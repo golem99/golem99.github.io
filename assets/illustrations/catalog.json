@@ -1,0 +1,408 @@
+{
+  "assets": [
+    {
+      "id": "POR-ELLA",
+      "src": "/assets/illustrations/love_por_ella.png"
+    },
+    {
+      "id": "POR-CLEO",
+      "src": "/assets/illustrations/love_por_cleo.png"
+    },
+    {
+      "id": "POR-JUNI",
+      "src": "/assets/illustrations/love_por_juni.png"
+    },
+    {
+      "id": "POR-ARVID",
+      "src": "/assets/illustrations/love_por_arvid.png"
+    },
+    {
+      "id": "POR-VINCENT",
+      "src": "/assets/illustrations/love_por_vincent.png"
+    },
+    {
+      "id": "POR-LOUIE",
+      "src": "/assets/illustrations/love_por_louie.png"
+    },
+    {
+      "id": "DLG-ELLA-COR-HELLO",
+      "src": "/assets/illustrations/love_dlg_ella_cor_hello.png"
+    },
+    {
+      "id": "DLG-ELLA-COR-CLARIFY",
+      "src": "/assets/illustrations/love_dlg_ella_cor_clarify.png"
+    },
+    {
+      "id": "DLG-ELLA-COR-LAUGH",
+      "src": "/assets/illustrations/love_dlg_ella_cor_laugh.png"
+    },
+    {
+      "id": "DLG-ELLA-CAF-INVITE",
+      "src": "/assets/illustrations/love_dlg_ella_caf_invite.png"
+    },
+    {
+      "id": "DLG-ELLA-CAF-LISTEN",
+      "src": "/assets/illustrations/love_dlg_ella_caf_listen.png"
+    },
+    {
+      "id": "DLG-ELLA-CAF-HURT",
+      "src": "/assets/illustrations/love_dlg_ella_caf_hurt.png"
+    },
+    {
+      "id": "DLG-ELLA-CAF-DRAW",
+      "src": "/assets/illustrations/love_dlg_ella_caf_draw.png"
+    },
+    {
+      "id": "DLG-ELLA-GYM-QUIET",
+      "src": "/assets/illustrations/love_dlg_ella_gym_quiet.png"
+    },
+    {
+      "id": "DLG-ELLA-GYM-BOUNDARY",
+      "src": "/assets/illustrations/love_dlg_ella_gym_boundary.png"
+    },
+    {
+      "id": "DLG-ELLA-GYM-RELIEF",
+      "src": "/assets/illustrations/love_dlg_ella_gym_relief.png"
+    },
+    {
+      "id": "DLG-ELLA-GYM-SHY",
+      "src": "/assets/illustrations/love_dlg_ella_gym_shy.png"
+    },
+    {
+      "id": "DLG-CLEO-COR-HELLO",
+      "src": "/assets/illustrations/love_dlg_cleo_cor_hello.png"
+    },
+    {
+      "id": "DLG-CLEO-COR-UNSURE",
+      "src": "/assets/illustrations/love_dlg_cleo_cor_unsure.png"
+    },
+    {
+      "id": "DLG-CLEO-COR-CLARIFY",
+      "src": "/assets/illustrations/love_dlg_cleo_cor_clarify.png"
+    },
+    {
+      "id": "DLG-CLEO-COR-LAUGH",
+      "src": "/assets/illustrations/love_dlg_cleo_cor_laugh.png"
+    },
+    {
+      "id": "DLG-CLEO-CAF-INVITE",
+      "src": "/assets/illustrations/love_dlg_cleo_caf_invite.png"
+    },
+    {
+      "id": "DLG-CLEO-CAF-LISTEN",
+      "src": "/assets/illustrations/love_dlg_cleo_caf_listen.png"
+    },
+    {
+      "id": "DLG-CLEO-CAF-HURT",
+      "src": "/assets/illustrations/love_dlg_cleo_caf_hurt.png"
+    },
+    {
+      "id": "DLG-CLEO-CAF-DRAW",
+      "src": "/assets/illustrations/love_dlg_cleo_caf_draw.png"
+    },
+    {
+      "id": "DLG-CLEO-GYM-QUIET",
+      "src": "/assets/illustrations/love_dlg_cleo_gym_quiet.png"
+    },
+    {
+      "id": "DLG-CLEO-GYM-BOUNDARY",
+      "src": "/assets/illustrations/love_dlg_cleo_gym_boundary.png"
+    },
+    {
+      "id": "DLG-CLEO-GYM-RELIEF",
+      "src": "/assets/illustrations/love_dlg_cleo_gym_relief.png"
+    },
+    {
+      "id": "DLG-CLEO-GYM-SHY",
+      "src": "/assets/illustrations/love_dlg_cleo_gym_shy.png"
+    },
+    {
+      "id": "DLG-JUNI-COR-HELLO",
+      "src": "/assets/illustrations/love_dlg_juni_cor_hello.png"
+    },
+    {
+      "id": "DLG-JUNI-COR-UNSURE",
+      "src": "/assets/illustrations/love_dlg_juni_cor_unsure.png"
+    },
+    {
+      "id": "DLG-JUNI-COR-CLARIFY",
+      "src": "/assets/illustrations/love_dlg_juni_cor_clarify.png"
+    },
+    {
+      "id": "DLG-JUNI-COR-LAUGH",
+      "src": "/assets/illustrations/love_dlg_juni_cor_laugh.png"
+    },
+    {
+      "id": "DLG-JUNI-CAF-INVITE",
+      "src": "/assets/illustrations/love_dlg_juni_caf_invite.png"
+    },
+    {
+      "id": "DLG-JUNI-CAF-LISTEN",
+      "src": "/assets/illustrations/love_dlg_juni_caf_listen.png"
+    },
+    {
+      "id": "DLG-JUNI-CAF-HURT",
+      "src": "/assets/illustrations/love_dlg_juni_caf_hurt.png"
+    },
+    {
+      "id": "DLG-JUNI-CAF-DRAW",
+      "src": "/assets/illustrations/love_dlg_juni_caf_draw.png"
+    },
+    {
+      "id": "DLG-JUNI-GYM-QUIET",
+      "src": "/assets/illustrations/love_dlg_juni_gym_quiet.png"
+    },
+    {
+      "id": "DLG-JUNI-GYM-BOUNDARY",
+      "src": "/assets/illustrations/love_dlg_juni_gym_boundary.png"
+    },
+    {
+      "id": "DLG-JUNI-GYM-RELIEF",
+      "src": "/assets/illustrations/love_dlg_juni_gym_relief.png"
+    },
+    {
+      "id": "DLG-JUNI-GYM-SHY",
+      "src": "/assets/illustrations/love_dlg_juni_gym_shy.png"
+    },
+    {
+      "id": "DLG-ARVID-COR-HELLO",
+      "src": "/assets/illustrations/love_dlg_arvid_cor_hello.png"
+    },
+    {
+      "id": "DLG-ARVID-COR-UNSURE",
+      "src": "/assets/illustrations/love_dlg_arvid_cor_unsure.png"
+    },
+    {
+      "id": "DLG-ARVID-COR-CLARIFY",
+      "src": "/assets/illustrations/love_dlg_arvid_cor_clarify.png"
+    },
+    {
+      "id": "DLG-ARVID-COR-LAUGH",
+      "src": "/assets/illustrations/love_dlg_arvid_cor_laugh.png"
+    },
+    {
+      "id": "DLG-ARVID-CAF-INVITE",
+      "src": "/assets/illustrations/love_dlg_arvid_caf_invite.png"
+    },
+    {
+      "id": "DLG-ARVID-CAF-LISTEN",
+      "src": "/assets/illustrations/love_dlg_arvid_caf_listen.png"
+    },
+    {
+      "id": "DLG-ARVID-CAF-HURT",
+      "src": "/assets/illustrations/love_dlg_arvid_caf_hurt.png"
+    },
+    {
+      "id": "DLG-ARVID-CAF-DRAW",
+      "src": "/assets/illustrations/love_dlg_arvid_caf_draw.png"
+    },
+    {
+      "id": "DLG-ARVID-GYM-QUIET",
+      "src": "/assets/illustrations/love_dlg_arvid_gym_quiet.png"
+    },
+    {
+      "id": "DLG-ARVID-GYM-BOUNDARY",
+      "src": "/assets/illustrations/love_dlg_arvid_gym_boundary.png"
+    },
+    {
+      "id": "DLG-ARVID-GYM-RELIEF",
+      "src": "/assets/illustrations/love_dlg_arvid_gym_relief.png"
+    },
+    {
+      "id": "DLG-ARVID-GYM-SHY",
+      "src": "/assets/illustrations/love_dlg_arvid_gym_shy.png"
+    },
+    {
+      "id": "DLG-VINCENT-COR-HELLO",
+      "src": "/assets/illustrations/love_dlg_vincent_cor_hello.png"
+    },
+    {
+      "id": "DLG-VINCENT-COR-UNSURE",
+      "src": "/assets/illustrations/love_dlg_vincent_cor_unsure.png"
+    },
+    {
+      "id": "DLG-VINCENT-COR-CLARIFY",
+      "src": "/assets/illustrations/love_dlg_vincent_cor_clarify.png"
+    },
+    {
+      "id": "DLG-VINCENT-COR-LAUGH",
+      "src": "/assets/illustrations/love_dlg_vincent_cor_laugh.png"
+    },
+    {
+      "id": "DLG-VINCENT-CAF-INVITE",
+      "src": "/assets/illustrations/love_dlg_vincent_caf_invite.png"
+    },
+    {
+      "id": "DLG-VINCENT-CAF-LISTEN",
+      "src": "/assets/illustrations/love_dlg_vincent_caf_listen.png"
+    },
+    {
+      "id": "DLG-VINCENT-CAF-HURT",
+      "src": "/assets/illustrations/love_dlg_vincent_caf_hurt.png"
+    },
+    {
+      "id": "DLG-VINCENT-CAF-DRAW",
+      "src": "/assets/illustrations/love_dlg_vincent_caf_draw.png"
+    },
+    {
+      "id": "DLG-VINCENT-GYM-QUIET",
+      "src": "/assets/illustrations/love_dlg_vincent_gym_quiet.png"
+    },
+    {
+      "id": "DLG-VINCENT-GYM-BOUNDARY",
+      "src": "/assets/illustrations/love_dlg_vincent_gym_boundary.png"
+    },
+    {
+      "id": "DLG-VINCENT-GYM-RELIEF",
+      "src": "/assets/illustrations/love_dlg_vincent_gym_relief.png"
+    },
+    {
+      "id": "DLG-VINCENT-GYM-SHY",
+      "src": "/assets/illustrations/love_dlg_vincent_gym_shy.png"
+    },
+    {
+      "id": "DLG-LOUIE-COR-HELLO",
+      "src": "/assets/illustrations/love_dlg_louie_cor_hello.png"
+    },
+    {
+      "id": "DLG-LOUIE-COR-UNSURE",
+      "src": "/assets/illustrations/love_dlg_louie_cor_unsure.png"
+    },
+    {
+      "id": "DLG-LOUIE-COR-CLARIFY",
+      "src": "/assets/illustrations/love_dlg_louie_cor_clarify.png"
+    },
+    {
+      "id": "DLG-LOUIE-COR-LAUGH",
+      "src": "/assets/illustrations/love_dlg_louie_cor_laugh.png"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-INVITE",
+      "src": "/assets/illustrations/love_dlg_louie_caf_invite.png"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-LISTEN",
+      "src": "/assets/illustrations/love_dlg_louie_caf_listen.png"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-HURT",
+      "src": "/assets/illustrations/love_dlg_louie_caf_hurt.png"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-DRAW",
+      "src": "/assets/illustrations/love_dlg_louie_caf_draw.png"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-QUIET",
+      "src": "/assets/illustrations/love_dlg_louie_gym_quiet.png"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-BOUNDARY",
+      "src": "/assets/illustrations/love_dlg_louie_gym_boundary.png"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-RELIEF",
+      "src": "/assets/illustrations/love_dlg_louie_gym_relief.png"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-SHY",
+      "src": "/assets/illustrations/love_dlg_louie_gym_shy.png"
+    },
+    {
+      "id": "SCN-SEAT",
+      "src": "/assets/illustrations/love_scn_seat.png"
+    },
+    {
+      "id": "SCN-QUESTION",
+      "src": "/assets/illustrations/love_scn_question.png"
+    },
+    {
+      "id": "SCN-QUIET",
+      "src": "/assets/illustrations/love_scn_quiet.png"
+    },
+    {
+      "id": "SCN-POTATO",
+      "src": "/assets/illustrations/love_scn_potato.png"
+    },
+    {
+      "id": "SCN-HAT",
+      "src": "/assets/illustrations/love_scn_hat.png"
+    },
+    {
+      "id": "SCN-PENCIL",
+      "src": "/assets/illustrations/love_scn_pencil.png"
+    },
+    {
+      "id": "SCN-SPACE",
+      "src": "/assets/illustrations/love_scn_space.png"
+    },
+    {
+      "id": "SCN-PLANS",
+      "src": "/assets/illustrations/love_scn_plans.png"
+    },
+    {
+      "id": "SCN-MISREAD",
+      "src": "/assets/illustrations/love_scn_misread.png"
+    },
+    {
+      "id": "SCN-EXPLAIN",
+      "src": "/assets/illustrations/love_scn_explain.png"
+    },
+    {
+      "id": "SCN-SORRY",
+      "src": "/assets/illustrations/love_scn_sorry.png"
+    },
+    {
+      "id": "SCN-RELIEVED",
+      "src": "/assets/illustrations/love_scn_relieved.png"
+    },
+    {
+      "id": "SCN-CALLBACK",
+      "src": "/assets/illustrations/love_scn_callback.png"
+    },
+    {
+      "id": "SCN-RETURN",
+      "src": "/assets/illustrations/love_scn_return.png"
+    },
+    {
+      "id": "SCN-WIND",
+      "src": "/assets/illustrations/love_scn_wind.png"
+    },
+    {
+      "id": "SCN-HELP",
+      "src": "/assets/illustrations/love_scn_help.png"
+    },
+    {
+      "id": "SCN-DRAWTEAM",
+      "src": "/assets/illustrations/love_scn_drawteam.png"
+    },
+    {
+      "id": "SCN-TOMORROW",
+      "src": "/assets/illustrations/love_scn_tomorrow.png"
+    },
+    {
+      "id": "COVER-01",
+      "src": "/assets/illustrations/love_cover_01.png"
+    },
+    {
+      "id": "COVER-02",
+      "src": "/assets/illustrations/love_cover_02.png"
+    },
+    {
+      "id": "COVER-03",
+      "src": "/assets/illustrations/love_cover_03.png"
+    },
+    {
+      "id": "COVER-04",
+      "src": "/assets/illustrations/love_cover_04.png"
+    },
+    {
+      "id": "COVER-05",
+      "src": "/assets/illustrations/love_cover_05.png"
+    },
+    {
+      "id": "DLG-ELLA-COR-UNSURE",
+      "src": "/assets/illustrations/love_dlg_ella_cor_unsure.png"
+    }
+  ]
+}

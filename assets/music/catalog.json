@@ -1,0 +1,106 @@
+{
+  "menu": [
+    {
+      "id": "tank-om",
+      "title": "Tänk om",
+      "src": "/assets/music/tank-om.mp3"
+    },
+    {
+      "id": "gor-om-det-dar",
+      "title": "Gör om det där",
+      "src": "/assets/music/gor-om-det-dar.mp3"
+    },
+    {
+      "id": "du-vill-ha-nan-annan",
+      "title": "Du vill ha nån annan",
+      "src": "/assets/music/du-vill-ha-nan-annan.mp3"
+    },
+    {
+      "id": "tre-ord",
+      "title": "Tre ord",
+      "src": "/assets/music/tre-ord.mp3"
+    },
+    {
+      "id": "bara-till-dig",
+      "title": "Bara till dig",
+      "src": "/assets/music/bara-till-dig.mp3"
+    },
+    {
+      "id": "du-har-last",
+      "title": "Du har läst",
+      "src": "/assets/music/du-har-last.mp3"
+    },
+    {
+      "id": "titta-inte-pa-mig",
+      "title": "Titta inte på mig",
+      "src": "/assets/music/titta-inte-pa-mig.mp3"
+    },
+    {
+      "id": "nu-vet-jag",
+      "title": "Nu vet jag",
+      "src": "/assets/music/nu-vet-jag.mp3"
+    },
+    {
+      "id": "karlek-kanns-sa-har",
+      "title": "Kärlek känns så här",
+      "src": "/assets/music/karlek-kanns-sa-har.mp3"
+    },
+    {
+      "id": "jag-vill-inte-vinna-dig",
+      "title": "Jag vill inte vinna dig",
+      "src": "/assets/music/jag-vill-inte-vinna-dig.mp3"
+    }
+  ],
+  "game": [
+    {
+      "id": "quiet-school-day",
+      "title": "Quiet School Day",
+      "src": "/assets/music/quiet-school-day.mp3"
+    },
+    {
+      "id": "gor-om-det-dar-underscore",
+      "title": "Gör om det där – instrumental",
+      "src": "/assets/music/gor-om-det-dar-underscore.mp3"
+    },
+    {
+      "id": "du-vill-ha-nan-annan-underscore",
+      "title": "Du vill ha nån annan – instrumental",
+      "src": "/assets/music/du-vill-ha-nan-annan-underscore.mp3"
+    },
+    {
+      "id": "tre-ord-underscore",
+      "title": "Tre ord – instrumental",
+      "src": "/assets/music/tre-ord-underscore.mp3"
+    },
+    {
+      "id": "bara-till-dig-underscore",
+      "title": "Bara till dig – instrumental",
+      "src": "/assets/music/bara-till-dig-underscore.mp3"
+    },
+    {
+      "id": "du-har-last-underscore",
+      "title": "Du har läst – instrumental",
+      "src": "/assets/music/du-har-last-underscore.mp3"
+    },
+    {
+      "id": "titta-inte-pa-mig-underscore",
+      "title": "Titta inte på mig – instrumental",
+      "src": "/assets/music/titta-inte-pa-mig-underscore.mp3"
+    },
+    {
+      "id": "nu-vet-jag-underscore",
+      "title": "Nu vet jag – instrumental",
+      "src": "/assets/music/nu-vet-jag-underscore.mp3"
+    },
+    {
+      "id": "karlek-kanns-sa-har-underscore",
+      "title": "Kärlek känns så här – instrumental",
+      "src": "/assets/music/karlek-kanns-sa-har-underscore.mp3"
+    },
+    {
+      "id": "jag-vill-inte-vinna-dig-underscore",
+      "title": "Jag vill inte vinna dig – instrumental",
+      "src": "/assets/music/jag-vill-inte-vinna-dig-underscore.mp3"
+    }
+  ]
+}
