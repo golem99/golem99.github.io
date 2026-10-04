@@ -207,6 +207,310 @@
     {
       "id": "DLG-VINCENT-GYM-SHY",
       "src": "/assets/illustrations/chibi_vincent_gym_shy.webp"
+    },
+    {
+      "id": "POR-JUNI",
+      "src": "/assets/illustrations/chibi_juni_portrait.webp"
+    },
+    {
+      "id": "DLG-JUNI-COR-HELLO",
+      "src": "/assets/illustrations/chibi_juni_cor_hello.webp"
+    },
+    {
+      "id": "DLG-JUNI-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_juni_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-JUNI-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_juni_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-JUNI-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_juni_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-JUNI-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_juni_caf_invite.webp"
+    },
+    {
+      "id": "DLG-JUNI-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_juni_caf_listen.webp"
+    },
+    {
+      "id": "DLG-JUNI-CAF-HURT",
+      "src": "/assets/illustrations/chibi_juni_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-JUNI-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_juni_caf_draw.webp"
+    },
+    {
+      "id": "DLG-JUNI-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_juni_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-JUNI-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_juni_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-JUNI-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_juni_gym_relief.webp"
+    },
+    {
+      "id": "DLG-JUNI-GYM-SHY",
+      "src": "/assets/illustrations/chibi_juni_gym_shy.webp"
+    },
+    {
+      "id": "POR-LOUIE",
+      "src": "/assets/illustrations/chibi_louie_portrait.webp"
+    },
+    {
+      "id": "DLG-LOUIE-COR-HELLO",
+      "src": "/assets/illustrations/chibi_louie_cor_hello.webp"
+    },
+    {
+      "id": "DLG-LOUIE-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_louie_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-LOUIE-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_louie_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-LOUIE-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_louie_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_louie_caf_invite.webp"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_louie_caf_listen.webp"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-HURT",
+      "src": "/assets/illustrations/chibi_louie_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-LOUIE-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_louie_caf_draw.webp"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_louie_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_louie_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_louie_gym_relief.webp"
+    },
+    {
+      "id": "DLG-LOUIE-GYM-SHY",
+      "src": "/assets/illustrations/chibi_louie_gym_shy.webp"
+    },
+    {
+      "id": "POR-TOVE",
+      "src": "/assets/illustrations/chibi_tove_portrait.webp"
+    },
+    {
+      "id": "DLG-TOVE-COR-HELLO",
+      "src": "/assets/illustrations/chibi_tove_cor_hello.webp"
+    },
+    {
+      "id": "DLG-TOVE-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_tove_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-TOVE-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_tove_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-TOVE-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_tove_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-TOVE-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_tove_caf_invite.webp"
+    },
+    {
+      "id": "DLG-TOVE-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_tove_caf_listen.webp"
+    },
+    {
+      "id": "DLG-TOVE-CAF-HURT",
+      "src": "/assets/illustrations/chibi_tove_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-TOVE-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_tove_caf_draw.webp"
+    },
+    {
+      "id": "DLG-TOVE-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_tove_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-TOVE-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_tove_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-TOVE-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_tove_gym_relief.webp"
+    },
+    {
+      "id": "DLG-TOVE-GYM-SHY",
+      "src": "/assets/illustrations/chibi_tove_gym_shy.webp"
+    },
+    {
+      "id": "POR-MAJA",
+      "src": "/assets/illustrations/chibi_maja_portrait.webp"
+    },
+    {
+      "id": "DLG-MAJA-COR-HELLO",
+      "src": "/assets/illustrations/chibi_maja_cor_hello.webp"
+    },
+    {
+      "id": "DLG-MAJA-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_maja_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-MAJA-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_maja_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-MAJA-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_maja_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-MAJA-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_maja_caf_invite.webp"
+    },
+    {
+      "id": "DLG-MAJA-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_maja_caf_listen.webp"
+    },
+    {
+      "id": "DLG-MAJA-CAF-HURT",
+      "src": "/assets/illustrations/chibi_maja_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-MAJA-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_maja_caf_draw.webp"
+    },
+    {
+      "id": "DLG-MAJA-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_maja_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-MAJA-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_maja_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-MAJA-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_maja_gym_relief.webp"
+    },
+    {
+      "id": "DLG-MAJA-GYM-SHY",
+      "src": "/assets/illustrations/chibi_maja_gym_shy.webp"
+    },
+    {
+      "id": "DLG-ANTON-COR-HELLO",
+      "src": "/assets/illustrations/chibi_anton_cor_hello.webp"
+    },
+    {
+      "id": "DLG-ANTON-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_anton_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-ANTON-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_anton_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-ANTON-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_anton_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-ANTON-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_anton_caf_invite.webp"
+    },
+    {
+      "id": "DLG-ANTON-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_anton_caf_listen.webp"
+    },
+    {
+      "id": "DLG-ANTON-CAF-HURT",
+      "src": "/assets/illustrations/chibi_anton_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-ANTON-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_anton_caf_draw.webp"
+    },
+    {
+      "id": "DLG-ANTON-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_anton_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-ANTON-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_anton_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-ANTON-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_anton_gym_relief.webp"
+    },
+    {
+      "id": "DLG-ANTON-GYM-SHY",
+      "src": "/assets/illustrations/chibi_anton_gym_shy.webp"
+    },
+    {
+      "id": "DLG-BENGT-COR-HELLO",
+      "src": "/assets/illustrations/chibi_bengt_cor_hello.webp"
+    },
+    {
+      "id": "DLG-BENGT-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_bengt_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-BENGT-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_bengt_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-BENGT-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_bengt_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-BENGT-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_bengt_caf_invite.webp"
+    },
+    {
+      "id": "DLG-BENGT-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_bengt_caf_listen.webp"
+    },
+    {
+      "id": "DLG-BENGT-CAF-HURT",
+      "src": "/assets/illustrations/chibi_bengt_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-BENGT-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_bengt_caf_draw.webp"
+    },
+    {
+      "id": "DLG-BENGT-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_bengt_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-BENGT-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_bengt_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-BENGT-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_bengt_gym_relief.webp"
+    },
+    {
+      "id": "DLG-BENGT-GYM-SHY",
+      "src": "/assets/illustrations/chibi_bengt_gym_shy.webp"
     }
   ]
 }
