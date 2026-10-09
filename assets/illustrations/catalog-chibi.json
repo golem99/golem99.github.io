@@ -511,6 +511,66 @@
     {
       "id": "DLG-BENGT-GYM-SHY",
       "src": "/assets/illustrations/chibi_bengt_gym_shy.webp"
+    },
+    {
+      "id": "POR-ANTON",
+      "src": "/assets/illustrations/chibi_anton_portrait.webp"
+    },
+    {
+      "id": "POR-BENGT",
+      "src": "/assets/illustrations/chibi_bengt_portrait.webp"
+    },
+    {
+      "id": "POR-KARIN",
+      "src": "/assets/illustrations/chibi_karin_portrait.webp"
+    },
+    {
+      "id": "DLG-KARIN-COR-HELLO",
+      "src": "/assets/illustrations/chibi_karin_cor_hello.webp"
+    },
+    {
+      "id": "DLG-KARIN-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_karin_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-KARIN-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_karin_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-KARIN-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_karin_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-KARIN-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_karin_caf_invite.webp"
+    },
+    {
+      "id": "DLG-KARIN-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_karin_caf_listen.webp"
+    },
+    {
+      "id": "DLG-KARIN-CAF-HURT",
+      "src": "/assets/illustrations/chibi_karin_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-KARIN-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_karin_caf_draw.webp"
+    },
+    {
+      "id": "DLG-KARIN-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_karin_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-KARIN-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_karin_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-KARIN-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_karin_gym_relief.webp"
+    },
+    {
+      "id": "DLG-KARIN-GYM-SHY",
+      "src": "/assets/illustrations/chibi_karin_gym_shy.webp"
     }
   ]
 }
