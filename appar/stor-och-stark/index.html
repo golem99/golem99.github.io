@@ -231,6 +231,14 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
 .pend b{font-weight:700}
 .passed{font-size:13px;color:var(--muted);padding:0 2px}
 .passed b{color:var(--ink)}
+.theme{display:flex;gap:10px;align-items:center;background:var(--surface);border-radius:14px;padding:10px 12px;font-size:14px}
+.theme b{font:800 18px/1 var(--display);text-transform:uppercase;color:var(--gold)}
+.sickrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.sickbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.sickbtn[aria-pressed="true"]{border-color:var(--noa);color:var(--noa);background:var(--noa-soft)}
+.editbar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--gold-soft);border-radius:12px;padding:8px 12px;font-size:14px}
+.editbar button{border:0;background:none;font-weight:700;text-decoration:underline}
+.mult{color:var(--gold);font-weight:700}
 /* Celebration */
 .celebrate{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(12,20,29,.55);
   padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -276,6 +284,7 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
           <button type="button" data-period="year" aria-pressed="false">År</button>
         </div>
       </div>
+      <div class="theme" id="theme" hidden></div>
       <div class="board" id="board"><div class="banner" id="banner"></div></div>
       <div class="week" id="week"></div>
       <div class="nudge" id="nudge" hidden></div>
@@ -287,10 +296,12 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
     <!-- Logga -->
     <section class="view" id="vLog" role="tabpanel" aria-labelledby="tLog" hidden>
       <div class="head"><h2>Logga pass</h2><label class="date">Datum <input type="date" id="fDate"></label></div>
+      <div class="editbar" id="editbar" hidden><span id="editTxt"></span><button type="button" id="editCancel">Avbryt</button></div>
       <div class="players" role="group" aria-label="Vem tränade">
         <button type="button" data-p="Steve" id="bSteve" style="--c:var(--steve);--cs:var(--steve-soft)">Steve</button>
         <button type="button" data-p="Noa" id="bNoa" style="--c:var(--noa);--cs:var(--noa-soft)">Noa</button>
       </div>
+      <div class="sickrow"><span id="sickTxt">Sjuk eller skadad? Då bryts inte veckokedjan.</span><button type="button" class="sickbtn" id="sickBtn" aria-pressed="false">Sjukdag</button></div>
       <div class="exlist" id="panel">
         <div class="ex"><div class="lbl"><strong>Roddmaskin</strong><span id="hRodd">minuter</span></div>
           <div class="step"><button type="button" data-s="fRodd" data-d="-1" aria-label="Minska rodd">−</button><input id="fRodd" type="number" inputmode="numeric" min="0" step="1" value="0" aria-label="Minuter rodd"><button type="button" data-s="fRodd" data-d="1" aria-label="Öka rodd">+</button></div></div>
@@ -348,8 +359,9 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
           <label>Nacklyft, per pass<input type="number" id="sNack" min="0" step="1"></label>
           <label>Superman, per pass<input type="number" id="sSup" min="0" step="1"></label>
           <label>Veckobonus, 5 dagar<input type="number" id="sBonus" min="0" step="1"></label>
+          <label>Lagbonus, båda klarar veckan<input type="number" id="sTeam" min="0" step="1"></label>
         </div>
-        <p class="note">Veckobonusen delas ut när man tränat minst fem olika dagar under samma vecka, måndag till söndag. Ändrad skala räknas om för alla pass, även gamla.</p>
+        <p class="note">Veckobonusen delas ut när man tränat minst fem olika dagar under samma vecka, måndag till söndag. Lagbonusen går till båda när ni båda klarar samma vecka. En vecka med sjukdagar bryter inte kedjan. Ändrad skala räknas om för alla pass, även gamla.</p>
         <button type="button" class="ghost" id="sSave">Spara poängskala</button>
         <div class="toast" id="sToast" role="status"></div>
       </div>
@@ -938,7 +950,11 @@ const QUOTES=[
 ];
 
 const RANKS=[[0,"Landkrabba"],[1500,"Jungman"],[5000,"Lättmatros"],[12000,"Matros"],[25000,"Båtsman"],[45000,"Styrman"],[70000,"Skeppare"],[100000,"Kapten"]];
-const DEF={rodd:15,plank:5,km:25,nack:15,sup:15,bonus:50};
+const DEF={rodd:15,plank:5,km:25,nack:15,sup:15,bonus:50,team:50};
+const THEMES={1:["Roddmånad","rodd",1.5,"Halva poäng extra på rodd"],2:["Styrkemånad","ns",2,"Dubbla poäng på nacklyft och superman"],3:["Plankmånad","plank",2,"Dubbla poäng på plankor"],4:["Vårpromenader","km",2,"Dubbla poäng på promenader"],5:["Roddmånad","rodd",1.5,"Halva poäng extra på rodd"],6:["Midsommarpromenader","km",2,"Dubbla poäng på promenader"],7:["Plankmånad","plank",2,"Dubbla poäng på plankor"],8:["Roddmånad","rodd",1.5,"Halva poäng extra på rodd"],9:["Styrkemånad","ns",2,"Dubbla poäng på nacklyft och superman"],10:["Höstpromenader","km",2,"Dubbla poäng på promenader"],11:["Plankmånad","plank",2,"Dubbla poäng på plankor"],12:["Julpromenader","km",2,"Dubbla poäng på promenader"]};
+const THEME_START="2026-11-01";
+function themeOf(date){if(!date||date<THEME_START)return null;return THEMES[+date.slice(5,7)]||null}
+let sick=[],editingId=null;
 const GOAL=5, KM_PER_P=0.035, HEAD=3, QPTS={e:10,m:20,h:30}, QLABEL={e:"Lätt",m:"Medel",h:"Svår"};
 const PLAYERS=["Steve","Noa"];
 const COL={Steve:"var(--steve)",Noa:"var(--noa)"};
@@ -1020,15 +1036,17 @@ const shortDate=s=>{const d=parse(s);return d.getDate()+" "+MONTHS[d.getMonth()]
 
 /* ---------- Points & derived ---------- */
 const num=v=>{const n=parseFloat(String(v).replace(",","."));return isFinite(n)&&n>0?n:0};
-function pts(s){return Math.round(num(s.rodd)*P.rodd+num(s.plank)*P.plank+num(s.km)*P.km+(s.nack?P.nack:0)+(s.sup?P.sup:0))}
+function pts(s){const t=themeOf(s.date),m=k=>t&&(t[1]===k||(t[1]==="ns"&&(k==="nack"||k==="sup")))?t[2]:1;
+  return Math.round(num(s.rodd)*P.rodd*m("rodd")+num(s.plank)*P.plank*m("plank")+num(s.km)*P.km*m("km")+(s.nack?P.nack*m("nack"):0)+(s.sup?P.sup*m("sup"):0))}
 const fmt=v=>String(+(+v).toFixed(1)).replace(".",",");
 const fmtInt=n=>Math.round(n).toLocaleString("sv-SE");
 function describe(s){const a=[];if(num(s.rodd))a.push(`<b>${fmt(s.rodd)}</b> min rodd${num(s.meter)?` (${fmtInt(s.meter)} m)`:""}`);if(num(s.plank))a.push(`<b>${fmt(s.plank)}</b> ${num(s.plank)===1?"planka":"plankor"}`);
   if(num(s.km))a.push(`<b>${fmt(s.km)}</b> km promenad`);if(s.nack)a.push("nacklyft");if(s.sup)a.push("superman");return a.join(" · ")||"tomt pass"}
 function bonusWeeks(list,p){const days={};list.forEach(s=>{if(s.player===p){const w=weekStart(s.date);(days[w]=days[w]||new Set()).add(s.date)}});
   const out={};for(const w in days){const arr=[...days[w]].sort();if(arr.length>=GOAL)out[w]=arr[GOAL-1]}return out}
-function bonusItems(list){return PLAYERS.flatMap(p=>Object.values(bonusWeeks(list,p)).map(date=>({player:p,date})))}
-function allTime(list,p){return list.filter(s=>s.player===p).reduce((a,s)=>a+pts(s),0)+Object.keys(bonusWeeks(list,p)).length*P.bonus}
+function bonusItems(list){const tw=Object.values(teamWeeks(list));return PLAYERS.flatMap(p=>[...Object.values(bonusWeeks(list,p)).map(date=>({player:p,date,v:P.bonus})),...tw.map(date=>({player:p,date,v:P.team}))])}
+function teamWeeks(list){const a=bonusWeeks(list,PLAYERS[0]),b=bonusWeeks(list,PLAYERS[1]),out={};for(const w in a)if(b[w])out[w]=a[w]>b[w]?a[w]:b[w];return out}
+function allTime(list,p){return list.filter(s=>s.player===p).reduce((a,s)=>a+pts(s),0)+Object.keys(bonusWeeks(list,p)).length*P.bonus+Object.keys(teamWeeks(list)).length*P.team}
 function teamPoints(list){return PLAYERS.reduce((a,p)=>a+allTime(list,p),0)}
 const kmOf=list=>Math.min(TOTAL,HEAD+teamPoints(list)*KM_PER_P);
 function rankOf(points){let i=0;while(i+1<RANKS.length&&points>=RANKS[i+1][0])i++;return{i,name:RANKS[i][1],next:RANKS[i+1]||null}}
@@ -1050,16 +1068,28 @@ function updateForm(){
   const f=form(),p=pts(f);$("preview").innerHTML=p+"<small>p</small>";$("previewKm").textContent=p?`${fmt(p*KM_PER_P)} km närmare Rom`:"Fyll i dagens träning";
   $("save").disabled=p===0||saving;
   $("hRodd").textContent=`minuter · ${P.rodd} p/min`;$("hPlank").textContent=`antal · ${P.plank} p/st`;$("hKm").textContent=`km · ${P.km} p/km`;
-  $("hNack").textContent=`${P.nack} p för passet`;$("hSup").textContent=`${P.sup} p för passet`}
+  $("hNack").textContent=`${P.nack} p för passet`;$("hSup").textContent=`${P.sup} p för passet`;
+  const t=themeOf(f.date);if(t){const tag=` · ×${String(t[2]).replace(".",",")} i ${t[0].toLowerCase()}`;const map={rodd:["hRodd"],plank:["hPlank"],km:["hKm"],ns:["hNack","hSup"]};(map[t[1]]||[]).forEach(id=>{$(id).innerHTML=esc($(id).textContent)+`<span class="mult">${tag}</span>`})}
+  const sk=sick.some(x=>x.player===player&&x.date===f.date);$("sickBtn").setAttribute("aria-pressed",sk);$("sickBtn").textContent=sk?"Sjukdag markerad":"Sjukdag";
+  $("sickTxt").textContent=sk?`${player} är sjukanmäld ${f.date===today()?"i dag":f.date}. Kedjan är skyddad den veckan.`:"Sjuk eller skadad? Då bryts inte veckokedjan.";
+  $("editbar").hidden=!editingId;$("save").textContent=editingId?"Spara ändring":"Spara"}
 document.querySelectorAll(".players button").forEach(b=>b.addEventListener("click",()=>{ac();player=b.dataset.p;store.set("player",player);play("on");render()}));
 document.querySelectorAll(".step button").forEach(b=>b.addEventListener("click",()=>{ac();const i=$(b.dataset.s),d=+b.dataset.d,v=Math.max(0,Math.round((num(i.value)+d)*10)/10);i.value=v;
   if(d>0)play("step",i.id==="fKm"?v*2:i.id==="fMeter"?v/100:v);else play("down");updateForm()}));
 ["fRodd","fMeter","fPlank","fKm","fDate"].forEach(id=>$(id).addEventListener("input",updateForm));
 ["fNack","fSup"].forEach(id=>$(id).addEventListener("click",e=>{ac();const t=e.currentTarget,on=t.getAttribute("aria-pressed")!=="true";t.setAttribute("aria-pressed",on);play(on?"on":"off");updateForm()}));
-function resetForm(){["fRodd","fMeter","fPlank","fKm"].forEach(id=>$(id).value=0);["fNack","fSup"].forEach(id=>$(id).setAttribute("aria-pressed","false"));updateForm()}
+$("sickBtn").addEventListener("click",async()=>{ac();const d=$("fDate").value||today(),id=player+"_"+d,ex=sick.find(x=>x.player===player&&x.date===d);
+  if(ex){sick=sick.filter(x=>x!==ex);play("off")}else{sick.push({player,date:d});play("on")}updateForm();renderBoard();
+  try{if(db){if(ex)await db.collection("sick").doc(id).delete();else await db.collection("sick").doc(id).set({player,date:d,created:Date.now()})}}catch(e){toast("toast","Det gick inte att spara sjukdagen. Försök igen.")}});
+$("editCancel").addEventListener("click",()=>{play("off");resetForm()});
+function resetForm(){editingId=null;["fRodd","fMeter","fPlank","fKm"].forEach(id=>$(id).value=0);$("fDate").value=today();["fNack","fSup"].forEach(id=>$(id).setAttribute("aria-pressed","false"));updateForm()}
 function toast(id,msg){$(id).textContent=msg;clearTimeout(toast[id]);toast[id]=setTimeout(()=>$(id).textContent="",5000)}
 $("save").addEventListener("click",async()=>{
-  ac();const f=form(),p=pts(f);if(!p)return;const rec={...f,created:Date.now()};const before=sessions.slice(),after=[...before,rec];
+  ac();const f=form(),p=pts(f);if(!p)return;
+  if(editingId){const orig=sessions.find(s=>s.id===editingId);if(orig){const upd={...f,created:orig.created||Date.now(),edited:Date.now()};if(Array.isArray(orig.cheers))upd.cheers=orig.cheers;saving=true;updateForm();
+    try{if(db&&!orig.id.startsWith("local"))await db.collection("sessions").doc(orig.id).set(upd);else{Object.assign(orig,upd);render()}play("record");toast("toast","Passet är ändrat.");resetForm();show("vBoard")}
+    catch(e){toast("toast","Det gick inte att spara ändringen. Försök igen.")}saving=false;updateForm();return}}
+  const rec={...f,created:Date.now()};const before=sessions.slice(),after=[...before,rec];
   saving=true;updateForm();
   try{if(db){await db.collection("sessions").add(rec)}else{rec.id="local"+rec.created;sessions.push(rec);render()}
     resetForm();celebrate(buildMoments(before,after,rec));
@@ -1080,6 +1110,7 @@ function buildMoments(before,after,rec){
   if(recs.length)m.push({sfx:"record",confetti:true,art:artMedal(),kick:"Nytt personligt rekord",title:`Bra jobbat, ${who}!`,c:"var(--gold)",text:"Du slog ditt rekord för "+recs.join(", ")+"."});
   const b0=bonusWeeks(before,who),b1=bonusWeeks(after,who),w=weekStart(rec.date);
   if(b1[w]&&!b0[w])m.push({sfx:"record",confetti:true,art:artDots(),kick:"Femdagarsvecka",title:`+${P.bonus} i bonus`,c:COL[who],text:`${who} har tränat fem dagar den här veckan. Veckan är klar och kedjan växer.`});
+  const t0=teamWeeks(before),t1=teamWeeks(after);if(t1[w]&&!t0[w])m.push({sfx:"rank",confetti:true,art:artDots(),kick:"Lagbonus",title:`+${P.team} till båda`,c:"var(--gold)",text:"Steve och Noa har båda klarat fem dagar den här veckan. Starkt jobbat tillsammans!"});
   const rk0=rankOf(allTime(before,who)),rk1=rankOf(allTime(after,who));
   if(rk1.i>rk0.i)m.push({sfx:"rank",confetti:true,art:artRank(rk1.i),kick:"Ny grad",title:rk1.name,c:COL[who],text:`${who} har befordrats från ${rk0.name.toLowerCase()} till ${rk1.name.toLowerCase()}.`});
   const s0=stopIndex(k0),s1=stopIndex(k1);
@@ -1203,9 +1234,10 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("sheet").hidden)
 /* ---------- Leaderboard ---------- */
 function periodStart(){return period==="week"?weekStart(today()):period==="month"?monthsBack(0):period==="half"?monthsBack(5):monthsBack(11)}
 function stats(p){const mine=sessions.filter(s=>s.player===p),start=periodStart(),t=today(),bw=bonusWeeks(sessions,p);
-  const nb=Object.values(bw).filter(d=>d>=start&&d<=t).length,pool=mine.filter(s=>s.date>=start&&s.date<=t);
-  const total=pool.reduce((a,s)=>a+pts(s),0)+nb*P.bonus,cw=weekStart(t),weekDays=new Set(mine.filter(s=>weekStart(s.date)===cw).map(s=>s.date)).size;
-  let streak=0,w=bw[cw]?cw:addDays(cw,-7);while(bw[w]){streak++;w=addDays(w,-7)}
+  const nb=Object.values(bw).filter(d=>d>=start&&d<=t).length,pool=mine.filter(s=>s.date>=start&&s.date<=t),nt=Object.values(teamWeeks(sessions)).filter(d=>d>=start&&d<=t).length;
+  const total=pool.reduce((a,s)=>a+pts(s),0)+nb*P.bonus+nt*P.team,cw=weekStart(t),weekDays=new Set(mine.filter(s=>weekStart(s.date)===cw).map(s=>s.date)).size;
+  const frozen=w=>sick.some(x=>x.player===p&&weekStart(x.date)===w);
+  let streak=0,w=bw[cw]||frozen(cw)?cw:addDays(cw,-7),guard=0;while((bw[w]||frozen(w))&&guard++<520){if(bw[w])streak++;w=addDays(w,-7)}
   const all=allTime(sessions,p);return{total,streak,weekDays,bonusNow:!!bw[cw],rank:rankOf(all),all,best:records(sessions,p).day}}
 const PLABEL={week:"Den här veckan",month:"Den här månaden",half:"Senaste sex månaderna",year:"Senaste året"};
 const rows={};let lastLeader=null,leaderPeriod=null;
@@ -1243,6 +1275,7 @@ function overtake(winner,loser){const b=$("banner");b.textContent=`${winner} gå
   const el=rows[winner];el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");play("overtake");if(view==="vBoard")confetti()}
 document.querySelectorAll("#periods button").forEach(b=>b.addEventListener("click",()=>{ac();period=b.dataset.period;store.set("period",period);
   document.querySelectorAll("#periods button").forEach(x=>x.setAttribute("aria-pressed",x===b));play("tab");renderBoard();renderChart()}));
+function renderTheme(){const t=themeOf(today());$("theme").hidden=!t;if(t){const mn=new Date().toLocaleDateString("sv-SE",{month:"long"});$("theme").innerHTML=`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg><span><b>${t[0]}</b><br>${t[3]} hela ${mn}.</span>`}}
 function renderExtras(){const pl=pendingFor(player);$("pend").hidden=!pl.length;
   $("pend").innerHTML=`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/></svg><span><b>${pl.length} ${pl.length===1?"fråga väntar":"frågor väntar"}</b> på ${player}. Tryck för att svara.</span>`;
   const km=kmOf(sessions),k=stopIndex(km),st=STOPS[k];$("passed").innerHTML=sessions.length&&k>0?`Senast passerat: <b>${esc(st.n)}</b>. ${esc(FACTS[st.n]||"")}`:""}
@@ -1299,7 +1332,7 @@ function buckets(){const t=today();
   if(period==="month"){const first=monthsBack(0),out=[];let w=weekStart(first);const cur=weekStart(t);while(w<=cur){const ww=w;out.push({label:"v."+isoWeek(ww),now:ww===cur,has:x=>weekStart(x)===ww&&x>=first});w=addDays(w,7)}return out}
   const n=period==="half"?6:12;return[...Array(n)].map((_,i)=>{const m=monthsBack(n-1-i).slice(0,7);return{label:MONTHS[+m.slice(5)-1],now:i===n-1,has:x=>x.slice(0,7)===m}})}
 function renderChart(){const bk=buckets(),extra=period==="week"?[]:bonusItems(sessions);
-  const v=bk.map(b=>PLAYERS.map(p=>sessions.filter(s=>s.player===p&&b.has(s.date)).reduce((a,s)=>a+pts(s),0)+extra.filter(x=>x.player===p&&b.has(x.date)).length*P.bonus));
+  const v=bk.map(b=>PLAYERS.map(p=>sessions.filter(s=>s.player===p&&b.has(s.date)).reduce((a,s)=>a+pts(s),0)+extra.filter(x=>x.player===p&&b.has(x.date)).reduce((a,x)=>a+x.v,0)));
   const raw=Math.max(...v.flat()),nice=[25,50,100,250,500,1000,2500,5000,10000,25000],step=nice.find(n=>raw/n<=4)||50000,top=Math.max(step*2,Math.ceil(raw/step)*step);
   const W=600,H=220,L=48,R=8,T=12,B=30,cw=(W-L-R)/bk.length,bw=Math.min(22,cw*.3),y=n=>T+(H-T-B)*(1-n/top);
   let g="";for(let t=0;t<=top;t+=step)g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="Figtree,system-ui">${fmtInt(t)}</text>`;
@@ -1318,8 +1351,13 @@ function renderHistory(){const list=[...sessions].sort((a,b)=>b.date.localeCompa
   $("history").innerHTML=Object.entries(groups).map(([d,arr])=>`<div class="day"><h3>${prettyDate(d)}</h3>${arr.map(s=>{const cheers=Array.isArray(s.cheers)?s.cheers:[],other=s.player!==player,mine=cheers.includes(player);
     return`<div class="entry" style="--c:${COL[s.player]||"var(--muted)"}"><span class="dot"></span><div class="what"><b>${esc(s.player)}</b> · ${describe(s)}</div><span class="p">${pts(s)}</span>
       <div class="acts">${other?`<button type="button" class="heja${mine?" done":""}" data-id="${s.id}" ${mine?"disabled":""}>${mine?"Du hejade":"Heja!"}</button>`:""}<span>${cheers.length?cheers.map(esc).join(" och ")+" hejade":""}</span>
+      <button type="button" class="heja" data-edit="${s.id}">Ändra</button>
       <button type="button" class="del${armed===s.id?" armed":""}" data-id="${s.id}">${armed===s.id?"Ta bort":"Ta bort…"}</button></div></div>`}).join("")}</div>`).join("")}
-$("history").addEventListener("click",async e=>{const h=e.target.closest(".heja");
+$("history").addEventListener("click",async e=>{const ed=e.target.closest("[data-edit]");
+  if(ed){ac();const s=sessions.find(x=>x.id===ed.dataset.edit);if(!s)return;editingId=s.id;player=s.player;$("fDate").value=s.date;
+    $("fRodd").value=num(s.rodd);$("fMeter").value=num(s.meter);$("fPlank").value=num(s.plank);$("fKm").value=num(s.km);$("fNack").setAttribute("aria-pressed",!!s.nack);$("fSup").setAttribute("aria-pressed",!!s.sup);
+    $("editTxt").textContent=`Du ändrar ${s.player}s pass från ${prettyDate(s.date).toLowerCase()}.`;play("tab");render();show("vLog");return}
+  const h=e.target.closest(".heja:not([data-edit])");
   if(h&&!h.disabled){ac();const s=sessions.find(x=>x.id===h.dataset.id);if(!s)return;const cheers=[...(Array.isArray(s.cheers)?s.cheers:[]),player];play("cheer");
     try{if(db&&!s.id.startsWith("local"))await db.collection("sessions").doc(s.id).update({cheers});else{s.cheers=cheers;renderHistory()}}catch(err){toast("sToast","Hejaropet kom inte fram. Försök igen.")}return}
   const b=e.target.closest(".del");if(!b)return;const id=b.dataset.id;
@@ -1327,12 +1365,12 @@ $("history").addEventListener("click",async e=>{const h=e.target.closest(".heja"
   armed=null;play("off");try{if(db&&!id.startsWith("local"))await db.collection("sessions").doc(id).delete();else{sessions=sessions.filter(s=>s.id!==id);render()}}catch(err){toast("sToast","Det gick inte att ta bort passet. Försök igen.")}});
 
 /* ---------- Settings ---------- */
-const SK={rodd:"sRodd",plank:"sPlank",km:"sKm",nack:"sNack",sup:"sSup",bonus:"sBonus"};
+const SK={rodd:"sRodd",plank:"sPlank",km:"sKm",nack:"sNack",sup:"sSup",bonus:"sBonus",team:"sTeam"};
 function fillSettings(){for(const k in SK)if(document.activeElement!==$(SK[k]))$(SK[k]).value=P[k]}
 $("sSave").addEventListener("click",async()=>{const n={};for(const k in SK)n[k]=Math.max(0,num($(SK[k]).value)||0);
   try{if(db)await db.doc("config/points").set(n);else{P=n;render()}play("record");toast("sToast","Poängskalan är sparad och ställningen omräknad.")}catch(e){toast("sToast","Det gick inte att spara skalan. Försök igen.")}});
 
-function render(){renderNudge();renderBoard();renderExtras();if(view==="vTrip"||view==="vMore")renderJourney();renderChart();renderHistory();fillSettings();updateForm()}
+function render(){renderNudge();renderTheme();renderBoard();renderExtras();if(view==="vTrip"||view==="vMore")renderJourney();renderChart();renderHistory();fillSettings();updateForm()}
 
 /* ---------- Boot ---------- */
 player=store.get("player")==="Noa"?"Noa":"Steve";
@@ -1353,6 +1391,7 @@ soundBtn();showQuote(false);render();renderJourney();
     if(!ms.exists){await db.collection("sessions").doc("nq855p1o3n1n4nrvpzgn").set({created:1792332265412,date:"2026-10-18",km:1,nack:false,plank:0,player:"Steve",rodd:0,sup:false});await mig.set({at:Date.now()})}}catch(e){}
   let gotS=false,gotQ=false;const ready=()=>{if(gotS&&gotQ&&!dataReady){dataReady=true;checkArrivals()}};
   db.collection("sessions").onSnapshot(snap=>{sessions=snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.date&&s.player);render();gotS=true;ready()},()=>toast("toast","Kontakten med loggboken bröts. Ladda om sidan."));
+  db.collection("sick").onSnapshot(snap=>{sick=snap.docs.map(d=>d.data()).filter(x=>x.player&&x.date);render()},()=>{});
   db.collection("quiz").onSnapshot(snap=>{quiz=snap.docs.map(d=>d.data()).filter(q=>q.player&&q.stop);renderExtras();renderBoard();gotQ=true;ready()},()=>{gotQ=true;ready()});
   db.doc("config/points").onSnapshot(snap=>{P={...DEF,...(snap.exists?snap.data():{})};render()},()=>{});
 })();
