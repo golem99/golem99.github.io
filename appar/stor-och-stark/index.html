@@ -1284,6 +1284,9 @@ addEventListener("resize",()=>renderBoard());
 /* ---------- Nudge ---------- */
 function renderNudge(){const t=today(),d=parse(t),mine=sessions.filter(s=>s.player===player),days=new Set(mine.map(s=>s.date));
   const wd=new Set(mine.filter(s=>weekStart(s.date)===weekStart(t)).map(s=>s.date)).size;let msg="";
+  const left=7-((d.getDay()+6)%7),must=PLAYERS.filter(p=>{const my=sessions.filter(s=>s.player===p&&weekStart(s.date)===weekStart(t));const D=new Set(my.map(s=>s.date)).size,N=GOAL-D;
+    return D<GOAL&&!my.some(s=>s.date===t)&&!sick.some(x=>x.player===p&&weekStart(x.date)===weekStart(t))&&N===left});
+  if(must.length){$("nudge").hidden=false;$("nudge").innerHTML=`<b>${must.length===2?"Steve och Noa":must[0]}</b>, i dag ${must.length===2?"måste ni båda":"måste du"} träna för att klara femdagarsveckan.`;return}
   if(days.has(t))msg=wd>=GOAL?`<b>${player}</b>, veckan är redan klar. Allt nu är extra.`:"";
   else if(d.getDate()===1)msg=`<b>Ny månad.</b> Alla börjar om på noll i månadsställningen.`;
   else if(d.getDay()===1)msg=`<b>Ny vecka, nytt kapitel.</b> Fem dagar ger ${P.bonus} p i bonus.`;
