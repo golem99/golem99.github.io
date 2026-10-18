@@ -288,6 +288,7 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
       <div class="board" id="board"><div class="banner" id="banner"></div></div>
       <div class="week" id="week"></div>
       <div class="nudge" id="nudge" hidden></div>
+      <button type="button" class="pend" id="tripq" hidden></button>
       <button type="button" class="pend" id="pend" hidden></button>
       <button type="button" class="next" id="nextCard"></button>
       <div class="passed" id="passed"></div>
@@ -301,7 +302,7 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
         <button type="button" data-p="Steve" id="bSteve" style="--c:var(--steve);--cs:var(--steve-soft)">Steve</button>
         <button type="button" data-p="Noa" id="bNoa" style="--c:var(--noa);--cs:var(--noa-soft)">Noa</button>
       </div>
-      <div class="sickrow"><span id="sickTxt">Sjuk eller skadad? Då bryts inte veckokedjan.</span><button type="button" class="sickbtn" id="sickBtn" aria-pressed="false">Sjukdag</button></div>
+      <div class="sickrow"><span id="sickTxt">Sjuk eller skadad? Då bryts inte veckokedjan.</span><span style="display:flex;gap:6px"><button type="button" class="sickbtn" id="sickBtn" aria-pressed="false">Sjukdag</button><button type="button" class="sickbtn" id="travelBtn" aria-pressed="false">Resedag</button></span></div>
       <div class="exlist" id="panel">
         <div class="ex"><div class="lbl"><strong>Roddmaskin</strong><span id="hRodd">minuter</span></div>
           <div class="step"><button type="button" data-s="fRodd" data-d="-1" aria-label="Minska rodd">−</button><input id="fRodd" type="number" inputmode="numeric" min="0" step="1" value="0" aria-label="Minuter rodd"><button type="button" data-s="fRodd" data-d="1" aria-label="Öka rodd">+</button></div></div>
@@ -349,6 +350,14 @@ h2{margin:0;font:800 24px/.95 var(--display);text-transform:uppercase;letter-spa
       <div class="sec">
         <div class="head"><h2>Loggboken</h2><span class="eyebrow" id="histCount"></span></div>
         <div id="history"></div>
+      </div>
+      <div class="sec">
+        <h2>Resor</h2>
+        <p class="note" style="margin:0">Lägg in en resa så blir alla dagarna resedagar för er båda. Veckokedjan skyddas, och varje resedag får ni tre resefrågor.</p>
+        <div class="grid"><label>Från<input type="date" id="tripFrom"></label><label>Till<input type="date" id="tripTo"></label></div>
+        <button type="button" class="ghost" id="tripAdd">Lägg in resa</button>
+        <div id="trips" class="recs" hidden></div>
+        <div class="toast" id="tripToast" role="status"></div>
       </div>
       <div class="sec">
         <h2>Poängskala</h2>
@@ -948,6 +957,59 @@ const QUOTES=[
  ["Ingen ko på isen. No cow on the ice. No need to worry.","Swedish saying"],
  ["Man ska inte sälja skinnet förrän björnen är skjuten. Don't sell the skin before the bear is shot.","Swedish proverb"]
 ];
+const TRAVELQ=[
+ ["Vilket land har flest tidszoner, om man räknar med alla territorier?",["Ryssland","USA","Frankrike","Kina"],2,"h"],
+ ["Vad heter Australiens huvudstad?",["Sydney","Melbourne","Canberra","Perth"],2,"m"],
+ ["Vilken valuta används i Schweiz?",["Euro","Schweizerfranc","Krona","Pund"],1,"e"],
+ ["Vilken stad kallas The Big Apple?",["Chicago","Los Angeles","New York","Boston"],2,"e"],
+ ["Vad heter Kanadas huvudstad?",["Toronto","Ottawa","Montreal","Vancouver"],1,"m"],
+ ["I vilket land ligger Machu Picchu?",["Mexiko","Chile","Peru","Bolivia"],2,"m"],
+ ["Vilket land i Afrika har flest invånare?",["Egypten","Nigeria","Etiopien","Sydafrika"],1,"m"],
+ ["Vilket av dessa vatten är saltast?",["Östersjön","Medelhavet","Döda havet","Nordsjön"],2,"e"],
+ ["Vad heter Japans huvudstad?",["Kyoto","Osaka","Tokyo","Seoul"],2,"e"],
+ ["Vilket land ligger närmast Island?",["Norge","Grönland","Skottland","Färöarna"],1,"h"],
+ ["Vilken flygplats har koden ARN?",["Göteborg Landvetter","Stockholm Arlanda","Oslo Gardermoen","Köpenhamn Kastrup"],1,"m"],
+ ["Vilken flygplatskod har Helsingfors-Vanda?",["HEL","HKI","FIN","HSV"],0,"m"],
+ ["Vad heter Norges huvudstad?",["Bergen","Trondheim","Oslo","Stavanger"],2,"e"],
+ ["På vilken kontinent ligger Egypten?",["Asien","Afrika","Europa","Mellanöstern"],1,"e"],
+ ["Vilket land har flest sjöar i världen?",["Finland","Sverige","Kanada","Ryssland"],2,"h"],
+ ["Vilken är världens största ö?",["Island","Grönland","Madagaskar","Borneo"],1,"m"],
+ ["Vilket land har ett lönnlöv på flaggan?",["USA","Kanada","Schweiz","Japan"],1,"e"],
+ ["I vilken stad kallas tunnelbanan the Tube?",["New York","Paris","London","Berlin"],2,"e"],
+ ["Vilket språk har flest modersmålstalare i världen?",["Engelska","Spanska","Mandarin","Hindi"],2,"m"],
+ ["Vad heter Spaniens huvudstad?",["Barcelona","Madrid","Sevilla","Valencia"],1,"e"],
+ ["I vilket land ligger Taj Mahal?",["Pakistan","Indien","Nepal","Bangladesh"],1,"e"],
+ ["Vilken är världens högsta byggnad i dag?",["Shanghai Tower","Burj Khalifa","Empire State Building","One World Trade Center"],1,"m"],
+ ["Vilket land har flest pyramider?",["Egypten","Mexiko","Sudan","Peru"],2,"h"],
+ ["Vilken flod rinner genom Budapest?",["Rhen","Donau","Elbe","Wisła"],1,"m"],
+ ["Vad heter Estlands huvudstad?",["Tartu","Tallinn","Riga","Pärnu"],1,"e"],
+ ["Vilket land producerar mest kaffe i världen?",["Colombia","Etiopien","Brasilien","Vietnam"],2,"m"],
+ ["Hur många stjärnor finns på EU-flaggan?",["10","12","15","27"],1,"m"],
+ ["Vilka öar i Atlanten hör till Danmark men har eget självstyre?",["Shetlandsöarna","Färöarna","Orkneyöarna","Hebriderna"],1,"e"],
+ ["Vad kallades den gamla handelsvägen mellan Kina och Medelhavet?",["Kryddvägen","Sidenvägen","Bärnstensvägen","Tevägen"],1,"e"],
+ ["I vilket land ligger tempelstaden Angkor Wat?",["Thailand","Kambodja","Vietnam","Laos"],1,"m"],
+ ["Vad heter Islands huvudstad?",["Akureyri","Reykjavik","Tórshavn","Nuuk"],1,"e"],
+ ["Vilket land har en drake på flaggan?",["Kina","Bhutan","Japan","Mongoliet"],1,"h"],
+ ["Vilket är Afrikas högsta berg?",["Mount Kenya","Kilimanjaro","Atlasbergen","Mount Stanley"],1,"e"],
+ ["Vad heter Sydamerikas längsta bergskedja?",["Klippiga bergen","Anderna","Himalaya","Alperna"],1,"e"],
+ ["I vilket land äter man mest choklad per person?",["Belgien","USA","Schweiz","Frankrike"],2,"h"],
+ ["Vilken stad ligger på två kontinenter?",["Kairo","Istanbul","Aten","Moskva"],1,"m"],
+ ["Vilken öken räknas som världens torraste, polartrakterna oräknade?",["Sahara","Gobi","Atacama","Namib"],2,"h"],
+ ["Ungefär hur lång är jordens omkrets runt ekvatorn?",["10 000 km","25 000 km","40 000 km","100 000 km"],2,"m"],
+ ["Vilket nordiskt land har flest invånare?",["Danmark","Finland","Norge","Sverige"],3,"e"],
+ ["Vad heter Litauens huvudstad?",["Kaunas","Riga","Vilnius","Minsk"],2,"m"],
+ ["I vilken stad står kyrkan Sagrada Família?",["Madrid","Barcelona","Lissabon","Rom"],1,"e"],
+ ["Vilket hav ligger mellan Europa och Afrika?",["Röda havet","Medelhavet","Svarta havet","Arabiska havet"],1,"e"],
+ ["Vilket litet land ligger i Pyrenéerna mellan Frankrike och Spanien?",["Monaco","Andorra","Liechtenstein","San Marino"],1,"m"],
+ ["Vad heter Lettlands huvudstad?",["Riga","Tallinn","Vilnius","Liepāja"],0,"e"],
+ ["Vilken är världens största regnskog?",["Kongo","Amazonas","Borneo","Daintree"],1,"e"],
+ ["Vilket land har världens längsta kustlinje?",["Norge","Australien","Kanada","Indonesien"],2,"h"],
+ ["I vilket land ligger ön Bali?",["Thailand","Filippinerna","Indonesien","Malaysia"],2,"e"],
+ ["Vilket år öppnade tunneln under Engelska kanalen?",["1984","1994","2000","2004"],1,"h"],
+ ["Vilken stad är Turkiets huvudstad?",["Istanbul","Ankara","Izmir","Antalya"],1,"m"],
+ ["Vilket land har flest aktiva vulkaner?",["Island","Japan","Indonesien","Italien"],2,"h"],
+ ["Vilken stad har Colosseum?",["Aten","Rom","Neapel","Florens"],1,"e"]
+];
 
 const RANKS=[[0,"Landkrabba"],[1500,"Jungman"],[5000,"Lättmatros"],[12000,"Matros"],[25000,"Båtsman"],[45000,"Styrman"],[70000,"Skeppare"],[100000,"Kapten"]];
 const DEF={rodd:15,plank:5,km:25,nack:15,sup:15,bonus:50,team:50};
@@ -1070,17 +1132,20 @@ function updateForm(){
   $("hRodd").textContent=`minuter · ${P.rodd} p/min`;$("hPlank").textContent=`antal · ${P.plank} p/st`;$("hKm").textContent=`km · ${P.km} p/km`;
   $("hNack").textContent=`${P.nack} p för passet`;$("hSup").textContent=`${P.sup} p för passet`;
   const t=themeOf(f.date);if(t){const tag=` · ×${String(t[2]).replace(".",",")} i ${t[0].toLowerCase()}`;const map={rodd:["hRodd"],plank:["hPlank"],km:["hKm"],ns:["hNack","hSup"]};(map[t[1]]||[]).forEach(id=>{$(id).innerHTML=esc($(id).textContent)+`<span class="mult">${tag}</span>`})}
-  const sk=sick.some(x=>x.player===player&&x.date===f.date);$("sickBtn").setAttribute("aria-pressed",sk);$("sickBtn").textContent=sk?"Sjukdag markerad":"Sjukdag";
-  $("sickTxt").textContent=sk?`${player} är sjukanmäld ${f.date===today()?"i dag":f.date}. Kedjan är skyddad den veckan.`:"Sjuk eller skadad? Då bryts inte veckokedjan.";
+  const sk=isAway(player,f.date,"sick"),tr=isAway(player,f.date,"travel");$("sickBtn").setAttribute("aria-pressed",sk);$("sickBtn").textContent=sk?"Sjukdag ✓":"Sjukdag";$("travelBtn").setAttribute("aria-pressed",tr);$("travelBtn").textContent=tr?"Resedag ✓":"Resedag";
+  const dd=f.date===today()?"i dag":f.date;$("sickTxt").textContent=sk?`${player} är sjukanmäld ${dd}. Kedjan är skyddad den veckan.`:tr?`Resedag ${dd} för er båda. Kedjan är skyddad den veckan.`:"Sjuk eller på resa? Då bryts inte veckokedjan.";
   $("editbar").hidden=!editingId;$("save").textContent=editingId?"Spara ändring":"Spara"}
 document.querySelectorAll(".players button").forEach(b=>b.addEventListener("click",()=>{ac();player=b.dataset.p;store.set("player",player);play("on");render()}));
 document.querySelectorAll(".step button").forEach(b=>b.addEventListener("click",()=>{ac();const i=$(b.dataset.s),d=+b.dataset.d,v=Math.max(0,Math.round((num(i.value)+d)*10)/10);i.value=v;
   if(d>0)play("step",i.id==="fKm"?v*2:i.id==="fMeter"?v/100:v);else play("down");updateForm()}));
 ["fRodd","fMeter","fPlank","fKm","fDate"].forEach(id=>$(id).addEventListener("input",updateForm));
 ["fNack","fSup"].forEach(id=>$(id).addEventListener("click",e=>{ac();const t=e.currentTarget,on=t.getAttribute("aria-pressed")!=="true";t.setAttribute("aria-pressed",on);play(on?"on":"off");updateForm()}));
-$("sickBtn").addEventListener("click",async()=>{ac();const d=$("fDate").value||today(),id=player+"_"+d,ex=sick.find(x=>x.player===player&&x.date===d);
-  if(ex){sick=sick.filter(x=>x!==ex);play("off")}else{sick.push({player,date:d});play("on")}updateForm();renderBoard();
-  try{if(db){if(ex)await db.collection("sick").doc(id).delete();else await db.collection("sick").doc(id).set({player,date:d,created:Date.now()})}}catch(e){toast("toast","Det gick inte att spara sjukdagen. Försök igen.")}});
+async function setAway(players,dates,kind,on){for(const p of players)for(const d of dates){const id=p+"_"+d,ex=sick.find(x=>x.player===p&&x.date===d);sick=sick.filter(x=>x!==ex);if(on)sick.push({player:p,date:d,kind});
+    try{if(db){if(on)await db.collection("sick").doc(id).set({player:p,date:d,kind,created:Date.now()});else if(ex)await db.collection("sick").doc(id).delete()}}catch(e){toast("toast","Det gick inte att spara. Försök igen.")}}render()}
+$("travelBtn").addEventListener("click",()=>{ac();const d=$("fDate").value||today(),on=!isAway(player,d,"travel");play(on?"on":"off");setAway(PLAYERS,[d],"travel",on)});
+$("sickBtn").addEventListener("click",async()=>{ac();const d=$("fDate").value||today(),id=player+"_"+d,ex=sick.find(x=>x.player===player&&x.date===d&&(x.kind||"sick")==="sick");if(!ex&&isAway(player,d,"travel")){await setAway([player],[d],"sick",true);play("on");return}
+  if(ex){sick=sick.filter(x=>x!==ex);play("off")}else{sick.push({player,date:d,kind:"sick"});play("on")}updateForm();renderBoard();
+  try{if(db){if(ex)await db.collection("sick").doc(id).delete();else await db.collection("sick").doc(id).set({player,date:d,kind:"sick",created:Date.now()})}}catch(e){toast("toast","Det gick inte att spara sjukdagen. Försök igen.")}});
 $("editCancel").addEventListener("click",()=>{play("off");resetForm()});
 function resetForm(){editingId=null;["fRodd","fMeter","fPlank","fKm"].forEach(id=>$(id).value=0);$("fDate").value=today();["fNack","fSup"].forEach(id=>$(id).setAttribute("aria-pressed","false"));updateForm()}
 function toast(id,msg){$(id).textContent=msg;clearTimeout(toast[id]);toast[id]=setTimeout(()=>$(id).textContent="",5000)}
@@ -1165,18 +1230,24 @@ const qid=n=>"stop_"+n.replace(/[^A-Za-z0-9]/g,c=>"_"+c.charCodeAt(0));
 function answered(p,n){return quiz.find(q=>q.player===p&&q.stop===n)}
 function quizScore(p){return quiz.filter(q=>q.player===p&&q.correct).reduce((a,q)=>a+(QPTS[q.diff]||10),0)}
 function pendingFor(p){const km=kmOf(sessions);if(!sessions.length)return[];const k=stopIndex(km);return STOPS.slice(0,k+1).filter(s=>STOPQ[s.n]&&!answered(p,s.n)).map(s=>s.n)}
-function quizHTML(n){const q=STOPQ[n];if(!q)return"";const a=answered(player,n);
+function getQ(n){if(n.startsWith("T#"))return TRAVELQ[+n.slice(2)];return STOPQ[n]}
+function quizHTML(n){const q=getQ(n);if(!q)return"";const a=answered(player,n);
   const opts=q[1].map((o,i)=>{let cls="opt";if(a){if(i===q[2])cls+=" right";else if(i===a.choice)cls+=" wrong"}return`<button type="button" class="${cls}" data-stop="${esc(n)}" data-i="${i}" ${a?"disabled":""}>${esc(o)}</button>`}).join("");
   return`<div class="quiz" style="--c:${COL[player]}"><div class="qmeta">Fråga för <b>${player}</b> · ${QLABEL[q[3]]} · ${QPTS[q[3]]} frågepoäng</div><div class="qq">${esc(q[0])}</div>${opts}<div class="qres">${a?(a.correct?"Rätt!":"Fel. Rätt svar: "+esc(q[1][q[2]])):""}</div></div>`}
 document.addEventListener("click",async e=>{const b=e.target.closest("button.opt");if(!b||b.disabled)return;ac();
-  const n=b.dataset.stop,i=+b.dataset.i,q=STOPQ[n];if(!q||answered(player,n))return;const correct=i===q[2];
+  const n=b.dataset.stop,i=+b.dataset.i,q=getQ(n);if(!q||answered(player,n))return;const correct=i===q[2];
   const rec={player,stop:n,choice:i,correct,diff:q[3],date:today(),created:Date.now()};quiz.push(rec);play(correct?"right":"wrong");
   const box=b.closest(".quiz");box.outerHTML=quizHTML(n);if(correct)confetti();
   renderExtras();renderBoard();
   try{if(db)await db.collection("quiz").doc(player+"_"+qid(n)).set(rec)}catch(err){}});
+const isAway=(p,d,kind)=>sick.some(x=>x.player===p&&x.date===d&&(!kind||(x.kind||"sick")===kind));
+function tripQs(p){const t=today(),tq=quiz.filter(q=>q.player===p&&q.stop.startsWith("T#"));const todays=tq.filter(q=>q.date===t).map(q=>q.stop),done=new Set(tq.map(q=>q.stop));
+  const out=[...todays];for(let i=0;i<TRAVELQ.length&&out.length<3;i++){const k="T#"+i;if(!done.has(k))out.push(k)}return out}
+function openTrip(){const qs=tripQs(player);if(!qs.length)return;celebrate(qs.map((n,i)=>({sfx:i?"tick":"open",art:artWave(),kick:`Resefrågesport ${i+1} av ${qs.length}`,title:"Bon voyage!",c:"var(--steve)",text:i?"":"Ni är på resa. Veckokedjan är skyddad, och här är dagens frågor.",quiz:n})))}
 function openPending(){const list=pendingFor(player);if(!list.length)return;
   celebrate(list.map(n=>{const st=STOPS.find(s=>s.n===n),isPort=!st.p;return{sfx:"tick",art:isPort?artStamp(n,null,true,PORTS.indexOf(st)):artPass(),kick:isPort?"Hamnfråga":"Passagefråga",title:n,c:isPort?"var(--gold)":"var(--steve)",text:"",quiz:n}}))}
 $("pend").addEventListener("click",openPending);
+$("tripq").addEventListener("click",openTrip);
 
 /* ---------- Arrival on open + daily position ---------- */
 function checkArrivals(){if(!dataReady||!$("cele").hidden)return;const k=stopIndex(kmOf(sessions)),raw=store.get("lastStop");
@@ -1276,7 +1347,9 @@ function overtake(winner,loser){const b=$("banner");b.textContent=`${winner} gå
 document.querySelectorAll("#periods button").forEach(b=>b.addEventListener("click",()=>{ac();period=b.dataset.period;store.set("period",period);
   document.querySelectorAll("#periods button").forEach(x=>x.setAttribute("aria-pressed",x===b));play("tab");renderBoard();renderChart()}));
 function renderTheme(){const t=themeOf(today());$("theme").hidden=!t;if(t){const mn=new Date().toLocaleDateString("sv-SE",{month:"long"});$("theme").innerHTML=`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg><span><b>${t[0]}</b><br>${t[3]} hela ${mn}.</span>`}}
-function renderExtras(){const pl=pendingFor(player);$("pend").hidden=!pl.length;
+function renderExtras(){const away=isAway(player,today(),"travel"),tq=away?tripQs(player).filter(n=>!answered(player,n)):[];$("tripq").hidden=!away||!tq.length;
+  if(away)$("tripq").innerHTML=`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16l20-6-20-6 4 6z"/><path d="M6 10h8"/></svg><span><b>Resedag.</b> ${tq.length} ${tq.length===1?"resefråga väntar":"resefrågor väntar"} på ${player}. Tryck för att svara.</span>`;
+  const pl=pendingFor(player);$("pend").hidden=!pl.length;
   $("pend").innerHTML=`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/></svg><span><b>${pl.length} ${pl.length===1?"fråga väntar":"frågor väntar"}</b> på ${player}. Tryck för att svara.</span>`;
   const km=kmOf(sessions),k=stopIndex(km),st=STOPS[k];$("passed").innerHTML=sessions.length&&k>0?`Senast passerat: <b>${esc(st.n)}</b>. ${esc(FACTS[st.n]||"")}`:""}
 addEventListener("resize",()=>renderBoard());
@@ -1373,7 +1446,14 @@ function fillSettings(){for(const k in SK)if(document.activeElement!==$(SK[k]))$
 $("sSave").addEventListener("click",async()=>{const n={};for(const k in SK)n[k]=Math.max(0,num($(SK[k]).value)||0);
   try{if(db)await db.doc("config/points").set(n);else{P=n;render()}play("record");toast("sToast","Poängskalan är sparad och ställningen omräknad.")}catch(e){toast("sToast","Det gick inte att spara skalan. Försök igen.")}});
 
-function render(){renderNudge();renderTheme();renderBoard();renderExtras();if(view==="vTrip"||view==="vMore")renderJourney();renderChart();renderHistory();fillSettings();updateForm()}
+function tripDays(){return [...new Set(sick.filter(x=>x.kind==="travel").map(x=>x.date))].sort()}
+function renderTrips(){const ds=tripDays().filter(d=>d>=addDays(today(),-30));if(!ds.length){$("trips").hidden=true;return}
+  const groups=[];ds.forEach(d=>{const g=groups[groups.length-1];if(g&&addDays(g[1],1)===d)g[1]=d;else groups.push([d,d])});
+  $("trips").hidden=false;$("trips").innerHTML=groups.map(g=>`<div><span>${shortDate(g[0])}${g[1]!==g[0]?" – "+shortDate(g[1]):""}</span><button type="button" class="del" data-trip="${g[0]}|${g[1]}">Ta bort</button></div>`).join("")}
+$("tripAdd").addEventListener("click",()=>{ac();const a=$("tripFrom").value,b=$("tripTo").value||a;if(!a||b<a){toast("tripToast","Välj ett startdatum och ett slutdatum som inte är före starten.");return}
+  const ds=[];for(let d=a;d<=b&&ds.length<60;d=addDays(d,1))ds.push(d);setAway(PLAYERS,ds,"travel",true);play("record");toast("tripToast",`Resan är inlagd: ${ds.length} ${ds.length===1?"dag":"dagar"}.`)});
+$("trips").addEventListener("click",e=>{const b=e.target.closest("[data-trip]");if(!b)return;const [a,z]=b.dataset.trip.split("|"),ds=[];for(let d=a;d<=z;d=addDays(d,1))ds.push(d);play("off");setAway(PLAYERS,ds,"travel",false)});
+function render(){renderTrips();renderNudge();renderTheme();renderBoard();renderExtras();if(view==="vTrip"||view==="vMore")renderJourney();renderChart();renderHistory();fillSettings();updateForm()}
 
 /* ---------- Boot ---------- */
 player=store.get("player")==="Noa"?"Noa":"Steve";
