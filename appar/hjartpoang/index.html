@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FF5FA2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hjärtpoäng">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Hjärtpoäng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: a pink pocket world. Header with name + avatar, one view at a time, tab bar. Single light theme on purpose. */
+:root{
+  color-scheme:light;
+  --bg:#FFF0F6; --card:#FFFFFF; --soft:#FFE0EE; --ink:#5A2150; --muted:#9B6A8F; --line:#F7C6DD;
+  --pink:#FF5FA2; --rose:#FF9CC7; --berry:#D63384; --mint:#5FCFB4; --sun:#FFC94D; --lilac:#B794F6;
+  --display:"Baloo 2","Arial Rounded MT Bold","Trebuchet MS",sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{height:100%}
+body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.4 var(--body);
+  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));
+  background-image:radial-gradient(circle at 12% 8%,#FFD6E8 0 60px,transparent 61px),radial-gradient(circle at 90% 30%,#FFE6F1 0 90px,transparent 91px)}
+[hidden]{display:none!important}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--lilac);outline-offset:2px}
+.app{height:100%;max-width:520px;margin:0 auto;display:grid;grid-template-rows:auto 1fr auto;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding-block:10px 6px}
+.ava{width:52px;height:52px;border-radius:50%;border:3px solid var(--pink);background:var(--soft);overflow:hidden;flex:none;padding:0}
+.ava svg,.ava img{width:100%;height:100%;display:block}
+.hello{flex:1;min-width:0;border:0;background:none;text-align:left;padding:0}
+.hello small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.hello b{display:block;font:800 24px/1.05 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hello b::after{content:" ✎";font-size:14px;color:var(--rose)}
+.totalpill{background:var(--pink);color:#fff;border-radius:999px;padding:6px 12px;font:800 18px/1 var(--display);display:flex;gap:6px;align-items:center}
+.totalpill svg{width:16px;height:16px}
+.snd{border:0;background:var(--card);border-radius:50%;width:38px;height:38px;display:grid;place-items:center;box-shadow:0 2px 0 var(--line)}
+.snd svg{width:20px;height:20px}
+.views{position:relative;min-height:0}
+.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:12px;padding-block:6px 14px}
+.view.enter{animation:pop .25s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:22px;padding:14px;box-shadow:0 3px 0 var(--line)}
+h2{margin:0;font:800 22px/1.1 var(--display)}
+.sub{font-size:13px;color:var(--muted);font-weight:700}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding-block:6px 8px}
+.tabs button{border:0;background:none;border-radius:16px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:800;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--berry);box-shadow:0 2px 0 var(--line)}
+.tabs svg{width:26px;height:26px}
+
+/* Challenge */
+.chal{display:flex;gap:12px;align-items:center}
+.chal img{width:64px;height:84px;object-fit:contain;flex:none}
+.chal .bubble{flex:1;background:var(--soft);border-radius:18px;padding:10px 12px;position:relative;font-weight:700}
+.chal .bubble::before{content:"";position:absolute;left:-8px;top:24px;border:8px solid transparent;border-right-color:var(--soft);border-left:0}
+.chal .done{color:var(--berry);font-size:13px;margin-top:4px}
+
+/* Log buttons */
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.act{border:0;border-radius:22px;padding:12px 10px;text-align:left;display:flex;flex-direction:column;gap:4px;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.12);transition:transform .1s}
+.act:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.act svg{width:34px;height:34px}
+.act b{font:800 19px/1 var(--display)}
+.act span{font-size:12px;font-weight:800;opacity:.92}
+.act.dance{background:linear-gradient(135deg,#FF5FA2,#FF8FC0)}
+.act.bike{background:linear-gradient(135deg,#7C5CE0,#B794F6)}
+.act.walk{background:linear-gradient(135deg,#2FB59A,#5FCFB4)}
+.act.math{background:linear-gradient(135deg,#F59E0B,#FFC94D);color:#5A2150}
+.act.play{background:linear-gradient(135deg,#3B9BE0,#7CC4F5)}
+.feel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.feel button{border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px 6px;font-weight:800}
+.act.screen{grid-column:1/-1;background:linear-gradient(135deg,#5A2150,#8E3B7E);flex-direction:row;align-items:center;gap:12px}
+.act.screen.done{background:#E9D7E4;color:var(--muted);box-shadow:none}
+.today{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--soft);border-radius:999px;padding:4px 10px;font-size:13px;font-weight:800}
+.endnote{display:flex;gap:10px;align-items:center;font-weight:700;font-size:14px}
+.endnote svg{width:28px;height:28px;flex:none}
+
+/* League */
+.league{display:flex;flex-direction:column;gap:8px;position:relative}
+.lrow{display:grid;grid-template-columns:28px 46px 1fr auto;gap:10px;align-items:center;background:var(--card);border-radius:18px;padding:6px 12px 6px 8px;box-shadow:0 3px 0 var(--line);border:0;text-align:left;width:100%}
+.lrow.me{background:linear-gradient(90deg,#FFE0EE,#FFF);outline:3px solid var(--pink)}
+.lrow .pos{font:800 22px/1 var(--display);color:var(--muted);text-align:center}
+.lrow img,.lrow .ava2{width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--soft)}
+.lrow .ava2 svg{width:100%;height:100%}
+.lrow .nm{font:800 18px/1.1 var(--display)}
+.lrow .nm small{display:block;font:700 12px var(--body);color:var(--muted)}
+.lrow .pt{font:800 22px/1 var(--display);font-variant-numeric:tabular-nums}
+.feed{display:flex;flex-direction:column;gap:8px}
+.post{display:flex;gap:10px;align-items:flex-start}
+.post img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--soft);flex:none}
+.post div{background:var(--card);border-radius:4px 16px 16px 16px;padding:8px 12px;font-size:14px;box-shadow:0 2px 0 var(--line)}
+.post b{color:var(--c)}
+.post .p{font-size:12px;color:var(--muted);font-weight:800}
+
+/* Math */
+.mq{font:800 52px/1 var(--display);text-align:center;letter-spacing:.02em;padding:10px 0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{border:0;background:var(--soft);border-radius:18px;padding:16px 0;font:800 30px/1 var(--display);box-shadow:0 4px 0 var(--line)}
+.opt.right{background:#C8F2E6}
+.opt.wrong{background:#FFD0D6}
+.progress{display:flex;gap:4px;justify-content:center}
+.progress i{width:18px;height:8px;border-radius:4px;background:var(--line)}
+.progress i.ok{background:var(--mint)}.progress i.no{background:#FF8A9A}.progress i.cur{background:var(--pink)}
+.tables{display:flex;flex-wrap:wrap;gap:6px}
+.tables span{border-radius:12px;padding:6px 10px;font:800 16px/1 var(--display);background:var(--soft);color:var(--muted)}
+.tables span.on{background:var(--pink);color:#fff}
+.tables span.star{background:var(--sun);color:var(--ink)}
+.big{border:0;background:var(--pink);color:#fff;border-radius:18px;padding:14px 18px;font:800 20px/1 var(--display);box-shadow:0 4px 0 var(--berry);width:100%}
+.big:disabled{opacity:.45}
+.ghost{border:2px solid var(--line);background:var(--card);border-radius:14px;padding:10px 14px;font-weight:800}
+
+/* Me */
+.credit{text-align:center;font-size:11px;margin:0 0 4px;opacity:.8}
+.avagrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.avagrid button{border:3px solid transparent;background:var(--soft);border-radius:18px;padding:4px;aspect-ratio:1;position:relative}
+.avagrid button[aria-pressed="true"]{border-color:var(--pink)}
+.avagrid button svg,.avagrid button img{width:100%;height:100%}
+.avagrid button{overflow:hidden}.avagrid button img{border-radius:13px;object-fit:cover;display:block}
+.avagrid button.locked img,.avagrid button.locked svg{filter:grayscale(1) opacity(.45)}.ava img{object-fit:cover}.lrow .ava2 img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avagrid button.locked::after{content:attr(data-need);position:absolute;inset:auto 4px 4px;text-align:center;font-size:11px;font-weight:800;background:rgba(255,255,255,.85);border-radius:999px;padding:1px 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats div{background:var(--soft);border-radius:16px;padding:10px}
+.stats b{display:block;font:800 26px/1 var(--display)}
+.stats span{font-size:12px;font-weight:700;color:var(--muted)}
+.hist div{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:2px dotted var(--line);font-size:14px}
+.hist div:last-child{border-bottom:0}
+.hist button{border:0;background:none;color:var(--muted);font-size:12px;font-weight:800}
+
+/* Messenger */
+.thread{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;background:var(--card);border:0;border-radius:18px;padding:8px 12px 8px 8px;box-shadow:0 3px 0 var(--line);text-align:left;width:100%}
+.thread img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--soft)}
+.thread .tx{min-width:0}.thread .tx b{display:block;font:800 18px/1.1 var(--display)}
+.thread .tx span{display:block;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thread .meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.thread .meta small{font-size:11px;color:var(--muted);font-weight:700}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--pink);display:block}
+.tabs button{position:relative}.badge{position:absolute;top:2px;right:calc(50% - 22px);background:var(--pink);color:#fff;border-radius:999px;font-size:11px;min-width:18px;height:18px;line-height:18px;padding:0 4px}
+.tview{position:fixed;inset:0;z-index:45;background:var(--bg);display:grid;grid-template-rows:auto 1fr auto;padding:env(safe-area-inset-top,0px) max(10px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(10px,env(safe-area-inset-left,0px));max-width:520px;margin:0 auto}
+.thead{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:2px solid var(--line)}
+.thead img{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--soft)}
+.thead b{display:block;font:800 19px/1 var(--display)}.thead small{font-size:12px;color:var(--mint);font-weight:800}
+.back{border:0;background:var(--card);width:40px;height:40px;border-radius:50%;font:800 28px/1 var(--display);color:var(--berry)}
+.tbody{overflow-y:auto;padding:12px 2px;display:flex;flex-direction:column;gap:8px}
+.b{display:flex;gap:6px;align-items:flex-end;max-width:85%}
+.b.me{align-self:flex-end;background:var(--pink);color:#fff;border-radius:20px 20px 4px 20px;padding:9px 13px;font-weight:700}
+.b.them img{width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--soft);flex:none}
+.b.them span{background:var(--card);border-radius:20px 20px 20px 4px;padding:9px 13px;font-weight:700;box-shadow:0 2px 0 var(--line);border-left:4px solid var(--c)}
+.typing{display:inline-flex;gap:4px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:ty 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes ty{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.treplies{display:flex;flex-direction:column;gap:6px;padding:8px 2px 10px;border-top:2px solid var(--line)}
+.treplies button{border:2px solid var(--pink);background:#fff;color:var(--berry);border-radius:20px;padding:9px 14px;font-weight:800;text-align:right;align-self:flex-end;max-width:90%}
+.tnote{text-align:center;font-size:13px;color:var(--muted);font-weight:700;padding:6px}
+.fam{display:flex;gap:12px;align-items:center}.fam svg{width:44px;height:44px;flex:none}
+.fam .ftxt{flex:1;font-weight:700}.fam .ftxt small{display:block;font-size:12px;color:var(--muted)}
+.chart svg{width:100%;height:auto;display:block}
+/* Overlay */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(90,33,80,.45);display:grid;place-items:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.ov canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.sheet{position:relative;background:var(--card);border-radius:28px;padding:18px;max-width:400px;width:100%;max-height:100%;overflow:auto;text-align:center;animation:bounce .45s cubic-bezier(.2,1.5,.4,1);box-shadow:0 20px 50px -10px rgba(90,33,80,.5)}
+@keyframes bounce{from{transform:scale(.8);opacity:0}to{transform:none;opacity:1}}
+.sheet .who{width:110px;height:140px;object-fit:contain;margin:-6px auto 0;display:block}
+.sheet .who.wiggle{animation:wig 1.2s ease-in-out infinite}
+@keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg) translateY(-2px)}75%{transform:rotate(4deg)}}
+.sheet h3{margin:4px 0;font:800 26px/1.1 var(--display);color:var(--c,var(--berry))}
+.sheet p{margin:0 0 12px;font-weight:700}
+.sheet .say{background:var(--soft);border-radius:18px;padding:12px;margin-bottom:12px;font-weight:700;text-align:left}
+.replies{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.replies button{border:2px solid var(--line);background:#fff;border-radius:16px;padding:10px 12px;font-weight:800;text-align:left}
+.counter{display:flex;justify-content:center;align-items:center;gap:14px;margin:6px 0 14px}
+.counter button{width:56px;height:56px;border-radius:50%;border:0;background:var(--soft);font:800 30px/1 var(--display)}
+.counter b{font:800 56px/1 var(--display);min-width:70px}
+.namein{width:100%;border:3px solid var(--line);border-radius:16px;padding:12px;font:800 22px/1 var(--display);text-align:center;margin-bottom:10px;color:var(--ink);background:#fff}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.sugg button{border:0;background:var(--soft);border-radius:999px;padding:6px 10px;font-weight:800;font-size:13px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:999px;padding:8px 16px;font-weight:800;font-size:14px;z-index:60;max-width:90%}
+@media (max-height:640px){.act svg{width:26px;height:26px}.mq{font-size:42px}}
+
+/* Dansturnén */
+:root{--sea:#FFF6FA;--landc:#FFD0E4}
+.tourcard{border:0;text-align:left;display:flex;flex-direction:column;gap:2px;width:100%;padding:10px 14px}
+.trow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.trow b{font:800 16px/1.1 var(--display)}
+.road{display:flex;align-items:center;gap:6px;height:52px}
+.road .tdot{font-size:22px;flex:none;width:30px;text-align:center}
+.lane{position:relative;flex:1;height:100%;background:linear-gradient(var(--line),var(--line)) center 80%/100% 3px no-repeat}
+.busat{position:absolute;bottom:0;width:78px;transform:translateX(-50%);transition:left 1.2s cubic-bezier(.3,.8,.3,1)}
+.bus{width:100%;height:auto;display:block;overflow:visible}
+.bus .wheel{transform-box:fill-box;transform-origin:center}
+.bus.go .wheel{animation:spin 1.6s linear infinite}.bus.go .busbody{animation:bob .8s ease-in-out infinite alternate}.busart.go .busbody,.wmap .bus.go .busbody{animation:bob2 .7s ease-in-out infinite alternate}@keyframes bob2{from{transform:translateY(0) rotate(0)}to{transform:translateY(-6px) rotate(-.6deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes bob{to{transform:translateY(-1.2px)}}
+#tour .tbody{gap:12px}#tour .card{flex:none}
+.mapcard{padding:6px;position:relative;overflow:hidden}
+.wmap{width:100%;height:auto;display:block;border-radius:16px}
+.wmap .leg{fill:none;stroke:#F7A8CB;stroke-dasharray:3 3;stroke-linecap:round}.wmap .leg.done{stroke:var(--pink);stroke-dasharray:none}
+.wmap .stop{fill:#fff;stroke:#F7A8CB;stroke-width:.8}.wmap .stop.got{fill:var(--pink);stroke:#fff}
+.wmap .lbl{fill:var(--ink);font-family:var(--body);font-weight:800;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:1.2px}
+.zoom{position:absolute;right:12px;bottom:12px;border:0;background:var(--card);border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px;box-shadow:0 2px 0 var(--line)}
+.bar{height:12px;border-radius:999px;background:var(--soft);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--rose),var(--pink));border-radius:999px}
+.tp{margin:6px 0 0;font-weight:700;font-size:14px}
+.riders{display:flex;gap:14px;margin-top:6px}.riders span{display:flex;flex-direction:column;align-items:center;font-weight:800;font-size:12px}.riders img{width:52px;height:66px;object-fit:contain}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:10px}
+.stk{display:flex;flex-direction:column;align-items:center;gap:2px}
+.stk>span,.stk>img{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:var(--soft);border:3px dashed var(--line);object-fit:cover}
+.stk.got>img{border:0;background:none}.stk.got>span{background:#fff;border:4px solid #fff;box-shadow:0 2px 6px rgba(214,51,132,.3)}
+.stk .q{color:var(--rose);font:800 22px var(--display)}.stk small{font-size:10px;font-weight:800;color:var(--muted);text-align:center;line-height:1.1}
+.postcard{display:flex;gap:12px;align-items:center;background:repeating-linear-gradient(45deg,var(--soft) 0 6px,#fff 6px 12px);border-radius:18px;padding:10px;margin-bottom:6px;text-align:left}
+.pcst{width:76px;height:76px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:40px;flex:none;box-shadow:0 3px 8px rgba(214,51,132,.3)}.pcst img{width:100%;height:100%;border-radius:50%;transform:scale(1.08)}
+.pctx small{display:block;font-size:12px;font-weight:800;color:var(--muted)}.pctx b{display:block;font:800 26px/1.1 var(--display);color:var(--berry)}.pctx span{font-size:13px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <button type="button" class="ava" id="avaBtn" aria-label="Byt avatar"></button>
+    <button type="button" class="hello" id="nameBtn" aria-label="Byt namn"><small id="greet">Hej!</small><b id="nameTxt">Saga</b></button>
+    <span class="totalpill" title="Hjärtpoäng totalt"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8.4 3 5 6.5 5c2 0 3.6 1.2 5.5 3.2C13.9 6.2 15.5 5 17.5 5 21 5 23 8.4 21.5 11.7 19.5 16.4 12 21 12 21z"/></svg><span id="total">0</span></span>
+    <button type="button" class="snd" id="snd" aria-label="Ljud"></button>
+  </header>
+
+  <main class="views">
+    <section class="view" id="vHome">
+      <div class="card chal" id="chal"></div>
+      <button type="button" class="card tourcard" id="tourCard" aria-label="Öppna dansturnén"></button>
+      <div class="card fam" id="fam"></div>
+      <div class="card fam" id="trip" hidden></div>
+      <div class="acts">
+        <button type="button" class="act dance" data-act="dance"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><b>Just Dance</b><span id="lDance">15 per låt</span></button>
+        <button type="button" class="act bike" data-act="bike"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h2l3 11.5M5.5 17.5L9 9h6l-3.5 8.5M9 9L7.5 6H6"/></svg><b>Cykeltur</b><span id="lBike">60 per tur</span></button>
+        <button type="button" class="act walk" data-act="walk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10 22l2-6 3 3v3M8 12l2-4 4 1 2 4M12 16l-2-4"/></svg><b>Promenad</b><span id="lWalk">25 per tur</span></button>
+        <button type="button" class="act play" data-act="play"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18M3 12h18M5.6 5.6c3.5 2.5 9.3 2.5 12.8 0M5.6 18.4c3.5-2.5 9.3-2.5 12.8 0"/></svg><b>Lek ute</b><span>30 per gång</span></button>
+        <button type="button" class="act math" data-act="math"><svg viewBox="0 0 24 24" fill="none" stroke="#5A2150" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg><b>Gångertabell</b><span id="lMath">Öva och få poäng</span></button>
+        <button type="button" class="act screen" data-act="screen" id="screenBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M3 21L21 3"/></svg><span style="text-align:left"><b style="display:block">Skärmfri dag</b><span id="lScreen">Markera på kvällen · 100 poäng</span></span></button>
+      </div>
+      <div class="card"><div class="sub">I dag</div><div class="today" id="todayList"></div></div>
+      <div class="card endnote" id="endnote" hidden></div>
+    </section>
+
+    <section class="view" id="vChat" hidden>
+      <div><h2>Meddelanden</h2><div class="sub" id="chatHint"></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px" id="chatList"></div>
+    </section>
+
+    <section class="view" id="vLeague" hidden>
+      <div><h2>Veckans gäng</h2><div class="sub" id="weekSub"></div></div>
+      <div class="league" id="league"></div>
+      <div><h2 style="font-size:19px">Vad gänget gör</h2><div class="sub">Tryck på en kompis för att skriva till hen.</div></div>
+      <div class="feed" id="feed"></div>
+    </section>
+
+    <section class="view" id="vMath" hidden>
+      <div class="card" id="mathCard"></div>
+    </section>
+
+    <section class="view" id="vMe" hidden>
+      <div class="card"><h2>Välj avatar</h2><div class="sub" style="margin-bottom:8px">Fler låses upp när du samlar hjärtpoäng.</div><div class="avagrid" id="avaGrid"></div></div>
+      <div class="card"><h2>Så har du växt</h2><div class="sub">Hjärtpoäng per vecka</div><div class="chart" id="chartWeeks"></div><div class="sub" style="margin-top:8px">Gångerfakta du kan</div><div class="chart" id="chartMath"></div></div>
+      <div class="card"><h2>Resor</h2><div class="sub" style="margin-bottom:8px">På resdagar kan du göra resläxor med en kompis och få dubbla gångerpoäng.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="sub">Från<input type="date" id="tripFrom" class="namein" style="font-size:15px;padding:8px"></label><label class="sub">Till<input type="date" id="tripTo" class="namein" style="font-size:15px;padding:8px"></label></div>
+        <button type="button" class="ghost" id="tripAdd">Lägg in resa</button><div class="hist" id="tripList" style="margin-top:6px"></div></div>
+      <div class="card"><h2>Mina siffror</h2><div class="stats" id="stats" style="margin-top:8px"></div></div>
+      <div class="card"><h2>Senaste</h2><div class="hist" id="hist"></div></div>
+      <p class="sub credit">Musik i dansturnén: ”Doodle menu like song” av StumpyStrust, OpenGameArt.org (CC0, fri att använda).</p>
+    </section>
+  </main>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" data-v="vHome" aria-selected="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8.4 3 5 6.5 5c2 0 3.6 1.2 5.5 3.2C13.9 6.2 15.5 5 17.5 5 21 5 23 8.4 21.5 11.7 19.5 16.4 12 21 12 21z"/></svg>Hem</button>
+    <button type="button" role="tab" data-v="vChat" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/></svg>Chatt<span class="badge" id="chatBadge" hidden>0</span></button>
+    <button type="button" role="tab" data-v="vLeague" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Gänget</button>
+    <button type="button" role="tab" data-v="vMath" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Gånger</button>
+    <button type="button" role="tab" data-v="vMe" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.5-7 8-7s7 2.5 8 7"/></svg>Jag</button>
+  </nav>
+</div>
+
+<div class="tview" id="thread" hidden><div class="thead" id="tHead"></div><div class="tbody" id="tBody"></div><div class="treplies" id="tReplies"></div></div>
+<div class="tview" id="tour" hidden><div class="thead" id="tourHead"></div><div class="tbody" id="tourBody"></div></div>
+<div class="ov" id="ov" hidden><canvas id="conf"></canvas><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* Karaktärer från Love. Personligheterna är ett förslag och kan ändras. {n} = Sagas namn. */
+const CHARS={
+ tove:{name:"Tove",color:"#3FAF8F",likes:["dance","dance","dance","walk"],
+  intro:"Hej {n}! Jag är Tove. Jag älskar att dansa, helst så att hela golvet skakar!",
+  post:{dance:["Jag hittade en ny Just Dance-låt med jättemycket armar!","Dansade med mormor i köket. Hon kan snurra!","Jag dansade två Just Dance-låtar i köket!","Dansade så att katten gömde sig under soffan.","Tre låtar i rad! Nu är jag helt snurrig."],bike:["Cyklade till kompisen och tillbaka.","En liten cykeltur i solen!"],walk:["Promenad med musik i öronen.","Jag gick och handlade bullar. Räknas det?"],rest:["Vilodag i dag. Jag ligger i soffan och lyssnar på musik."]},
+  challenge:{dance:"I dag ska jag dansa minst tre låtar. Hänger du på, {n}?",walk:"I dag tänker jag gå en promenad. Gör du också det?"},
+  passed:["Nämen! {n} gick om mig! Nu måste jag dansa lite till.","Wow, {n}, du är snabb! Jag får ta ut svängarna."],
+  cheer:["Snyggt jobbat, {n}!","Du är en riktig dansdrottning!","Yes! Det där var grymt!"],
+  chat:{hi:["Hej {n}! Vad roligt att du tittar in!","Hallå där! Har du dansat något i dag?"],today:["Jag dansade till min favoritlåt. Den med mycket hopp!","Jag har övat på en ny dansrörelse. Den heter snurr-hoppet."],fun:["Visste du att flamingos kan stå på ett ben i flera timmar? Jag försökte. Två sekunder.","Jag dansade så mycket i går att jag drömde att sängen dansade."],race:["Okej! Den som dansar flest låtar i veckan vinner en låtsasmedalj!","Tävling? Jag är på! Men det viktigaste är att det är kul."],bye:["Nu ska jag äta middag. Hejdå, {n}!","Jag måste gå nu. Vi ses i morgon!"]}},
+ vincent:{name:"Vincent",color:"#3B6FD8",likes:["bike","bike","bike","dance","dance"],
+  intro:"Tja {n}! Vincent här. Jag cyklar överallt, till och med till glassbaren.",
+  post:{dance:["Testade Just Dance igen. Jag fick fem stjärnor på en låt!","Dansade en låt med lillasyster. Hon vann.","Robotdans i vardagsrummet. Pip!","Jag testade Just Dance. Mina ben gick åt varsitt håll."],bike:["Cyklade hela vägen till glassbaren!","Cykeltur runt hamnen. Vinden blåste håret rakt upp.","Två cykelturer i dag. Benen säger tack!"],walk:["Promenad med mormor. Hon gick fortare än jag."],rest:["I dag vilar jag. Cykeln får också vila."]},
+  challenge:{bike:"I dag ska jag ta en cykeltur. Följer du med, {n}?",dance:"Jag ska försöka dansa en låt i dag. Gör du också det?"},
+  passed:["Va? {n} körde om mig! Nu får jag trampa lite fortare.","Snyggt, {n}! Du lämnade mig i dammet."],
+  cheer:["Grymt, {n}!","Det där var starkt jobbat!","Du är en riktig cykelstjärna!"],
+  chat:{hi:["Tja {n}! Läget?","Hej! Har du varit ute och cyklat?"],today:["Jag cyklade till glassbaren och tog jordgubbsglass.","Jag pumpade cykeldäcken. Nu går det som en raket."],fun:["En gång cyklade jag så fort att en mås blev imponerad.","Visste du att cykeln uppfanns för över 200 år sedan? Den hade inga pedaler."],race:["Tävling? Okej, men du får försöka hinna ikapp mig!","Kör! Vi ses på topplistan."],bye:["Jag måste dra nu. Vi ses!","Nu ska jag hem och äta. Hejdå, {n}!"]}},
+ milo:{name:"Milo",color:"#8A6BD1",likes:["walk","walk","dance","dance"],
+  intro:"Hej {n}. Jag heter Milo. Jag gillar långa promenader och att titta på fåglar.",
+  post:{dance:["Jag dansade en lugn låt. Som en trana.","Två låtar Just Dance. Bättre än jag trodde!","Jag dansade en låt. Ingen såg, tack och lov."],bike:["Cyklade till skogen och tittade på fåglar."],walk:["Lång promenad längs stranden. Såg tre svanar!","Promenad i skogen. Det luktade svamp.","Jag gick runt hela sjön i dag."],rest:["Vilodag. Jag läser en bok om ugglor."]},
+  challenge:{walk:"I dag ska jag gå en promenad och leta efter fåglar. Vill du också gå ut, {n}?"},
+  passed:["Oj, {n} gick förbi mig. Bra jobbat! Jag får gå en extra runda.","Du är stark, {n}. Jag måste nog ut och gå igen."],
+  cheer:["Fint, {n}!","Snyggt jobbat. Lugnt och stadigt vinner.","Du är så bra, {n}."],
+  chat:{hi:["Hej {n}. Skönt att se dig.","Hej! Har du sett några fåglar i dag?"],today:["Jag såg en hackspett. Den knackade som en trummis.","Jag gick en promenad och samlade fina stenar."],fun:["Ugglor kan vrida huvudet nästan ett helt varv. Jag kan bara titta åt sidan.","En kråka kan känna igen ansikten. Så var snäll mot kråkor."],race:["Vi kan tävla, men jag går ganska långsamt. Det är okej.","Gärna! Den som går längst i veckan får välja kvällens saga."],bye:["Nu måste jag gå hem. Hejdå, {n}.","Vi ses i morgon. Sov gott sen!"]}},
+ cleo:{name:"Cleo",color:"#E2559B",likes:["dance","dance","dance","bike"],
+  intro:"Hejsan {n}! Cleo heter jag. Jag skämtar mycket och dansar ännu mer.",
+  post:{dance:["Dansade bananendansen tre gånger. Alla skrattade!","Just Dance i pyjamas. Bästa sättet.","Jag dansade med en hårborste som mikrofon!","Just Dance-maraton! Okej, två låtar. Men ändå!"],bike:["Cyklade med glitter på hjälmen.","Cykeltur! Jag ringde i klockan åt varenda katt."],walk:["Promenad med hunden. Hunden gick ut med mig, typ."],rest:["Vilodag. Jag har ritat en serie om en dansande banan."]},
+  challenge:{dance:"Dansutmaning! I dag kör jag minst tre låtar. Du med, {n}?",bike:"I dag tar jag cykeln. Gör du också det?"},
+  passed:["Neeej, {n} gick om mig! Ge mig en låt så är jag tillbaka.","Haha, {n}, du är ju supersnabb! Jag måste träna lite."],
+  cheer:["Wiiihoo, {n}!","Du är bäst!","Det där var fantastiskt!"],
+  chat:{hi:["Hejsan {n}! Vill du höra ett skämt?","Hallå! Vad har du gjort i dag?"],today:["Jag har dansat i pyjamas. Det är min nya grej.","Jag lärde min lillebror en dans. Han kan den inte än."],fun:["Varför går skelett aldrig på disco? De har ingen kropp att dansa med!","Vad säger en katt som dansar? Mjau-tastiskt!"],race:["Tävling! Förloraren får göra en rolig dans. Okej, båda gör det.","Kör! Men skratt ger också poäng i mitt huvud."],bye:["Jag måste dansa vidare. Hejdå, {n}!","Puss och kram, vi ses i morgon!"]}},
+ ella:{name:"Ella",color:"#F08A24",likes:["dance","dance","bike","walk"],
+  intro:"Hej {n}! Jag är Ella. Jag gillar utmaningar och att testa nya saker.",
+  post:{dance:["Testade den snabbaste låten i Just Dance. Svettigt!","Dansade fyra låtar på raken. Utmaning klarad!","Jag dansade den svåraste låten jag hittade!"],bike:["Cykeltur uppför den stora backen!","Cyklade till badplatsen."],walk:["Snabb promenad, nästan springpromenad!"],rest:["Vilodag. Kroppen behöver vila för att bli stark."]},
+  challenge:{bike:"Utmaning: en cykeltur i dag! Antar du den, {n}?",dance:"I dag dansar jag tre låtar. Kör vi?",walk:"I dag går jag en promenad. Hänger du med?"},
+  passed:["Starkt, {n}! Du gick om mig. Jag gillar en bra utmaning!","Oj oj! {n} tog sig förbi. Nu ska jag ge järnet."],
+  cheer:["Mäktigt, {n}!","Du klarade det!","Så ska det se ut!"],
+  chat:{hi:["Hej {n}! Redo för en utmaning?","Tjenare! Vad har du hittat på?"],today:["Jag cyklade uppför backen utan att stanna!","Jag har hoppat hopprep. Trettio hopp!"],fun:["Visste du att hjärtat slår ungefär hundratusen gånger varje dag?","Jag tror att jag kan springa fortare än en höna. Vill inte testa."],race:["Absolut! Men vi hejar på varandra hela vägen.","Tävling! Den som vinner får bestämma veckans låt."],bye:["Nu ska jag vila. Hejdå, {n}!","Vi ses i morgon, kämpe!"]}},
+ juni:{name:"Juni",color:"#5FB3E0",likes:["walk","dance","dance"],
+  intro:"Hej {n}! Jag heter Juni. Jag älskar djur och att vara ute i naturen.",
+  post:{dance:["Dansade kanindansen med min kanin. Han hoppade med!","Två Just Dance-låtar och sen kaninkramar.","Jag dansade för min kanin. Han verkade gilla det."],bike:["Cyklade till stallet och klappade hästarna."],walk:["Promenad med hunden, en stor runda!","Gick till ängen och plockade blommor.","Jag gick och matade änderna."],rest:["Vilodag. Jag har kramat min kanin hela dagen."]},
+  challenge:{walk:"I dag går jag en promenad och letar efter djur. Gör du också det, {n}?"},
+  passed:["Åh, {n} gick om mig! Bra kämpat. Jag tar en promenad till.","Vad duktig du är, {n}!"],
+  cheer:["Så fint, {n}!","Min kanin hejar också på dig!","Härligt jobbat!"],
+  chat:{hi:["Hej {n}! Har du sett något gulligt djur i dag?","Hej hej! Kul att du kom."],today:["Jag såg en ekorre som bar på en kotte. Den såg så stolt ut.","Jag har borstat min kanin. Han var jättemjuk."],fun:["Visste du att kaniner hoppar och snurrar när de är glada? Det kallas binky!","Igelkottar kan ha flera tusen taggar."],race:["Vi kan tävla, men vi är fortfarande kompisar!","Okej! Men djur ger extrapoäng i mitt hjärta."],bye:["Nu måste jag mata kaninen. Hejdå!","Vi ses i morgon, {n}!"]}},
+ arvid:{name:"Arvid",color:"#2F8F6E",likes:["walk","dance","dance","bike"],
+  intro:"Hej {n}. Jag är Arvid. Jag gillar klurigheter och matte, och promenader där man hinner tänka.",
+  post:{dance:["Dansade tre låtar och räknade varje steg. 640 steg!","Just Dance är matte med musik, har jag kommit fram till.","Jag räknade stegen i en dans. Det blev 212."],bike:["Cyklade till biblioteket."],walk:["Promenad och huvudräkning samtidigt. Två sorters träning!","Jag gick och tänkte på primtal."],rest:["Vilodag. Jag har löst ett korsord."]},
+  challenge:{walk:"I dag går jag en promenad. Följer du med, {n}?"},
+  passed:["Intressant! {n} gick om mig. Jag måste räkna om min plan.","Bra jobbat, {n}. Statistiken talar för dig."],
+  cheer:["Mycket bra, {n}!","Det där var smart och starkt!","Snyggt räknat!"],
+  chat:{hi:["Hej {n}. Vill du ha en klurighet?","Hej! Har du räknat något roligt i dag?"],today:["Jag räknade hur många trappsteg det finns hemma. Fjorton!","Jag lärde mig att sju gånger åtta är femtiosex. Fem, sex, sju, åtta!"],fun:["Om man viker ett papper på mitten sju gånger blir det jättetjockt. Testa!","Talet noll uppfanns för länge sedan. Innan dess fanns ingenting. Eller, inget noll."],race:["En tävling är bara matte med spänning. Jag är med!","Okej. Jag räknar poängen noga."],bye:["Nu ska jag läsa. Hejdå, {n}.","Vi ses i morgon. Glöm inte gångertabellen!"]}},
+ louie:{name:"Louie",color:"#D9483B",likes:["bike","dance","dance"],
+  intro:"Hallå {n}! Louie här. Jag är snabb som blixten, nästan.",
+  post:{dance:["Dansade så snabbt att jag snurrade in i soffan!","Just Dance-battle med pappa. Jag vann. Typ.","Jag dansade som en robot. Pip, pip!"],bike:["Cyklade så fort att kepsen flög av!","Cykeltur till fotbollsplanen."],walk:["Promenad, fast jag sprang lite ibland."],rest:["Vilodag. Jag spelar brädspel med pappa."]},
+  challenge:{bike:"I dag kör jag en cykeltur! Kör du också, {n}?",dance:"Jag ska dansa en robotdans i dag. Hänger du på?"},
+  passed:["Va?! {n} smet förbi! Nu får jag växla upp.","Okej {n}, du vann den här rundan!"],
+  cheer:["Woho, {n}!","Snabbt jobbat!","Du är ju en blixt!"],
+  chat:{hi:["Hallå {n}! Vad händer?","Tjena! Hittat på något busigt i dag?"],today:["Jag cyklade runt kvarteret fem gånger.","Jag gjorde ett mål på fotbollsplanen!"],fun:["En gepard springer fortare än en bil i stan. Fast den får inte köra bil.","Jag kan säga alfabetet baklänges. Nästan."],race:["Tävling? Jaaa! Men ingen fusk med raketer.","Kör! Den som kommer sist är ett ruttet ägg. Fast ett snällt ägg."],bye:["Måste springa! Hejdå, {n}!","Vi ses i morgon!"]}},
+ anton:{name:"Anton",color:"#C98A2B",likes:["dance","dance","walk"],
+  intro:"Hej {n}! Jag heter Anton. Jag är liten men jag hejar jättehögt!",
+  post:{dance:["Nalledansen igen! Brum dansade också.","Jag dansade och hoppade tills jag skrattade.","Jag dansade en låt med nallen!"],bike:["Jag cyklade med stödhjul. Det gick jättebra!"],walk:["Promenad till lekparken!","Jag gick och hämtade posten."],rest:["Vilodag. Jag har byggt en koja av kuddar."]},
+  challenge:{dance:"I dag ska jag dansa en låt med nallen! Dansar du också, {n}?",walk:"Jag ska gå till lekparken i dag. Gör du också en promenad?"},
+  passed:["Oj! {n} gick förbi mig! Du är så duktig!","Heja {n}! Du är snabbast!"],
+  cheer:["Heeeja {n}!","Du är bäst i hela världen!","Jippii!"],
+  chat:{hi:["Hej {n}! Jag har saknat dig!","Hej hej! Vad gör du?"],today:["Jag hoppade i en vattenpöl. Plask!","Jag ritade en bild på dig och mig när vi dansar."],fun:["Min nalle heter Brum. Han gillar honung och dans.","Vet du vad? Jag kan hoppa på ett ben. Typ."],race:["Jaa, tävling! Men du får vinna ibland. Och jag ibland.","Okej! Men vi tar en paus och äter mellanmål också."],bye:["Nu ska jag sova middag. Hejdå!","Hejdå {n}! Kram!"]}}
+};
+const CHAR_IDS=Object.keys(CHARS);
+const GENERIC={
+ end:["Bra jobbat i dag, {n}! Nu kan telefonen få vila en stund.","Vilken dag! Gå ut och lek, så ses vi i morgon.","Du har gjort massor i dag. Nu är det dags för något annat roligt!"],
+ surprise:["Överraskning! {c} skickar dig en hjärtbonus.","{c} tycker att du är grym och ger dig extrapoäng!","Pling! {c} hittade en bonus åt dig."],
+ rest:["Vilodagar är också viktiga. Kroppen blir starkare när den får vila.","Det är helt okej att vila i dag. Alla behöver det ibland."],
+ week:["Ny vecka, nya kompisar! Här är veckans gäng.","Måndag! Fem nya kompisar vill hänga med dig den här veckan."]
+};
+
+/* ===== Stor replikbank =====
+   SAGA_MSGS: lappar Saga kan skicka. Varje gång visas fyra slumpade.
+   kind "fav": varje karaktär har ett eget svar i FAV.
+   Övriga: svar från GEN[kind] (passar alla), blandat med karaktärens egna rader. */
+const SAGA_MSGS=[
+ {t:"Vad är din favoritglass?",k:"fav",f:"glass"},{t:"Vilket är ditt favoritdjur?",k:"fav",f:"djur"},{t:"Vad vill du bli när du blir stor?",k:"fav",f:"bli"},
+ {t:"Om du fick en superkraft, vilken skulle det vara?",k:"fav",f:"kraft"},{t:"Vilken är din favoritfärg?",k:"fav",f:"farg"},{t:"Vad är det roligaste du vet?",k:"fav",f:"roligt"},
+ {t:"Vilken dans är din bästa?",k:"fav",f:"dans"},{t:"Vad äter du helst till frukost?",k:"fav",f:"frukost"},{t:"Vart skulle du vilja resa?",k:"fav",f:"resa"},
+ {t:"Vad gör du när du är ledsen?",k:"fav",f:"ledsen"},{t:"Vad heter ditt gosedjur?",k:"fav",f:"gosedjur"},{t:"Vilken årstid gillar du mest?",k:"fav",f:"arstid"},
+ {t:"Vad har du gjort i dag?",k:"today"},{t:"Berätta något roligt!",k:"fun"},{t:"Vill du tävla med mig?",k:"race"},{t:"Kan du ett skämt?",k:"joke"},
+ {t:"Jag har dansat i dag!",k:"proud"},{t:"Jag cyklade i dag!",k:"proud"},{t:"Jag klarade gångertabellen!",k:"proud"},{t:"Jag har varit ute och lekt!",k:"proud"},
+ {t:"Du är min bästa kompis!",k:"love"},{t:"Jag gillar din tröja!",k:"compliment"},{t:"Du är jätteduktig!",k:"compliment"},{t:"Du är rolig!",k:"compliment"},
+ {t:"Vi dansar tillsammans!",k:"together"},{t:"Ska vi cykla ihop i morgon?",k:"together"},{t:"Kom så går vi en promenad!",k:"together"},
+ {t:"Jag är trött i dag.",k:"tired"},{t:"Jag har haft en jobbig dag.",k:"sad"},{t:"Jag är så glad i dag!",k:"happy"},
+ {t:"Vad tycker du om mattelektionen?",k:"school"},{t:"Hur mycket är sju gånger åtta?",k:"math"},{t:"Gissa vad jag har på mig!",k:"guess"},
+ {t:"Jag har en hemlighet…",k:"secret"},{t:"Vad drömde du i natt?",k:"dream"},{t:"Kan du hoppa på ett ben?",k:"silly"},
+ {t:"Bananer eller jordgubbar?",k:"choice"},{t:"Hund eller katt?",k:"choice"},{t:"Rosa eller lila?",k:"choice"},{t:"Studsmatta eller gunga?",k:"choice"},
+ {t:"Hejdå, vi ses!",k:"bye"},{t:"God natt!",k:"bye"},{t:"Skicka ett hjärta!",k:"heart"},{t:"Gör en rolig min!",k:"face"},{t:"Sjung en sång!",k:"sing"}
+];
+/* Följdlappar efter första svaret */
+const FOLLOW=[
+ {t:"Haha!",k:"laugh"},{t:"Samma här!",k:"same"},{t:"Berätta mer!",k:"more"},{t:"Vad roligt!",k:"nice"},{t:"Va? På riktigt?",k:"really"},
+ {t:"Du är bäst!",k:"love"},{t:"Okej, hejdå!",k:"bye"},{t:"Jag gillar dig!",k:"love"},{t:"Tack!",k:"thanks"},{t:"Wow!",k:"nice"},{t:"Inte jag!",k:"notme"},{t:"Jag med!",k:"same"}
+];
+const GEN={
+ today:["Jag har dansat och skrattat massor!","Jag har varit ute och lekt i lövhögen.","Jag har ritat och sen dansat lite.","Jag hjälpte till att baka bullar.","Jag har läst en spännande bok och gått en promenad."],
+ fun:["Visste du att sniglar kan sova i tre år? Typ som min storebror.","En gång dansade jag så mycket att strumporna flög av!","Bläckfiskar har tre hjärtan. Tänk att vara så kärleksfull!","Vissa sköldpaddor kan andas genom rumpan. Sant!","Visste du att pingviner ger varandra fina stenar som present?"],
+ race:["Kör! Men det viktigaste är att vi har kul.","Okej! Vinnaren får hitta på en ny dans.","Ja! Och sen hejar vi på varandra.","Gärna! Men jag tror du vinner, du är så snabb."],
+ joke:["Vad sa den ena väggen till den andra? Vi ses i hörnet!","Varför kan inte cyklar stå själva? De är två-trötta!","Vad heter en ko som dansar? En mu-sikal!","Vad gör en fisk på datorn? Surfar!","Vad säger man till en ledsen jordgubbe? Det ordnar sig, du är berry bra!"],
+ proud:["Wow, vad stolt jag är över dig!","Det är ju jättebra! Du är en stjärna.","Jaa! Gör en segerdans!","Fantastiskt! Jag blir glad bara av att höra det."],
+ love:["Åh, du är min bästa kompis också!","Det värmde hela hjärtat!","Kram! Du är bäst!","Det gör mig så glad!"],
+ compliment:["Tack! Du är också jättefin!","Åh, tack snälla! Du gjorde min dag.","Tack! Du är den snällaste jag vet."],
+ together:["Ja! Det blir jättekul!","Det gör vi! Jag hämtar mina skor.","Absolut! Du får välja först."],
+ tired:["Då vilar vi i dag. Vila är också viktigt.","Gör något mysigt, kanske läsa en bok? Vi ses i morgon.","Trötta dagar är helt okej. Kroppen säger till när den behöver vila."],
+ sad:["Åh, vad tråkigt. Vill du ha en virtuell kram?","Ibland är dagar jobbiga. Prata gärna med mamma eller pappa också.","Jag hoppas att i morgon blir bättre. Jag tänker på dig."],
+ happy:["Yes! Glädje smittar, nu blev jag också glad!","Vad härligt! Gör en glädjedans!","Wiii! Vad är det som har hänt?"],
+ school:["Matte är som ett pussel. Lite klurigt men kul när man klarar det!","Jag gillar när läraren berättar roliga saker.","Ibland svårt, ibland kul. Precis som allt."],
+ math:["Femtiosex! Fem, sex, sju, åtta, kom ihåg det!","Femtiosex. Det kan du också!","Hmm… femtiosex? Arvid lärde mig."],
+ guess:["Något rosa? Med glitter?","En tröja med ett djur på?","Dina finaste dansbyxor!"],
+ secret:["Ooh! Jag lovar att inte säga något till någon.","En hemlighet? Jag är bra på att hålla tyst.","Viska!"],
+ dream:["Jag drömde att jag kunde flyga över havet!","Jag drömde att min säng var en båt.","Jag drömde om en dansande enhörning."],
+ silly:["Jaaa! Fast jag ramlade nästan.","Titta! Ett, två… plask, ner i soffan.","Klart! Nu hoppar jag på det andra benet också."],
+ choice:["Svårt! Men jag väljer det första.","Det andra! Helt säkert.","Båda! Kan man välja båda?"],
+ bye:["Hejdå! Ha en jättefin dag!","God natt! Sov så gott!","Vi ses snart!"],
+ heart:["Här kommer ett stort hjärta till dig!","Hjärta, hjärta, hjärta!","Jag skickar tre hjärtan tillbaka!"],
+ face:["Titta! Jag gör grisnäsa!","Jag korsar ögonen. Hjälp, nu fastnade de!","Jag blåser upp kinderna som en fisk!"],
+ sing:["La la la, {n} är bäst, la la la!","Bä, bä, vita lamm… nej vänta, jag tar en ny sång!","Jag sjunger högt i duschen. Nu sjunger jag högt för dig!"],
+ laugh:["Hihi!","Haha, du är rolig!","Jag skrattar så att jag får hicka!"],
+ same:["Vi är så lika!","High five!","Tvillingar!"],
+ more:["Mer kommer i morgon! Nu måste jag snart gå.","Det är en lång historia. Nästa gång!","Ja, och sen… nej, det berättar jag i morgon!"],
+ nice:["Visst!","Ja, eller hur!","Tack!"],
+ really:["Ja, på riktigt!","Helt sant!","Jag lovar!"],
+ thanks:["Varsågod!","Ingen orsak!","Själv tack!"],
+ notme:["Haha, okej då!","Det är fint att vi är olika!","Ingen fara!"]
+};
+/* Karaktärernas egna favoritsvar */
+const FAV={
+ tove:{glass:"Hallon! Rosa som en discolampa.",djur:"Delfiner. De dansar ju i vattnet!",bli:"Dansare på en stor scen!",kraft:"Att kunna dansa på taket.",farg:"Turkos, som havet.",roligt:"Att dansa så att man blir varm i hela kroppen.",dans:"Snurr-hoppet! Jag uppfann det själv.",frukost:"Pannkakor med sylt.",resa:"Till Hawaii och dansa hula.",ledsen:"Då sätter jag på min gladaste låt.",gosedjur:"Disco-Delfinen.",arstid:"Sommar! Då kan man dansa ute."},
+ vincent:{glass:"Jordgubb. Alltid jordgubb.",djur:"Geparden. Snabbast i världen!",bli:"Cykelproffs. Eller glassbarsägare.",kraft:"En cykel som kan flyga.",farg:"Blå, som min jacka.",roligt:"Att cykla nerför en backe med vinden i håret.",dans:"Robotdansen. Jag är faktiskt ganska bra.",frukost:"Fil med flingor.",resa:"Till Frankrike och titta på Tour de France.",ledsen:"Då cyklar jag en runda. Då blir allt bättre.",gosedjur:"Han heter Turbo. Ingen får veta.",arstid:"Våren, när man kan cykla igen."},
+ milo:{glass:"Vanilj. Lugn och god.",djur:"Ugglan. Den är klok.",bli:"Fågelforskare.",kraft:"Att kunna prata med fåglar.",farg:"Lila, som skymningen.",roligt:"Att sitta tyst i skogen och lyssna.",dans:"Den långsamma. Jag dansar som en trana.",frukost:"Gröt med blåbär.",resa:"Till Galápagos och se sköldpaddor.",ledsen:"Då går jag en promenad och tittar på himlen.",gosedjur:"En uggla som heter Professor Hoo.",arstid:"Hösten, med alla färger."},
+ cleo:{glass:"Tuttifrutti! Den smakar som ett skämt.",djur:"Lamor. De ser alltid lite förvånade ut.",bli:"Komiker och dansare samtidigt.",kraft:"Att få alla att skratta på en gång.",farg:"Rosa med glitter!",roligt:"Att skämta tills någon fnissar.",dans:"Bananendansen. Man viftar som en banan.",frukost:"Rostat bröd med smiley av sylt.",resa:"Till ett land där alla dansar på gatan.",ledsen:"Då ser jag på mitt roligaste klipp.",gosedjur:"Sir Fnissbert, en lama.",arstid:"Vinter, för man kan göra snöänglar!"},
+ ella:{glass:"Choklad med strössel.",djur:"Tigern. Modig och stark.",bli:"Brandman eller astronaut.",kraft:"Superstyrka, så jag kan lyfta ett hus.",farg:"Orange, som eld.",roligt:"Att testa saker jag aldrig gjort förut.",dans:"Breakdance! Jag övar på huvudet. Typ.",frukost:"Ägg och smörgås.",resa:"Upp på ett riktigt högt berg.",ledsen:"Då pratar jag med min mamma.",gosedjur:"Tigern Tapper.",arstid:"Alla! Varje årstid har sina äventyr."},
+ juni:{glass:"Päron. Ovanligt men gott.",djur:"Kaniner! Särskilt min.",bli:"Djurskötare eller veterinär.",kraft:"Att förstå vad alla djur säger.",farg:"Ljusblå, som en morgonhimmel.",roligt:"Att krama min kanin.",dans:"Kanindansen. Man hoppar!",frukost:"Smoothie med banan.",resa:"Till Australien och se kängurur.",ledsen:"Då kramar jag min kanin.",gosedjur:"Klappis. Han är en kanin, förstås.",arstid:"Våren, när alla djurbebisar kommer."},
+ arvid:{glass:"Pistage. Den är grön, vilket är logiskt.",djur:"Myran. Den kan bära femtio gånger sin vikt.",bli:"Uppfinnare.",kraft:"Att kunna räkna ut allt på en sekund.",farg:"Grön.",roligt:"Att lösa ett svårt problem.",dans:"Fyrkantsdansen. Fyra steg, perfekt symmetri.",frukost:"Fil och exakt tolv russin.",resa:"Till Egypten och mäta pyramiderna.",ledsen:"Då bygger jag något med lego.",gosedjur:"En robot som heter Pi.",arstid:"Vintern. Snöflingor har sex hörn, vet du."},
+ louie:{glass:"Cola-glass! Den bubblar.",djur:"Hajen. Fast den snälla sorten.",bli:"Fotbollsproffs.",kraft:"Supersnabbhet!",farg:"Röd, som en racerbil.",roligt:"Att springa så fort att det susar.",dans:"Robotdansen. Pip, pip, bop!",frukost:"Mackor. Fem stycken.",resa:"Till Brasilien och spela fotboll på stranden.",ledsen:"Då sparkar jag boll tills det går över.",gosedjur:"Hajen Hugo.",arstid:"Sommar! Lov, lov, lov!"},
+ anton:{glass:"Alla! Men mest med strössel.",djur:"Nallebjörnar. Riktiga och låtsas.",bli:"Stor!",kraft:"Att bli osynlig när det är läggdags.",farg:"Gul, som solen.",roligt:"Att hoppa i vattenpölar.",dans:"Nalledansen! Man gungar fram och tillbaka.",frukost:"Välling!",resa:"Till Mumindalen.",ledsen:"Då kramar jag Brum jättehårt.",gosedjur:"Brum. Han är bäst.",arstid:"Julen! Är det en årstid?"}
+};
+/* Extra reaktioner efter att Saga loggat något, per aktivitet */
+const REACT={
+ dance:["Danspartyyy! Vilka moves, {n}!","Jag hörde musiken ända hit!","Du dansar som en stjärna, {n}!","Golvet skakade! Snyggt!","Wow, du har rytm i hela kroppen!","Dansa, dansa! Det är det roligaste som finns."],
+ bike:["En cykeltur! Kände du vinden?","Plingeling! Snyggt cyklat, {n}!","Cykelstjärnan har varit ute!","Wow, cykeln fick sig en tur i dag!","Trampa, trampa, starka ben!"],
+ walk:["En promenad, så härligt!","Såg du något spännande på vägen?","Promenader är bästa sättet att tänka.","Fint, {n}! Frisk luft är det bästa."],
+ play:["Utelek är ju det roligaste!","Studsmatta? Gunga? Kurragömma? Allt är bra!","Du har varit ute och lekt, vad härligt!"],
+ math:["Hjärnan har tränat! Den blir starkare för varje gång.","Gångertabellen är som en dans för hjärnan.","Snyggt räknat, {n}!"],
+ screen:["En hel skärmfri dag! Vad hittade du på i stället?","Wow, {n}! Det är riktigt starkt."]
+};
+const FEEL=[{t:"Superkul!",r:"Yes! Det är det bästa."},{t:"Bra",r:"Vad fint att höra!"},{t:"Lite jobbigt",r:"Då har du verkligen kämpat. Vila gärna sen."},{t:"Trött",r:"Skönt att vila nu. Det har du förtjänat."}];
+const NIGHT=["Gänget har gått och lagt sig. Vi ses i morgon, {n}!","Sov gott, {n}! Morgondagen blir också rolig.","Nu sover alla. Zzz… Ses i morgon!"];
+
+/* ===== Innehåll för ett år ===== */
+/* Just Dance-låtar (barnvänligt urval ur 2024, 2025 och 2026). tag: glad, snabb, lugn, jul, halloween, rolig, klassisk */
+const SONGS=[
+ ["Butter","BTS",2024,"glad"],["Calm Down","Rema",2024,"lugn"],["Flowers","Miley Cyrus",2024,"glad"],["I Wanna Dance With Somebody","Whitney Houston",2024,"glad"],
+ ["I'm Good (Blue)","David Guetta & Bebe Rexha",2024,"snabb"],["It's the Most Wonderful Time of the Year","Andy Williams",2024,"jul"],["Makeba","Jain",2024,"glad"],
+ ["My Name Is","D Billions",2024,"rolig"],["Shine a Little Love","The Sunlight Shakers",2024,"glad"],["Stronger (What Doesn't Kill You)","Kelly Clarkson",2024,"snabb"],
+ ["Survivor","Destiny's Child",2024,"snabb"],["Swan Lake","The Just Dance Orchestra",2024,"klassisk"],["Treasure","Bruno Mars",2024,"glad"],["Wasabi","Little Mix",2024,"snabb"],
+ ["Woof","Sofi Tukker",2024,"rolig"],["Can't Tame Her","Zara Larsson",2024,"snabb"],["Canned Heat","Jamiroquai",2024,"snabb"],["How You Like That","BLACKPINK",2024,"snabb"],
+ ["A Night in the Château de Versailles","The Just Dance Orchestra",2024,"klassisk"],["Dubidubidu (Chipi Chipi Chapa Chapa)","Christell",2025,"rolig"],
+ ["Espresso","Sabrina Carpenter",2025,"glad"],["In The Shadows","The Rasmus",2025,"snabb"],["Halloween's Here","The Just Dance Band",2025,"halloween"],
+ ["Move Your Body","The Sunlight Shakers",2025,"snabb"],["My Heart Will Go On","Celine Dion",2025,"lugn"],["Party In The USA","Miley Cyrus",2025,"glad"],
+ ["Payphone","Maroon 5",2025,"lugn"],["Pink Venom","BLACKPINK",2025,"snabb"],["Sleigh Ride","Mrs. Claus and the Elves",2025,"jul"],
+ ["SpongeBob SquarePants' Birthday","Groove Century",2025,"rolig"],["Sunlight","The Just Dance Band",2025,"glad"],["Sweet Melody","Little Mix",2025,"glad"],
+ ["The Lion Sleeps Tonight","The Tokens",2025,"rolig"],["Training Season","Dua Lipa",2025,"snabb"],["Unstoppable","Sia",2025,"snabb"],
+ ["Whenever, Wherever","Shakira",2025,"glad"],["You Love Who You Love","Zara Larsson",2025,"glad"],["Padam Padam","Kylie Minogue",2025,"glad"],
+ ["Calabria 2007","Enur",2025,"snabb"],["Vogue","Madonna",2025,"klassisk"],["Abracadabra","Lady Gaga",2026,"snabb"],["All Star","Smash Mouth",2026,"rolig"],
+ ["APT.","ROSÉ & Bruno Mars",2026,"glad"],["Azizam","Ed Sheeran",2026,"glad"],["Big Bad Frog","Austin & Collins",2026,"rolig"],["Bluey Medley","Bluey",2026,"rolig"],
+ ["Born To Be Alive","Patrick Hernandez",2026,"snabb"],["Counting Stars","OneRepublic",2026,"glad"],["Don't Go Breaking My Heart","Lulu & Levon",2026,"glad"],
+ ["DRIP","BABYMONSTER",2026,"snabb"],["Feather","Sabrina Carpenter",2026,"glad"],["Girls Just Want To Have Fun","Cyndi Lauper",2026,"glad"],
+ ["Houdini","Dua Lipa",2026,"snabb"],["La Bamba","The Sunlight Shakers",2026,"glad"],["Love Again","Dua Lipa",2026,"glad"],["Moonlight","Aileen-O",2026,"lugn"],
+ ["Pop Muzik","M",2026,"rolig"],["Prehistorock","Ricky Stone",2026,"rolig"],["Rockin' Around the Christmas Tree","Mrs. Claus and the Elves",2026,"jul"],
+ ["Stay Cheese","Paul Russell",2026,"rolig"],["Spin Your Love","Kevin J Simon",2026,"snabb"],["Strangers","Sigrid",2026,"glad"],["Viva la Vida","Coldplay",2026,"lugn"],
+ ["Zombieboy","Lady Gaga",2026,"halloween"]
+];
+const SONG_OPEN=[
+ "Har du dansat {s}? Jag dansade den i går och fick nästan fem stjärnor!",
+ "Jag kan inte sluta tänka på {s}. Den sitter fast i huvudet!",
+ "Vilken är bäst, {s} eller {s2}? Jag kan inte bestämma mig.",
+ "Jag övade på {s} i dag. Dansen har ett ställe som är jättesvårt!",
+ "Min nya favorit i Just Dance är {s}. Har du testat den?",
+ "Om du fick välja en låt till en dansfest, skulle du ta {s}?",
+ "Jag dansade {s} med min familj. Alla skrattade så mycket!",
+ "Vet du vilken dans som är roligast i {s}? Den i slutet!"
+];
+const SONG_TAG={glad:"Den gör mig så glad!",snabb:"Den är supersnabb, jag blev helt svettig.",lugn:"Den är lugn och fin, perfekt när man är trött.",jul:"Den är så juligt mysig!",halloween:"Den är lite läskig på ett kul sätt!",rolig:"Den är så knasig att jag skrattar hela tiden.",klassisk:"Den känns som att dansa på ett slott!"};
+const SONG_OPTS=[["Ja, den är jättebra!","Visste väl det! Vi har samma smak."],["Nej, inte än!","Testa! Jag tror du kommer att älska den."],["Den är svår!","Ja! Men det är det som gör den kul. Övning ger färdighet."],["Min favorit är {s2}!","{s2}! Den är också grym. Den ska jag dansa i morgon."],["Vi dansar den ihop!","Ja! Jag sätter på den direkt. Ett, två, tre, kör!"],["Jag gillar mest glada låtar","Samma! Glada låtar gör hela dagen bättre."]];
+
+/* Samtalsämnen: karaktären frågar, Saga väljer ett av fyra svar, karaktären svarar. */
+const TOPICS=[
+ {q:"Om du fick ett husdjur, vilket som helst, vad skulle du välja?",o:[["En häst!","En häst! Då kan vi rida till glassbaren."],["En kanin","Kaniner är så mjuka. Bra val!"],["En drake!","En drake! Då flyger vi till skolan."],["En katt","Katter är så mysiga när de spinner."]]},
+ {q:"Vad skulle du göra om det snöade glass?",o:[["Äta upp allt!","Haha, då får vi magknip! Men vilken dag!"],["Bygga en glassgubbe","En glassgubbe! Med strössel som knappar."],["Åka pulka i den","Pulka i glass! Kladdigt men kul."],["Dela med alla","Så snällt! Du är bäst."]]},
+ {q:"Vilken superkraft skulle vara bäst för att städa sitt rum?",o:[["Supersnabbhet","Swisch! Klart på en sekund."],["Kunna trolla","Abrakadabra, rent rum!"],["Ha tio armar","Tio armar! Då kan man dansa samtidigt."],["Få en städrobot","En robot! Den kan heta Dammis."]]},
+ {q:"Om du fick bestämma middagen i kväll, vad skulle det bli?",o:[["Pannkakor!","Pannkakor till middag är det bästa som finns."],["Pizza","Pizza! Med extra ost, tack."],["Tacos","Tacos-fredag varje dag!"],["Köttbullar och mos","Klassiskt och gott!"]]},
+ {q:"Vad är det modigaste du har gjort?",o:[["Hoppat från hopptornet","Wow, det är jättemodigt!"],["Sjungit inför klassen","Det kräver mod. Du är cool!"],["Klappat en stor hund","Stora hundar är ofta jättesnälla."],["Provat ny mat","Det är modigt på riktigt!"]]},
+ {q:"Om du var ett djur i en dag, vilket skulle du vara?",o:[["En fågel","Då kan du flyga över hela Kristinestad!"],["En delfin","Simma och hoppa i vågorna, härligt!"],["En gepard","Snabbast i världen!"],["En panda","Äta bambu och sova hela dagen, mysigt."]]},
+ {q:"Vad gör du helst en regnig dag?",o:[["Bygger koja","Kojor är det bästa på regniga dagar!"],["Dansar inne","Danspartyyy inomhus!"],["Hoppar i pölar","Med stövlar på! Plask!"],["Ritar","Rita är så mysigt när det regnar."]]},
+ {q:"Vilken årstid passar bäst för att dansa?",o:[["Sommar","Dansa barfota i gräset!"],["Vinter","Dansa så att man blir varm!"],["Höst","Dansa i lövhögen!"],["Alla!","Rätt svar! Man kan dansa jämt."]]},
+ {q:"Om du fick resa vart som helst, vart skulle du åka?",o:[["Till Paris","Eiffeltornet! Vi kan dansa där uppe."],["Till Japan","Japan har så gulliga saker!"],["Till en strand","Sol, bad och glass. Perfekt!"],["Till månen","Wow! Dansa i tyngdlöshet!"]]},
+ {q:"Vad är det roligaste ni har gjort i skolan den här veckan?",o:[["Gympa!","Gympa är bäst!"],["Rast","Rasten är viktig, man måste ju leka."],["Bild","Vad ritade du? Jag vill se!"],["Matte","Matte! Du är en riktig mattestjärna."]]},
+ {q:"Vilken färg skulle ditt drömrum ha?",o:[["Rosa!","Rosa med glitter! Självklart."],["Lila","Lila är så magiskt."],["Regnbåge","Ett regnbågsrum! Wow!"],["Turkos","Som havet. Fint!"]]},
+ {q:"Om du fick uppfinna en ny glass, vilken smak skulle den ha?",o:[["Godis-smak","Godisglass! Jag vill smaka."],["Pannkaka","Pannkaksglass med sylt, genialt!"],["Regnbåge","En glass som byter smak, magiskt!"],["Popcorn","Popcornglass till film, perfekt."]]},
+ {q:"Vad tror du att fiskar drömmer om?",o:[["Om att flyga","Flygfiskar! Det finns faktiskt sådana."],["Om godis","Fiskgodis. Haha!"],["Om oss","Kanske drömmer de om att dansa som vi."],["Om havet","Ett ännu större hav, kanske."]]},
+ {q:"Vilket är det bästa ljudet i världen?",o:[["Skratt","Skratt är absolut bäst!"],["Regn på taket","Så mysigt!"],["Musik","Musik, särskilt dansmusik!"],["Katter som spinner","Purrrr. Så fint."]]},
+ {q:"Om du fick en egen robot, vad skulle den göra?",o:[["Dansa med mig","En dansrobot! Den kan heta Discobot."],["Göra läxor","Haha, smart! Men då lär man sig inte."],["Laga mat","Robotkock! Pannkakor varje dag."],["Leka kurragömma","Den hittar en direkt med sina sensorer!"]]},
+ {q:"Vad är det första du gör när du vaknar?",o:[["Sträcker på mig","Som en katt! Bra start."],["Äter frukost","Frukost är dagens viktigaste mål."],["Kollar ut genom fönstret","Är det sol eller regn?"],["Somnar om","Haha, fem minuter till!"]]},
+ {q:"Vilken saga skulle du vilja vara med i?",o:[["Askungen","Med glasskor! Kan man dansa i dem?"],["Pippi","Starkast i världen!"],["Mumin","Mumindalen är så mysig."],["En egen saga","Den bästa! Du får skriva den."]]},
+ {q:"Om du fick byta namn på veckodagarna, vad skulle lördag heta?",o:[["Dansdag","Dansdag! Perfekt."],["Godisdag","Godisdag, det är ju sant."],["Myssdag","Myssdag, mysigt."],["Sagadag","Sagadag! Det blir bäst."]]},
+ {q:"Vad är du bäst på?",o:[["Att dansa","Det vet jag ju! Du är grym."],["Att rita","Du är en konstnär!"],["Att vara en bra kompis","Det är det viktigaste av allt."],["Att skratta","Skratt smittar, så du gör alla glada."]]},
+ {q:"Om du fick ha en fest, vilket tema skulle den ha?",o:[["Prinsessfest","Med kronor och tårta!"],["Discofest","Discokula och Just Dance!"],["Djurfest","Alla klär ut sig till djur!"],["Pyjamasfest","Pyjamas och film, mysigt."]]},
+ {q:"Vilket djur tror du är mest kittlig?",o:[["Apan","Apor skrattar faktiskt när man kittlar dem!"],["Hunden","Hundar älskar magkli."],["Grisen","Nöff nöff, haha!"],["Elefanten","En stor elefant som fnissar. Gulligt!"]]},
+ {q:"Vad skulle du göra om du var osynlig en dag?",o:[["Busa med pappa","Haha, stackars pappa!"],["Smyga in på bio","Gratis film!"],["Dansa på skolgården","Ingen ser, så man kan dansa hur som helst!"],["Följa en katt","Vad gör katter egentligen hela dagarna?"]]},
+ {q:"Vad är det gulligaste du har sett?",o:[["En valp","Valpar är för gulliga!"],["En bebis","Bebisar har så små fingrar."],["En kattunge","Mjau! Så söt."],["Mitt gosedjur","Gosedjur räknas absolut!"]]},
+ {q:"Om du fick bo i ett annat sorts hus, vilket skulle det vara?",o:[["Ett trädhus","Ett trädhus med rutschkana!"],["Ett slott","Prinsessan {n} i slottet."],["En husbåt","Bo på vattnet, vad häftigt!"],["Ett godishus","Som i sagan, fast utan häxa."]]},
+ {q:"Vad blir du glad av?",o:[["Solsken","Solen gör allt bättre!"],["Mina kompisar","Kompisar är guld."],["Att dansa","Dans gör en glad, det är bevisat."],["Kramar","Kramar är superkrafter."]]},
+ {q:"Vilket är det konstigaste du har ätit?",o:[["Sushi","Sushi är gott när man vant sig!"],["Oliver","Oliver är antingen jättegott eller jätteäckligt."],["Lakrits","Salt lakrits är typiskt nordiskt!"],["Inget konstigt","Smart, då vet man vad man får!"]]},
+ {q:"Om du fick en dag utan regler, vad skulle du göra?",o:[["Äta glass till frukost","Glassfrukost! Bara en gång."],["Dansa hela dagen","Det låter som en perfekt dag."],["Stanna uppe sent","Men sen blir man så trött, haha."],["Hoppa i sängen","Studsa, studsa!"]]},
+ {q:"Vad tycker du är det roligaste med vintern?",o:[["Snö","Snöänglar och snögubbar!"],["Julen","Julen är magisk."],["Åka skridskor","Snurra på isen som en prinsessa."],["Varm choklad","Med grädde på!"]]},
+ {q:"Vilken är den bästa leken på rasten?",o:[["Kull","Kull är klassiskt!"],["Hopprep","Hopprep är superbra träning också."],["Kurragömma","Var gömmer du dig bäst?"],["Gunga","Gunga högt, högt!"]]},
+ {q:"Om du var lärare en dag, vad skulle ni göra?",o:[["Dansa hela lektionen","Danslektion! Alla skulle älska dig."],["Gå till skogen","Utelektion är bäst!"],["Baka","Bakning är ju matte, med socker!"],["Ha filmdag","Film med popcorn, perfekt."]]},
+ {q:"Vad tror du att katter tänker på?",o:[["Mat","Säkert mat, hela tiden!"],["Att sova","Sova, äta, sova igen."],["På oss","De tänker nog: kliar ni mig snart?"],["På fåglar","Fåglar, fåglar, fåglar."]]},
+ {q:"Vilket instrument skulle du vilja spela?",o:[["Piano","Piano är så fint!"],["Trummor","Bom, bom! Det blir högt!"],["Gitarr","Som en rockstjärna!"],["Fiol","Fiol är så vackert."]]},
+ {q:"Om du fick en extra timme varje dag, vad skulle du göra med den?",o:[["Dansa","Så klart! En dansstund till."],["Leka","Mer lek är alltid bra."],["Sova","Sömn är också viktigt!"],["Vara med familjen","Det är fint!"]]},
+ {q:"Vad är ditt favoritgodis?",o:[["Gelégodis","Gelégrodor! Mums."],["Choklad","Choklad är bäst."],["Klubbor","Klubbor räcker länge."],["Surt godis","Surt! Man gör en rolig min."]]},
+ {q:"Vad skulle du säga till en utomjording?",o:[["Hej, vill du dansa?","Utomjordingar dansar säkert konstigt. Kul!"],["Välkommen!","Så snällt!"],["Vill du ha glass?","Alla älskar glass, även utomjordingar."],["Ta mig till din planet","Wow, modigt!"]]},
+ {q:"Vilket är världens bästa ord?",o:[["Glass","Glass. Det är ett bra ord."],["Kram","Kram är ett mysigt ord."],["Dans","Dans! Mitt favoritord också."],["Lov","Lov! Det bästa ordet i skolan."]]},
+ {q:"Hur skulle du fira om du vann en tävling?",o:[["Med en dans","En segerdans!"],["Med glass","Vinnarglass!"],["Med en fest","Fest för alla!"],["Krama alla","Det bästa firandet."]]},
+ {q:"Vad gör du när du har tråkigt?",o:[["Dansar","Bästa botemedlet!"],["Ritar","Rita mot tristess, bra!"],["Går ut","Ut och lek!"],["Läser","Böcker är äventyr."]]},
+ {q:"Om du fick välja en ny färg till himlen, vilken skulle det bli?",o:[["Rosa","En rosa himmel, så fint!"],["Lila","Magiskt!"],["Guld","Glittrig guldhimmel!"],["Regnbåge","Hela tiden regnbåge, wow."]]},
+ {q:"Vilken är den bästa leksaken någonsin?",o:[["Lego","Man kan bygga vad som helst!"],["Gosedjur","Gosedjur är bästa kompisarna."],["Studsmatta","Studsa högt!"],["Pussel","Pussel är kluriga och mysiga."]]},
+ {q:"Vad tror du att hundar skrattar åt?",o:[["Katter","Haha, säkert!"],["Oss när vi dansar","Kanske!"],["Sina svansar","De jagar dem ju jämt."],["Pruttar","Haha! Kanske!"]]},
+ {q:"Om du fick gå på en dansskola, vilken dans skulle du lära dig?",o:[["Balett","Balett är så elegant."],["Hiphop","Coola moves!"],["Discodans","Disco är så kul!"],["Folkdans","Folkdans är mysigt med många."]]},
+ {q:"Vad är det mest hemliga du vet?",o:[["Det berättar jag inte!","Haha, bra! En hemlighet är en hemlighet."],["Var godiset finns","Shh, jag säger inget!"],["Vad jag vill ha i julklapp","Ooh, spännande!"],["Ingenting","Haha, okej då!"]]},
+ {q:"Vem är snällast i din familj?",o:[["Mamma","Mammor är bäst!"],["Pappa","Pappor är också bäst!"],["Noa","Storebröder kan vara snälla!"],["Alla!","Det bästa svaret."]]},
+ {q:"Vilket väder är bäst för att cykla?",o:[["Sol","Sol och vind i håret!"],["Lite moln","Perfekt, inte för varmt."],["Regn","Haha, då blir man blöt! Men kul."],["Allt väder","Riktiga cyklister cyklar alltid!"]]},
+ {q:"Vad skulle du vilja lära dig nästa?",o:[["Simma bättre","Simning är så kul!"],["Cykla utan händer","Försiktigt, men coolt!"],["En ny dans","Vi kan lära oss tillsammans!"],["Ett nytt språk","Hola! Bonjour! Hej!"]]},
+ {q:"Vilken film skulle du kunna se hundra gånger?",o:[["Frost","Let it go-oo!"],["En Bluey-film","Bluey är så rolig!"],["Encanto","Vi pratar inte om Bruno, haha!"],["Någon annan","Berätta sen vilken!"]]},
+ {q:"Vad gör dig stark?",o:[["Att träna","Ja! Musklerna tackar."],["Att äta bra","Mat är energi!"],["Min familj","Familjen ger styrka."],["Att sova","Sömn bygger upp kroppen."]]},
+ {q:"Om du fick en egen ö, vad skulle den heta?",o:[["Sagaön","Sagaön! Där bor bara snälla."],["Dansön","Där dansar alla hela dagen."],["Glassön","Glassön, mumsig ö."],["Hjärtön","Formad som ett hjärta, så fint."]]},
+ {q:"Vilken är den bästa delen av dagen?",o:[["Morgonen","En ny dag börjar!"],["Eftermiddagen","Då kan man leka!"],["Kvällen","Mys och saga."],["När jag dansar","Haha, det är ju bäst!"]]},
+ {q:"Hur många pannkakor tror du att du kan äta?",o:[["Fem","Fem är ett bra antal."],["Tio!","Tio! Wow!"],["Tjugo","Oj oj, magen!"],["Hundra","Haha, då rullar du hem!"]]},
+ {q:"Vilket djur skulle vara bäst på Just Dance?",o:[["En apa","Apor har bra rytm!"],["En flamingo","Flamingodansen på ett ben!"],["En bläckfisk","Åtta armar! Dubbla poäng!"],["En pingvin","Vaggdansen, gulligt!"]]},
+ {q:"Vad önskar du dig mest just nu?",o:[["Ett husdjur","Kanske en dag!"],["Mer tid att leka","Leka är viktigt."],["Snö","Snön kommer snart!"],["Glass","Det är en bra önskan."]]},
+ {q:"Om du fick ge en present till hela världen, vad skulle det vara?",o:[["Glädje","Det finaste man kan ge."],["Godis","Världen skulle bli så glad!"],["Musik","Då kan alla dansa!"],["Kramar","Kramar till alla, så fint."]]},
+ {q:"Hur skulle din dröm-cykel se ut?",o:[["Rosa med glitter","Och ringklocka formad som ett hjärta!"],["Med vingar","En flygande cykel!"],["Med korg för djur","Så kan kaninen åka med."],["Supersnabb","Brum brum, fast utan motor."]]},
+ {q:"Vad är det bästa med att ha syskon?",o:[["Man har alltid sällskap","Ja, man är aldrig ensam!"],["Man kan busa ihop","Bus är bäst tillsammans."],["De hjälper en","Så fint!"],["Inget, haha","Haha! Ibland känns det så."]]},
+ {q:"Vad skulle du göra om du hittade en skatt?",o:[["Köpa en häst","En häst!"],["Ge till de som behöver","Så snällt, {n}!"],["Bygga ett slott","Med danssal!"],["Gömma den igen","Haha, för säkerhets skull!"]]},
+ {q:"Vilken är den roligaste rörelsen i en dans?",o:[["Snurra","Snurra tills man blir yr!"],["Hoppa","Hopp, hopp!"],["Vifta med armarna","Som en väderkvarn!"],["Shaka på rumpan","Haha, det är roligast!"]]},
+ {q:"Om du var en färg, vilken skulle du vara?",o:[["Rosa","Det passar dig perfekt!"],["Gul","Glad som solen!"],["Blå","Lugn som havet."],["Glitter","Glitter är en färg i mitt hjärta."]]},
+ {q:"Vad tycker du om när du kommer hem från skolan?",o:[["Mellanmål","Mellanmål är heligt!"],["Att leka","Äntligen lek!"],["Att vila","Vila är skönt."],["Att träffa familjen","Mysigt!"]]},
+ {q:"Vilken är den bästa sången att sjunga i duschen?",o:[["En Just Dance-låt","Dansa i duschen, men halka inte!"],["En julsång","Även i juli!"],["Något jag hittat på","Egna sånger är bäst!"],["Jag sjunger inte","Haha, inte ens lite?"]]},
+ {q:"Vad tror du att månen gör på dagen?",o:[["Sover","Månen behöver också sova!"],["Gömmer sig","Den leker kurragömma med solen."],["Tittar på oss","Kanske!"],["Dansar","En månedans, vackert."]]},
+ {q:"Om du fick en extra arm, vad skulle du använda den till?",o:[["Äta glass","Två glassar samtidigt!"],["Dansa","Dansa med tre armar, nya moves!"],["Klia ryggen","Haha, praktiskt!"],["Krama mer","Fler kramar!"]]},
+ {q:"Vilket är ditt favoritställe i Kristinestad?",o:[["Stranden","Stranden är bäst på sommaren!"],["Lekparken","Lekparker är toppen."],["Glasskiosken","Mums!"],["Hemma","Hemma är bäst."]]},
+ {q:"Vad gör du för att bli glad igen när du är sur?",o:[["Dansar","Dansa bort surheten!"],["Kramar någon","Kramar hjälper alltid."],["Äter något gott","Ibland hjälper det, haha."],["Är för mig själv en stund","Det är också okej."]]},
+ {q:"Om du fick vara vuxen en dag, vad skulle du göra?",o:[["Köra bil","Brum brum!"],["Bestämma läggdags","Haha, sent!"],["Köpa godis","Så mycket man vill!"],["Ingenting, barn är bäst","Klokt svar!"]]},
+ {q:"Vilket är det bästa sättet att säga hej på?",o:[["Vinka","Hej hej!"],["High five","Smack!"],["Kram","Bästa sättet!"],["En liten dans","Dans-hälsning! Jag lär mig den."]]},
+ {q:"Vad skulle hända om alla djur kunde prata?",o:[["Katter skulle klaga","Haha, mer mat!"],["Hundar skulle säga tack","Så fint!"],["Fåglar skulle sjunga sånger","Fågelkör!"],["Det skulle bli kaos","Haha, så mycket prat!"]]},
+ {q:"Vad är det svåraste med att lära sig gångertabellen?",o:[["Sjuans tabell","Sjuan är klurig! Men du fixar den."],["Åttans tabell","Åtta gånger åtta är sextiofyra. Mitt knep!"],["Att komma ihåg allt","Lite i taget, så fastnar det."],["Inget, den är lätt","Wow, mattestjärna!"]]},
+ {q:"Vilken är den bästa högtiden?",o:[["Jul","Julen är magisk!"],["Midsommar","Små grodorna, hopp!"],["Halloween","Bus eller godis!"],["Min födelsedag","Självklart! Tårta och kalas."]]},
+ {q:"Om du fick vara ett gosedjur en dag, vilket skulle du vara?",o:[["En nalle","Mjuk och kramig."],["En enhörning","Med glittrigt horn!"],["En kanin","Med långa öron."],["En katt","Mjau!"]]},
+ {q:"Vad tycker du är viktigast i en kompis?",o:[["Att hen är snäll","Ja, snällhet är viktigast."],["Att man skrattar ihop","Skratt är guld."],["Att man kan lita på hen","Precis!"],["Att hen gillar att dansa","Haha, då är jag din kompis!"]]},
+ {q:"Vilken är den bästa sortens bulle?",o:[["Kanelbulle","Klassiskt!"],["Kardemummabulle","Mums!"],["Semla","Semla, men bara på våren!"],["Vaniljbulle","Med kräm i mitten, mmm."]]},
+ {q:"Om du fick ha ett ord till din egen dans, vad skulle den heta?",o:[["Sagasnurren","Sagasnurren! Jag vill lära mig den."],["Hjärthoppet","Hjärthoppet, så gulligt!"],["Glitterstegen","Glittrigt!"],["Bananen","Haha, banandansen!"]]},
+ {q:"Vad gör du på sommarlovet helst?",o:[["Badar","Bada, bada!"],["Reser","Äventyr!"],["Leker ute hela dagarna","Bästa lovet."],["Sover länge","Haha, mysigt!"]]},
+ {q:"Vilken är den bästa platsen att gömma sig på i kurragömma?",o:[["Bakom gardinen","Fötterna syns, haha!"],["Under sängen","Klassiker!"],["I garderoben","Tyst som en mus."],["Det är hemligt","Smart!"]]},
+ {q:"Om du fick en egen tv-kanal, vad skulle den visa?",o:[["Dans dygnet runt","Dans-tv! Bästa kanalen."],["Djurprogram","Gulliga djur hela dagen."],["Tecknat","Tecknat är bäst."],["Mig själv","{n}-kanalen, haha!"]]},
+ {q:"Vilket är det bästa med att vara du?",o:[["Jag är rolig","Det är du verkligen!"],["Jag är snäll","Det märks!"],["Jag kan dansa","Det kan du!"],["Allt","Bästa svaret!"]]},
+ {q:"Vad tror du att träden pratar om?",o:[["Vädret","Typiskt träd, haha!"],["Fåglarna","De har ju fåglar som grannar."],["Hösten","Nu tappar vi löven igen!"],["Hemligheter","Viskande löv, mystiskt!"]]},
+ {q:"Vilket är det bästa mellanmålet efter träning?",o:[["En frukt","Frukt ger energi!"],["En smörgås","Klassiskt och bra."],["Yoghurt","Mums!"],["Vatten först","Smart! Vatten är viktigt."]]},
+ {q:"Om du fick dansa på en scen, vilken låt skulle du välja?",o:[["En glad låt","Glada låtar får alla att dansa med!"],["En snabb låt","Wow, full fart!"],["En lugn låt","Fint och vackert."],["Min favoritlåt","Självklart!"]]},
+ {q:"Vad tycker du om att plugga gångertabellen med mig?",o:[["Kul!","Yes! Vi är ett bra team."],["Lite svårt","Svårt betyder att hjärnan växer!"],["Okej","Okej är också bra!"],["Jag vill vinna över dig","Haha, utmaning antagen!"]]},
+ {q:"Vilken sorts monster skulle du vilja ha som kompis?",o:[["Ett gosigt monster","Ett gosmonster!"],["Ett dansande monster","Monsterdans!"],["Ett osynligt monster","Hur vet man att det finns, haha?"],["Inget, jag är rädd","Det är okej, vi tar en nalle i stället."]]},
+ {q:"Om du fick byta plats med en lärare, vem skulle du vara?",o:[["Gympaläraren","Då blir det dans varje lektion!"],["Musikläraren","Sång och musik!"],["Bildläraren","Konst hela dagen!"],["Rektorn","Wow, chefen!"]]},
+ {q:"Vad gör du när du inte kan somna?",o:[["Räknar får","Ett, två, tre… zzz."],["Tänker på roliga saker","Glada tankar!"],["Kramar gosedjuret","Det hjälper!"],["Går till mamma eller pappa","Det är helt rätt."]]},
+ {q:"Vilket är det bästa du har byggt?",o:[["En koja","Kojor är bäst!"],["Ett legohus","Legomästare!"],["En snögubbe","Med morotsnäsa!"],["Ett sandslott","Med vallgrav!"]]},
+ {q:"Vilken är den mest magiska varelsen?",o:[["Enhörning","Glitter och regnbågar!"],["Drake","Mäktigt!"],["Fe","Små och snabba!"],["Sjöjungfru","Under havet!"]]},
+ {q:"Vad skulle du göra om du fick bestämma över hela skolan en dag?",o:[["Längre raster","Alla skulle jubla!"],["Glass till lunch","Haha, populärt!"],["Dansfest i matsalen","Bästa idén!"],["Inga läxor","Bara en dag!"]]},
+ {q:"Vad tycker du om att träna?",o:[["Jättekul!","Så härligt att höra!"],["Bara när det är lek","Precis, lek är också träning!"],["Ibland jobbigt","Ja, men man blir glad efteråt."],["Bäst med musik","Musik gör allt roligare!"]]},
+ {q:"Vilken är den roligaste dagen i veckan?",o:[["Fredag","Fredagsmys!"],["Lördag","Ledig!"],["Söndag","Söndagsmys!"],["Onsdag","Lillördag, haha!"]]},
+ {q:"Om du kunde prata med ett djur, vilket skulle det vara?",o:[["Min framtida katt","Hon skulle säkert vilja ha mer mat."],["En delfin","De är så smarta!"],["En häst","Vart vill du springa idag?"],["En uggla","Ugglor vet allt."]]},
+ {q:"Vad tycker du om vinterns mörker?",o:[["Mysigt med ljus","Ljus och filtar, mysigt!"],["Lite tråkigt","Då dansar vi och tänder lampor!"],["Bra för att se stjärnor","Stjärnhimmel, så fint!"],["Jag längtar efter sommaren","Snart kommer den!"]]},
+ {q:"Vilken är den bästa sortens sko att dansa i?",o:[["Gympaskor","Bekväma och bra!"],["Strumpor","Glid runt på golvet!"],["Barfota","Härligt fritt!"],["Glittriga skor","Snyggt!"]]},
+ {q:"Vad skulle du skriva en bok om?",o:[["En dansande katt","Den vill jag läsa!"],["Mig själv","En självbiografi, coolt!"],["Ett magiskt land","Som Love-världen!"],["Kompisar","Kompisar är det bästa ämnet."]]},
+ {q:"Hur skulle det vara att bo under vattnet?",o:[["Blött!","Haha, ja!"],["Spännande","Fiskar som grannar!"],["Läskigt","Lite läskigt, ja."],["Magiskt","Som sjöjungfrur!"]]},
+ {q:"Vad tycker du om att ha prov i skolan?",o:[["Spännande","Wow, modigt!"],["Lite nervöst","Det är normalt. Du kan mer än du tror."],["Tråkigt","Haha, ja ibland."],["Okej om man pluggat","Precis, det hjälper!"]]},
+ {q:"Vilket är det bästa ljudet en djur gör?",o:[["Katten som spinner","Purr!"],["Hunden som skäller glatt","Voff!"],["Fågelsång","Pip pip!"],["Grisen","Nöff!"]]},
+ {q:"Vad gör du för att vara snäll mot någon?",o:[["Ger en kram","Kramar är bäst."],["Hjälper till","Så fint!"],["Säger något snällt","Ord kan värma."],["Delar med mig","Generöst!"]]},
+ {q:"Om din cykel kunde prata, vad skulle den säga?",o:[["Tack för turen!","Så gulligt!"],["Pumpa mina däck!","Haha!"],["Kör fortare!","Vrooom!"],["Jag vill vila","Haha, trött cykel."]]},
+ {q:"Vilken är den bästa sortens musik att vakna till?",o:[["Glad musik","Starta dagen glad!"],["Lugn musik","Mjuk start."],["Fågelsång","Naturens alarm!"],["Ingen musik, tack","Haha, tystnad är också fint."]]},
+ {q:"Vad tycker du är viktigast att komma ihåg i dag?",o:[["Att ha kul","Det viktigaste!"],["Att vara snäll","Alltid!"],["Läxorna","Duktig!"],["Att dricka vatten","Smart!"]]},
+ {q:"Om du fick en medalj för något, vad skulle det vara för?",o:[["Bästa dansare","Den medaljen är din!"],["Snällaste kompisen","Den förtjänar du!"],["Roligaste skämtet","Haha!"],["Bästa kramen","Guldmedalj!"]]},
+ {q:"Vad är det första du skulle göra på en ny planet?",o:[["Dansa","Första dansen på en ny planet!"],["Leta efter liv","Spännande!"],["Plantera en blomma","Så fint!"],["Ta en selfie","Haha, för att visa alla!"]]},
+ {q:"Vad gör du helst med pappa?",o:[["Dansar","Pappadans! Haha!"],["Bygger saker","Kul!"],["Spelar spel","Vem vinner oftast?"],["Myser","Mys är bäst."]]},
+ {q:"Vad gör du helst med mamma?",o:[["Bakar","Mmm, vad bakar ni?"],["Pratar","Prat är fint."],["Går promenader","Härligt!"],["Dansar","Mammadans!"]]},
+ {q:"Vad gör du helst med Noa?",o:[["Busar","Syskonbus!"],["Spelar","Vem är bäst?"],["Tränar","Starka syskon!"],["Bråkar lite","Haha, det hör till."]]},
+ {q:"Vilken är den bästa leken att göra i snön?",o:[["Snöbollskrig","Akta huvudet!"],["Snöänglar","Så fint!"],["Bygga snöborg","En borg!"],["Åka pulka","Wiiii!"]]},
+ {q:"Vad tycker du om att vara ute i naturen?",o:[["Jag älskar det","Naturen är bäst!"],["Bra om det är sol","Sol gör det bättre."],["Spännande med djur","Ser du några djur?"],["Mysigt med picknick","Picknick, mums!"]]},
+ {q:"Vad är det roligaste du har hört någon säga?",o:[["Pappas skämt","Pappaskämt är klassiska!"],["Något från skolan","Haha, berätta!"],["Noas skämt","Storebrorshumor!"],["Mitt eget","Du är rolig!"]]},
+ {q:"Vilket är ditt drömyrke?",o:[["Dansare","Du har talangen!"],["Djurskötare","Djuren skulle älska dig."],["Lärare","Du skulle bli en bra lärare."],["Spelskapare","Du gör ju redan ett spel!"]]},
+ {q:"Om du fick säga en sak till hela världen, vad skulle det vara?",o:[["Var snälla","Det viktigaste!"],["Dansa mer","Haha, ja!"],["Ät glass","Bra råd!"],["Ha kul","Precis!"]]},
+ {q:"Vad gör du när någon är ledsen?",o:[["Tröstar","Du är en fin kompis."],["Ger en kram","Kramar hjälper."],["Gör något roligt","Skratt hjälper!"],["Säger till en vuxen","Det är klokt."]]},
+ {q:"Vilket är ditt favoritmoment i Love-spelet?",o:[["Dykningen","Dyka två och två, spännande!"],["Glasscaféet","Glass med Vincent!"],["Lektionerna","Skicka lappar, haha!"],["Allt","Bästa spelet!"]]},
+ {q:"Vad skulle vi göra om vi träffades på riktigt?",o:[["Dansa","Självklart!"],["Äta glass","Mums!"],["Cykla","Cykeltur!"],["Prata hela dagen","Det skulle bli kul!"]]}
+];
+/* Små berättelser: kombineras till tusentals varianter */
+const STORY={
+ act:["cyklade","gick","dansade","sprang","hoppade","promenerade"],
+ place:["till stranden","runt hamnen","till lekparken","genom skogen","till glasskiosken","till biblioteket","till mormor","längs ån","runt kvarteret","upp på kullen","till torget","bort till fotbollsplanen"],
+ saw:["en ekorre med en kotte","en regnbåge","en jättestor mås","en hund i regnjacka","en katt som sov på en mur","tre ankor på rad","en fjäril","en igelkott","en båt med röda segel","en snigel som var jättesnabb","ett träd som såg ut som en drake","en kanin i en trädgård","ett moln som såg ut som en glass","en häst som åt äpplen","två hackspettar"],
+ end:["Det var så fint!","Jag blev jätteglad.","Sen vinkade jag hejdå.","Jag tänkte på dig!","Det var dagens bästa stund.","Jag skrattade högt!","Sen dansade jag lite av glädje.","Vilken tur jag hade!"]
+};
+const STORY_OPTS=[["Wow, coolt!","Ja, eller hur! Jag ville visa dig."],["Berätta mer!","Den såg mig och sen försvann den, precis som i en saga!"],["Jag vill också!","Nästa gång följer du med!"],["Haha!","Haha, ja det var roligt!"],["Vad mer hände?","Sen gick jag hem och åt mellanmål. Typiskt mig!"]];
+/* Familjeutmaningar. {f} = familjemedlem */
+const FAMILY=["Dansa en Just Dance-låt tillsammans med {f}!","Gå en promenad med {f} och leta efter något rosa.","Utmana {f} i hopprep. Vem hoppar flest?","Lär {f} en dans som du har hittat på.","Ta en cykeltur med {f}.","Gör tio hopp tillsammans med {f}, högt som kängurur!","Spela kull med {f} på gården.","Dansa till {f}s favoritlåt.","Gör yoga med {f}. Testa trädet och katten!","Gå en kvällspromenad med {f} och titta på stjärnorna.","Bygg en hinderbana inne med {f}.","Kör en dansbattle mot {f}. Den som skrattar först förlorar!","Fråga {f} om en ny gångertabellsfråga och svara på den.","Gå till lekparken med {f} och gunga.","Gör en stretchstund med {f} innan läggdags.","Lär {f} en rörelse från Just Dance.","Leta efter fem olika fåglar med {f} på en promenad.","Spring ikapp med {f} till brevlådan.","Dansa frysdans med {f}. När musiken stannar fryser ni!","Gör en rolig gångart med {f}: krabbgång, ankgång och robotgång!"];
+const FAMILY_MEMBERS=["pappa","mamma","Noa"];
+const NIGHT2=["Gänget har gått och lagt sig. Vi ses i morgon, {n}!","Sov gott, {n}! Morgondagen blir också rolig.","Nu sover alla. Zzz… Ses i morgon!"];
+
+/* ---------- Dansturnén ----------
+   Den rosa bussen åker framåt med alla hjärtpoäng som samlats. Den backar aldrig.
+   Varje stad ger ett klistermärke och en kompis som hoppar på bussen.
+   Sparas: profile.tourSeen (index för senaste stad som visats). */
+const TOURMAP={"W":400,"H":169,"land":"M147.7,195.6L147.9,196L148,196.4L146.3,196.3L144.7,196.3L143.5,196L143.5,196L142.9,195.7L144.6,195.8L146.3,195.9L146.5,195.5L146.7,195.2ZM72,195.1L70.8,195.2L69.2,194.9L68.2,194.5L68.1,194.5L67.1,194.2L67,193.9L68.7,194L69.9,194.3L71.1,194.6ZM157.5,193.7L158.7,194.1L159.3,194.7L159.6,195.1L159.9,195.5L158.9,195.8L157.9,196L156.6,196.3L155.2,196.4L153.4,196.4L152.2,196.1L152.1,195.7L153.5,195.5L153.9,195.2L154.2,194.8L154.3,194.4L154.6,194.1L154.8,193.7L155.2,193.7L156.3,193.5ZM93.9,189.1L95.1,189.3L95.9,189.1L95.8,189.5L95.3,189.7L94.1,189.7L92.9,189.3L92.7,189ZM90.4,189.1L92,189.5L91.5,189.5L90.3,189.4L88.9,189.1L89.3,188.9ZM110.5,187.5L111.5,187.6L112.3,187.5L113.3,188.1L112.6,188L111.6,188.1L110.6,188L109.5,188.1L108.5,187.9L107.7,187.4L108.1,187.3L109.2,187.4ZM135,186.4L135.3,186.9L135.4,187.3L135.4,187.7L134.6,187.9L133.8,188.1L132.7,188.1L132.8,187.7L132,187.8L131.1,187.9L130.3,187.6L130,187.2L130.6,186.8L131.1,186.7L132.1,186.7L132,186.2L131.8,185.8L131.3,184.9L131.5,184.4L132.2,184.2L132.9,184.6L133.3,185L133.9,185.5L134.5,186ZM72.3,198.7L72.4,198.7L73.6,198.9L74.1,199L76,199.2L78.5,199.4L80.8,199.6L84,199.8L85.4,199.6L88.8,199.7L91.1,199.9L92.3,199.7L93.7,199.6L92.9,199.2L90,199.2L87.3,199L85.9,198.8L83.6,198.6L82.8,198.3L82.3,197.9L81.9,197.6L81,197.3L79.3,197.1L78.2,196.8L76.5,196.5L78.4,196.5L79.8,196.4L81.4,196.7L82.3,196.4L82.9,196.1L83,195.8L82.1,195.5L80.7,195.2L79.1,194.9L77.5,194.9L75.9,194.7L74.3,194.7L73.2,194.3L71.7,194L70.6,193.7L68.6,192.6L69.2,192.7L70.3,193L71.5,192.9L72.5,192.7L73.8,193.2L74.9,193.1L75.6,192.9L76.2,192.6L76.6,192.3L77.7,192.2L77.1,191.8L76.3,191.4L76.1,191.1L76.9,190.9L77.8,191.2L78.8,191L79.4,190.8L80.5,190.7L81.4,190.6L82.2,190.4L82.8,190.2L83.5,190L84.2,190L84.9,190.1L85.9,190L87.2,190.1L88.2,190.1L89.1,190L90.3,190.1L91.6,190.2L92.7,190.1L93.9,190.2L95.1,190.2L96.2,190.1L96.7,189.8L97.5,189.7L98.7,189.9L99.5,189.7L100,189.4L100.8,189.7L101.5,190L102.3,190.4L102.9,190.1L104.2,190.5L105.4,190.6L106.6,190.9L107.6,190.8L108.5,190.6L109.7,190.7L110.9,190.8L112.2,191L112.2,190.5L111.4,190.2L110.7,189.8L109.5,189.8L108.7,189.4L108.2,189L107.3,188.2L108,188.4L109.1,188.4L110.1,188.4L111.2,188.5L112.3,188.8L113,189.2L114.1,189.3L115,189.1L116,188.9L116.9,188.8L117.9,189L118.9,188.9L119,188.1L120,188.6L121.1,188.8L122,188.7L123,189.1L124.1,189.2L125.2,189.3L126.3,189.5L126.6,189.1L126.7,188.7L127.8,189.2L128.8,189.1L129.8,189.3L130.6,189.6L131.6,189.5L132.3,189.3L132.9,189L133.8,188.9L134.9,188.8L135.9,188.6L136.5,188.4L136.8,188.1L136.7,187.6L136.4,187.2L135.9,186.8L135.3,186.3L134.8,185.9L134.4,185.5L134.1,185.1L134,184.7L134.1,184.3L134.2,183.8L134.1,183.4L133.7,182.9L133.4,182.5L133.5,182L133.8,181.7L134.2,181.3L134.6,180.9L135.1,180.6L135.2,180.1L135.6,179.8L136,179.5L136.8,179.4L137.2,179.1L137.7,178.8L138.4,178.7L138.9,178.4L139.2,178.1L139.9,177.9L140.5,178.2L140.3,178.6L139.6,178.9L139.3,179.2L138.6,179L137.9,179.1L137.4,179.4L136.9,179.7L136.7,180L136.7,180.4L137,180.9L137.6,181.2L137.1,181.5L136.4,181.6L136.1,181.9L135.7,182.3L135.4,182.8L135.5,183.2L136.1,183.6L136.7,184L137.5,184.2L138.3,184.6L138.9,185L139.3,185.4L139.8,185.8L140.3,186.2L140.8,186.6L141.4,187.6L141.9,188L142.2,188.4L142.6,188.8L142.8,189.3L142.6,189.8L142.4,190.1L141.4,190.2L141.2,190.6L141,190.9L140,191.3L139,191.5L138.2,191.7L137.3,191.9L136.9,192.3L135.7,192.4L134.3,192.3L133.1,192.4L131.8,192.4L132.3,192.8L133.7,193L134.7,193.2L135.5,193.6L134.9,193.9L133.5,193.8L132.6,194L132.9,194.4L133.2,194.8L134.3,195.1L134.8,195.4L136.1,195.8L137.8,195.9L139.4,196.1L140.7,196.4L142.3,196.7L144.2,196.8L146.3,197L147.7,197.3L149.3,197.6L150.4,197.9L151.1,198.2L151.7,198L152.6,197.7L153.7,197.5L155,197.3L156.1,197L158,197L159.8,197.1L161.4,197.3L161.7,197L162.5,196.7L164.4,196.7L165.8,196.5L167,196.3L168.5,196.2L170.1,196L171.2,195.8L170.5,195.5L170,195.2L169.9,194.8L168.4,194.9L166.9,195L165.5,195L165.1,194.7L164.9,194L165.1,193.8L166.1,193.5L167.4,193.3L168.2,193L169,192.7L169.6,192.4L170.6,192.2L171.6,192L172.1,192L173.3,191.9L174.5,191.8L175.4,191.6L176.3,191.4L177.1,191.1L178.1,190.8L178.7,190.5L179.4,190.2L179.6,189.8L178.7,189.5L178.9,189.1L179.3,188.8L180.2,188.6L181,188.3L181.8,188L182.3,187.6L182.7,187.1L183.2,186.8L184.2,186.8L184.7,187.2L185.7,187.2L185.6,186.8L186,186.4L186.9,186.5L187.2,186.9L188.2,187L189.2,186.8L190.2,186.7L191.2,186.7L191.6,187.2L192.5,186.8L193.3,186.6L194.2,186.5L195.1,186.3L196,186.1L196.9,185.9L197.6,185.7L198.1,185.3L198.7,185.6L199.6,185.4L200.2,185.9L200.7,186.3L201.6,186.1L202,185.7L202.9,185.4L204,185.5L204.3,185.9L205,185.5L205.9,185.3L206.9,185.3L207.8,185.3L208.7,185.4L209.6,185.5L209.9,185.9L210.4,186.2L211.4,186L212.4,185.9L213.3,185.9L214.2,185.9L215.1,185.8L216,185.6L216.8,185.3L217.6,185.2L218.5,185L219.1,184.8L219.7,184.2L220.2,183.8L221.1,184L221.4,184.3L222,184.6L222.9,184.5L223.4,184.9L224,185.2L224.9,184.9L225.3,184.5L226.1,184.3L227.1,183.9L227.9,183.7L229,183.5L229.7,183.3L230.5,183L231.2,182.8L232,182.9L232.8,182.5L233.5,182.2L234.3,182.3L235.1,182L235.3,181.6L236.1,181.3L236.9,181.1L237.8,180.9L238.7,180.8L239.4,180.9L240.2,181L240.8,181.3L240.7,181.8L241.4,182.1L241.8,182.4L242.8,182.6L243.2,182.9L243.8,183.2L244.6,183.3L245.4,183L246.3,182.6L247,182.8L247.8,182.9L248.5,183.1L249.3,183.2L250.2,183.2L250.4,184.3L250.3,184.6L250,185.1L249,185.3L248.2,185.7L248.2,186.2L249.1,186.1L248.8,186.6L248.2,187L247.6,187.4L248.1,187.7L249,187.8L250,187.7L250.7,187.2L251.1,186.8L251.8,186.5L252.4,186.2L252.8,185.8L253.5,185.3L254.1,185.2L255,185.1L255.9,185L256.9,184.8L257.5,184.4L257.9,184L258.7,183.6L259.7,183.3L260.5,183.1L261.1,182.7L261.7,182.5L262.4,182.4L263.2,182.5L264.1,182.4L265,182.2L265.9,182.3L266.7,182L267.5,181.3L267.6,181.6L267.8,182.1L268.4,182.3L269.2,182.4L270,182.3L270.9,182.3L271.7,182.4L272.3,182.3L273,182.3L273.5,182.6L274.3,182.4L275.3,182.4L276.1,182.3L276.9,182.4L277.7,182L278.4,181.7L279.2,181.4L280.8,180.5L281.2,180.7L281.7,181L282,181.4L282.7,182.1L283.5,182.1L284.3,182.1L285.3,181.9L286.4,181.8L287.3,181.5L288.1,181.2L289.1,181.1L289.9,180.9L290.4,181.1L290.6,181.4L291,181.8L292,181.8L292.4,182L293.2,182.3L294.2,182.4L295.1,182.3L296.1,182L296.9,181.6L297.7,181.6L298.4,181.7L299.2,181.8L300.2,181.6L300.9,181.6L301.6,181.8L302.3,181.9L303.2,181.7L304.3,181.5L305.2,181.4L306.2,181.4L307.1,181.3L308,181.3L308.6,180.7L309.1,180.2L309.3,180.5L309.1,181.1L309,181.5L309,181.9L309.6,182.1L310.6,182L311.8,182L312.6,181.9L313.7,181.9L314.6,181.9L315.6,181.9L316.5,182L316.8,182.4L316.3,182.8L316.5,183.1L317.2,183.4L317.9,183.7L318.8,183.9L319.7,184L320.4,184.2L321.4,184.2L322.3,183.9L322.7,184.2L323,184.5L323.5,184.8L324.4,184.9L325.2,185L325.2,185.4L325.9,185.7L326.1,186L326.8,186.2L327.8,186.2L328.7,186.3L329.7,186.2L330.6,186.3L331.3,186.5L331.9,186.7L332.5,186.9L332.7,187.2L332.1,187.7L331.2,188L330.3,188.5L329.5,188.9L328.6,189.3L327.4,189.5L326.4,189.8L325.1,190L324.2,190.4L323.2,190.8L322.2,191.1L321.4,191.6L320.7,191.9L320,192.4L319.5,192.7L319.4,193.1L319.1,193.5L318.9,193.8L320.2,194L319.8,194.4L318.2,194.5L316.8,194.7L315.3,194.7L313.8,195.3L313,195.7L312.1,196L311.1,196.4L311.6,196.6L311.3,197L311.4,197.3L311.7,197.6L312.1,197.8L312.7,198.1L313.7,198.3L313.2,198.7L314.8,198.9L314.8,198.9L314.7,199.1L317.2,198.9L318.1,199.2L318.8,199.3L318.8,199.3L318.8,199.3L320.7,198.9L321.3,199.2L321.5,199.1L321.8,199.1L322.3,199L322.7,198.9L322.9,198.9L323,198.9L323,198.9L323.1,199.2L325,198.9L325.2,198.9L327.7,198.7L310.1,201.8L200,201.8L89.9,201.8ZM126.1,166.8L127.6,167.5L129.1,167.8L128.9,168.4L128,168.5L127.4,168L127.3,168.5L126.6,168.9L125.5,168.8L124.7,168.4L123.6,168.2L122.1,167.6L120.9,166.9L119,165.5L119.9,165.8L121.6,166.6L123,167L123.3,166.5L123.3,165.6L123.9,165.1L124.7,165.3L125.3,165.9ZM133.7,163.4L134.7,163.9L134.5,164.4L133.3,164.8L132.8,164.3L132.1,164.9L131.5,164.3L132.4,163.6L133.3,163.9ZM258.8,161.7L257.3,161.7L257.4,161.1L257.7,160.6L257.8,160.3L258.4,160.7L259.3,160.9L259.2,161.1ZM338.3,150.4L339.1,150.8L339.7,150.6L340.6,150.4L341.2,150.5L340.5,152L339.9,152.4L339.3,153.5L339.1,153.1L337.9,154L337.8,153.9L337.2,153.9L337.1,152.8L337.4,152L337.4,150.8L337.7,150.3ZM366.4,150.5L366.3,151.1L367.4,150.5L367.3,151.1L367,151.6L366.3,152.2L365,153.2L364.2,153.7L364.2,154.3L363.4,154.3L362.2,154.8L361.4,155.6L360,156.9L358.8,157.5L358.1,157.8L357.2,157.8L356.8,157.4L355.8,157.3L356,156.8L357.1,155.9L359.1,154.6L359.9,154.4L361,153.9L362.2,153.2L363.3,152.6L364.3,151.6L364.9,151.3L365.4,150.6L366.5,150ZM371.4,144.4L371.5,145.8L371.9,144.9L372.2,145.2L371.9,146.2L372.5,146.6L373.1,146.7L374,146.2L374.4,146.4L373.5,147.5L372.8,148.3L372,148.3L371.5,148.7L371.3,149.2L371,149.4L370.2,150.1L369.2,151L368.1,151.5L368.1,151.2L367.8,151L369,149.9L369.1,149.2L368.3,148.7L368.6,148.3L369.6,147.8L370.3,146.8L370.7,146L370.7,145.1L370.9,144.9L370.6,144.4L370.4,143.2L370.4,142.3L370.8,142.2L371,142.9L371.7,143.3ZM370.6,126.3L370.1,126.6L369.6,126.3L368.9,125.7L368.4,125L367.9,124.1L367.9,123.6L368.4,123.7L368.9,124.1L369.2,124.5L369.5,124.9L370.2,125.7ZM384.5,120.1L384.7,120.4L384.4,121.1L383.7,121.3L383.1,121.1L383.1,120.6L383.7,120.1L384.1,120.3ZM386.5,119.1L385.7,119.4L384.9,119.7L384.9,119.2L385.5,118.9L385.9,118.8L386.6,118.4L386.9,118.4L386.6,119ZM373.2,118.9L372.8,119.1L372.5,118.6L372.6,118.2ZM372.8,117L372.7,118L372.5,117.9L372.2,117.9L372.1,117.6L372.3,116.6ZM244.1,115.2L244.2,116.7L244.5,117.3L244.3,118L244.1,118.3L243.8,117.6L243.6,118L243.7,118.9L243.6,119.5L243.3,119.8L243.2,120.9L242.6,122.4L242,124.2L241.2,126.6L240.6,128.4L240,129.9L239.1,130.2L238.1,130.8L237.5,130.4L236.7,130L236.5,129.3L236.5,128.1L236.1,127.1L236.1,126.2L236.4,125.2L236.9,125L236.9,124.6L237.5,123.6L237.6,122.8L237.4,122.2L237.2,121.4L237.2,120.2L237.6,119.4L237.8,118.6L238.4,118.6L239,118.3L239.4,118.1L239.9,118.1L240.5,117.3L241.5,116.5L241.8,115.9L241.7,115.3L242.2,115.5L242.8,114.6L242.9,113.8L243.3,113.2L243.6,113.8L243.9,114.3ZM347.1,115.5L347.3,116.5L348.1,116L348.4,116.5L348.8,117L348.6,117.6L348.7,118.7L348.7,119.4L349,119.5L349.1,120.6L348.8,121.3L349,122.2L350,122.8L350.7,123.5L351.3,124L351.1,124.3L351.5,125.1L351.6,126.5L352.1,126.3L352.4,126.8L352.7,126.6L352.5,128L353.1,128.8L353.4,129.3L354,130.3L353.9,131.4L353.7,132.1L353.4,132.9L353.6,134L353.1,135.1L352.7,135.7L352,136.9L351.8,137.6L351.2,138.6L350.3,139.7L349.2,140.4L348.5,141.4L347.8,142L347.1,143.1L346.4,143.8L345.7,144.7L345.2,145.6L345.1,146L344.3,146.5L343.1,146.5L341.9,147.1L341.2,147.6L340.3,148.1L339.7,147.6L339.2,147.3L339.6,146.7L339,146.9L337.6,147.8L336.9,147.5L336.4,147.3L335.9,147.2L335,146.8L334.7,146L334.9,145L334.9,144.4L334.6,143.9L333.7,143.7L334.3,143.1L334.4,142.1L333.5,143L332.5,143.3L333.3,142.5L333.8,141.8L334.4,141.2L334.7,140.2L333.4,141.3L332.6,141.7L331.8,142.8L331.2,142.2L331.5,141.6L331.2,140.6L330.8,140.1L331.1,139.8L330,139.1L329.3,139L328.4,138.4L326.5,138.5L325,139L323.6,139.4L322.7,139.3L321.3,140L320.3,140.3L319.9,141L319.3,141.5L318.4,141.5L317.8,141.6L316.9,141.4L316.1,141.5L315.4,141.6L314.5,142.3L314.2,142.2L313.6,142.6L313,143L312.2,142.9L311.5,142.9L310.6,142.1L310.2,141.9L310.4,141.1L311,141L311.3,140.7L311.4,140.2L311.7,139.3L311.8,138.5L311.6,137.2L311.7,136.5L311.9,135.8L311.7,134.9L311.8,134.5L311.4,134L311.5,133L311.2,132L311.1,131.4L311.5,132L311.4,130.8L311.8,131.2L312,131.7L312.2,131L311.9,130L311.8,129.6L311.7,129.2L311.9,128.4L312.2,128.1L312.5,127.5L312.5,126.7L313.2,125.8L313,126.8L313.7,125.9L314.6,125.4L315.3,124.9L316.2,124.4L316.7,124.3L317,124.5L317.9,124L318.6,123.8L318.8,123.6L319.1,123.4L319.7,123.5L320.9,123.1L321.6,122.5L322,121.8L322.8,121.2L322.9,120.7L323.1,120L324,118.9L324.3,120L324.8,119.7L324.5,119.1L324.9,118.5L325.4,118.8L325.7,117.8L326.3,117.2L326.7,116.6L327.3,116.4L327.3,116.1L327.8,116.2L327.9,115.9L328.4,115.7L328.9,115.5L329.7,116.1L330.2,116.9L330.8,116.9L331.5,117L331.4,116.3L332.1,115.3L332.6,114.9L332.5,114.6L333,113.9L333.8,113.4L334.3,113.6L335.3,113.3L335.3,112.7L334.6,112.3L335.2,112.1L335.9,112.4L336.4,112.9L337.3,113.2L337.6,113.1L338.3,113.5L338.9,113.1L339.3,113.3L339.6,113L340.1,113.6L339.7,114.3L339.2,114.9L338.8,114.9L338.9,115.4L338.4,116.1L338,116.7L338,117.1L338.7,117.8L339.5,118.2L340,118.6L340.7,119.4L341,119.4L341.5,119.7L341.6,120.1L342.6,120.6L343.4,120.1L343.7,119.4L344,118.8L344.3,118.1L344.8,117.1L344.7,116.5L344.9,116.1L344.9,115.4L345.1,114.4L345.4,114.1L345.3,113.7L345.6,113L345.9,112.3L346,112L346.5,111.5L346.7,112.1L346.7,112.9L346.9,113.1L346.9,113.6L347.2,114.3L347.2,115ZM368.2,111.2L368.4,111.7L367.6,111.7L367.3,110.9L367.9,111.2ZM322.4,110.9L322,110.9L320.6,110L321.6,109.8L322.2,110.2L322.5,110.6ZM366.9,110.5L366.4,110.5L365.8,110.4L365.6,110.2L365.7,109.6L366.4,109.8L366.7,110.1ZM367.8,110.1L367.6,110.3L366.9,109.2L366.8,108.5L367.2,108.5L367.4,109.5ZM326.5,110.8L325.6,111.1L325.5,110.9L325.6,110.5L326.1,109.7L327.3,109.2L327.4,108.9L328.4,108.6L329.2,108.6L329.5,108.4L329.9,108.6L329.5,108.9L328.3,109.5L327.4,109.8ZM319.5,108.2L319.9,108.5L320.6,108.4L320.8,109L319.5,109.2L318.7,109.4L318.2,109.4L318.6,108.6L319.2,108.6ZM325.1,108.2L324.9,108.9L323.2,109.2L321.7,109.1L321.7,108.6L322.6,108.3L323.3,108.7L324,108.6ZM366,108.5L366,108.7L365.2,108.2L364.6,107.7L364.3,107.3L364.4,107.2L364.9,107.5L365.8,108.1ZM363.5,107.2L363.3,107.3L362.8,107L362.4,106.5L362.5,106.2L363.1,106.8ZM309.3,106.5L311.5,106.6L311.7,106.1L313.8,106.7L314.1,107.5L315.8,107.8L317.1,108.5L315.8,109L314.6,108.5L313.6,108.5L312.4,108.4L311.4,108.2L310.2,107.7L309.4,107.6L308.9,107.7L306.9,107.2L306.7,106.7L305.7,106.6L306.6,105.3L307.9,105.4L308.8,105.9L309.2,106ZM338.3,105.7L337.7,106.6L337.7,105.7L337.9,105.2L338.1,104.8L338.4,105.1ZM361.7,106.5L361.4,106.7L361,106.2L360.5,105.3L360.4,104.4L360.5,104.2L360.6,104.6L360.9,104.9L361.4,105.7L361.9,106.2ZM357.5,104.8L357,104.9L356.8,105.3L356.1,105.6L355.5,105.9L354.9,105.9L354.1,105.5L353.5,105.1L353.6,104.7L354.6,104.9L355.2,104.8L355.4,104.2L355.5,104.2L355.6,104.9L356.2,104.8L356.6,104.3L357.2,103.9L357.1,103.1L357.8,103.1L358,103.3L358,104ZM330.2,102.2L329.8,102.6L329,102.4L328.8,101.8L329.9,101.8ZM333.8,101.7L334.2,102.7L333.3,102.2L332.3,102.1L331.7,102.2L330.9,102.1L331.2,101.4L332.6,101.4ZM358.9,103.5L358.5,103.9L358.4,103.1L358.1,102.6L357.6,102.2L357,101.7L356.2,101.3L356.6,101L357.1,101.3L357.5,101.6L358,101.9L358.4,102.5L358.8,102.9ZM337.9,99.2L338.2,101.3L339.3,102.1L340.3,100.7L341.6,99.9L342.6,99.9L343.5,100.4L344.3,100.9L345.5,101.1L347.4,102L349.4,102.7L350.2,103.4L350.8,104L350.9,104.8L352.7,105.6L352.9,106.3L351.9,106.4L352.1,107.3L353,108.1L353.6,109.5L354.2,109.4L354.1,110L354.9,110.2L354.6,110.5L355.7,111L355.5,111.4L354.8,111.5L354.5,111.1L353.6,111L352.5,110.8L351.7,110L351.2,109.3L350.7,108.1L349.3,107.6L348.3,107.9L347.6,108.4L347.7,109.3L346.8,109.8L346.2,109.5L345,109.5L344.1,108.4L343,108.2L342.7,108.5L341.3,108.6L341.9,107.5L342.6,107.2L342.4,105.8L341.9,104.7L339.9,103.6L338.9,103.5L337.3,102.3L337,102.9L336.5,103L336.3,102.6L336.3,102L335.5,101.4L336.7,100.9L337.5,100.9L337.4,100.6L335.8,100.6L335.4,99.8L334.4,99.6L333.9,99L335.4,98.7L336,98.2L337.8,98.8ZM328,95.9L327.2,97.2L326.3,97.5L325.2,97.2L323.4,97.3L322.4,97.5L322.3,98.4L323.2,99.6L323.9,99L325.9,98.5L325.8,99.1L325.4,99L324.9,99.7L323.9,100.2L324.9,101.9L324.7,102.3L325.6,103.8L325.6,104.6L325,105L324.5,104.6L325.1,103.5L324,104L323.8,103.6L323.9,103.1L323.1,102.4L323.3,101.1L322.5,101.5L322.6,103L322.5,104.9L321.8,105.1L321.4,104.7L321.7,103.5L321.6,102.3L321.1,102.2L320.8,101.4L321.3,100.5L321.5,99.5L322,97.6L322.3,97L323.2,96.1L324.1,96.5L325.5,96.6L326.7,96.6L327.8,95.6ZM331.9,96.3L331.8,97.4L331.2,97.3L331.1,98.1L331.5,98.8L331.2,98.9L330.8,98.1L330.4,96.5L330.6,95.4L331,95L331.1,95.7L331.8,95.8ZM306.3,105.3L305.1,105.3L304.2,104.2L302.8,103.2L302.3,102.4L301.5,101.4L301,100.4L300.2,98.6L299.2,97.5L298.9,96.4L298.4,95.4L297.4,94.6L296.8,93.5L296,92.8L294.8,91.4L294.6,90.7L295.4,90.8L297.1,91L298.1,92.3L299,93.1L299.6,93.7L300.7,95.1L301.8,95.1L302.8,96L303.4,97L304.3,97.6L303.8,98.7L304.5,99.1L304.9,99.2L305,100L305.4,100.8L306.2,100.9L306.7,101.7L306.4,103.3ZM319.8,95.4L321.1,96.6L319.8,96.8L319.4,97.6L319.5,98.8L318.4,99.7L318.3,101L317.9,102.9L317.7,102.5L316.4,103L316,102.3L315.2,102.2L314.7,101.8L313.3,102.2L313,101.6L312.2,101.7L311.3,101.5L311.2,99.8L310.6,99.4L310.1,98.3L309.9,97.2L310.1,96L310.7,95.2L311.5,95.6L312.4,95.4L312.6,94.3L313.1,94L314.4,93.8L315.2,92.8L315.7,91.9L316.1,91.5L317,90.8L317.8,89.9L318.3,88.9L318.8,88.9L319.4,89.5L319.5,90.1L320.2,90.4L321.1,90.8L321.1,91.3L320.4,91.4L320.6,92L319.8,92.4L319.2,93.6L320,94.8ZM328.9,86.9L329.1,87.8L329.2,88.5L328.9,89.7L328.4,88.4L327.9,89L328.3,90L328,90.6L326.7,89.8L326.3,88.9L326.6,88.3L325.9,87.7L325.6,88.2L325,88.2L324.3,88.9L324.1,88.5L324.4,87.4L325.1,87.1L325.7,86.6L326.1,87.2L326.9,86.8L327,86.2L327.8,86.2L327.7,85.2L328.6,85.8L328.8,86.5ZM279,89.8L278,90.1L277.5,89.1L277.2,87.2L277.6,85.1L278.4,85.8L279,86.7L279.6,88.1L279.4,89.4ZM121.6,84.8L120.6,84.9L120.4,84.8L120.8,84.4L120.8,83.9L121.4,83.8L121.7,83.8ZM326,84.5L325.7,85L325.4,85.8L325.1,86.2L324.3,85.3L324.5,84.9L324.8,84.6L324.8,83.8L325.4,83.7L325.3,84.6L326,83.3ZM320.1,85.8L318.7,87L319.2,86.1L319.9,85.3L320.5,84.4L321,83.1L321.2,84.2L320.6,84.9ZM323.5,82.5L324.2,82.9L324.9,82.9L324.9,83.4L324.5,83.9L323.8,84.3L323.7,83.7L323.7,83.1ZM327.5,82.1L327.9,83.6L327,83.2L327.1,83.6L327.4,84.4L326.9,84.7L326.8,83.8L326.5,83.8L326.2,83L326.9,83.1L326.8,82.6L326,81.6L327.1,81.6ZM322.9,80.9L322.8,82.1L322.2,81.4L321.5,80.4L322.5,80.5ZM321.7,73.9L322.4,74.3L322.7,74L322.9,74.3L322.8,74.8L323.3,75.8L323.2,76.8L322.6,77.3L322.6,78.3L323,79.3L323.6,79.5L324,79.3L325.5,80L325.5,80.7L325.9,81L325.8,81.6L324.9,81L324.4,80.3L324.2,80.8L323.4,80L322.4,80.2L321.8,79.9L321.8,79.4L322.1,79.1L321.7,78.8L321.7,79.2L321,78.5L320.8,77.9L320.6,76.7L321.1,77.1L320.9,75.1L321,73.9ZM117.3,74.3L117,74.6L116.2,74.6L115.5,74.7L115.5,74.1L115.7,73.9L116.6,73.9L117.1,74ZM104.9,74.8L104.5,75L103.9,74.8L103.4,74.3L103.5,74L104,73.9L104.3,74L105,74.1L105.5,74.4L105.7,74.7ZM109.9,72.2L110.9,72.4L111,72.2L111.9,72.2L112.5,72.5L112.8,72.5L112.9,72.9L113.5,72.9L113.4,73.3L113.9,73.3L114.4,73.8L113.9,74.3L113.4,74L112.9,74.1L112.6,74L112.3,74.3L111.9,74.4L111.8,74L111.4,74.2L110.9,75.1L110.6,74.9L110.6,74.5L109.9,74.3L109.4,74.4L108.7,74.3L108.2,74.5L107.6,74.1L107.8,73.7L108.8,73.9L109.6,74L110,73.7L109.6,73.2L109.6,72.7L109,72.5L109.3,72.1ZM309.7,73.7L308.8,74.3L307.9,73.9L307.7,72.8L308.1,72.2L309.2,71.9L309.9,71.9L310.2,72.4L309.8,73ZM19.2,73.2L19,73.4L18.8,73.2L18.9,72.9L18.8,72.4L18.9,72.2L19.2,72L19.2,71.8L19.3,71.7L19.3,71.7L19.7,71.9L19.8,72L20,72.2L20.1,72.6L20.1,72.7L19.6,73ZM19.1,71.2L18.8,71.3L18.6,71L18.6,70.9L18.6,70.8L18.7,70.7L19.1,70.8L19.3,71ZM18.6,70.5L18.5,70.6L18,70.6L18.1,70.4ZM17.7,70.3L17.6,70.4L17.5,70.4L17.2,70.3L17.1,70L17.1,70L17.4,69.8L17.5,69.9ZM16.1,69.4L15.9,69.6L15.6,69.3L15.7,69.2L15.9,69.1L16.2,69.1ZM102.8,68.4L103.1,68.9L104.2,68.8L104.5,69.1L105.3,69.9L105.9,70.4L106.2,70.4L106.9,70.7L106.7,71.1L107.5,71.1L108.3,71.6L108.1,71.9L107.4,72.1L106.6,72.2L105.9,72.1L104.3,72.2L105.1,71.5L104.7,71.1L104,71.1L103.7,70.7L103.6,69.9L103,70L102,69.6L101.7,69.4L100.3,69.2L100,68.9L100.5,68.6L99.4,68.5L98.5,69.2L98.1,69.2L97.8,69.5L97.3,69.7L96.8,69.6L97.5,69.2L97.8,68.7L98.3,68.4L98.9,68.2L99.8,68L100.1,67.9L101,68L101.8,68ZM105.3,67.1L105,67.2L104.9,66.5L104.6,66.1L104.9,65.3L105.3,65.3L105.4,66.4ZM320.5,68.4L320.3,69.5L319.5,68.4L319.2,67.4L319.5,66.1L320.1,65.2L320.7,65.5L320.7,66.3ZM105.7,63.5L104.5,63.7L104.5,63.2L105,63.1L105.7,63.2ZM106.6,63.5L106.2,64.4L106,64.2L106.2,63.6L105.8,63L105.8,62.9ZM330.8,53.7L331,54.1L330.7,54.9L330.2,54.5L329.7,54.8L329.7,55.6L328.9,55.2L328.7,54.6L329,53.8L329.7,54L329.9,53.4ZM225.6,51.7L225,52.3L225.1,52.5L225.1,52.6L224.1,53.2L223.5,53L223.3,52.5L223.8,52.4L223.8,52.4L224,52.1L224.7,52.1ZM214.3,51.7L214.9,52.1L215.7,52.1L216.5,52.1L216.5,52.4L217,52.2L216.9,52.6L215.4,52.7L215.4,52.5L214.1,52.2ZM205.7,48.4L205.3,49.4L205.5,49.8L205.3,50.5L204.5,50L204,49.9L202.5,49.2L202.7,48.6L203.9,48.7L204.9,48.5ZM199.2,44.6L199.8,45.5L199.7,47.2L199.2,47.1L198.8,47.6L198.4,47.2L198.4,45.7L198.1,44.9L198.7,45ZM335.9,49.8L335.9,50.9L336.3,51.5L336.2,52.4L335.1,53L333.2,53.1L332.3,54.6L331.4,54.1L331,53.1L329.3,53.4L328.3,54L327,54L328.4,55L328.5,57.2L328,57.7L327.3,57.2L327.2,56.1L326.4,55.7L325.6,54.8L326.5,54.4L326.8,53.6L327.6,52.9L328,52L330,51.7L331.2,51.9L331.4,49.6L332.3,50.2L333.3,49L333.7,48.5L333.6,46.9L332.8,45.4L332.8,44.6L333.8,44.4L335.2,46.2L335.7,47.2L335.3,48.5ZM199.6,43.4L199.2,44.4L198.8,44.1L198.5,43.3L198.7,42.8L199.4,42.3ZM334.6,40.8L335.4,41.1L335.9,40.6L336.8,42L335.5,42.3L335.3,43.6L333.3,42.7L333.4,44.1L332.3,44.1L331.5,42.9L331.5,41.9L332.6,41.8L331.9,40.1L331.7,39.1L333.6,40.4ZM126.9,37.8L127.5,38L128.5,37.9L127.8,38.5L127.4,38.5L126.3,38L126.2,37.6L126.7,37.2ZM129.7,34.6L129.2,34.6L128.1,34.2L127.4,33.6L127.8,33.5L128.9,33.9L129.8,34.4ZM68.9,35.3L68.3,35.5L67,35L67,34.5L66.4,34.1L66.4,33.7L65.6,33.5L65.6,32.8L65.9,32.5L66.8,32.8L67.2,33L68.1,33.1L68.1,33.6L68.2,34.1L68.9,34.7ZM135.9,32.6L134.9,33.7L135.7,33.3L136.2,33.6L135.8,34L136.5,34.3L137.1,34L137.9,34.4L137.4,35.3L138.1,35.1L138,35.8L138.1,36.6L137.4,37.7L137,37.7L136.4,37.5L136.9,36.5L136.6,36.3L135.2,37.4L134.6,37.3L135.5,36.8L134.6,36.4L133.5,36.5L131.6,36.5L131.6,36.1L132.3,35.7L132,35.3L133.1,34.6L134.7,32.6L135.5,31.9L136.5,31.5L136.9,31.5L136.6,31.9ZM64.5,28.5L65.5,28.4L64.2,29.8L64.4,30.8L64,30.8L63.8,30.2L63.9,29.7L63.6,29.3L63.9,28.7L64.2,28.4ZM329.5,32.6L331.9,34.8L330.2,34.4L330.7,36.2L332.4,37.5L332.8,38.3L331.6,37.6L331.5,38.5L330.8,37.5L330.2,36.3L329.3,34.9L328.9,34L328,32.3L326.6,31.1L325.6,29.4L326.1,28.9L325.3,28.3L325.6,28.1L326.4,28.9L327.6,30.1L328.3,31.3ZM183.9,30.7L182.1,31.4L180.8,31.2L181.7,30L181.3,28.7L182.7,27.8L183.4,27.2L184.2,27.1L185.2,27.9L184.6,28.7L184.7,29.6ZM202.5,26.6L202,27.6L201,26.9L200.8,26.4L202.2,26ZM48.5,24.8L47.2,25.3L47,24.9L47.3,24.4L48.6,24L49.2,23.8L49.8,23.9L49.8,24.2ZM188,23L187,24.3L187.9,24.1L188.9,24.1L188.6,25.1L187.7,26.2L188.7,26.2L189.5,27.8L190.1,28L190.6,29.4L190.9,29.9L192,30.1L191.9,30.9L191.4,31.3L191.7,31.9L190.8,32.5L189.5,32.5L187.9,32.9L187.4,32.6L186.8,33.2L185.9,33.1L185.2,33.5L184.7,33.3L186.2,32L187.1,31.7L185.6,31.5L185.3,31L186.3,30.6L185.9,30L186.1,29.2L187.5,29.3L187.7,28.6L187.1,27.8L186,27.6L185.8,27.3L186.2,26.7L185.9,26.4L185.3,27L185.4,25.8L185,25.2L185.4,24L186.2,23L186.9,23.1ZM40.1,21.5L39.4,21.7L39,21.5L38.8,21.1L39.9,20.9L40.5,21ZM120.1,18.9L119.4,19.5L119.1,19.4L119.1,19L119.1,19L119.7,18.6L120,18.6ZM118.1,18.2L116.7,18.9L116.1,18.8L116.1,18.5L117.1,18L118.3,18ZM40.7,17.3L40.9,17.4L41.6,17.6L41.4,17.7L40.4,17.9L40.2,17.8L40.7,17.3ZM359.8,17.8L359.5,17.7L358.9,17.5L358.2,17.5L357.9,17.4L357.4,17L357.4,17L358.2,17.2L358.6,17.1L359.3,17.3L359.8,17.8ZM117.3,14.9L117.1,15.4L117.7,15.2L118,15.5L118.7,15.9L119.5,16.2L119.3,16.8L120,16.7L120.4,17.1L119.4,17.4L118.2,17.2L118,16.6L116.8,17.3L115.1,17.8L115.2,17.2L114,17.3L115.1,16.7L115.8,15.8L116.7,14.8ZM178.8,14L178.5,14.7L179.4,15.5L178.1,16.3L175.4,17.1L174.6,17.3L173.5,17.2L171.1,16.8L172.1,16.3L170.3,15.7L171.9,15.5L171.9,15.2L170.1,14.9L170.9,14.2L172.2,14L173.4,14.8L174.9,14.2L175.9,14.5L177.4,13.9ZM126.3,13.2L125.3,13.3L125.4,12.7L126.1,12.1L127,12L127.5,12.3L127.2,12.7L127.1,12.9ZM239.9,44.5L240.5,45.4L241,45.5L241.4,45.8L240.5,45.9L240.5,46.9L240.4,47.4L240,47.7L240.1,48.3L240.6,49.3L241.6,49.5L242.4,50.2L243.9,50.4L245.5,50.1L245.6,49.8L245.2,48.9L245.2,47.5L244.3,47.1L244.4,46.2L243.8,46.1L243.8,45L244.8,45.3L245.7,44.9L244.8,44.2L244.4,43.4L243.6,43.8L243.7,44.7L243.2,43.9L243.1,43.6L243.3,43L243,42.6L241.8,42.1L241.1,41L240.5,40.7L240.4,40.3L241.4,40.4L241.3,39.5L242.1,39.3L243,39.4L243,38.2L242.7,37.4L241.7,37.5L240.8,37.2L239.7,37.7L238.9,38L238.5,38.8L237.6,39L236.8,40.3L237.9,41.5L237.9,42.3L239.2,43.8ZM44,14.5L44,14.5L43.9,14.6L44,14.5ZM356.1,14.6L355.9,15L354.6,15.1L355.8,16.2L355.7,16.5L354.9,16.4L353.8,16L352.2,15.7L351.5,15.2L350.4,15L349.6,15.2L348.6,14.8L348.4,14.4L347.6,14.6L348.6,15.2L348.6,15.7L348.6,15.7L348.1,16.2L346.8,16.1L348.3,16.7L349.8,17.6L350.6,17.9L351.2,18.4L351.2,18.7L349.3,18.5L347.7,19.3L347,19.5L346.5,20.3L345.8,21L346,21.5L344,20.7L342.4,21.6L341.6,21.2L341.2,21.7L339.8,21.5L340.2,22.3L340.1,23.5L340.6,23.9L341.9,24.2L343.2,25.9L342.4,26L342.8,27L343.6,27.5L342.4,28.1L343.2,29.5L342,29.8L342.6,31.1L342,32.2L341.1,31.4L339.4,29.6L336.8,26.9L335.9,25.2L336.2,24.5L335.7,23.9L337,23.7L337.3,22.2L337.8,21L338.6,20.1L337.8,18.4L336.8,18.5L337.2,19.5L336,20.7L334,19.3L332,19.7L331.5,21.7L332.8,22.4L331,22.7L329.7,22.8L329.1,22L327.5,21.8L326.9,22.4L323.9,22.2L321.2,22.5L319.9,24.8L318.2,27.7L319.8,27.8L320.8,28.6L321.9,28.9L322.1,28.3L323.2,28.3L325.5,29.7L326.2,30.7L326.2,32L327,33.4L327.8,35.4L327.3,37.2L327.5,38.1L326.9,39.6L326.3,41.1L326,41.8L325,42.6L324.4,42.6L323.4,42L322.5,42.9L322.6,43.3L322.1,43.2L321.9,43.7L321.8,44.1L322.2,45L321.8,45.3L321.7,45.5L321.5,45.9L320.9,46.1L320.6,46.5L320.8,47L320.7,47.2L321.2,47.4L322,47.9L323.5,49.5L324.1,50.3L324.7,51.8L324.5,52.5L323.7,52.7L323,53.3L322.1,53.4L321.7,52.7L321.6,51.7L320.6,50.4L321.3,50.2L320.2,49.1L319.6,48.8L319.6,49.1L319.3,49.2L319.2,48.9L318.9,48.8L318.5,48.6L318.6,48L318.8,47.9L318.6,47.6L318.6,46.9L318.4,46.7L317.8,46.6L317.2,46.3L315.9,46.6L315.3,47.2L314.4,47.6L314.7,47L314.3,46.5L314.8,45.6L313.9,44.9L313.2,45.4L312.4,46.3L312.1,47.1L311.1,47.2L310.8,47.8L311.7,48.7L312.6,48.9L312.8,49.4L313.8,49.8L314.6,48.9L315.7,49.4L316.4,49.4L316.8,50.1L315.5,50.5L315.2,51.2L314.4,51.8L314.2,52.7L315.6,53.4L316.4,54.7L317.4,55.9L318.4,56.9L318.7,57.8L318.1,58.2L318.5,58.9L319.3,59.3L319.4,60.3L319.4,61.4L318.8,61.5L318.4,62.9L318,64.6L317.3,66.1L316.1,67.3L314.8,68.4L313.6,68.6L313,69.1L312.6,68.7L312.1,69.4L310.7,70L309.6,70.2L309.4,71.6L308.9,71.6L308.4,70.7L308.6,70.2L307,69.8L306.6,70L305.3,71.1L304.6,72.3L304.5,73.2L305.5,74.6L306.8,76.3L307.9,77.1L308.7,78.1L309.4,80.5L309.5,82.8L308.7,83.6L307.5,84.4L306.7,85.5L305.4,86.7L304.9,85.9L305.2,85L304.3,84.3L303.3,84.1L302.8,83.4L302.2,82.1L301.1,81.5L300.2,81.5L300.2,80.5L299.3,80.5L299.3,81.9L298.9,83.8L298.6,84.9L298.7,85.9L299.5,85.9L300,87.1L300.3,88.2L300.9,88.9L301.6,89.1L302.2,89.8L302.5,89.9L303.1,90.7L303.6,91.5L303.7,92.4L303.6,93L303.8,93.4L303.9,94.2L304.3,94.5L304.7,95.7L304.7,96.1L303.9,96.2L302.8,95.2L301.5,94.2L301.4,93.6L300.7,92.7L300.5,91.6L300.1,90.9L300.2,90L299.9,89.4L299.4,89L299.2,88.3L298.6,87.6L298,87L297.9,87.7L297.6,87L297.7,86.2L297.9,85L297.8,84L298,83L297.6,82.3L297.6,80.9L297,80.2L296.5,78.7L296.2,77L295.6,76L294.9,76.6L293.8,77.5L293.1,77.4L292.4,77.1L292.6,75.5L292.2,74.3L291.2,72.8L291.3,72.4L290.6,72.2L289.7,71.1L289.3,70.5L289.1,69.8L288.8,69.2L288.3,68.4L287.3,68.4L287.4,68.9L287.2,69.6L286.7,69.4L286.6,69.6L286.2,69.5L285.8,69.3L285.7,69.8L285,69.8L283.7,70.1L283.9,71L283.4,71.8L281.9,72.7L280.9,74.2L280.1,75L279.1,75.9L279.2,76.5L278.7,76.8L277.7,77.2L277.2,77.3L277,78.3L277.3,80L277.5,81L277.1,82.3L277.2,84.4L276.7,84.5L276.2,85.5L276.6,85.9L275.6,86.3L275.3,87.1L274.8,87.5L273.7,86.3L273.1,84.5L272.6,83.2L272.2,82.6L271.5,81.4L271.1,79.8L270.9,79L269.8,77.2L269.1,74.7L268.6,73L268.4,71.5L268.1,70.3L266.6,71L265.8,70.9L264.2,69.3L264.7,68.8L264.3,68.3L262.9,67.2L262.1,66.9L261.7,66L260.7,65L258.8,65.2L257,65.3L255.5,65.4L253.5,65L252.3,64.8L251,64.6L250.4,63L249.9,62.8L249.1,63L248,63.6L246.7,63.2L245.5,62.2L244.4,61.8L243.6,60.6L242.6,58.9L242.1,59.1L241.4,58.7L241,59.2L240.4,59.1L240.7,59.7L240.6,60L241,60.9L241.6,62.1L242.1,62.4L242.3,62.8L243.1,63.4L243.2,63.9L243.2,64.3L243.3,64.8L243.7,65.1L243.8,65.5L244,65.9L243.9,64.9L244.1,64.2L244.4,64.1L244.8,64.5L244.8,65.3L244.7,66L244.9,66.5L245.1,66.5L245.2,66.8L246,66.6L246.9,66.6L247.6,66.7L248.2,65.8L248.9,65L249.6,64.2L249.8,63.7L250,63.8L249.9,64.4L249.8,64.6L250,65.6L250.6,66.5L251.3,67L252.1,67.2L252.7,67.4L253.3,68.1L253.6,68.6L254,68.7L254,69L253.7,69.8L253.6,70.2L253.2,70.6L252.8,71.5L252.3,71.4L252.1,71.7L252,72.3L252.2,73.2L252.1,73.4L251.6,73.4L251,73.8L250.9,74.5L250.7,74.7L250,74.7L249.6,75.1L249.6,75.6L249.1,75.9L248.5,75.8L247.8,76.3L247.3,76.3L246.5,76.7L246.3,77.2L246.3,77.7L245.3,78.2L243.5,78.8L242.6,79.7L242.1,79.8L241.8,79.7L241.1,80.3L240.5,80.5L239.5,80.6L239.3,80.7L239,81L238.7,81.1L238.6,81.4L238,81.4L237.7,81.6L236.9,81.5L236.6,80.8L236.6,80L236.4,79.7L236.2,78.7L235.8,78.2L236.1,78.1L235.9,77.5L236,77.3L236,76.7L235.8,76.2L235.5,75.8L235.3,75.3L234.8,74.8L234.1,73.7L233.8,72.7L233,71.8L232.5,71.6L231.7,70.3L231.5,69.4L231.5,68.7L230.8,67.2L230.3,66.7L229.7,66.5L229.3,65.7L229.3,65.4L229,64.8L228.7,64.5L228.2,63.5L227.5,62.5L226.9,61.6L226.3,61.6L226.5,60.9L226.5,60.4L226.6,59.9L226.5,59.7L226.3,60.2L226.1,61.2L225.9,61.9L225.6,62.1L225.2,61.7L224.7,61.1L223.9,59.3L223.8,59.4L224.3,60.7L225,62L225.9,64.1L226.4,64.8L226.7,65.5L227.8,66.9L227.6,67.2L227.7,68L229,69.2L229.2,69.4L229.6,70.7L229.4,70.9L229.6,72.3L230,73.8L230.5,74.1L231.1,74.6L231.8,76.1L232.1,77.3L232.8,77.9L234.3,79.1L234.9,79.8L235.6,80.6L235.9,81L236.5,81.4L236.8,81.8L236.7,82.4L236.1,82.7L236.6,83L237,83.3L237.2,83.8L237.7,84.3L238.3,84.3L239.3,84L240.5,83.8L241.5,83.4L242,83.4L242.4,83.1L243,83.1L243.4,83.1L243.9,82.9L244.4,82.7L245,82.3L245.4,82.3L245.4,82.6L245.3,83.4L245.4,84.1L245.1,84.5L244.9,85.9L244.4,87.4L243.7,89L242.8,90.9L241.9,92.3L240.6,94.1L239.5,95.1L237.9,96.4L236.8,97.4L235.6,98.9L235.3,99.6L235.1,99.9L234.3,100.4L234,101L233.6,101.1L233.5,102L233.1,102.5L232.9,103.3L232.4,103.8L231.9,105.4L231.9,106.1L232.6,106.6L232.7,106.9L232.4,107.7L232.4,108.1L232.3,108.7L232.7,109.5L233.1,110.7L233.5,111L233.7,111.6L233.6,112.9L233.7,114L233.7,116L233.9,116.7L233.5,117.6L233,118.5L232.3,119.3L231.3,119.8L230,120.4L228.7,121.8L228.3,122L227.5,122.9L227,123.2L226.9,124.2L227.4,125.1L227.6,125.9L227.6,126.3L227.8,126.2L227.7,127.5L227.5,128.1L227.7,128.3L227.5,128.8L227,129.3L226.1,129.7L224.8,130.4L224.3,130.9L224.4,131.5L224.6,131.5L224.5,132.2L224.2,133.2L224,134.2L223.7,134.8L222.9,135.5L222.7,135.7L222.2,136.3L221.9,137L221.3,137.9L220,139.3L219.2,140L218.4,140.6L217.3,141.1L216.7,141.2L216.6,141.6L215.9,141.4L215.4,141.6L214.3,141.4L213.6,141.5L213.2,141.4L212.1,142L211.2,142.2L210.5,142.7L210.1,142.7L209.6,142.2L209.3,142.2L208.8,141.6L208.8,141.8L208.7,141.5L208.7,140.7L208.4,139.8L208.7,139.6L208.7,138.6L208,137.4L207.5,136.3L207.5,136.3L206.8,134.6L206,133.6L205.6,132.7L205.4,131.4L205.1,130.5L204.8,128.5L204.8,126.9L204.6,126.2L204.2,125.7L203.6,124.6L203.1,123.1L202.8,122.3L202,121L201.9,120L201.8,119.2L202,118.1L202.3,116.9L202.4,116.3L202.8,115.2L203,114.7L203.7,113.8L204,113.2L204.1,112.3L204.1,111.6L203.7,111.1L203.5,110.3L203.2,109.5L203.2,109.3L203.6,108.8L203.3,107.5L203,106.7L202.5,105.8L202.6,105.6L202.4,105.2L202.1,104.2L201.2,102.9L200.1,101.6L199.3,100.5L198.7,99.2L198.7,98.8L198.9,98.3L199.2,97.4L199.4,96.5L199.2,96.3L199.6,94.8L199.8,93.8L199.3,93L198.8,92.7L198.6,92.2L198.3,92L198.3,91.6L197.2,92.1L196.8,92L196.3,92.3L195.4,92.3L194.9,91.5L194.5,90.5L193.7,89.7L192.9,89.7L191.9,89.7L191,89.9L190.1,90.1L188.3,90.9L187.7,91.3L186.7,91.7L185.7,91.3L185.2,91.4L184.5,91.1L183.7,91.1L182.4,91.3L181.7,91.7L180.6,92.2L180.3,92.1L180,92.2L178.9,91.5L177.9,90.6L177,89.9L176.2,89L175.9,88.9L175.1,88.4L174.6,87.7L174.4,87.3L174.3,86.3L173.8,85.6L173.4,85L173.1,84.9L172.8,84.6L172.7,84.1L172.6,83.8L172.2,83.6L171.7,83L171.2,82.9L171,82.6L171,82.4L170.6,82.1L170.6,81.8L170.4,80.8L170.6,80.3L170.1,79.3L169.6,78.8L170.1,78.6L170.7,77.7L171,77L170.9,76.3L171.2,75.7L171.4,74.4L171.3,73.2L171.2,72.5L171.4,71.9L171.1,71.3L170.6,70.7L170.6,70.2L170.7,69.6L171.1,69.2L171.5,68.5L171.5,68.1L171.9,67.2L172.5,66.4L172.9,66.2L173.2,65.4L173.3,64.7L173.7,63.9L174.5,63.4L175.2,62.1L175.8,61.6L176.8,61.5L177.7,60.6L178.2,60.2L179.2,59.2L179,57.5L179.5,56.4L179.6,55.7L180.4,54.9L181.4,54.3L182.3,53.7L183,52.4L183.4,51.6L184.2,51.6L184.8,52.2L185.8,52.1L186.8,52.4L187.3,52.4L188.3,51.7L189.4,51.5L190.1,50.9L191.1,50.5L192.9,50.3L194.6,50.2L195.1,50.4L196.1,49.9L197.2,49.9L197.7,50.2L198.4,50.1L199.5,49.6L200.2,49.7L200.2,50.4L201.1,49.9L201.1,50.1L200.6,50.8L200.6,51.4L201,51.7L200.8,52.8L200.2,53.5L200.4,54.2L200.9,54.2L201.2,54.8L201.6,55L202.8,55.5L203.3,55.3L204.1,55.6L205.5,56.1L206,57.3L207,57.5L208.5,58.1L209.7,58.7L210.2,58.4L210.7,57.8L210.4,56.8L210.7,56.2L211.4,55.6L212.2,55.4L213.6,55.7L214,56.2L214.4,56.2L214.7,56.5L215.8,56.6L216.1,57L217.5,57L218.5,57.4L219.6,57.7L220.1,57.9L220.9,57.5L221.3,57.2L222.2,57.1L223,57.2L223.3,57.9L223.5,57.4L224.4,57.7L225.2,57.8L225.7,57.5L226,57.1L225.9,57L226.2,56.4L226.3,55.4L226.4,55.1L226.5,55.1L226.8,54L227.2,53.1L227.2,53.1L227.1,52.1L227.3,51.5L226.8,51L227.2,50.5L226.6,50.6L225.7,50.3L225,51L223.4,51.2L222.6,50.5L221.4,50.4L221.2,51L220.5,51.1L219.5,50.4L218.3,50.5L217.6,49.2L216.9,48.5L217.3,47.5L216.6,46.8L217.7,45.6L219.3,45.6L219.6,44.6L221.6,44.8L222.7,43.9L223.9,43.6L225.6,43.5L227.4,44.4L228.9,44.9L230.1,44.7L231,44.9L232.1,44.2L232.2,43.6L231.8,42.8L231.2,42.3L230.6,42.2L230.2,41.8L228.8,40.7L227.6,40.2L226.7,39.5L227.4,39.3L228.1,38.2L227.5,37.7L228.9,37.2L228.8,36.9L227.9,37.1L227.2,37.2L226.5,37.6L225.6,37.7L224.8,38.2L225,38.9L225.5,39.3L226.5,39.2L226.3,39.6L225.3,39.9L224,40.6L223.4,40.3L223.6,39.7L222.4,39.4L222.6,39.1L223.5,38.7L223.2,38.4L221.6,38.1L221.5,37.6L220.6,37.8L220.3,38.5L219.6,39.4L219.6,39.7L219.2,40L218.9,39.9L218.7,41.4L218.2,41.9L217.9,42.9L218.3,43.6L218.4,44.1L219.4,44.5L219.2,44.8L218,44.9L217.6,45.3L216.8,46L216.4,45.4L216.4,45.1L215.8,45.1L215.2,44.9L214,45.3L214.8,46L214.2,46.2L213.7,46.2L213.1,45.5L212.9,45.8L213.2,46.6L213.7,47.2L213.4,47.5L214,48.1L214.5,48.4L214.5,49.2L213.6,48.8L213.9,49.5L213.2,49.6L213.7,50.8L213,50.8L212.1,50.2L211.7,49.2L211.5,48.3L211.1,47.7L210.5,47L210.4,46.6L210.2,46.6L210.2,46.3L209.6,45.8L209.5,45.2L209.6,44.4L209.7,44L209.5,43.8L209.3,43.7L209,43.2L208.6,43L207.6,42.5L207,42.1L206.1,41.7L205.2,40.7L205.4,40.6L204.9,40.1L204.9,39.7L204.3,39.5L204,40L203.7,39.6L203.7,39.2L203.7,39.1L203.9,39L203.1,38.8L202.3,39.3L202.4,39.9L202.3,40.3L202.6,40.9L203.6,41.6L204.1,42.6L205.2,43.7L206,43.6L206.3,43.9L206,44.2L206.9,44.6L207.7,45L208.6,45.7L208.7,45.9L208.5,46.4L207.9,45.8L207,45.6L206.6,46.4L207.4,46.9L207.3,47.6L206.8,47.6L206.3,48.7L205.9,48.8L205.9,48.5L206.1,47.8L206.3,47.5L205.9,46.7L205.5,46.1L205.1,45.9L204.8,45.4L204.1,45.1L203.7,44.6L202.9,44.6L202.1,44L201.2,43.1L200.5,42.4L200.2,41.1L199.7,41L198.9,40.6L198.4,40.8L197.8,41.3L197.4,41.4L196.5,42.2L194.5,41.8L193,42.2L192.9,43L192.9,43.7L191.9,44.6L190.6,44.9L190.5,45.3L189.9,46L189.4,47L189.8,47.8L189.2,48.4L188.9,49.2L188.1,49.4L187.4,50.4L186.1,50.5L185.1,50.4L184.4,50.9L184,51.4L183.5,51.3L183.1,50.8L182.8,50.1L181.9,49.9L181.5,50.2L180.9,50L180.4,50.2L180.6,49.2L180.5,48.4L180.1,48.3L179.9,47.8L180,46.9L180.5,46.5L180.6,46L180.8,45.2L180.8,44.6L180.7,44.2L180.7,43.7L180.8,42.8L180.4,42.3L181.9,41.4L183.1,41.6L184.5,41.6L185.5,41.8L186.4,41.7L188,41.8L188.5,41L188.9,38.5L187.9,37.2L187.2,36.5L185.7,36L185.7,35.1L187,34.9L188.6,35.2L188.4,33.8L189.3,34.3L191.6,33.3L191.9,32.3L192.8,32.1L193.5,31.8L194.1,31.5L194.9,29.7L196.3,29.2L197.1,29.2L197.2,28.9L198,28.9L198.2,29.1L198.9,28.5L198.6,28.1L198.6,27.4L198.2,26.7L198.2,25.5L198.4,25.2L198.6,24.8L199.5,24.7L199.8,24.4L200.5,24.1L200.5,24.7L200.2,25.1L200.3,25.4L200.9,25.6L200.6,26L200.3,25.9L199.7,26.8L199.9,27.4L199.9,27.8L200.9,28.1L200.9,28.6L201.9,28.3L202.4,28L203.5,28.5L203.9,28.9L204.6,28.5L206,27.9L207.2,27.5L208.1,27.7L208.2,28L209.1,28L209.3,27.5L210.6,27.1L210.4,26.1L210.3,25.2L210.7,24.4L211.6,24L212.4,24.9L213.1,24.9L213.2,24L213.3,23.3L213,23.4L212.3,23L212.2,22.3L213.3,22L214.5,21.8L215.5,22L216.4,22L217.4,21.3L216.4,20.8L214.7,20.9L213.2,21.3L211.7,21.6L211.1,20.9L210.2,20.5L210.4,19.4L209.9,18.4L210.2,17.7L211,17L212.9,15.7L213.4,15.5L213.3,15L212.1,14.5L210.6,14.8L209.8,15.6L210,16.3L208.6,17.2L207,18.2L206.4,19.8L207.1,20.6L208,21.3L207.2,22.6L206.3,22.9L206,24.9L205.5,26L204.4,25.9L203.9,26.9L202.8,26.9L202.5,25.8L201.7,24.4L200.9,22.7L200.3,22L198.5,23.4L197.3,23.7L196,23L195.7,21.8L195.5,19.1L196.4,18.3L198.7,17.4L200.5,16.2L202,14.6L204.1,12.5L205.5,11.7L207.7,10.3L209.5,9.8L210.9,9.9L212.1,9L213.6,9L215,8.8L217.7,9.6L216.7,9.9L217.7,10.6L218.5,10.2L220,10.9L222.4,11.1L225.8,12.4L226.6,12.9L226.8,13.6L226,14.2L224.6,14.5L220.6,13.7L220,13.8L221.5,14.6L221.9,16.3L223.1,16.6L223.8,16.9L223.9,16.4L223.2,15.9L223.7,15.5L226,16.2L226.7,15.9L225.9,15.1L227.7,14L228.5,14L229.4,14.4L229.7,13.7L228.9,13L229.1,12.3L228.4,11.7L230.8,12L231.5,12.6L230.4,12.8L230.6,13.4L231.3,13.8L232.6,13.5L232.6,12.8L234.3,12.3L237,11.3L237.6,11.4L237,12.1L238.1,12.2L238.6,11.8L240.1,11.8L241.2,11.3L242.4,12L243.1,11.2L242,10.6L242.3,10.3L244.9,10.6L246.2,10.9L249.8,12.2L250.1,11.6L249,11L248.9,10.8L247.9,10.7L247.9,10.2L247.1,9.3L247,9L248.1,8L248.2,7.1L248.7,6.9L251,7.1L251.4,7.7L251.1,8.6L251.7,8.9L252.3,9.7L252.8,11.2L254,11.8L254,12.6L253,14.1L254,14.3L254.2,13.9L255,13.6L255,13.1L255.5,12.5L254.8,11.9L254.8,11.2L253.9,11.1L253.4,10.5L253.6,9.4L252.1,8.5L253.2,7.8L252.6,7.1L253,7.1L253.8,7.6L253.9,8.7L254.9,8.9L254.2,8.1L255.3,7.7L257,7.6L258.8,8.2L257.6,7.3L256.9,6.2L258.2,6L260.2,6.1L261.9,5.9L260.9,5.4L261.4,4.7L262.3,4.7L263.5,4.2L265.5,4.1L265.5,3.8L267.5,3.7L268.4,3.9L269.7,3.4L271.2,3.4L271,3L271.4,2.6L272.9,2.2L274.5,2.5L273.7,2.7L275.6,2.9L276.2,3.4L276.7,3.1L279,3.1L281.2,3.6L282.2,4L282.4,4.5L281.8,4.8L280.2,5.4L279.8,5.7L280.9,5.8L282.3,6.1L282.9,5.9L283.9,6.6L284,6.3L285.2,6.1L287.9,6.3L288.5,6.8L292,6.9L291.4,6.1L293.3,6.3L294.5,6.3L296.3,6.9L297.3,7.5L297.2,8L299,8.8L300.7,9.3L300.5,8.1L302.3,8.6L303.4,8.3L305.3,8.7L305.6,8.4L307.1,8.5L305.6,7.5L306.2,7.1L314.3,7.7L315.6,8.4L318.7,9.2L321.8,9L323.6,9.2L324.8,9.6L325.6,10.4L326.9,10.7L327.8,10.5L329.3,10.5L331.1,10.7L332.5,10.5L335.1,11.5L335.7,11.2L334.3,10.5L334.1,10L337.1,10.3L338.8,10.2L341.8,10.7L343.6,11.2L343.6,11.2L346.6,12.1L350.2,13.2L350.9,13.8L351.8,14.1L350.7,13.3L353.2,13.5L356,14.5L356.1,14.6ZM110.9,11.1L110.1,11.4L109.2,11.1L108.4,11.2L107.6,10.7L108.6,10.4L109.6,9.9L110.2,10.3L110.6,10.4L110.7,10.7ZM340.2,8.5L341.1,9.2L340.3,9.3L339.7,8.9ZM340.2,8.5L340.2,8.4L340.9,8.4L342.5,8.7L342.6,8.9L342.1,9.1L341.1,9.2ZM115.5,10.6L114.7,11.8L116.4,10.9L117,11.6L116.2,12.4L116.5,13.2L117.9,12.4L119.2,11.4L120,10.2L121.1,10.3L122.3,10.5L123.1,11L122.8,11.5L121.8,12.1L122,12.7L121.5,13.3L119.4,14L118.1,14.2L117.4,13.9L116.8,14.4L115.3,15.4L114.8,15.9L113.3,16.6L111.9,16.7L110.9,17.2L110.4,17.9L109.3,18.1L107.6,19L105.8,20.3L104.9,21.3L104,22.6L105.2,22.8L105,23.9L104.9,24.8L106.3,24.6L107.8,25.1L108.5,25.6L108.8,26.1L109.8,26.5L110.6,27L112.1,27L113.1,27.2L112.4,28.2L112.1,29.4L112.2,30.8L113.1,32L114,31.6L115.1,30.3L115.5,28.4L115.1,27.7L116.9,27.2L118.3,26.3L119.2,25.5L119.5,24.7L119.4,23.7L118.7,22.8L120.4,21.6L120.6,20.5L121.3,18.7L122,18.4L123.4,18.7L124.3,18.8L125.2,18.5L125.8,18.9L126.6,19.6L126.6,20.1L128.2,20.1L127.7,21.1L127.3,22.6L128,22.8L128.4,23.5L130,22.8L131.5,21.5L132.3,21L132.6,22L133.1,23.5L133.6,25L132.9,25.7L133.9,26.4L134.5,27.1L135.9,27.4L136.3,27.8L136.4,28.8L137,29L137.3,29.5L136.9,30.8L136,31.3L135.2,31.7L133.5,32.2L131.9,33.2L130.2,33.4L128.2,33.1L126.8,33.1L125.7,33.2L124.6,34.1L123.1,34.7L121.1,36.3L119.6,37.5L120.5,37.3L122.7,35.6L125.1,34.6L126.6,34.4L127.3,35.1L126.1,35.9L125.9,37.3L125.9,38.2L127,38.8L128.7,38.7L130.2,37.2L130,38.2L130.5,38.6L129,39.4L126.6,40.2L125.4,40.7L124,41.6L123.3,41.5L123.6,40.5L125.6,39.4L124,39.4L122.8,39.6L122.9,40L121.6,40.6L120.5,41.1L119.3,41.4L118.4,42.3L118.3,42.5L118,43.2L118.2,43.8L118.6,43.9L118.6,43.4L118.8,43.7L118.6,44.1L117.9,44.3L117.4,44.2L116.6,44.5L116.1,44.5L115.5,44.6L114.6,45L116.1,44.7L116.4,45L114.8,45.3L114.2,45.4L114.2,45.2L113.8,45.6L114.1,45.6L113.6,46.5L112.6,47.5L112.6,47.2L112.4,47.1L112.1,46.8L112.2,47.5L112.3,47.7L112.2,48.2L111.8,48.7L110.9,49.7L110.8,49.7L111.4,48.8L111,48.3L111.2,47.3L110.8,47.8L110.8,48.6L110.2,48.4L110.8,48.8L110.5,50.1L110.7,50.2L110.7,50.6L110.5,51.9L109.6,52.8L108.4,53.2L107.6,54L107,54.1L106.3,54.5L106.1,55L104.7,55.8L104,56.4L103.3,57.2L102.9,58.1L102.9,59L103,60.1L103.3,61L103.2,61.6L103.4,63.1L103.1,64L103,64.5L102.6,65.3L102.2,65.4L101.7,65.3L101.7,64.7L101.3,64.4L101,63.3L100.7,62.3L100.6,61.8L101,60.9L100.9,60.2L100.3,59.2L99.9,59L98.7,59.5L98.6,59.5L98.2,58.9L97.6,58.6L96.4,58.7L95.4,58.6L94.6,58.7L94.1,58.8L94.2,59.2L94.1,59.7L94.2,60L94,60.2L93.7,60L93.2,60.2L92.4,60.2L91.8,59.5L90.8,59.6L90.1,59.3L89.4,59.4L88.5,59.7L87.3,60.7L86.1,61.3L85.3,61.9L84.9,62.5L84.7,63.4L84.6,64L84.7,64.4L84.7,64.4L84.7,64.4L84,65.6L83.6,66.5L83.2,68.2L83,68.8L83,69.6L83.2,70.2L83.3,71.2L83.8,72.1L84,72.9L84.3,73.5L85.4,73.9L85.8,74.4L86.8,74L87.6,73.9L88.5,73.7L89.2,73.5L90,72.9L90.4,72.2L90.6,71.1L90.9,70.7L91.7,70.4L92.9,70.1L93.8,70.1L94.5,70L94.7,70.3L94.6,70.9L93.9,71.7L93.5,72.5L93.7,72.7L93.4,73.2L93,74.3L92.8,73.9L92.5,73.9L92.5,74.1L92.7,74.1L92.6,74.5L92.4,75L92.4,75.2L92.3,75.7L92.3,75.8L92.1,76.5L91.8,76.8L91.6,76.9L91.4,77.3L91.7,77.5L91.8,77.4L92.1,77.5L92.2,77.6L92.5,77.3L92.8,77.3L92.9,77.4L93.1,77.4L93.6,77.5L94.1,77.4L94.5,77.3L94.6,77.2L94.9,77.2L95.2,77.3L95.5,77.3L95.7,77.2L96.2,77.4L96.4,77.4L96.7,77.6L97,77.9L97.3,78.1L97.6,78.5L97.5,78.6L97.4,78.9L97.5,79.3L97.2,79.8L97,80.3L96.9,80.9L96.9,81.2L96.9,81.8L96.7,81.9L96.5,82.5L96.6,82.8L96.3,83.1L96.4,83.5L96.5,83.7L96.7,84.4L97.1,84.9L97.6,85.5L98,85.9L97.9,86.2L98.4,86.2L98.5,86.1L98.8,86.5L99.3,86.4L99.8,86L100.5,85.8L100.9,85.4L101.5,85.5L101.5,85.6L102.1,85.6L102.5,85.9L102.9,86.3L103.3,86.6L103.8,86.7L104.7,85.8L105.2,85.6L105.2,85.2L105.5,84.1L106.2,83.5L106.9,83.5L107,83.2L107.9,83.3L108.8,82.7L109.2,82.4L109.8,81.8L110.2,81.8L110.5,82.2L110.2,82.6L110.2,82.9L109.5,83.1L109.8,83.7L109.8,84.3L109.2,85.1L109.6,86.1L110.1,86L110.4,85.1L110,84.6L110.1,83.7L111.5,83.1L111.4,82.5L111.8,82.1L112.1,83L112.9,83L113.6,83.8L113.6,84.2L114.6,84.2L115.7,84.1L116.3,84.6L117.2,84.8L117.8,84.4L117.9,84.1L119.2,84L120.6,84L119.6,84.4L119.9,85L120.8,85.1L121.6,85.7L121.7,86.7L122.3,86.7L122.7,87L123.4,87.5L124.1,88.3L124.1,89L124.5,89L125.1,89.6L125.5,90.1L126.8,90.3L127,90.1L127.9,90L129,90.4L129.4,90.5L130.2,90.8L131.4,91.9L131.5,92.4L131.9,92.4L132.2,93.1L132.8,95.3L133.4,95.5L133.4,96.4L132.6,97.5L132.9,97.9L134.9,98.1L134.9,99.4L135.8,98.5L137.1,99L139,99.8L139.5,100.5L139.4,101.2L140.7,100.8L142.8,101.5L144.5,101.5L146.1,102.5L147.6,104L148.4,104.3L149.4,104.4L149.8,104.8L150.2,106.4L150.4,107.2L150,109.3L149.5,110.2L148,112L147.4,113.4L146.6,114.5L146.3,114.6L146.1,115.5L146.3,117.9L146.1,119.9L146.1,120.8L145.8,121.3L145.7,123L144.7,124.7L144.7,126L143.8,126.6L143.7,127.3L142.5,127.3L140.8,127.8L140.1,128.4L139,128.8L137.8,129.8L137.1,131.1L137,132.1L137.3,132.8L137.3,134.1L137.1,134.7L136.5,135.4L135.6,137.7L134.9,138.7L134.3,139.4L134,140.6L133.4,141.3L133.1,142.1L132.1,142.9L131.3,142.6L130.7,142.7L129.6,142.2L128.9,142.2L128.2,141.5L128.2,142.2L129.8,143.3L129.8,144.2L130.6,144.7L130.7,145.4L130,147L128.6,147.7L126.6,148L125.5,147.9L125.9,148.6L125.9,149.6L126.3,150.2L125.8,150.7L124.8,150.9L123.7,150.4L123.4,150.7L123.9,152L124.7,152.4L125.1,152L125.6,152.6L124.8,153L124.2,153.8L124.4,155.1L124.4,155.8L123.4,155.8L122.9,156.4L122.9,157.4L124.2,158.3L125.2,158.6L125.2,159.7L124.3,160.4L124.2,161.9L123.5,162.4L123.3,162.9L124.1,164.2L125,164.9L124.6,164.9L123.7,164.9L123.4,165.2L122.7,165.6L123,166.8L122.6,166.8L121.4,166.4L119.9,165.5L118.4,164.8L117.8,164L117.8,163.3L117,162.5L116,160.4L116,159.2L116.7,158.2L115,157.8L115.6,156.7L115.2,154.6L116.5,155.1L116.1,152.4L115.3,152.1L115.5,153.7L114.8,153.5L114.6,151.7L114.2,149.3L114.4,148.4L113.8,147.2L113.3,145.7L113.7,145.7L113.8,143.6L114,141.5L114.1,139.6L113.4,137.6L113.5,136.6L113,135L113.4,133.4L113.1,130.9L113,128.2L112.9,125.3L112.6,123.2L112.1,121.4L110.9,120.6L110.8,120.1L108.4,118.8L106.3,117.4L105.4,116.6L104.8,115.5L105,115.2L103.9,113.5L102.6,111.1L101.4,108.5L100.9,108L100.5,107L99.6,106.2L98.8,105.6L99.1,105.1L98.5,103.8L98.9,102.9L99.7,102.1L100.3,101.2L100,100.6L99.6,101.2L98.9,100.6L99.2,100.3L99,99.1L99.4,98.9L99.6,98.1L100,97.3L99.9,96.8L100.5,96.5L101.3,96L101.1,95.6L101.5,95.5L101.5,94.8L101.8,94.4L102.3,94.3L102.8,93.5L103.3,92.8L102.9,92.5L103.1,91.8L102.9,90.6L103.1,90.2L103,89.2L102.6,88.5L102.2,88.1L102,87.4L102.3,87.1L102.1,87L101.9,86.6L101.3,86.2L100.9,86.3L100.6,86.7L100.1,87L99.9,87.1L99.8,87.4L100.3,88.1L99.9,88.2L99.8,88.4L99.3,88.5L99.1,87.7L99,87.9L98.6,87.9L98.4,87.3L97.9,87.2L97.7,87.1L97.2,87.1L97.1,87.4L97,87.2L96.4,86.9L96.2,86.6L96.4,86.4L96.4,86.1L96.1,85.8L95.7,85.6L95.3,85.4L95.2,85L95,84.8L95,85.2L94.8,85.5L94.5,85.1L94.2,85L94.1,84.7L94.1,84.3L94.3,83.9L94,83.7L94.3,83.5L93.9,83.1L93.4,82.6L93.2,82.1L92.8,81.7L92.3,81.2L92.5,81L92.6,81.1L92.7,81.1L92.6,80.7L92.2,80.5L92.1,80.8L91.5,80.8L91.1,80.7L90.6,80.4L90,80.4L89.8,80.1L89.2,79.9L88.5,79.8L88.1,79.6L87.5,79.1L86.5,77.7L85.9,77.2L85.1,76.9L84.5,77L83.5,77.5L83,77.6L82.2,77.3L81.4,77L80.5,76.4L79.7,76.3L78.6,75.7L77.7,75L77.5,74.7L76.9,74.6L75.9,74.2L75.5,73.6L74.5,72.9L74.1,72.1L73.9,71.4L74.3,71.3L74.3,71L74.6,70.6L74.7,70.2L74.4,69.6L74.4,69.1L74.2,68.4L73.6,67.1L72.7,66.1L72.4,65.3L71.6,64.8L71.5,64.5L71.8,63.7L71.4,63.4L70.9,62.7L70.9,61.8L70.3,61.7L69.9,61.1L69.6,60.4L69.7,60L69.4,59L69.3,58.1L69.5,57.6L68.9,57L68.5,57.1L68,56.7L67.7,57.3L67.7,57.9L67.5,58.9L67.7,59.4L68.2,60.3L68.3,60.6L68.4,60.7L68.4,61.1L68.6,61.1L68.6,61.9L68.8,62.3L68.9,62.7L69.4,63.4L69.4,64.6L69.6,65.2L69.8,65.8L69.7,66.4L70.2,66.5L70.5,67.1L70.7,67.7L70.6,67.9L70.1,68.4L69.9,68.4L69.8,67.6L69.2,66.8L68.6,66.2L68.2,65.9L68.4,64.9L68.4,64.2L68,63.8L67.5,63.3L67.3,63.4L67.1,63.1L66.5,62.8L66.1,62L66.2,61.9L66.6,62L67.2,61.5L67.4,60.9L66.8,60L66.3,59.6L66.2,58.8L66.1,58L65.9,57L65.9,55.8L65.9,55.1L65.5,54.4L65.1,54.2L65.1,53.9L64.5,53.8L64.3,53.4L63.4,53.3L63.2,53.1L63.3,52.4L62.8,51.1L62.7,49.3L62.9,49L62.6,48.6L62.3,47.5L62.7,46.5L62.4,45.8L63.2,44.7L63.7,43.6L63.8,42.6L64.9,41.4L66.3,39.1L67.1,37.4L67.4,36.3L67.5,35.8L67.8,35.5L68.9,35.9L68.8,37.1L69.2,36.8L69.6,35.8L69.9,34.7L69.8,34.7L68.6,33.5L68.3,33L66.9,32.5L67,31.4L67.7,30.6L66.8,30.1L67.4,29.1L66.8,28.2L67.3,27.6L67.1,27.1L66.6,26.7L67.1,25.7L66.7,24.7L67.1,23.6L66.2,23.5L64.8,23.5L64,23.2L63.2,21.9L62.5,21.7L61.3,21.3L59.9,21.4L58.6,20.8L58,20.3L56.8,20.6L56.2,21.4L55.6,21.5L54.3,21.7L53.2,22.1L51.9,22.4L52.4,21.7L53.9,20.5L55.3,20.2L55.3,19.9L53.5,20.5L52.1,21.3L50,22.1L50.2,22.7L48.5,23.6L47,24.1L45.8,24.4L45.1,25L43,25.6L42.2,26.1L40.7,26.7L40.1,26.6L38.9,26.9L37.6,27.3L36.4,27.7L34.5,28.1L34.5,27.9L36.1,27.3L37.3,26.9L39,26.3L40.2,26.1L41.2,25.6L43.1,24.9L43.5,24.7L44.6,24.3L45.6,23.4L46.8,22.7L45.4,23L45.3,22.8L44.4,23.2L44.3,22.6L43.7,23.1L43.9,22.5L42.5,22.9L42,22.9L42.6,22.2L43.2,21.8L43,21.4L41.6,21.6L41.4,21.1L41.1,20.8L41.8,20.1L41.6,19.6L42.7,19L44.1,18.3L45,17.7L45.8,17.7L46.3,17.8L47.6,17.3L48.1,17.4L49.2,17L49.6,16.5L49.3,16.3L50.4,15.9L49.9,15.9L48.7,16.1L48.1,16.4L47.7,16.1L46.3,16.3L45.4,16L45.5,15.5L45.2,14.9L46.9,14.4L49.5,13.9L50.2,13.9L49.5,14.4L51.3,14.4L51.4,13.7L50.9,13.3L50.9,12.7L50.7,12.2L49.9,11.9L51.1,11.3L52.6,11.3L54.3,10.8L55.2,10.3L56.6,9.7L57.6,9.6L59.8,9.1L60.5,9.2L62.4,8.6L63.4,8.9L63.4,9.3L64,9.1L65.4,9.2L65,9.5L66.1,9.6L67.1,9.5L68.4,9.9L69.9,10L70.4,10.1L71.7,9.9L72.6,10.3L73.4,10.4L74.7,10.7L75.4,11.2L76.2,11.3L77.4,10.8L78.8,10.5L79.9,10.6L81.6,10.2L83.3,9.9L83.4,10.3L84.3,10.1L85,9.6L85.4,9.7L85.9,10.7L87.7,9.9L87,10.7L88.2,10.6L88.9,10.3L89.8,10.3L90.7,10.8L92.3,11.2L93.3,11.4L94.2,11.3L94.8,11.8L93.2,12.4L94.5,12.6L96.9,12.5L97.8,12.3L98.2,13L99.6,12.4L99.1,11.9L99.9,11.6L101,11.5L101.8,11.4L102.2,11.7L102.6,12.3L103.6,12.2L104.8,12.7L106.2,12.5L107.4,12.5L107.9,11.8L108.8,11.6L109.8,12L109,13.1L110.2,12.2L110.9,12.2L112.1,11.1L111.7,10.4L111,10L112,8.8L113.6,8L114.5,8.2L115,8.7L115.2,9.9L114.1,10.4ZM99.2,6.8L98.3,7.3L100.4,7L101.1,7.5L102.5,6.9L102.9,7.3L102.7,8.3L103.5,7.9L103.9,6.8L104.7,6.7L105.4,6.8L105.9,7.2L105.5,8.3L105.1,9L106.1,9.6L107.2,10.1L106.7,10.5L105.3,10.6L105.5,11.1L104.9,11.5L103.5,11.3L102.3,11L101.2,11.1L99.3,11.4L96.7,11.6L95.5,11.7L95.4,11.2L94.6,10.9L93.7,11L93.4,10.1L94.1,10L95.6,9.8L96.7,9.9L98,9.7L96.6,9.5L94.7,9.5L93.5,9.5L93.5,9.1L95.8,8.7L94.5,8.7L93.3,8.4L94.8,7.6L95.8,7.2L98.6,6.6ZM107.3,6.5L106,7.2L105.4,6.4L105.8,6.3L106.9,6.2ZM129.9,6.8L129.8,7.1L128.9,7.1L128.1,7L127.1,7.2L126.9,7.1L126.4,6.6L126.7,6.2L127.1,6.1L128.9,6.2ZM121.6,6.7L121.8,7.4L123.2,6.5L125.5,6.1L126.2,7.2L125.6,7.9L127.4,7.6L128.4,7.2L129.9,7.7L130.7,8.2L130.5,8.7L132.2,8.4L132.7,9.1L134.4,9.5L134.9,10L135.1,11L133.3,11.5L134.9,12.2L136.1,12.4L136.9,13.5L138.2,13.5L137.5,14.3L135.4,15.6L134.5,15.1L133.7,14.1L132.5,14.2L132.1,14.8L132.7,15.5L133.6,16L133.8,16.3L133.8,17.5L133.2,18.3L132.2,18L130.4,17.1L131.2,18L131.8,18.7L131.7,19.1L129.5,18.7L127.9,18L127.1,17.4L127.6,17.1L126.6,16.5L125.6,16L125.5,16.3L122.8,16.5L122.3,16.1L123.4,15.3L125,15.3L126.9,15.1L126.8,14.7L127.4,14.2L129.1,13.1L129.2,12.6L129.1,12.2L128.1,11.7L126.6,11.3L127.3,11L126.8,10.3L126.1,10.3L125.7,9.9L125.1,10.2L123.4,10.4L120.6,10.1L119,9.8L117.8,9.7L117.3,9.3L118.6,8.8L117.4,8.8L117.9,7.7L119.3,6.8L120.4,6.3L122.7,6.1ZM111.1,6L111.8,6.2L113.4,6.1L113.3,6.4L112.2,6.9L113,7.4L112.1,8.3L110.4,8.7L109.7,8.6L109.5,8.2L108.1,7.4L108.4,7.1L110,7.2L109.7,6.5ZM308.4,6.7L307.1,6.7L305.4,6.6L305.2,6.5L305.5,6.1L306.4,6L308,6.4ZM115.9,7.1L114.4,7.9L113.5,7.9L113.8,7L114.2,6.4L115,6L116,5.7L117.7,5.8L119,6L117.1,6.9ZM92.3,8.6L89.6,9.1L89.6,8.7L88.3,8.1L88.9,7.8L90.5,6.9L91.9,6.2L91.8,5.6L94.6,5.4L95.6,5.6L97.6,5.7L98,6L98.5,6.4L97.2,6.7L94.5,7.4L92.7,8.1ZM312,4.8L311.5,5.2L310.1,5.1L308.2,4.7L308,4.3L309.7,4.5ZM117.5,4.9L116.7,5.3L115.6,5.2L114.9,4.9L115.7,4.5L117.1,4.2L117.5,4.5ZM306.9,4.3L307.1,5L304.2,5L303.1,5.2L300.8,4.6L300.5,3.9L301.3,3.7L303.5,3.7ZM115.2,3.1L115.4,3.6L114.9,4.1L113.9,4.8L112.5,4.9L111.8,4.8L112.3,4.2L110.9,4.3L111.6,3.5L112.5,3.5L114,3.2L115,3.2ZM107.1,3.6L107,4L107.9,3.8L108.7,3.9L108.3,4.4L107.4,4.8L104.5,5L102.1,5.4L100.8,5.5L101.1,5.1L103.2,4.7L99.5,4.8L98.5,4.6L100.7,3.6L101.7,3.4L103.6,3.7L104.4,4.3L105.7,4.4L105.5,3.4L106.6,3L107.3,3.2ZM239.5,9.3L239,9.4L236.3,9.3L235.9,8.8L234.3,8.5L234,7.9L234.8,7.7L234.6,7.1L235.9,6.3L235.1,6.1L236.7,5.2L236.3,4.8L237.9,4.2L240.2,3.6L242.7,3.4L243.9,3L245.3,2.9L246.1,3.3L245.7,3.6L243.2,4.1L241,4.6L238.9,5.5L238.1,6.6L237.1,7.6L237.6,8.4ZM118.5,2.7L119.1,3.1L120.6,3.1L121,3.4L120.5,3.8L121.2,4L121.5,4.2L122.6,4.3L123.6,4.4L125.1,4.1L126.8,4L128,4.1L128.5,4.5L128.4,4.9L127.7,5.2L126.4,5.4L125.4,5.3L123,5.4L121.3,5.5L120.2,5.3L118.3,5L118.5,4.4L118.8,3.9L118.4,3.5L116.9,3.4L116.3,3.1L117,2.7ZM102.4,2.2L101.4,3L100.4,3.3L99.7,3.4L97.7,3.8L96.3,3.9L95.5,3.7L97.6,3L100,2.3L101.2,2.4ZM119.6,2.3L119.2,2.4L117.8,2.3L117.9,2L119.4,2L119.8,2.2ZM107.1,2.2L105.3,2.4L104.5,2.1L105.5,1.8L106.8,1.7L107.7,1.9ZM211.4,2L209.7,2.4L208.3,2.2L208.8,1.9L208.3,1.6L209.9,1.4L210.2,1.8ZM108.5,1.3L107.3,1.5L106.1,1.5L106.2,1.3L107.4,1.1L107.7,1.1ZM118.5,1.8L117.2,2L116.8,1.8L116.8,1.4L117.2,1L118.1,1.1L118.5,1.1L119.1,1.5ZM115.6,1.6L115.4,2L114.3,1.9L113.4,1.5L111.7,1.5L112.7,1.2L112.1,1L112.4,0.6L113.8,0.8L115.5,1.1ZM273,1.6L269,1.9L269.3,0.7L269.8,0.6L270.4,0.7L272.8,1.2ZM206.2,0.3L208.8,1L206.9,1.3L206.5,2L205.9,2.2L205.6,3L204.6,3.1L202.9,2.5L203.6,2.1L202.4,1.8L200.9,1L200.3,0.3L202.4,0L202.8,0.3L203.9,0.3L204.1,0L205.2,0ZM211.5,-0.4L213.1,-0.1L212,0.4L209.9,0.5L207.6,0.4L207.5,0.1L206.4,0.1L205.5,-0.3L207.8,-0.5L208.9,-0.3L209.6,-0.6ZM230.7,-0.5L229.7,-0.4L229.1,-0.3L229.1,-0.2L228.2,0L227.3,-0.2L227.7,-0.5L226,-0.5L227.4,-0.7L228.5,-0.7L228.8,-0.5L229.1,-0.7L229.7,-0.8L230.9,-0.6ZM268.5,1L267,1.1L264.6,0.9L263.1,0.5L261.9,-0.1L260.7,-0.3L262.1,-0.9L263.5,-1.1L265.4,-0.7L268,0.2ZM126.8,0.3L127.4,0.6L126.1,0.9L124,1.6L122.6,1.7L121.1,1.5L120.6,1.2L121,0.8L121.9,0.6L120.5,0.6L120,0.3L120,-0.1L121,-0.5L121.8,-0.8L122.6,-0.9L122.6,-1.1L124.3,-1.1L124.7,-0.6L125.8,-0.5L126.8,-0.3ZM143.6,-2.6L145.4,-2.6L146.9,-2.5L148,-2.3L147.7,-2L145.6,-1.7L143.7,-1.5L142.8,-1.3L144.4,-1.3L142.2,-0.8L140.8,-0.6L138.8,0.2L137.1,0.3L136.5,0.5L134.1,0.6L135.1,0.7L134.4,0.9L134.6,1.4L133.6,1.7L132.2,2L131.5,2.3L130.2,2.6L130.2,2.9L131.5,2.8L131.3,3.1L128.8,3.7L127,3.4L124.5,3.5L123.5,3.4L122,3.4L122.3,2.9L124,2.7L124.2,2L124.8,1.9L126.4,2.3L125.9,1.7L124.9,1.5L125.8,1.1L127.4,0.9L127.9,0.6L127.2,0.2L127.4,-0.2L129.4,-0.2L129.9,-0.1L131.4,-0.4L129.8,-0.5L127.2,-0.5L126.2,-0.8L126,-1.1L125.4,-1.4L125.6,-1.7L126.9,-1.8L127.8,-1.8L129.4,-2L130.9,-2.3L131.7,-2.2L132.2,-2L133.3,-2.4L134.5,-2.6L135.9,-2.7L138.1,-2.7L138.4,-2.6L140.6,-2.7L142.1,-2.7ZM173.5,-3L177.7,-2.3L176.2,-2L173.4,-2L169.5,-1.9L169.8,-1.8L172.4,-1.9L174.5,-1.6L176,-1.8L176.5,-1.5L175.5,-1L177.5,-1.3L181.1,-1.7L183.3,-1.5L183.6,-1.1L180.4,-0.5L179.9,-0.3L177.5,-0.2L179.2,-0.1L178.1,0.5L177.3,1.2L177,2.2L177.8,2.9L176.6,2.9L175.2,3.2L176.5,3.7L176.5,4.6L175.6,4.7L176.4,5.6L174.6,5.6L175.5,6.1L175.1,6.4L173.9,6.6L172.8,6.6L173.6,7.3L173.5,7.8L172,7.3L171.5,7.6L172.6,7.9L173.5,8.5L173.6,9.4L172.1,9.6L171.5,9.2L170.7,8.6L170.8,9.3L169.6,9.9L171.8,9.9L173,10L170.5,10.9L168,11.8L165.4,12.1L164.5,12.1L163.4,12.6L161.9,13.7L159.8,14.5L159.2,14.6L158,14.8L156.6,15.1L155.6,15.8L155.4,16.6L154.7,17.4L152.9,18.3L153,19.2L152.3,20.1L151.5,21.3L150.2,21.3L149.1,20.4L147.3,20.4L146.7,19.7L146.5,18.6L145.5,17.2L145.3,16.4L145.6,15.4L144.9,14.4L145.5,13.6L145.1,13.2L146.5,11.9L148,11.5L148.5,11L149,10.2L147.9,10.6L147.4,10.7L146.6,10.9L145.7,10.5L146,9.8L146.6,9.2L147.4,9.2L148.9,9.5L147.8,8.8L147.2,8.4L146.3,8.6L145.8,8.3L147.2,7.3L146.9,6.9L146.6,6.2L146.2,5.1L145.4,4.7L145.7,4.3L143.9,3.7L142.3,3.7L140.2,3.7L138.2,3.8L137.5,3.5L136.6,2.8L138.8,2.5L140.4,2.5L137.3,2.2L135.9,1.8L136.3,1.5L139.5,1L142.7,0.6L143.2,0.2L141.5,-0.1L142.4,-0.5L145.5,-1.1L146.7,-1.2L146.7,-1.5L148.7,-1.8L151,-1.9L153.3,-1.9L153.8,-1.6L156.1,-2.1L157.6,-1.8L158.6,-1.7L159.9,-1.5L158.5,-1.9L158.9,-2.3L161.7,-2.7L164.2,-2.7L165.3,-3L167.9,-3Z","stops":[[210.2,18.7],[207.4,22.2],[190.2,31.6],[192.3,35],[192.7,89.4],[208.8,141.5],[142.3,127.3],[105.5,84.4],[80.9,72.7],[65.4,53.8],[335.3,51.7],[321.1,49.3],[348.3,141.5]],"legs":[[[210.2,18.7],[209.4,19.6],[208.7,20.4],[208,21.3],[207.4,22.2]],[[207.4,22.2],[202.6,24.2],[198.2,26.4],[194.1,28.9],[190.2,31.6]],[[190.2,31.6],[190.8,32.5],[191.3,33.3],[191.8,34.1],[192.3,35]],[[192.3,35],[192.3,40.3],[192.3,45.7],[192.3,51.2],[192.3,56.6],[192.4,62.1],[192.4,67.6],[192.5,73],[192.5,78.5],[192.6,83.9],[192.7,89.4]],[[192.7,89.4],[194.2,94.6],[195.7,99.8],[197.2,105.1],[198.7,110.3],[200.2,115.5],[201.8,120.8],[203.5,126],[205.2,131.2],[207,136.4],[208.8,141.5]],[[208.8,141.5],[203.5,141.9],[198.2,142],[192.9,141.9],[187.6,141.5],[182.3,140.8],[177.1,139.8],[171.9,138.7],[166.8,137.2],[161.7,135.6],[156.7,133.8],[151.9,131.8],[147.1,129.6],[142.3,127.3]],[[142.3,127.3],[138.5,123.5],[134.7,119.8],[131.1,115.9],[127.6,112],[124.2,108.1],[120.8,104.2],[117.6,100.2],[114.5,96.2],[111.4,92.3],[108.4,88.3],[105.5,84.4]],[[105.5,84.4],[101.4,82.3],[97.4,80.2],[93.3,78.2],[89.2,76.3],[85.1,74.5],[80.9,72.7]],[[80.9,72.7],[77.9,68.7],[74.9,64.8],[71.8,61],[68.7,57.3],[65.4,53.8]],[[65.4,53.8],[62.2,50.7],[58.9,47.9],[55.3,45.2],[51.5,42.9],[47.3,40.8],[42.8,39.1],[37.9,37.7],[32.7,36.8],[27,36.2],[375.7,36.1],[369.8,36.3],[364.2,37],[359.1,38.1],[354.3,39.6],[349.9,41.4],[345.9,43.6],[342.1,46.1],[338.6,48.8],[335.3,51.7]],[[335.3,51.7],[331.7,51],[328.2,50.3],[324.7,49.7],[321.1,49.3]],[[321.1,49.3],[324.8,54.3],[328.1,59.4],[331.1,64.5],[333.9,69.7],[336.3,74.8],[338.5,79.9],[340.5,85.1],[342.2,90.2],[343.7,95.3],[345,100.5],[346.1,105.6],[347,110.7],[347.7,115.9],[348.1,121],[348.4,126.1],[348.6,131.3],[348.5,136.4],[348.3,141.5]]]};
+const TOUR_STOPS=[
+ {id:"kristinestad",city:"Kristinestad",land:"Finland",hi:"Hej!",hiSv:"Här börjar turnén",emo:"⛵",
+  fact:"Kristinestad har gamla trähus i glada färger och en av Finlands smalaste gator."},
+ {id:"stockholm",city:"Stockholm",land:"Sverige",hi:"Tjena!",hiSv:"hej på stockholmska",emo:"👑",song:15,
+  fact:"Stockholm är byggt på fjorton öar, så det finns broar nästan överallt."},
+ {id:"london",city:"London",land:"England",hi:"Hello!",hiSv:"hej på engelska",emo:"💂",song:31,
+  fact:"Big Ben är egentligen namnet på den stora klockan inne i tornet, inte på själva tornet."},
+ {id:"paris",city:"Versailles",land:"Frankrike",hi:"Bonjour !",hiSv:"god dag på franska",emo:"⛲",song:18,
+  fact:"Slottet i Versailles har en spegelsal med 357 speglar. Perfekt för att öva danssteg!"},
+ {id:"lagos",city:"Lagos",land:"Nigeria",hi:"Bawo ni!",hiSv:"hej på yoruba",emo:"🌴",song:1,
+  fact:"Lagos är en av de största städerna i hela Afrika, och musiken där kallas afrobeats."},
+ {id:"kapstaden",city:"Kapstaden",land:"Sydafrika",hi:"Molo!",hiSv:"hej på xhosa",emo:"⛰️",song:6,
+  fact:"Taffelberget är platt som ett bord. När ett moln ligger över det säger man att bordet är dukat."},
+ {id:"rio",city:"Rio de Janeiro",land:"Brasilien",hi:"Olá!",hiSv:"hej på portugisiska",emo:"🚡",
+  fact:"I Rio dansar tusentals människor samba i ett jättestort karnevalståg varje år."},
+ {id:"cartagena",city:"Cartagena",land:"Colombia",hi:"¡Hola!",hiSv:"hej på spanska",emo:"🏖️",song:35,
+  fact:"Shakira kommer från Barranquilla, en stad inte långt härifrån."},
+ {id:"mexiko",city:"Mexico City",land:"Mexiko",hi:"¡Hola!",hiSv:"hej på spanska",emo:"🎸",song:53,
+  fact:"Mexico City ligger över 2 000 meter över havet. Där blir man andfådd lite snabbare när man dansar!"},
+ {id:"losangeles",city:"Los Angeles",land:"USA",hi:"Hi!",hiSv:"hej på engelska",emo:"🌅",song:25,
+  fact:"Hollywood ligger i Los Angeles. Där spelas massor av filmer in."},
+ {id:"tokyo",city:"Tokyo",land:"Japan",hi:"Konnichiwa!",hiSv:"god dag på japanska",emo:"🗻",
+  fact:"Från Tokyo kan man en klar dag se berget Fuji, Japans högsta berg."},
+ {id:"seoul",city:"Seoul",land:"Sydkorea",hi:"Annyeong!",hiSv:"hej på koreanska",emo:"🌸",song:0,
+  fact:"K-popgrupper som BTS och BLACKPINK kommer från Sydkorea."},
+ {id:"sydney",city:"Sydney",land:"Australien",hi:"G'day!",hiSv:"hej på australiska",emo:"🎭",song:37,
+  fact:"Taket på operahuset i Sydney ser ut som segel på en båt. Här är turnéns stora final!"}
+];
+/* Poäng för varje etapp. Första etappen går fort, sedan blir de längre. Totalt cirka ett halvår. */
+const TOUR_LEGS=[200,350,500,650,800,950,1050,1150,1250,1350,1450,1600];
+const TOUR_EXTRA=[{id:"suitcase",at:0,emo:"🧳",name:"Resväskan"},{id:"sneakers",at:3,emo:"👟",name:"Danskorna"},{id:"mic",at:6,emo:"🎤",name:"Mikrofonen"},
+ {id:"disco",at:9,emo:"🪩",name:"Discokulan"},{id:"trophy",at:12,emo:"🏆",name:"Turnépokalen"}];
+/* Bilder från Seedream läggs i mappen img/. Tills de finns används emoji och en ritad buss. */
+const TOUR_ART={stickers:true,bus:true};
+const stickerImg=id=>`img/sticker-${id}.webp`;
+
+function tourCum(){const c=[0];TOUR_LEGS.forEach(l=>c.push(c[c.length-1]+l));return c}
+function tourState(pts=totalAll()){const cum=tourCum(),last=TOUR_STOPS.length-1;let i=0;while(i<last&&pts>=cum[i+1])i++;
+  const done=i>=last,frac=done?0:(pts-cum[i])/TOUR_LEGS[i],left=done?0:cum[i+1]-pts;return{i,frac,left,done,next:done?null:TOUR_STOPS[i+1]}}
+function tourRiders(i){return[...Array(i)].map((_,k)=>CHAR_IDS[k%CHAR_IDS.length]).slice(-4)}
+function tourSongName(s){return s==null||!SONGS[s]?"":`${SONGS[s][0]} med ${SONGS[s][1]}`}
+
+/* Bussen: ritad i SVG, hjulen snurrar och kroppen guppar. */
+/* Seedream-bussen (img/bus.webp, 560 × 329). Kompisarna syns i de runda fönstren. */
+const BUS_W=560,BUS_H=329,BUS_WIN=[[86,144],[172,144],[265,144],[358,144]];
+function busArtInner(riders=[]){const faces=riders.slice(0,4).map((id,k)=>{const[x,y]=BUS_WIN[k];return`<clipPath id="bwin${k}"><circle cx="${x}" cy="${y}" r="35"/></clipPath><circle cx="${x}" cy="${y}" r="35" fill="#E9FBF6"/><image href="${IMG(id)}" x="${x-40}" y="${y-36}" width="80" height="110" clip-path="url(#bwin${k})" preserveAspectRatio="xMidYMin slice"/>`}).join("");
+  return`<g class="busbody"><image href="img/bus.webp" width="${BUS_W}" height="${BUS_H}"/>${faces}</g>`}
+function busSVG(riders=[],moving=true){
+  if(TOUR_ART.bus)return`<svg class="bus busart${moving?" go":""}" viewBox="0 0 ${BUS_W} ${BUS_H}" aria-hidden="true">${busArtInner(riders)}</svg>`;
+  const win=[0,1,2].map(k=>{const id=riders[k],x=30+k*26;return id?`<clipPath id="bw${k}"><circle cx="${x}" cy="27" r="9"/></clipPath><circle cx="${x}" cy="27" r="10" fill="#fff"/><image href="${IMG(id)}" x="${x-11}" y="15" width="22" height="30" clip-path="url(#bw${k})" preserveAspectRatio="xMidYMin slice"/>`:`<circle cx="${x}" cy="27" r="10" fill="#FFF6FA" stroke="#FFD0E4" stroke-width="2"/>`}).join("");
+  const wheel=x=>`<g class="wheel"><circle cx="${x}" cy="52" r="9" fill="#5A2150"/><circle cx="${x}" cy="52" r="4.5" fill="#fff"/><path d="M${x} 47.5v9M${x-4.5} 52h9" stroke="#FF9CC7" stroke-width="1.6"/></g>`;
+  return`<svg class="bus${moving?" go":""}" viewBox="0 0 120 64" aria-hidden="true"><g class="busbody">
+   <circle cx="60" cy="4.5" r="4" fill="#E5DBFF" stroke="#B794F6" stroke-width="1.2"/><path d="M60 8.5v3" stroke="#B794F6" stroke-width="1.5"/>
+   <rect x="12" y="11" width="96" height="40" rx="14" fill="#FF7DB5"/><rect x="12" y="38" width="96" height="13" rx="6" fill="#FF5FA2"/>
+   ${win}<rect x="94" y="17" width="12" height="18" rx="5" fill="#fff" opacity=".9"/>
+   <circle cx="99" cy="40" r="1.4" fill="#5A2150"/><circle cx="104" cy="40" r="1.4" fill="#5A2150"/><path d="M99.5 44q2.2 2 4.4 0" stroke="#5A2150" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+   <path d="M20 44.5c-1.7-1.8-.3-4 1.6-3 .5-2 3.4-1.5 2.9 1 .2 1.4-2.3 2.8-4.5 2z" fill="#fff"/><path d="M84 43v-5l5-1v5" stroke="#fff" stroke-width="1.4" fill="none"/><circle cx="83" cy="43.5" r="1.6" fill="#fff"/><circle cx="88" cy="42.5" r="1.6" fill="#fff"/>
+  </g>${wheel(34)}${wheel(88)}</svg>`}
+
+/* Kortet på hemskärmen */
+function renderTourCard(){const el=$("tourCard");if(!el)return;const s=tourState(),cur=TOUR_STOPS[s.i];
+  const pct=s.done?100:Math.round(s.frac*100);
+  el.innerHTML=`<div class="trow"><span class="sub">Dansturnén</span><span class="sub">${s.done?"Turnén är klar!":`${s.left.toLocaleString("sv-SE")} p kvar`}</span></div>
+   <div class="road"><span class="tdot">${cur.emo}</span><span class="lane"><span class="busat" style="left:${pct}%">${busSVG(tourRiders(s.i),true)}</span></span><span class="tdot">${s.done?"🏆":s.next.emo}</span></div>
+   <div class="trow"><b>${esc(cur.city)}</b><b>${s.done?"Final!":esc(s.next.city)}</b></div>`}
+
+/* Helskärmsvyn med karta och klistermärken */
+let tourZoom=true;
+function tourBusXY(s){if(s.done)return TOURMAP.stops[s.i];const seg=TOURMAP.legs[s.i],t=s.frac*(seg.length-1),k=Math.min(seg.length-2,Math.floor(t)),f=t-k,a=seg[k],b=seg[k+1];
+  if(Math.abs(a[0]-b[0])>TOURMAP.W/2)return f<.5?a:b;return[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}
+function legPath(seg){let d="",prev=null;seg.forEach(p=>{d+=(!prev||Math.abs(p[0]-prev[0])>TOURMAP.W/2?"M":"L")+p[0]+" "+p[1];prev=p});return d}
+function tourDir(s){if(s.done)return 1;const seg=TOURMAP.legs[s.i],k=Math.min(seg.length-2,Math.floor(s.frac*(seg.length-1)));const dx=seg[k+1][0]-seg[k][0];return Math.abs(dx)>TOURMAP.W/2?-Math.sign(dx):(dx<0?-1:1)}
+function tourMapSVG(s){const M=TOURMAP,[bx,by]=tourBusXY(s),dir=tourDir(s);
+  let vb=`0 0 ${M.W} ${M.H}`;if(tourZoom){const w=150,h=Math.round(w*M.H/M.W*1.35);const x=Math.max(0,Math.min(M.W-w,bx-w/2)),y=Math.max(0,Math.min(M.H-h,by-h/2));vb=`${x.toFixed(1)} ${y.toFixed(1)} ${w} ${h}`}
+  const sc=tourZoom?.45:1;
+  const legs=M.legs.map((seg,i)=>`<path d="${legPath(seg)}" class="${i<s.i?"leg done":"leg"}" style="stroke-width:${1.6*sc}px"/>`).join("");
+  const stops=M.stops.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${(i<=s.i?3:2.4)*sc}" class="${i<=s.i?"stop got":"stop"}"/>`).join("");
+  const r=s.done?TOUR_STOPS.length:s.i+1,label=TOUR_STOPS.slice(0,r).map((st,i)=>tourZoom?`<text x="${M.stops[i][0]}" y="${M.stops[i][1]-5*sc}" font-size="${7*sc}" class="lbl">${esc(st.city)}</text>`:"").join("");
+  const bw=(TOUR_ART.bus?46:34)*sc;
+  return`<svg class="wmap" viewBox="${vb}" role="img" aria-label="Karta över dansturnén"><rect x="-10" y="-10" width="${M.W+20}" height="${M.H+20}" fill="var(--sea)"/><path d="${M.land}" fill="var(--landc)"/>${legs}${stops}${label}
+   ${TOUR_ART.bus?`<g class="bus go" transform="translate(${(bx+(dir<0?bw/2:-bw/2)).toFixed(1)} ${(by-bw*BUS_H/BUS_W*0.9).toFixed(1)}) scale(${(dir*bw/BUS_W).toFixed(4)} ${(bw/BUS_W).toFixed(4)})">${busArtInner(tourRiders(s.i))}</g>`
+     :`<g transform="translate(${(bx+(dir<0?bw/2:-bw/2)).toFixed(1)} ${(by-bw*0.62).toFixed(1)}) scale(${(dir*bw/120).toFixed(3)} ${(bw/120).toFixed(3)})">${busSVG(tourRiders(s.i),true).replace(/^<svg[^>]*>/,'<g class="bus go">').replace(/<\/svg>$/,"</g>")}</g>`}</svg>`}
+function stickerHTML(id,emo,got,label){return`<div class="stk${got?" got":""}" title="${esc(label)}">${got?(TOUR_ART.stickers?`<img src="${stickerImg(id)}" alt="">`:`<span>${emo}</span>`):`<span class="q">?</span>`}<small>${got?esc(label):"&nbsp;"}</small></div>`}
+/* Bakgrundsmusik bara när kartan är öppen, lågt och via ljudknappen. Går genom Web Audio så att volymen fungerar även på iPhone. */
+let tourAudio=null;
+function tourMusic(on){try{if(on&&!soundOn)on=false;if(!tourAudio){if(!on)return;const a=ac();tourAudio=new Audio("audio/tour-theme.mp3");tourAudio.loop=true;tourAudio.preload="auto";
+    if(a&&a.createMediaElementSource){const g=a.createGain();g.gain.value=.55;a.createMediaElementSource(tourAudio).connect(g);g.connect(a.o)}else tourAudio.volume=.15}
+  if(on){const p=tourAudio.play();if(p&&p.catch)p.catch(()=>{})}else tourAudio.pause()}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)tourMusic(false);else if($("tour")&&!$("tour").hidden)tourMusic(true)});
+function openTour(){ac();play("tap");$("tour").hidden=false;drawTour();tourMusic(true)}
+function drawTour(){const s=tourState(),got=s.done?TOUR_STOPS.length:s.i+1;
+  $("tourHead").innerHTML=`<button type="button" class="back" id="tourBack" aria-label="Tillbaka">‹</button><span><b>Dansturnén</b><small>${got-1} av ${TOUR_STOPS.length-1} städer</small></span>`;
+  $("tourBack").onclick=()=>{$("tour").hidden=true;tourMusic(false);play("tap")};
+  const st=TOUR_STOPS[s.i],song=s.next&&tourSongName(s.next.song);
+  $("tourBody").innerHTML=`<div class="card mapcard">${tourMapSVG(s)}<button type="button" class="zoom" id="tourZoom">${tourZoom?"Hela världen":"Zooma in"}</button></div>
+   <div class="card"><div class="sub">${s.done?"Turnén är klar":"Nästa stopp"}</div>
+    ${s.done?`<h2>Ni klarade hela världen! 🏆</h2><p class="tp">Bussen står parkerad vid operahuset i Sydney. En ny turné kommer snart.</p>`
+     :`<h2>${esc(s.next.city)}, ${esc(s.next.land)}</h2><div class="bar"><i style="width:${Math.round(s.frac*100)}%"></i></div>
+       <p class="tp">${s.left.toLocaleString("sv-SE")} hjärtpoäng kvar. All rörelse räknas: dans, cykel, promenader, lek och gångertabellen. Bussen åker bara framåt, så den väntar snällt om du vilar.</p>${song?`<p class="tp">Där dansar man till <b>${esc(song)}</b>.</p>`:""}`}</div>
+   <div class="card"><div class="sub">Med på bussen</div><div class="riders">${tourRiders(s.i).length?tourRiders(s.i).map(id=>`<span><img src="${IMG(id)}" alt=""><small style="color:${CHARS[id].color}">${esc(CHARS[id].name)}</small></span>`).join(""):`<p class="tp">Bussen är tom än så länge. Vid första stoppet hoppar en kompis på!</p>`}</div></div>
+   <div class="card"><div class="sub" style="margin-bottom:8px">Klistermärken</div><div class="album">${TOUR_STOPS.map((t,i)=>stickerHTML(t.id,t.emo,i<got,t.city)).join("")}${TOUR_EXTRA.map(x=>stickerHTML(x.id,x.emo,x.at<got,x.name)).join("")}</div></div>`;
+  $("tourZoom").onclick=()=>{tourZoom=!tourZoom;play("tap");drawTour()}}
+
+/* Framkomst: visas en gång per stad */
+let tourReady=false;
+function tourCheck(){if(!tourReady)return;const s=tourState(),seen=profile.tourSeen==null?0:profile.tourSeen;
+  if(s.i<=seen)return;if(!$("ov").hidden||!$("thread").hidden)return;
+  const st=TOUR_STOPS[s.i],rider=CHAR_IDS[(s.i-1)%CHAR_IDS.length],rc=CHARS[rider],extra=TOUR_EXTRA.find(x=>x.at===s.i),song=tourSongName(st.song);
+  setProfile({tourSeen:s.i});play("win");
+  openSheet(`<div class="postcard"><div class="pcst">${TOUR_ART.stickers?`<img src="${stickerImg(st.id)}" alt="">`:st.emo}</div><div class="pctx"><small>Vykort från ${esc(st.land)}</small><b>${esc(st.hi)}</b><span>${esc(st.hiSv)}</span></div></div>
+   <h3>Framme i ${esc(st.city)}!</h3>
+   <div class="say"><img src="${IMG(rider)}" alt="" style="width:40px;height:52px;object-fit:contain;float:left;margin-right:8px"><b style="color:${rc.color}">${esc(rc.name)}:</b> Jag hoppar på bussen! Nu turnerar vi tillsammans, ${esc(profile.name)}!</div>
+   <p class="tp" style="text-align:left">${esc(st.fact)}${song?` Här dansar man gärna till <b>${esc(song)}</b>.`:""}</p>
+   <p class="tp" style="text-align:left">Du fick ett nytt klistermärke${extra?` och ${esc(extra.name.toLowerCase())} ${TOUR_ART.stickers?`<img src="${stickerImg(extra.id)}" alt="" style="width:34px;height:34px;vertical-align:middle">`:extra.emo}`:""}!</p>
+   <button type="button" class="big" id="tourOk">${s.done?"Hurra, vi klarade det!":"Vidare!"}</button>`,"var(--berry)");
+  if(typeof conf==="function")conf();$("tourOk").onclick=()=>{closeSheet();play("tap")}}
+
+const FIREBASE_CONFIG={"apiKey":"AIzaSyAs_pnGSsWqmgU_oCelnWfNjeFP8EHc41I","authDomain":"stor-och-stark.firebaseapp.com","projectId":"stor-och-stark","storageBucket":"stor-och-stark.firebasestorage.app","messagingSenderId":"450988584626","appId":"1:450988584626:web:d292805cb4b70d4ff4e3ab"};
+const TEAM="2VO5f9JOEDPe8eMeDSgMTrHV";
+const PTS={dance:15,bike:60,walk:25,play:30,screen:100,mathRight:2,mathPerfect:10,challenge:30};
+const DANCE_CAP=8, NIGHT_HOUR=20.5;
+let isNight=()=>{const d=new Date();return d.getHours()+d.getMinutes()/60>=NIGHT_HOUR||d.getHours()<6};
+const said=new Set();function pickFresh(arr){const f=arr.filter(x=>!said.has(x));const x=pick(f.length?f:arr,Math.random);said.add(x);return x}
+const MATH_ROUNDS_POINTS=2, MATH_ROUNDS_MAX=3, CHATS_PER_DAY=3;
+const IMG=id=>`../../assets/characters/${id}/${id}-chibi-portrait.webp`;
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let profile={name:"Saga",avatar:"kitten"}, entries=[], math={facts:{},unlocked:3}, daily={}, db=null, view="vHome";
+
+/* ---------- Dates & seeded random ---------- */
+const iso=d=>d.toLocaleDateString("sv-SE");
+const today=()=>iso(new Date());
+const parse=s=>new Date(s+"T12:00:00");
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const weekStart=s=>{const d=parse(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)};
+const dayIdx=s=>(parse(s).getDay()+6)%7;
+function rng(seedStr){let h=1779033703^seedStr.length;for(let i=0;i<seedStr.length;i++){h=Math.imul(h^seedStr.charCodeAt(i),3432918353);h=h<<13|h>>>19}
+  return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return(h>>>0)/4294967296}}
+const pick=(arr,r)=>arr[Math.floor(r()*arr.length)];
+const fill=(s,extra={})=>s.replace(/\{n\}/g,profile.name).replace(/\{c\}/g,extra.c||"");
+
+/* ---------- Sound (soft, low) ---------- */
+let AC=null,soundOn=store.get("snd")!=="off";
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();AC.o=AC.createGain();AC.o.gain.value=.28;AC.o.connect(AC.destination)}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,t,d,type="sine",v=.15){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v,s+.01);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g).connect(a.o);o.start(s);o.stop(s+d+.05)}
+const SFX={tap(){tone(880,0,.08,"triangle",.08)},save(){[784,988,1175,1568].forEach((f,i)=>tone(f,i*.07,.35,"sine",.13))},
+  sparkle(){[1319,1568,1976,2349].forEach((f,i)=>tone(f,i*.05,.25,"sine",.06))},right(){tone(1047,0,.15,"triangle",.12);tone(1568,.08,.3,"triangle",.1)},
+  wrong(){tone(392,0,.2,"triangle",.08);tone(330,.12,.25,"triangle",.08)},pop(){tone(660,0,.06,"sine",.1);tone(990,.04,.1,"sine",.08)},
+  win(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,.5,"triangle",.11))}};
+function play(n){if(soundOn)try{SFX[n]()}catch(e){}}
+function sndBtn(){$("snd").innerHTML=soundOn?'<svg viewBox="0 0 24 24" fill="none" stroke="#D63384" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="#9B6A8F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/></svg>';$("snd").setAttribute("aria-pressed",soundOn)}
+$("tourCard").addEventListener("click",openTour);
+$("snd").addEventListener("click",()=>{soundOn=!soundOn;store.set("snd",soundOn?"on":"off");sndBtn();if(soundOn)play("pop");if(typeof tourMusic==="function")tourMusic(soundOn&&!$("tour").hidden)});
+
+/* ---------- Avatars (placeholders until the Seedream sheets arrive) ---------- */
+const LEGACY_AVATARS=[
+ {id:"a1",need:0,bg:"#FFD0E4",face:"#FFE3D3",ear:"cat",col:"#FF8FC0"},{id:"a2",need:0,bg:"#E5DBFF",face:"#FFF",ear:"bunny",col:"#B794F6"},
+ {id:"a3",need:0,bg:"#CFF5EA",face:"#F2D2B6",ear:"bear",col:"#C98A5B"},{id:"a4",need:300,bg:"#FFF1C2",face:"#FFFFFF",ear:"unicorn",col:"#FFC94D"},
+ {id:"a5",need:700,bg:"#FFD9D1",face:"#FFB38A",ear:"fox",col:"#F0743E"},{id:"a6",need:1200,bg:"#D8ECFF",face:"#F4F4F4",ear:"panda",col:"#333"},
+ {id:"a7",need:2000,bg:"#FFE0F0",face:"#FFE3D3",ear:"crown",col:"#FFC94D"},{id:"a8",need:3000,bg:"#E8FFE0",face:"#BFF0A8",ear:"frog",col:"#5FB04A"}];
+function avaSVG(a){const ears={cat:`<path d="M22 38 L28 14 L44 30Z M78 38 L72 14 L56 30Z" fill="${a.col}"/>`,bunny:`<ellipse cx="38" cy="18" rx="8" ry="20" fill="${a.face}" stroke="${a.col}" stroke-width="3"/><ellipse cx="62" cy="18" rx="8" ry="20" fill="${a.face}" stroke="${a.col}" stroke-width="3"/>`,
+  bear:`<circle cx="26" cy="30" r="11" fill="${a.col}"/><circle cx="74" cy="30" r="11" fill="${a.col}"/>`,unicorn:`<path d="M50 4 L56 30 L44 30Z" fill="${a.col}"/><path d="M26 34 L30 18 L42 30Z M74 34 L70 18 L58 30Z" fill="#FFB3D1"/>`,
+  fox:`<path d="M20 40 L24 12 L44 30Z M80 40 L76 12 L56 30Z" fill="${a.col}"/>`,panda:`<circle cx="26" cy="30" r="11" fill="#333"/><circle cx="74" cy="30" r="11" fill="#333"/>`,
+  crown:`<path d="M30 30 L34 12 L42 24 L50 8 L58 24 L66 12 L70 30Z" fill="${a.col}"/>`,frog:`<circle cx="34" cy="30" r="12" fill="${a.face}"/><circle cx="66" cy="30" r="12" fill="${a.face}"/><circle cx="34" cy="30" r="5" fill="#333"/><circle cx="66" cy="30" r="5" fill="#333"/>`};
+  const eyes=a.ear==="panda"?`<ellipse cx="38" cy="54" rx="8" ry="9" fill="#333"/><ellipse cx="62" cy="54" rx="8" ry="9" fill="#333"/><circle cx="39" cy="53" r="3" fill="#fff"/><circle cx="63" cy="53" r="3" fill="#fff"/>`:a.ear==="frog"?"":`<circle cx="38" cy="54" r="5" fill="#5A2150"/><circle cx="62" cy="54" r="5" fill="#5A2150"/><circle cx="39.5" cy="52.5" r="1.6" fill="#fff"/><circle cx="63.5" cy="52.5" r="1.6" fill="#fff"/>`;
+  return`<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="${a.bg}"/>${ears[a.ear]||""}<circle cx="50" cy="58" r="30" fill="${a.face}"/>${eyes}<circle cx="30" cy="66" r="6" fill="#FF9CC7" opacity=".7"/><circle cx="70" cy="66" r="6" fill="#FF9CC7" opacity=".7"/><path d="M43 68 Q50 75 57 68" fill="none" stroke="#5A2150" stroke-width="3" stroke-linecap="round"/></svg>`}
+/* Avatarer från Seedream-arken, utklippta till img/avatars/<id>.webp. Sex är öppna från start, resten låses upp med hjärtpoäng. */
+const AVATARS=[["kitten",0],["bunny",0],["puppy",0],["unicorn",0],["dolphin",0],["star",0],
+ ["panda",150],["hamster",300],["fox",500],["penguin",700],["cupcake-kitten",900],["seahorse",1200],["koala",1500],["dragon",1800],
+ ["owl",2200],["elephant",2600],["strawberry-bunny",3000],["turtle",3500],["fairy-squirrel",4000],["hedgehog",4600],["donut-puppy",5200],
+ ["moon",6000],["icecream-bear",7000],["ladybug",8000],["pegasus",9500],["cloud",11000],["planet",13000]].map(([id,need])=>({id,need,img:`img/avatars/${id}.webp`}));
+const avaById=id=>AVATARS.find(a=>a.id===id)||LEGACY_AVATARS.find(a=>a.id===id)||AVATARS[0];
+const avaArt=a=>a.img?`<img src="${a.img}" alt="">`:avaSVG(a);
+
+/* ---------- Points ---------- */
+const totalAll=()=>entries.reduce((a,e)=>a+(e.pts||0),0);
+const weekPts=w=>entries.filter(e=>weekStart(e.date)===w).reduce((a,e)=>a+(e.pts||0),0);
+const todays=()=>entries.filter(e=>e.date===today());
+function countToday(type){return todays().filter(e=>e.type===type).reduce((a,e)=>a+(e.count||1),0)}
+
+/* ---------- Week roster & simulated friends ---------- */
+function roster(w){const r=rng("roster"+w),ids=[...CHAR_IDS];for(let i=ids.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}return ids.slice(0,5)}
+function baseline(w){const prev=[weekPts(addDays(w,-7)),weekPts(addDays(w,-14))].filter(x=>x>0);return Math.max(300,prev.length?prev.reduce((a,b)=>a+b,0)/prev.length:0)}
+function charPlan(id,w){const r=rng(id+w),facs=[.5,.62,.74,.86,.98],ros=roster(w),f=facs[ros.indexOf(id)]*(0.94+r()*.12),target=Math.round(baseline(w)*f/5)*5;
+  const shares=[...Array(7)].map(()=>r()<0.3?0:0.5+r());const sum=shares.reduce((a,b)=>a+b,0)||1;
+  const days=shares.map(s=>{const p=Math.round(target*s/sum/5)*5;let act=null;if(p>0){const likes=CHARS[id].likes;act=pick(likes,r)}return{p,act,line:Math.floor(r()*10)}});return days}
+function charScore(id,w,upto){const plan=charPlan(id,w),last=w===weekStart(today())?dayIdx(today()):6;const h=new Date().getHours();
+  return plan.reduce((a,d,i)=>{if(i<last)return a+d.p;if(i===last&&w===weekStart(today()))return a+(h>=15?d.p:Math.round(d.p*h/15/5)*5);if(i<=last)return a+d.p;return a},0)}
+function league(w=weekStart(today())){const rows=roster(w).map(id=>({id,name:CHARS[id].name,pts:charScore(id,w)}));rows.push({id:"me",name:profile.name,pts:weekPts(w)});return rows.sort((a,b)=>b.pts-a.pts||(a.id==="me"?-1:1))}
+
+/* ---------- Daily challenge ---------- */
+function challenge(){const t=today(),r=rng("chal"+t),ros=roster(weekStart(t)),id=pick(ros,r),c=CHARS[id],types=Object.keys(c.challenge),type=pick(types,r);
+  const need={dance:3,bike:1,walk:1}[type]||1;return{id,type,need,text:fill(c.challenge[type])}}
+const chalDone=()=>{const c=challenge();return countToday(c.type)>=c.need};
+const chalRewarded=()=>todays().some(e=>e.type==="challenge");
+
+/* ---------- Firebase ---------- */
+async function saveEntry(e){e.created=Date.now();e.date=e.date||today();entries.push(e);render();try{if(db){const ref=await db.collection("entries").add(e);e.id=ref.id}}catch(err){toast("Det sparades inte. Kolla internet och försök igen.")}}
+async function saveDoc(path,data){try{if(db)await db.doc(path).set(data)}catch(e){}}
+function setProfile(p){profile={...profile,...p};render();saveDoc("profile/main",profile)}
+function bumpDaily(k){const t=today();if(daily.date!==t)daily={date:t};daily={...daily};daily[k]=(daily[k]||0)+1;saveDoc("daily/"+t,daily)}
+const dailyCount=k=>daily.date===today()?(daily[k]||0):0;
+
+/* ---------- Overlay helpers ---------- */
+function openSheet(html,c){$("sheet").style.setProperty("--c",c||"var(--berry)");$("sheet").innerHTML=html;$("ov").hidden=false;const f=$("sheet").querySelector("button");if(f)f.focus()}
+function closeSheet(){$("ov").hidden=true;stopConf();setTimeout(()=>{if(typeof tourCheck==="function")tourCheck()},500)}
+$("ov").addEventListener("click",e=>{if(e.target.id==="ov")closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("ov").hidden)closeSheet()});
+function toast(t){$("toast").textContent=t;$("toast").hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").hidden=true,2600)}
+let cf=0;function conf(){if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;const cv=$("conf"),x=cv.getContext&&cv.getContext("2d");if(!x)return;const dpr=devicePixelRatio||1;cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;x.setTransform(dpr,0,0,dpr,0,0);
+  const cols=["#FF5FA2","#FFC94D","#B794F6","#5FCFB4","#FF9CC7"],P=[...Array(70)].map(()=>({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*10,vy:-Math.random()*11-3,s:Math.random()*10+8,r:Math.random()*6,c:cols[Math.floor(Math.random()*5)]}));
+  cancelAnimationFrame(cf);let t=0;(function f(){x.clearRect(0,0,innerWidth,innerHeight);t++;P.forEach(p=>{p.vy+=.28;p.x+=p.vx;p.y+=p.vy;p.r+=.05;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.beginPath();const s=p.s/2;x.moveTo(0,s*.6);x.bezierCurveTo(-s,0,-s*.6,-s,0,-s*.4);x.bezierCurveTo(s*.6,-s,s,0,0,s*.6);x.fill();x.restore()});if(t<130)cf=requestAnimationFrame(f);else x.clearRect(0,0,innerWidth,innerHeight)})()}
+function stopConf(){cancelAnimationFrame(cf);const cv=$("conf"),x=cv.getContext&&cv.getContext("2d");if(x)x.clearRect(0,0,cv.width,cv.height)}
+
+/* ---------- Reactions after logging ---------- */
+async function afterLog(before,type){const w=weekStart(today()),after=league(w),meB=before.findIndex(r=>r.id==="me"),meA=after.findIndex(r=>r.id==="me");
+  const passed=before.slice(0,meB).filter(r=>after.findIndex(x=>x.id===r.id)>meA).map(r=>r.id);
+  const queue=[];const ros=roster(w);
+  if(passed.length){const id=passed[0];queue.push({id,text:fill(pick(CHARS[id].passed,Math.random))})}
+  else{const id=pick(ros,Math.random),pool=[...CHARS[id].cheer,...(REACT[type]||[])];queue.push({id,text:fill(pickFresh(pool))})}
+  const c=challenge();if(chalDone()&&!chalRewarded()){await saveEntry({type:"challenge",pts:PTS.challenge});queue.push({id:c.id,text:`Du klarade utmaningen! Här får du ${PTS.challenge} extra hjärtpoäng.`,big:true})}
+  if(Math.random()<0.18&&!todays().some(e=>e.type==="surprise")){const id=pick(ros,Math.random),p=pick([10,15,20],Math.random);await saveEntry({type:"surprise",pts:p});queue.push({id,text:fill(pick(GENERIC.surprise,Math.random),{c:CHARS[id].name})+` +${p}`,big:true})}
+  if(type==="family"){queue.unshift({id:pick(ros,Math.random),text:`Familjeutmaning klarad med ${(todays().find(e=>e.type==="family")||{}).with||"familjen"}! Så roligt att göra saker tillsammans.`,big:true})}
+  if(["dance","bike","walk","play","family"].includes(type))askFeel(()=>showQueue(queue));else showQueue(queue)}
+function askFeel(next){openSheet(`<h3>Hur kändes det?</h3><div class="feel">${FEEL.map((f,i)=>`<button type="button" data-f="${i}">${f.t}</button>`).join("")}</div>`);
+  $("sheet").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{const f=FEEL[+b.dataset.f];play("pop");toast(f.r);try{if(db)db.collection("feelings").add({date:today(),feel:f.t,created:Date.now()})}catch(e){}next()})}
+function showQueue(q){if(!q.length){closeSheet();return}const m=q.shift(),c=CHARS[m.id];play(m.big?"win":"save");if(m.big)conf();
+  openSheet(`<img class="who wiggle" src="${IMG(m.id)}" alt=""><h3>${esc(c.name)}</h3><div class="say">${esc(m.text)}</div><button type="button" class="big" id="qNext">${q.length?"Nästa":"Tack!"}</button>`,c.color);
+  $("qNext").onclick=()=>{play("tap");showQueue(q)}}
+
+/* ---------- Logging ---------- */
+document.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click",()=>{ac();play("tap");const a=b.dataset.act;
+  if(a==="math"){show("vMath");return}
+  if(a==="screen"){if(todays().some(e=>e.type==="screen"))return;openSheet(`<h3>Skärmfri dag?</h3><p>Har du varit utan surfplatta, tv-spel och film hela dagen? Appen räknas inte.</p><div class="replies"><button type="button" id="scYes">Ja, hela dagen!</button><button type="button" id="scNo">Inte i dag</button></div>`);
+    $("scYes").onclick=async()=>{const before=league();closeSheet();await saveEntry({type:"screen",pts:PTS.screen});afterLog(before,"screen")};$("scNo").onclick=()=>{closeSheet();toast("Det gör inget. Det finns fler dagar!")};return}
+  if(a==="dance"){let n=1;const draw=()=>{$("cnt").textContent=n;$("cntPts").textContent=`${n*PTS.dance} hjärtpoäng`};
+    openSheet(`<h3>Hur många låtar?</h3><div class="counter"><button type="button" id="cm" aria-label="Färre">−</button><b id="cnt">1</b><button type="button" id="cp" aria-label="Fler">+</button></div><p id="cntPts"></p><button type="button" class="big" id="cSave">Spara</button>`,"#FF5FA2");draw();
+    $("cm").onclick=()=>{n=Math.max(1,n-1);play("tap");draw()};$("cp").onclick=()=>{n=Math.min(20,n+1);play("pop");draw()};
+    $("cSave").onclick=async()=>{const before=league();closeSheet();const done=countToday("dance"),paid=Math.max(0,Math.min(n,DANCE_CAP-done));await saveEntry({type:"dance",count:n,pts:paid*PTS.dance});
+      if(paid<n)toast(paid?`Dagens danspoäng är fulla efter ${DANCE_CAP} låtar. Dansa gärna ändå!`:`Du har redan fått dagens danspoäng. Nu dansar du bara för att det är kul!`);afterLog(before,"dance")};return}
+  const label={bike:"En cykeltur!",walk:"En promenad!",play:"Utelek!"}[a],hint=a==="play"?"<p>Studsmatta, gunga, kurragömma, snögubbe… allt räknas!</p>":"";
+  openSheet(`<h3>${label}</h3>${hint}<p>Det ger ${PTS[a]} hjärtpoäng.</p><button type="button" class="big" id="cSave">Spara</button>`,{bike:"#7C5CE0",walk:"#2FB59A",play:"#3B9BE0"}[a]);
+  $("cSave").onclick=async()=>{const before=league();closeSheet();await saveEntry({type:a,count:1,pts:PTS[a]});afterLog(before,a)}}));
+
+/* ---------- Name & avatar ---------- */
+const NAME_IDEAS=["Glitter-Saga","Prinsessan Pirat","Dansdrottningen","Cykel-Saga","Stjärnan","Hjärtat","Superstark","Regnbågen"];
+$("nameBtn").addEventListener("click",()=>{ac();play("tap");openSheet(`<h3>Vad vill du heta?</h3><input class="namein" id="nameIn" maxlength="24" value="${esc(profile.name)}" aria-label="Namn"><div class="sugg">${NAME_IDEAS.map(s=>`<button type="button">${esc(s)}</button>`).join("")}</div><button type="button" class="big" id="nameSave">Spara namnet</button>`);
+  $("sheet").querySelectorAll(".sugg button").forEach(b=>b.onclick=()=>{$("nameIn").value=b.textContent;play("pop")});
+  $("nameSave").onclick=()=>{const v=$("nameIn").value.trim().slice(0,24);if(v){setProfile({name:v});play("sparkle");conf();toast("Hej "+v+"!")}closeSheet()};$("nameIn").focus()});
+$("avaBtn").addEventListener("click",()=>{play("tap");show("vMe")});
+
+/* ---------- Messenger-chatt ---------- */
+let msgs=[], talk={n:0}, openThread=null;
+const PATTERN=["T","S","R","S","R","S","S","R","S","R"];
+const shuffled=(n,seed)=>{const r=rng(seed),a=[...Array(n).keys()];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPIC_ORDER=shuffled(TOPICS.length,"topics-v1"),SONG_ORDER=shuffled(SONGS.length,"songs-v1");
+const songName=i=>`${SONGS[i][0]} med ${SONGS[i][1]}`;
+function itemAt(k){const type=PATTERN[k%10];let j=0;for(let i=0;i<k;i++)if(PATTERN[i%10]===type)j++;
+  if(type==="T"&&j<TOPICS.length){const t=TOPICS[TOPIC_ORDER[j]];return{type,open:fill(t.q),opts:t.o.map(o=>[fill(o[0]),fill(o[1])])}}
+  if(type==="S"||type==="T"){const si=SONG_ORDER[j%SONGS.length],r=rng("song"+k),s2=SONG_ORDER[(j+7+Math.floor(r()*20))%SONGS.length],tpl=SONG_OPEN[(j+Math.floor(j/SONGS.length))%SONG_OPEN.length];
+    const S=SONGS[si],open=tpl.replace("{s}",songName(si)).replace("{s2}",SONGS[s2][0])+(r()<.6?" "+SONG_TAG[S[3]]:"");
+    const opts=shuffleTake(SONG_OPTS,4).map(o=>[o[0].replace("{s2}",SONGS[s2][0]),o[1].replace(/\{s2\}/g,SONGS[s2][0])]);return{type:"S",open,opts}}
+  const r=rng("story"+k),open=`I dag ${pick(STORY.act,r)} jag ${pick(STORY.place,r)} och såg ${pick(STORY.saw,r)}! ${pick(STORY.end,r)}`;
+  return{type:"R",open,opts:shuffleTake(STORY_OPTS,4)}}
+function shuffleTake(arr,n){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a.slice(0,n)}
+function answerFor(id,m){const c=CHARS[id];if(m.k==="fav")return FAV[id]&&FAV[id][m.f]||pickFresh(GEN.choice);
+  const own=(c.chat[m.k]||[]).map(x=>fill(x)),gen=(GEN[m.k]||GEN.nice).map(x=>fill(x));return pickFresh([...own,...gen])}
+const conv=id=>(daily.date===today()&&daily.conv&&daily.conv[id])||null;
+function setConv(id,data){if(daily.date!==today())daily={date:today()};daily={...daily,conv:{...(daily.conv||{}),[id]:data}};saveDoc("daily/"+today(),daily)}
+const convCount=()=>Object.keys((daily.date===today()&&daily.conv)||{}).length;
+function morningIds(){const t=today(),r=rng("morning"+t),ros=[...roster(weekStart(t))];for(let i=ros.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[ros[i],ros[j]]=[ros[j],ros[i]]}return ros.slice(0,2)}
+function unread(id){if(isNight()||new Date().getHours()<7)return false;const c=conv(id);return morningIds().includes(id)&&!c&&convCount()<CHATS_PER_DAY}
+function addMsg(id,from,text){const m={char:id,from,text,ts:Date.now(),date:today()};msgs.push(m);try{if(db)db.collection("msgs").add(m)}catch(e){}return m}
+function threadMsgs(id){return msgs.filter(m=>m.char===id).sort((a,b)=>a.ts-b.ts).slice(-40)}
+
+/* Chattlistan */
+function renderChatList(){const ros=roster(weekStart(today()));const n=ros.filter(unread).length;$("chatBadge").hidden=!n;$("chatBadge").textContent=n;
+  $("chatList").innerHTML=ros.map(id=>{const c=CHARS[id],th=threadMsgs(id),last=th[th.length-1],u=unread(id),cv=conv(id);
+    const preview=u?fill(c.chat.hi[0]):last?(last.from==="me"?"Du: ":"")+last.text:"Säg hej!";
+    const status=isNight()?"sover":cv&&cv.done?"pratat i dag":u?"nytt meddelande":"";
+    return`<button type="button" class="thread" data-thread="${id}"><img src="${IMG(id)}" alt=""><span class="tx"><b style="color:${c.color}">${esc(c.name)}</b><span>${esc(preview)}</span></span><span class="meta">${u?'<i class="dot"></i>':""}<small>${status}</small></span></button>`}).join("");
+  $("chatHint").textContent=isNight()?"Alla sover nu. God natt!":convCount()>=CHATS_PER_DAY?"Du har pratat med tre kompisar i dag. Fler samtal i morgon!":`Du kan prata med ${CHATS_PER_DAY-convCount()} ${CHATS_PER_DAY-convCount()===1?"kompis":"kompisar"} till i dag.`}
+
+/* Själva tråden */
+function bubble(m,id){const c=CHARS[id];return m.from==="me"?`<div class="b me">${esc(m.text)}</div>`:`<div class="b them"><img src="${IMG(id)}" alt="">${'<span style="--c:'+c.color+'">'+esc(m.text)+'</span>'}</div>`}
+function drawThread(){const id=openThread;if(!id)return;$("tBody").innerHTML=threadMsgs(id).map(m=>bubble(m,id)).join("")+(typing?`<div class="b them"><img src="${IMG(id)}" alt=""><span class="typing"><i></i><i></i><i></i></span></div>`:"");$("tBody").scrollTop=$("tBody").scrollHeight}
+let typing=false;
+function say(id,text,delay=900){return new Promise(res=>{typing=true;drawThread();setTimeout(()=>{typing=false;addMsg(id,"char",text);play("pop");drawThread();res()},delay+Math.min(1400,text.length*18))})}
+function setReplies(list,onPick){$("tReplies").innerHTML=list.map((o,i)=>`<button type="button" data-r="${i}">${esc(o.t||o[0])}</button>`).join("");
+  $("tReplies").querySelectorAll("button").forEach(b=>b.onclick=()=>{const o=list[+b.dataset.r];$("tReplies").innerHTML="";play("tap");addMsg(openThread,"me",o.t||o[0]);drawThread();onPick(o)})}
+function closedReplies(text){$("tReplies").innerHTML=`<div class="tnote">${esc(text)}</div>`}
+async function openThreadView(id){ac();openThread=id;const c=CHARS[id];$("thread").hidden=false;$("tHead").innerHTML=`<button type="button" class="back" id="tBack" aria-label="Tillbaka">‹</button><img src="${IMG(id)}" alt=""><span><b>${esc(c.name)}</b><small>${isNight()?"sover":"aktiv nu"}</small></span>`;
+  $("tBack").onclick=closeThread;drawThread();
+  if(isNight()){closedReplies(fill(pickFresh(NIGHT2)));return}
+  const cv=conv(id);
+  if(cv&&cv.done){closedReplies(`Ni har pratat i dag. ${c.name} hörs av i morgon igen!`);return}
+  if(!cv&&convCount()>=CHATS_PER_DAY){closedReplies("Du har pratat med tre kompisar i dag. Nu är det dags för något annat kul!");return}
+  run(id,cv)}
+async function run(id,cv){const c=CHARS[id];
+  if(!cv){const k=talk.n||0;talk={n:k+1};saveDoc("talk/progress",talk);cv={k,stage:0};setConv(id,cv);
+    const first=!store.get("met_"+id);store.set("met_"+id,"1");await say(id,first?fill(c.intro):fill(pickFresh(c.chat.hi)),400);const it=itemAt(k);await say(id,it.open)}
+  const it=itemAt(cv.k);
+  if(cv.stage===0){setReplies(it.opts.map(o=>[o[0],o[1]]),async o=>{setConv(id,{...cv,stage:1});await say(id,o[1]);stage2(id,{...cv,stage:1})});return}
+  if(cv.stage===1){stage2(id,cv);return}}
+function stage2(id,cv){const extra=shuffleTake(SAGA_MSGS.filter(m=>m.k!=="bye"),2),list=[...shuffleTake(FOLLOW,2),...extra];
+  setReplies(list,async m=>{setConv(id,{...cv,stage:2,done:true});if(m.k==="bye"){await say(id,fill(pickFresh([...CHARS[id].chat.bye,...GEN.bye])));}else{await say(id,answerFor(id,m));await say(id,fill(pickFresh(CHARS[id].chat.bye)),700)}
+    closedReplies("Samtalet är slut för i dag. Vad roligt att ni pratade!");renderChatList()})}
+function closeThread(){openThread=null;$("thread").hidden=true;renderChatList()}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-thread]");if(t)openThreadView(t.dataset.thread)});
+
+/* ---------- Multiplication (adaptive) ---------- */
+const ORDER=[2,5,10,3,4,1,6,9,7,8];
+const factKey=(a,b)=>a<=b?a+"x"+b:b+"x"+a;
+function activeTables(){return ORDER.slice(0,Math.max(3,math.unlocked||3))}
+function factsFor(tables){const s=new Set();tables.forEach(t=>{for(let b=1;b<=10;b++)s.add(factKey(t,b))});return[...s]}
+const box=k=>(math.facts[k]||0);
+function maybeUnlock(){const fs=factsFor(activeTables());const good=fs.filter(k=>box(k)>=3).length/fs.length;if(good>=.8&&(math.unlocked||3)<ORDER.length){math.unlocked=(math.unlocked||3)+1;return ORDER[math.unlocked-1]}return null}
+function pickFacts(n){const fs=factsFor(activeTables()),w=fs.map(k=>Math.pow(5-Math.min(4,box(k)),2)+.3),out=[];
+  for(let i=0;i<n;i++){let tot=w.reduce((a,b)=>a+b,0),r=Math.random()*tot,j=0;while(r>w[j]){r-=w[j];j++}out.push(fs[j]);w[j]*=.25}return out.map(k=>{let[a,b]=k.split("x").map(Number);if(Math.random()<.5)[a,b]=[b,a];return{a,b,k}})}
+function options(a,b){const ans=a*b,s=new Set([ans]),cand=[a*(b+1),a*(b-1),(a+1)*b,(a-1)*b,ans+10,ans-10,ans+1,ans-1,ans+2].filter(x=>x>0&&x!==ans);while(s.size<4&&cand.length){s.add(cand.splice(Math.floor(Math.random()*cand.length),1)[0])}while(s.size<4)s.add(ans+s.size*3);return[...s].sort(()=>Math.random()-.5)}
+let round=null;
+function mathIntro(){const rounds=dailyCount("math"),tabs=activeTables(),mastered=t=>factsFor([t]).every(k=>box(k)>=3);
+  const left=MATH_ROUNDS_MAX-rounds;
+  $("mathCard").innerHTML=`<h2>Gångertabellen</h2><div class="sub" style="margin:4px 0 10px">Appen känner av vad du kan och övar mest på det som är svårt.</div>
+   <div class="tables">${ORDER.map(t=>`<span class="${tabs.includes(t)?(mastered(t)?"star":"on"):""}">${t}:an</span>`).join("")}</div>
+   <p class="sub" style="margin:10px 0">Rosa = övar nu. Gul = kan du! Nya tabeller öppnas när du kan de gamla.</p>
+   ${left>0?`<button type="button" class="big" id="mStart">Starta en runda · 10 frågor</button><p class="sub" style="text-align:center;margin-top:8px">${rounds<MATH_ROUNDS_POINTS?`Ger upp till ${10*PTS.mathRight+PTS.mathPerfect} hjärtpoäng`:"Den här rundan är för träningens skull"} · ${left} ${left===1?"runda":"rundor"} kvar i dag</p>`
+   :`<div class="say" style="background:var(--soft);border-radius:18px;padding:12px;font-weight:700">Hjärnan har tränat klart för i dag. Den växer medan du sover!</div>`}`;
+  const s=$("mStart");if(s)s.onclick=()=>{ac();play("tap");round={qs:pickFacts(10),i:0,res:[],retry:[]};mathQ()}}
+function mathQ(){const r=round,q=r.qs[r.i],opts=options(q.a,q.b);
+  $("mathCard").innerHTML=`<div class="progress">${r.qs.map((_,i)=>`<i class="${i<r.i?(r.res[i]?"ok":"no"):i===r.i?"cur":""}"></i>`).join("")}</div>
+   <div class="mq">${q.a} · ${q.b}</div><div class="opts">${opts.map(o=>`<button type="button" class="opt" data-v="${o}">${o}</button>`).join("")}</div><p class="sub" id="mFb" style="text-align:center;min-height:1.4em;margin-top:10px"></p>`;
+  const t0=Date.now();
+  $("mathCard").querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const v=+b.dataset.v,ok=v===q.a*q.b,fast=Date.now()-t0<6000;$("mathCard").querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.v===q.a*q.b)x.classList.add("right")});
+    if(!ok)b.classList.add("wrong");r.res[r.i]=ok;play(ok?"right":"wrong");
+    math.facts[q.k]=ok?Math.min(5,box(q.k)+(fast?1:0.5)):0;
+    $("mFb").textContent=ok?pick(["Rätt!","Snyggt!","Jaa!","Precis!"],Math.random):`${q.a} · ${q.b} = ${q.a*q.b}. Den kommer igen!`;
+    if(!ok&&r.qs.length<14){r.qs.push({...q})}
+    setTimeout(()=>{r.i++;if(r.i<r.qs.length)mathQ();else mathDone()},ok?650:1500)})}
+async function mathDone(){const r=round,right=r.res.filter(Boolean).length,first10=r.res.slice(0,10),perfect=first10.length===10&&first10.every(Boolean);
+  const earns=dailyCount("math")<MATH_ROUNDS_POINTS;bumpDaily("math");const unlocked=maybeUnlock();saveDoc("math/progress",math);
+  const mult=onTrip(today())?2:1;const p=earns?(Math.min(10,first10.filter(Boolean).length)*PTS.mathRight+(perfect?PTS.mathPerfect:0))*mult:0;
+  math.hist={...(math.hist||{}),[today()]:factsFor(ORDER).filter(k=>box(k)>=3).length};saveDoc("math/progress",math);
+  const before=league();if(p)await saveEntry({type:"math",pts:p,right,count:r.qs.length});
+  const id=onTrip(today())?tutorToday():"arvid";play(perfect?"win":"save");if(perfect||unlocked)conf();
+  openSheet(`<img class="who wiggle" src="${IMG(id)}" alt=""><h3>${perfect?"Alla rätt!":"Bra kämpat!"}</h3><div class="say">${right} rätt av ${r.qs.length}. ${p?`Du fick ${p} hjärtpoäng.`:"Den här rundan var extraträning."}${unlocked?` Nu har du låst upp ${unlocked}:ans tabell!`:""}</div><button type="button" class="big" id="mOk">Klart</button>`,CHARS[id].color);
+  $("mOk").onclick=()=>{closeSheet();round=null;mathIntro();if(p)afterLog(before)}}
+
+/* ---------- Family challenge ---------- */
+function famToday(){const t=today(),r=rng("fam"+t),dn=Math.floor(parse(t).getTime()/864e5);const f=FAMILY_MEMBERS[dn%FAMILY_MEMBERS.length];return{f,text:pick(FAMILY,r).replace(/\{f\}/g,f)}}
+const famDone=()=>todays().some(e=>e.type==="family");
+async function doFamily(){const fm=famToday();if(famDone())return;const before=league();await saveEntry({type:"family",with:fm.f,pts:40});play("win");conf();afterLog(before,"family")}
+/* ---------- Trips ---------- */
+const trips=()=>Array.isArray(profile.trips)?profile.trips:[];
+const onTrip=d=>trips().some(t=>d>=t.from&&d<=t.to);
+function tutorToday(){const r=rng("tutor"+today());return pick(roster(weekStart(today())),r)}
+/* ---------- Charts ---------- */
+function barChart(vals,labels,color){const W=520,H=140,B=20,T=14,mx=Math.max(1,...vals),bw=W/vals.length;
+  return`<svg viewBox="0 0 ${W} ${H}">${vals.map((v,i)=>{const h=(H-B-T)*v/mx,x=i*bw+bw*.18,w=bw*.64;return`<rect x="${x}" y="${H-B-h}" width="${w}" height="${Math.max(v?3:0,h)}" rx="6" fill="${color}"/>${v?`<text x="${x+w/2}" y="${H-B-h-4}" text-anchor="middle" font-size="11" font-weight="800" fill="#9B6A8F" font-family="Nunito,sans-serif">${v}</text>`:""}<text x="${x+w/2}" y="${H-5}" text-anchor="middle" font-size="10" fill="#9B6A8F" font-family="Nunito,sans-serif">${labels[i]}</text>`}).join("")}</svg>`}
+function isoWeek(s){const d=parse(s);d.setDate(d.getDate()+3-((d.getDay()+6)%7));const w1=new Date(d.getFullYear(),0,4);return 1+Math.round(((d-w1)/864e5-3+((w1.getDay()+6)%7))/7)}
+
+/* ---------- Render ---------- */
+function show(v){if(v===view)return;view=v;document.querySelectorAll(".view").forEach(el=>{el.hidden=el.id!==v;if(el.id===v){el.classList.remove("enter");void el.offsetWidth;el.classList.add("enter");el.scrollTop=0}});
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));if(v==="vMath"&&!round)mathIntro();render()}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ac();play("tap");show(b.dataset.v)}));
+const TYPE={family:"Familjeutmaning",homework:"Resläxa",read:"Läsa",play:"Lek ute",dance:"Just Dance",bike:"Cykeltur",walk:"Promenad",screen:"Skärmfri dag",math:"Gångertabell",challenge:"Utmaning",surprise:"Överraskning"};
+function render(){
+  renderTourCard();if($("tour")&&!$("tour").hidden)drawTour();setTimeout(tourCheck,300);
+  const h=new Date().getHours();$("greet").textContent=h<10?"God morgon!":h<17?"Hej!":"God kväll!";$("nameTxt").textContent=profile.name;$("avaBtn").innerHTML=avaArt(avaById(profile.avatar));$("total").textContent=totalAll().toLocaleString("sv-SE");
+  // challenge
+  const c=challenge(),ch=CHARS[c.id],done=chalDone();
+  $("chal").innerHTML=`<img src="${IMG(c.id)}" alt="${esc(ch.name)}"><div class="bubble"><b style="color:${ch.color}">${esc(ch.name)}:</b> ${esc(c.text)}${done?`<div class="done">Klarat! Ni gjorde det båda två.</div>`:""}</div>`;
+  // family
+  const fm=famToday(),fd=famDone();$("fam").innerHTML=`<svg viewBox="0 0 48 48"><circle cx="16" cy="16" r="7" fill="#FF9CC7"/><circle cx="33" cy="14" r="8" fill="#B794F6"/><circle cx="25" cy="27" r="5" fill="#FFC94D"/><path d="M5 44c1-9 6-14 11-14s9 4 10 9M22 44c1-8 5-13 11-13s10 5 11 13" fill="none" stroke="#5A2150" stroke-width="3" stroke-linecap="round"/></svg><span class="ftxt"><small>Familjeutmaning · 40 poäng</small>${esc(fm.text)}</span>${fd?`<span class="chip">Klart!</span>`:`<button type="button" class="ghost" id="famBtn">Vi gjorde det!</button>`}`;
+  const fb=$("famBtn");if(fb)fb.onclick=()=>{ac();play("tap");doFamily()};
+  // trip
+  const tr=onTrip(today());$("trip").hidden=!tr;if(tr){const tu=tutorToday(),tc=CHARS[tu];$("trip").innerHTML=`<img src="${IMG(tu)}" alt="" style="width:48px;height:62px;object-fit:contain"><span class="ftxt"><small>Resdag · dubbla gångerpoäng</small>${esc(tc.name)} vill öva gångertabellen med dig i dag!</span><button type="button" class="ghost" id="tripGo">Öva</button>`;$("tripGo").onclick=()=>{ac();play("tap");show("vMath")}}
+  // screen
+  const sc=todays().some(e=>e.type==="screen");$("screenBtn").classList.toggle("done",sc);$("lScreen").textContent=sc?"Klart för i dag. Vad bra!":"Markera på kvällen · 100 poäng";
+  // today list
+  const t=todays();$("todayList").innerHTML=t.length?t.map(e=>`<span class="chip">${TYPE[e.type]||e.type}${e.count>1&&e.type==="dance"?" ×"+e.count:""} +${e.pts}</span>`).join(""):`<span class="sub">Inget än. Vilodagar är också bra!</span>`;
+  const active=t.filter(e=>["dance","bike","walk","play","math"].includes(e.type)).length;
+  $("endnote").hidden=!active;if(active)$("endnote").innerHTML=`<svg viewBox="0 0 24 24" fill="#FF5FA2"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8.4 3 5 6.5 5c2 0 3.6 1.2 5.5 3.2C13.9 6.2 15.5 5 17.5 5 21 5 23 8.4 21.5 11.7 19.5 16.4 12 21 12 21z"/></svg><span>${esc(fill(pick(GENERIC.end,rng("end"+today()))))}</span>`;
+  // league
+  const w=weekStart(today()),L=league(w);$("weekSub").textContent=isNight()?"Gänget sover. Du kan prata med dem i morgon igen.":`Veckan börjar om varje måndag. ${dayIdx(today())===0?"I dag kom nya kompisar!":""}`;
+  $("league").innerHTML=L.map((r,i)=>r.id==="me"?`<div class="lrow me"><span class="pos">${i+1}</span><span class="ava2">${avaArt(avaById(profile.avatar))}</span><span class="nm">${esc(r.name)}<small>Det är du!</small></span><span class="pt">${r.pts}</span></div>`
+    :`<button type="button" class="lrow" data-thread="${r.id}"><span class="pos">${i+1}</span><img src="${IMG(r.id)}" alt=""><span class="nm" style="color:${CHARS[r.id].color}">${esc(r.name)}<small>Tryck för att prata</small></span><span class="pt">${r.pts}</span></button>`).join("");
+  // feed: today + yesterday posts
+  const di=dayIdx(today()),posts=[];roster(w).forEach(id=>{const plan=charPlan(id,w);for(let d=Math.max(0,di-1);d<=di;d++){const p=plan[d];if(d===di&&h<12)continue;const c=CHARS[id];
+    const lines=p.p>0?c.post[p.act]:c.post.rest;posts.push({id,d,txt:lines[p.line%lines.length],p:p.p})}});
+  posts.sort((a,b)=>b.d-a.d);$("feed").innerHTML=posts.slice(0,7).map(p=>`<button type="button" class="post" data-thread="${p.id}" style="--c:${CHARS[p.id].color};border:0;background:none;padding:0;text-align:left"><img src="${IMG(p.id)}" alt=""><div><b>${esc(CHARS[p.id].name)}</b> ${esc(p.txt)}<div class="p">${p.d===di?"I dag":"I går"}${p.p?" · +"+p.p:""}</div></div></button>`).join("")||`<p class="sub">Gänget har inte hunnit göra något än i dag.</p>`;
+  // chat list
+  renderChatList();if(openThread)drawThread();
+  // charts
+  const wk=[...Array(10)].map((_,i)=>addDays(w,-7*(9-i)));$("chartWeeks").innerHTML=barChart(wk.map(weekPts),wk.map(x=>"v"+isoWeek(x)),"#FF5FA2");
+  const mh=math.hist||{},md=Object.keys(mh).sort().slice(-8);$("chartMath").innerHTML=md.length?barChart(md.map(d=>mh[d]),md.map(d=>d.slice(5).replace("-","/")),"#FFC94D"):`<p class="sub">Kör en gångerrunda så börjar kurvan här.</p>`;
+  $("tripList").innerHTML=trips().map((t,i)=>`<div><span>${t.from} – ${t.to}</span><button type="button" data-trip="${i}">ta bort</button></div>`).join("");
+  // me
+  const tot=totalAll();$("avaGrid").innerHTML=AVATARS.map(a=>{const lock=tot<a.need;return`<button type="button" data-ava="${a.id}" class="${lock?"locked":""}" aria-pressed="${profile.avatar===a.id}" data-need="${lock?a.need+" p":""}" aria-label="${lock?"Låst, kräver "+a.need+" poäng":"Välj avatar"}">${avaArt(a)}</button>`}).join("");
+  const cnt=t2=>entries.filter(e=>e.type===t2).reduce((a,e)=>a+(e.count||1),0);
+  $("stats").innerHTML=`<div><b>${cnt("dance")}</b><span>låtar dansade</span></div><div><b>${cnt("bike")}</b><span>cykelturer</span></div><div><b>${cnt("walk")}</b><span>promenader</span></div><div><b>${cnt("play")}</b><span>gånger utelek</span></div><div><b>${cnt("screen")}</b><span>skärmfria dagar</span></div><div><b>${factsFor(ORDER).filter(k=>box(k)>=3).length}</b><span>gångerfakta du kan</span></div><div><b>${weekPts(w)}</b><span>poäng den här veckan</span></div>`;
+  $("hist").innerHTML=[...entries].sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,12).map(e=>`<div><span>${TYPE[e.type]||e.type}${e.count>1&&e.type==="dance"?" ×"+e.count:""} · ${e.date===today()?"i dag":e.date}</span><span><b>+${e.pts}</b> ${e.id&&["dance","bike","walk","play","screen"].includes(e.type)?`<button type="button" data-del="${e.id}">ta bort</button>`:""}</span></div>`).join("")||`<p class="sub">Här syns det du gör.</p>`;
+}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-ava]");if(a){if(a.classList.contains("locked")){play("tap");toast("Samla fler hjärtpoäng för att låsa upp den!");return}setProfile({avatar:a.dataset.ava});play("sparkle");return}
+  const d=e.target.closest("[data-del]");if(d){if(d.dataset.armed){entries=entries.filter(x=>x.id!==d.dataset.del);render();if(db)db.collection("entries").doc(d.dataset.del).delete().catch(()=>{});play("tap")}else{d.dataset.armed="1";d.textContent="säker?";setTimeout(()=>{if(d.isConnected){delete d.dataset.armed;d.textContent="ta bort"}},3000)}}});
+
+$("tripAdd").addEventListener("click",()=>{const a=$("tripFrom").value,b=$("tripTo").value||a;if(!a||b<a){toast("Välj datum för resan.");return}setProfile({trips:[...trips(),{from:a,to:b}]});play("sparkle");toast("Resan är inlagd!")});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-trip]");if(t){const l=trips().filter((_,i)=>i!==+t.dataset.trip);setProfile({trips:l});play("tap")}});
+
+/* ---------- Monday welcome ---------- */
+function weekWelcome(){const w=weekStart(today());if(store.get("welcomed")===w)return;store.set("welcomed",w);const ros=roster(w),q=ros.map(id=>({id,text:fill(CHARS[id].intro)}));
+  q.unshift({id:ros[0],text:fill(pick(GENERIC.week,Math.random))});setTimeout(()=>showQueue(q),600)}
+
+/* ---------- Boot ---------- */
+sndBtn();render();
+(async()=>{try{if(window.firebase&&FIREBASE_CONFIG){try{firebase.initializeApp(FIREBASE_CONFIG)}catch(e){}const base=firebase.firestore().collection("teams").doc(TEAM);
+    db={collection:p=>base.collection(p),doc:p=>{const[c,d]=p.split("/");return base.collection(c).doc(d)}}}}catch(e){db=null}
+  if(!db){tourReady=true;weekWelcome();return}
+  let gotE=false,gotP=false;const ready=()=>{if(gotE&&gotP&&!tourReady){tourReady=true;setTimeout(tourCheck,1200)}};
+  let first=true;
+  db.collection("entries").onSnapshot(s=>{entries=s.docs.map(d=>({id:d.id,...d.data()}));gotE=true;ready();render();if(first){first=false;weekWelcome()}},()=>toast("Ingen kontakt med molnet just nu."));
+  db.collection("msgs").onSnapshot(s=>{msgs=s.docs.map(d=>d.data());renderChatList();if(openThread&&!typing)drawThread()},()=>{});
+  db.doc("talk/progress").onSnapshot(s=>{if(s.exists)talk={n:0,...s.data()};renderChatList()},()=>{});
+  db.doc("profile/main").onSnapshot(s=>{if(s.exists)profile={...profile,...s.data()};gotP=true;ready();render()},()=>{gotP=true;ready()});
+  db.doc("math/progress").onSnapshot(s=>{if(s.exists&&!round)math={facts:{},unlocked:3,...s.data()};if(view==="vMath"&&!round)mathIntro()},()=>{});
+  db.doc("daily/"+today()).onSnapshot(s=>{daily=s.exists?{date:today(),...s.data()}:{date:today()};renderChatList();if(view==="vMath"&&!round)mathIntro()},()=>{});
+})();
+</script>
+</body>
+</html>
