@@ -748,7 +748,7 @@ soundBtn();showQuote(false);render();renderJourney();
 (async()=>{
   const m=location.hash.match(/t=([A-Za-z0-9]{16,})/);
   if(m){store.set("team",m[1]);history.replaceState(null,"",location.pathname+location.search)}
-  const TEAM=store.get("team");
+  const TEAM=store.get("team")||"GwjVDmR9wPm9PXGmRLnbkiRo";
   if(!TEAM){$("app").hidden=true;$("locked").hidden=false;return}
   if(!window.firebase||!FIREBASE_CONFIG||!FIREBASE_CONFIG.projectId){toast("toast","Databasen är inte kopplad än.");return}
   try{firebase.initializeApp(FIREBASE_CONFIG)}catch(e){}
