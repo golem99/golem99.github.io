@@ -1,5 +1,5 @@
 // Gör att spelet fungerar utan täckning i bilen när det väl laddats en gång.
-const C = "sjuan-v1";
+const C = "sjuan-v2";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png",
   "img/bus.webp", "img/sticker-kristinestad.webp", "img/sticker-trophy.webp"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(C).then(c => c.addAll(FILES))); self.skipWaiting(); });

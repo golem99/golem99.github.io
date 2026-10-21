@@ -308,7 +308,7 @@ const speaker=()=>pick(S.riders.length?S.riders:["juni"]);
 const NEED=3;
 const known=n=>(S.m[n]||0)>=NEED;
 function drawKnow(pulse){
- let h="";for(let n=1;n<=10;n++){const v=S.m[n]||0;h+=`<span class="${known(n)?"yes":v>0?"half":""} ${pulse===n?"pulse":""}">${7*n}</span>`}
+ let h="";for(let n=1;n<=10;n++){const v=S.m[n]||0;h+=`<span class="${known(n)?"yes":v>0?"half":""} ${pulse===n?"pulse":""}">${known(n)?"✓":n}</span>`}
  $("#know").innerHTML=h;
 }
 function learn(n,ok){
@@ -316,7 +316,7 @@ function learn(n,ok){
  if(ok&&!was&&known(n)){
   const all=[1,2,3,4,5,6,7,8,9,10].every(known);
   if(all&&!S.allKnown){S.allKnown=true;save();setTimeout(mastered,250);return true}
-  setTimeout(()=>{say(speaker(),`Nu kan du 7 × ${n} = ${7*n}! Den lyser rosa nu. 🩷`);SND.pop()},40);return true;
+  setTimeout(()=>{say(speaker(),`Nu kan du 7 × ${n}! Den lyser rosa nu. 🩷`);SND.pop()},40);return true;
  }
  return false;
 }
