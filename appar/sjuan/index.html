@@ -446,7 +446,13 @@ function toggleSound(){S.sound=!S.sound;save();sndIcon();if(S.sound)SND.pop()}
 $("#sound").onclick=toggleSound;
 
 /* ================= Hjälpare för bilder ================= */
-const NEWAVS=["reindeer","bear-cub","seal","moose-calf","arctic-fox","lynx-kitten","swan","squirrel-skater","troll-baby","snow-owl","mountain-hare","duckling"];
+// Ark 1 är öppet från start. Ark 2–4 låses upp en i taget (se unlocked()).
+const SHEET1=["reindeer","bear-cub","seal","moose-calf","arctic-fox","lynx-kitten","swan","squirrel-skater","troll-baby","snow-owl","mountain-hare","duckling"];
+const LOCKED=["otter","beaver","frog","perch","pike","seagull","puffin","crayfish","dragonfly","loon","heron","jellyfish",
+ "calf","piglet","lamb","foal","goat-kid","chick","guinea-pig","dachshund","lop-rabbit","parakeet","goldfish","mouse-baker",
+ "wizard-cat","robot","alien","friendly-ghost","baby-yeti","phoenix-chick","mushroom-sprite","ice-dragon","rainbow-snail","cactus-buddy","rocket-pug","tomte-gnome"];
+const NEWAVS=SHEET1;
+function stars(){const k=Object.keys(S.F).filter(known).length;return (S.days||0)+(S.trips||0)+(S.trollWins||0)+Math.floor(k/5)}
 const AVS=["kitten","bunny","puppy","unicorn","dolphin","star","fox","panda","koala","owl","penguin","hedgehog","hamster","turtle","ladybug","elephant","seahorse","dragon","pegasus","moon","cloud","planet","cupcake-kitten","donut-puppy","strawberry-bunny","icecream-bear","fairy-squirrel"];
 const avSrc=id=>`img/avatars/${id}.webp`;
 function avHTML(){return S.av.img?`<img src="${avSrc(S.av.img)}" alt="">`:`<span style="font-size:28px">🙂</span>`}
@@ -471,6 +477,8 @@ function allFacts(){const a=[];for(let x=1;x<=10;x++)for(let y=x;y<=10;y++)a.pus
 function dueList(){return allFacts().filter(due)}
 function renderHome(){
  checkDay();
+ const st0=stars();if(S.seenStars===undefined)S.seenStars=st0;
+ if(st0>S.seenStars&&st0<=LOCKED.length){const nw=LOCKED.slice(S.seenStars,st0);setTimeout(()=>{const im=new Image();im.onload=()=>{S.seenStars=st0;save();SND.learned();confetti(40);sheet(`<h2>Ny avatar! 🔓</h2><div style="width:140px;margin:0 auto" class="sticker"><img src="${avSrc(nw[nw.length-1])}" style="width:100%;border-radius:50%"></div><p class="sub">${nw.length>1?`Du har låst upp ${nw.length} nya avatarer!`:"Du har låst upp en ny avatar!"}</p><button class="big" id="nwOk">Byt avatar</button><button class="big alt" id="nwNo">Senare</button>`);$("#nwOk").onclick=()=>avatarSheet(false);$("#nwNo").onclick=close};im.src=avSrc(nw[nw.length-1])},500)}
  const facts=allFacts(),k=facts.filter(known).length;
  let grid="";for(let y=1;y<=10;y++)for(let x=1;x<=10;x++){const key=fk(x,y),f=S.F[key];grid+=`<i class="${deep(key)?"g":known(key)?"k":f&&f.s>0?"h":""}"></i>`}
  const tr=S.tr,dl=dueList();
@@ -498,12 +506,14 @@ function renderHome(){
 }
 
 function avatarSheet(first){
- let sel=S.av.img||"";
+ let sel=S.av.img||"";const st=stars(),open=LOCKED.slice(0,st),locked=LOCKED.slice(st);
+ const btn=(a,lk)=>`<button data-a="${a}" class="${a===sel?"on":""}" ${lk?'disabled style="position:relative;opacity:.45;filter:grayscale(1)"':""}><img src="${avSrc(a)}" alt="${a}" onerror="this.parentNode.remove()">${lk?'<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:22px">🔒</span>':""}</button>`;
  sheet(`<h2>${first?"Välkommen!":"Din avatar"}</h2><p class="sub">Välj en kompis som kör bussen. Ge den ett eget namn!</p>
-  <div class="avs">${[...NEWAVS,...AVS].map(a=>`<button data-a="${a}" class="${a===sel?"on":""}"><img src="${avSrc(a)}" alt="${a}" onerror="this.parentNode.remove()"></button>`).join("")}</div>
+  <div class="avs">${[...open.slice().reverse(),...SHEET1,...AVS].map(a=>btn(a,false)).join("")}${locked.map(a=>btn(a,true)).join("")}</div>
+  <p class="sub" style="font-size:13px">🔓 En ny avatar låses upp för varje klar dagens resa, varje avslutad resa, varje vinst mot trollet och var femte tal du lär dig.</p>
   <input class="inp" id="avName" maxlength="16" placeholder="Vad heter den?" value="${(S.av.name||"").replace(/"/g,"")}">
   <button class="big" id="avOk">Klart!</button>`);
- $("#sheet").querySelectorAll(".avs button").forEach(b=>b.onclick=()=>{sel=b.dataset.a;$("#sheet").querySelectorAll(".avs button").forEach(x=>x.classList.toggle("on",x===b));SND.pop()});
+ $("#sheet").querySelectorAll(".avs button:not([disabled])").forEach(b=>b.onclick=()=>{sel=b.dataset.a;$("#sheet").querySelectorAll(".avs button").forEach(x=>x.classList.toggle("on",x===b));SND.pop()});
  $("#avOk").onclick=()=>{S.av={img:sel||"kitten",name:($("#avName").value||"").trim().slice(0,16)};save();SND.learned();close();renderHome()};
 }
 
