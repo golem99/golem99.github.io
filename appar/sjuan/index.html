@@ -365,26 +365,16 @@ const DEST={
 };
 const KEYS=[1,2,10,5,3,4,6,7,8,9];   // ordning på startsidan: lättast först
 
-/* ================= Knep ================= */
-function trick(a,b){
- const p=a*b;
- if((a===7&&b===8)||(a===8&&b===7))return "7 × 8 = 56. Tänk 5, 6, 7, 8!";
- if((a===6&&b===7)||(a===7&&b===6))return "6 × 7 = 42. Sex sjuor, fyra-två.";
- if(a===b)return `${a} × ${a} = ${p}. Ett kvadrattal, som en fyrkant med ${a} rader och ${a} i varje.`;
- const order=[10,1,2,5,9,4,3,8,6,7];
- const t=order.find(x=>x===a||x===b),o=t===a?b:a;
- const s={10:`Gånger tio: lägg till en nolla. ${o} blir ${p}.`,
-  1:`Gånger ett är talet självt: ${p}.`,
-  2:`Gånger två är dubbla: ${o} + ${o} = ${p}.`,
-  5:`Gånger fem är hälften av gånger tio: ${o*10} delat med två är ${p}.`,
-  9:`Gånger nio: ta gånger tio och minus en gång. ${o*10} − ${o} = ${p}.`,
-  4:`Gånger fyra: dubbla och dubbla igen. ${o} → ${o*2} → ${p}.`,
-  3:`Gånger tre: dubbla och lägg till en gång till. ${o*2} + ${o} = ${p}.`,
-  8:`Gånger åtta: dubbla tre gånger. ${o} → ${o*2} → ${o*4} → ${p}.`,
-  6:`Gånger sex: fem gånger och en gång till. ${o*5} + ${o} = ${p}.`,
-  7:`Gånger sju: fem gånger plus två gånger. ${o*5} + ${o*2} = ${p}.`}[t];
- return `${a} × ${b} = ${p}. ${s}`;
+/* ================= Tips (korta, högst sex ord) ================= */
+const TIP={1:"Gånger ett: samma tal.",2:"Gånger två: dubbla talet.",3:"Dubbla och lägg på en till.",4:"Dubbla, och dubbla igen.",
+ 5:"Hälften av gånger tio.",6:"Gånger fem, plus en gång.",7:"Gånger fem plus gånger två.",8:"Dubbla, dubbla, dubbla.",
+ 9:"Gånger tio, minus en gång.",10:"Lägg till en nolla."};
+const MIXTIP="Byt plats om det känns lättare.";
+function tipFor(a,b){
+ if((a===7&&b===8)||(a===8&&b===7))return "Tänk 5, 6, 7, 8!";
+ const order=[10,1,2,5,9,4,3,8,6,7];return TIP[order.find(x=>x===a||x===b)];
 }
+function trick(a,b){return `${a} × ${b} = ${a*b} · 💡 ${tipFor(a,b)}`}
 
 /* ================= Sparat (bara i den här telefonen) =================
    Samma nyckel som Sjuan. Gamla fält finns kvar; nya läggs till. */
@@ -484,14 +474,15 @@ function renderHome(){
  const tr=S.tr,dl=dueList();
  let h=`<div class="top"><button class="me-av" id="avBtn" aria-label="Välj avatar">${avHTML()}<span class="edit">✏️</span></button>
    <div><h1>Tabellresan</h1><p>Hej ${NAME}${S.av.name?" och "+S.av.name:""}! 🚌</p></div><button class="iconbtn snd" id="hSnd">🔊</button></div>`;
- if(tr&&DEST[tr.key])h+=`<button class="cont" id="contBtn"><small>Fortsätt resan</small>${DEST[tr.key].name} · ${Math.round(tr.km/DEST[tr.key].need*100)} %</button>`;
+ if(tr&&DEST[tr.key])h+=`<button class="cont" id="contBtn"><small>Fortsätt resan</small>${DEST[tr.key].name} · ${Math.round(tr.km/(tr.key==="mix"?Math.min(60,20+6*tr.tables.length):DEST[tr.key].need)*100)} %</button>`;
  h+=`<div class="card day"><div class="stamp">${S.day.done?"⭐":"🗓️"}</div><div style="flex:1"><h3 style="margin:0">${S.day.done?"Dagens resa är klar!":"Dagens resa"}</h3>
    <p class="muted">${S.day.done?`Bra jobbat! Du har gjort ${S.days} dagsresor.`:`${S.day.r} av ${DAILY} rätt i dag`}</p><div class="bar"><i style="width:${Math.min(100,S.day.r/DAILY*100)}%"></i></div></div></div>`;
  if(dl.length)h+=`<button class="cont" id="repBtn" style="background:var(--ok);box-shadow:0 5px 0 #1d8a58"><small>${dl.length} tal vill hälsa på igen</small>Repetera en stund 🔁</button>`;
- h+=`<div class="tabs">`;
+ h+=`<h3 style="margin:6px 4px -4px;font-size:20px">Vad vill du öva på i dag?</h3>
+ <div class="tabs"><button class="tab mix" data-t="mix"><b style="font-size:22px">Blanda tabeller 🎲</b><span class="to">Välj en eller flera, till exempel de som kommer på förhöret → ${DEST.mix.short} ${DEST.mix.emoji}</span>${S.stk.rovaniemi?`<span class="got">🏅</span>`:""}</button>`;
  KEYS.forEach(t=>{const d=DEST[t],kk=tableKnown(t);let dots="";for(let n=1;n<=10;n++)dots+=`<i class="${known(fk(t,n))?"k":""}"></i>`;
-  h+=`<button class="tab" data-t="${t}"><b>${t}:an</b><span class="to">→ ${d.short} ${d.emoji}</span><span class="dots">${dots}</span>${S.stk[d.slug]?`<span class="got">🏅</span>`:""}</button>`});
- h+=`<button class="tab mix" data-t="mix"><b style="font-size:22px">Blandat 🎲</b><span class="to">Välj vilka tabeller du vill blanda → ${DEST.mix.short} ${DEST.mix.emoji}</span>${S.stk.rovaniemi?`<span class="got">🏅</span>`:""}</button></div>`;
+  h+=`<button class="tab" data-t="${t}"><b>${t}:an</b><span class="to">→ ${d.short} ${d.emoji}</span><span class="to" style="font-size:11px">💡 ${TIP[t]}</span><span class="dots">${dots}</span>${S.stk[d.slug]?`<span class="got">🏅</span>`:""}</button>`});
+ h+=`</div>`;
  h+=`<button class="cont" id="trollBtn" style="background:#5fae63;box-shadow:0 5px 0 #3f8a45"><small>${S.trollWins?`Du har vunnit ${S.trollWins} ${S.trollWins===1?"gång":"gånger"} · trollet har blivit ${trollHp()} hjärtan starkt`:"Trollet har samlat på dina svåraste tal"}</small>Utmana Tabelltrollet 🧌</button>
  <div class="row2"><button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button><button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>`;
  h+=`<div class="card"><h3>Du kan ${k} av 55 gångertal</h3><p class="muted">6 × 7 och 7 × 6 är samma tal. Därför finns det bara 55 att lära, inte 100. Varje tabell du kan gör nästa lättare!</p>
@@ -537,11 +528,12 @@ function mixSheet(){
  const draw=()=>{$("#chips").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="chip ${sel.has(n)?"on":""}" data-n="${n}">${n}</button>`).join("");
   $("#chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const n=+b.dataset.n;sel.has(n)?sel.delete(n):sel.add(n);SND.pop();draw()});
   $("#go").disabled=sel.size<2;$("#go").textContent=sel.size<2?"Välj minst två":"Åk till Rovaniemi! 🎅"};
- sheet(`<h2>Blandat 🎲</h2><p class="sub">Välj tabellerna du vill blanda. Resan går ända till ${DEST.mix.name}, ${DEST.mix.total} km.</p><div class="chips" id="chips"></div>
+ sheet(`<h2>Blanda tabeller 🎲</h2><p class="sub">Välj tabellerna du vill blanda. Resan går ända till ${DEST.mix.name}, ${DEST.mix.total} km.</p><div class="chips" id="chips"></div>
   <button class="big alt" id="all">Alla tabeller</button><button class="big" id="go"></button><button class="big alt" id="no">Inte nu</button>`);
  draw();
  $("#all").onclick=()=>{sel=new Set([1,2,3,4,5,6,7,8,9,10]);draw()};
- $("#go").onclick=()=>{S.mixSel=[...sel].sort((a,b)=>a-b);save();close();newTrip("mix",S.mixSel)};$("#no").onclick=close;
+ $("#go").onclick=()=>{S.mixSel=[...sel].sort((a,b)=>a-b);save();close();newTrip("mix",S.mixSel)};
+ $("#sheet").querySelector(".sub").innerHTML=`Välj tabellerna du vill öva på. Ju fler tabeller, desto längre resa – med alla tio går den ända till ${DEST.mix.name}.`;$("#no").onclick=close;
 }
 
 /* ================= Landskap ================= */
@@ -580,7 +572,7 @@ function drawSeats(){
 
 /* ================= Resan ================= */
 let P=[],cur=null,lock=false,retry=[],sinceChat=0,pendingStop=null,qStart=0;
-const D=()=>DEST[S.tr.key];
+const D=()=>S.tr.key==="mix"?Object.assign({},DEST.mix,{need:Math.min(60,20+6*S.tr.tables.length)}):DEST[S.tr.key];
 const kmOf=x=>x/D().need*D().total;           // rätt svar → kilometer
 const stopX=s=>s[0]/D().total*D().need;       // kilometer → rätt svar
 function buildPool(){P=[];S.tr.tables.forEach(t=>{for(let n=1;n<=10;n++)P.push([t,n])})}
@@ -705,7 +697,7 @@ function arrive(idx){
  const reveal=()=>{$("#go").style.display="";$("#st").style.display=""};
  if(idx===0){
   setTimeout(()=>{if(S.av.img)sayMe(`Jag kör! Hej allihop, jag heter ${S.av.name||"Bussföraren"}! 🚌`,$("#r2"));
-   say(id,`Det är ${d.total} kilometer till ${d.name}. Kör!`,$("#r3"));reveal()},700);
+   say(id,`Det är ${d.total} kilometer till ${d.name}. ${S.tr.tables.length===1?"💡 Tips: "+TIP[S.tr.tables[0]]:"💡 Tips: "+MIXTIP} Kör!`,$("#r3"));reveal()},700);
  }else{
   setTimeout(()=>{say(S.tr.riders.length>1?S.tr.riders[S.tr.riders.length-1]:id,"Är vi framme snart?",$("#r2"));SND.pop();
    setTimeout(()=>{const ans=S.tr.riders.find(r=>r!==id)||"juni";const q=makeQ();
@@ -745,6 +737,20 @@ function stairs(done){
 
 /* --- Tabelltrollet: eget spel. Trollet tar dina svåraste tal.
    Varje vinst gör trollet ett hjärta starkare (5 → 10). --- */
+const TV={start:[1,2,3,4,5,6,7],again:[8],many:[39,40,41],right:[9,10,11,12,13,14,15,16,17,18,19],wrong:[20,21,22,23,24,25,26],wrongFull:[27],last:[28,29,30],win:[31,32,33,35],winFirst:[34],quit:[36,37,38]};
+const TT={1:"Hohoho! Vem är det som trampar på min bro? Ingen kommer över här utan att räkna!",2:"Jag har samlat på dina svåraste tal. Alla är mina! Hohoho!",3:"Brrr. Jag har väntat i hundra år på någon att räkna med. Äntligen!",4:"Va? Är det någon där? Jag sov så gott. Nåja, nu ska vi räkna.",5:"Stopp och belägg! Den här bron kostar tal. Svåra tal. Mina tal!",6:"Psst. Jag har gömt de knepigaste talen under bron. Vill du se?",7:"Mmm, jag har ätit gröt i morse, så jag är extra stark i dag. Hohoho!",8:"Du igen? Jag har tränat, vet du. Lite grann. Okej, mycket.",
+ 9:"Aj! Det där kunde du.",10:"Nej men! Rätt igen?",11:"Mitt favorittal! Hur visste du det?",12:"Usch och fy. Du är ju jättebra.",13:"Okej, okej, okej …",14:"Aj aj aj! Det kittlade ända ut i tårna.",15:"Hrmpf. Det där var visst rätt. Jag räknade efter två gånger.",16:"Oj! Min mossa åkte av av bara farten.",17:"Vänta, vänta! Hur gjorde du det där så snabbt?",18:"Det där talet tyckte jag om. Nu är det ditt.",19:"Huj! Nu skakar hela bron.",
+ 20:"Hihihi! Fel! Men du får försöka igen.",21:"Hohoho! Det talet är mitt!",22:"Haha! Nära, nära. Men inte riktigt.",23:"Hoppsan! Det där talet gömde sig visst.",24:"Mohoho! Ett till tal i min samling. Tack så mycket!",25:"Hehe. Testa en gång till, jag lovar att inte titta.",26:"Ojdå! Där smet det. Fånga det nästa gång!",27:"Hohoho! Jag har fortfarande alla mina hjärtan. Nästan.",
+ 28:"Nej, nej, nej! Bara ett hjärta kvar!",29:"Snälla, ta det lugnt nu. Jag är ett litet, litet troll.",30:"Det här är min sista chans. Jag tar fram mitt allra svåraste tal!",
+ 31:"Okej då. Du får gå över min bro. Men nästa gång har jag fler hjärtan!",32:"Du är för bra för mig. Jag ska nog sitta under bron och öva lite. Hejdå!",33:"Nä, nu ger jag mig. Varsågod, bron är din!",34:"Wow! Ingen har kommit över min bro på hundra år. Fram till nu!",35:"Bra kämpat! Jag ska berätta för alla troll i skogen om dig.",
+ 36:"Hohoho! Kom tillbaka när du har övat. Jag väntar här under bron.",37:"Redan trött? Okej, jag sparar talen till nästa gång.",38:"Gå du. Jag ska sitta här och räkna mina tal. Ett, två, tre …",
+ 39:"Åh nej. Är det du igen? Jag har gömt mig, men du hittade mig ändå.",40:"Alla troll i skogen pratar om dig. De säger att du är räknemästaren.",41:"Okej, jag erkänner. Du är bättre än jag. Men säg inget till de andra trollen!"};
+let tAudio=null,tLast=0;
+function trollSay(list,el,extra){
+ let pool=list.filter(n=>n!==tLast);if(!pool.length)pool=list;const n=pick(pool);tLast=n;
+ (el||$("#tr1")).innerHTML=`<div class="bubble"><b>Trollet</b>${TT[n]}${extra?`<br><small>${extra}</small>`:""}</div>`;
+ try{if(tAudio){tAudio.pause();tAudio=null}if(S.sound){tAudio=new Audio(`audio/troll-${String(n).padStart(2,"0")}.mp3`);tAudio.volume=.8;tAudio.play().catch(()=>{})}}catch(e){}
+}
 function trollHp(){return Math.min(10,5+(S.trollWins||0))}
 function weakAll(n){
  let ks=Object.keys(S.F).filter(k=>S.F[k].ok+S.F[k].bad>0);
@@ -757,13 +763,10 @@ function setTroll(v){const t=$("#troll");if(!t)return;const i=t.querySelector(".
 function trollFight(){
  document.body.classList.remove("typing");
  const max=trollHp(),qs=weakAll(max);let hp=max,i=0;
- const TAUNT=["Hohoho! Ingen kommer över min bro utan att räkna!","Jag har samlat på dina svåraste tal. Alla är mina!","Brrr, jag har väntat i hundra år på någon att räkna med."].concat(S.trollWins?["Du igen! Jag har tränat, vet du. Lite grann.","Nu har jag fler hjärtan. Hohoho!"]:[]);
- const OUCH=["Aj! Det där kunde du.","Nej men! Rätt igen?!","Mitt favorittal! Hur visste du?","Usch, du är ju jättebra!","Okej, okej…"];
- const HAHA=["Hihihi! Fel! Men du får försöka igen.","Hohoho! Det talet är mitt!","Haha! Det var nära i alla fall."];
  sheet(`<h2>Tabelltrollet!</h2><p class="sub">Svara rätt ${max} gånger så släpper trollet över dig.</p>${trollImg("troll")}<div class="hp" id="hp"></div>
   <div class="row" id="tr1"></div><h2 id="tq" style="font-size:52px;margin:8px 0"></h2><div id="tp" style="display:grid"></div><button class="big alt" id="tquit">Ge upp för den här gången</button>`);
- $("#tquit").onclick=()=>{close();renderHome()};
- SND.troll();$("#tr1").innerHTML=`<div class="bubble"><b>Trollet</b>${pick(TAUNT)}</div>`;
+ $("#tquit").onclick=()=>{trollSay(TV.quit);$("#tquit").disabled=true;$("#tp").innerHTML="";setTimeout(()=>{close();renderHome()},S.sound?5200:2200)};
+ const w=S.trollWins||0;trollSay(w>=3&&Math.random()<.6?TV.many:w>0&&Math.random()<.5?TV.again:TV.start);
  const hpDraw=()=>$("#hp").textContent="💚".repeat(hp)+"🤍".repeat(max-hp);
  const next=()=>{
   hpDraw();if(hp<=0)return win();
@@ -771,13 +774,13 @@ function trollFight(){
   pad($("#tp"),a,ok=>{
    learn(fk(t,n),ok,performance.now()-t0<=FAST_TYPED);countDay();
    const tr=$("#troll");tr.classList.remove("hit","laugh");void tr.offsetWidth;
-   if(ok){hp--;i++;SND.hit();buzz(30);setTroll("troll");tr.classList.add("hit");tr.style.transform=`scale(${.62+hp/max*.38})`;$("#tr1").innerHTML=`<div class="bubble"><b>Trollet</b>${pick(OUCH)}</div>`;setTimeout(next,900)}
-   else{SND.troll();setTroll("troll-laugh");tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;$("#tr1").innerHTML=`<div class="bubble"><b>Trollet</b>${pick(HAHA)}<br><small>${trick(t,n)}</small></div>`;setTimeout(()=>{setTroll("troll");next()},2800)}
+   if(ok){hp--;i++;SND.hit();buzz(30);setTroll("troll");tr.classList.add("hit");tr.style.transform=`scale(${.62+hp/max*.38})`;if(hp>0)trollSay(hp===1?TV.last:TV.right);setTimeout(next,hp===1?2400:1500)}
+   else{setTroll("troll-laugh");tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;trollSay(hp>=max-1?TV.wrong.concat(TV.wrongFull):TV.wrong,null,trick(t,n));setTimeout(()=>{setTroll("troll");next()},3400)}
   });
  };
  const win=()=>{S.trollWins=(S.trollWins||0)+1;save();SND.fanfare();confetti(80);
   sheet(`<h2>Du vann över trollet!</h2>${trollImg("troll-friendly")}<div class="row" id="w1"></div><button class="big" id="wgo">${S.trollWins<6?"Utmana igen":"Utmana igen 💪"}</button><button class="big alt" id="whome">Till startsidan</button>`);
-  $("#w1").innerHTML=`<div class="bubble"><b>Trollet</b>${S.trollWins<6?`Okej då… du får gå över. Men jag tränar! Nästa gång har jag ${trollHp()} hjärtan.`:"Du är för bra för mig. Jag ska nog sitta under bron och öva lite."} Hejdå, ${NAME}!</div>`;
+  trollSay(S.trollWins===1?TV.winFirst:TV.win,$("#w1"),S.trollWins<6?`Nästa gång har trollet ${trollHp()} hjärtan.`:"");
   $("#wgo").onclick=trollFight;$("#whome").onclick=()=>{close();renderHome()}};
  next();
 }
