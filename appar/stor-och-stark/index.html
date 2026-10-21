@@ -1076,7 +1076,7 @@ const THEMES={1:["Roddmånad","rodd",1.5,"Halva poäng extra på rodd"],2:["Styr
 const THEME_START="2026-11-01";
 function themeOf(date){if(!date||date<THEME_START)return null;return THEMES[+date.slice(5,7)]||null}
 let sick=[],editingId=null;
-const GOAL=5, KM_PER_P=0.035, HEAD=3, QPTS={e:10,m:20,h:30}, QLABEL={e:"Lätt",m:"Medel",h:"Svår"};
+const GOAL=5, KM_PER_P=0.15, HEAD=3, QPTS={e:10,m:20,h:30}, QLABEL={e:"Lätt",m:"Medel",h:"Svår"};
 const PLAYERS=["Steve","Noa"];
 const COL={Steve:"var(--steve)",Noa:"var(--noa)"};
 const ROUTE=MAP.route, PORTS=ROUTE.filter(p=>p.n&&!p.p), STOPS=ROUTE.filter(p=>p.n), TOTAL=ROUTE[ROUTE.length-1].km;
