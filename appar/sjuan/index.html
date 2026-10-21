@@ -323,9 +323,10 @@ function learn(n,ok){
 function mastered(){
  SND.fanfare();confetti(120);busAnim("hop");boost(8);
  sheet(`<img class="sticker" src="img/sticker-trophy.webp" alt=""><h2>Du kan sjuans tabell!</h2><p class="sub">Alla tio har lysts upp. Förhöret i morgon blir en lätt match.</p>
-  <div class="row" id="m1"></div><div class="row" id="m2"></div><button class="big" id="mg">Kör vidare ändå</button>`);
+  <div class="row" id="m1"></div><div class="row" id="m2"></div><button class="big" id="mx">Slutförhör: 10 frågor</button><button class="big alt" id="mg">Kör vidare</button>`);
  say("juni","Fallet är officiellt löst. Jag skriver in det i anteckningsblocket med guldpenna.",$("#m1"));
  say(S.riders.find(r=>r!=="juni")||"vincent","Vi kör vidare och håller det varmt. Proffs tränar fast de redan kan!",$("#m2"));
+ $("#mx").onclick=()=>exam(true);
  $("#mg").onclick=()=>{close();if(pendingStop){const p=pendingStop;pendingStop=null;arrive(p)}else showQ()};
 }
 /* ================= Frågor ================= */
@@ -445,17 +446,18 @@ function finish(stop){
  sheet(h);
  const lines=["Där är ni! Vi har väntat i en evighet. Typ i tio minuter.","Välkomna! Jag tog en bild när bussen svängde in.","Bussen låter fortfarande bra. Jag lyssnade på motorn.","Ni kom fram exakt i tid. Jag har räknat ut det."];
  stop.party.forEach((id,i)=>say(id,lines[i%4],$("#p"+i)));
- $("#exam").onclick=exam;$("#st2").onclick=()=>stairs(()=>finish(stop));
+ $("#exam").onclick=()=>exam(false);$("#st2").onclick=()=>stairs(()=>finish(stop));
 }
-function exam(){
+function exam(midway){
  let i=0,ok=0;const qs=[1,2,3,4,5,6,7,8,9,10].sort(()=>Math.random()-.5);
  const next=()=>{
   if(i>=10){const st=ok>=10?"⭐⭐⭐":ok>=8?"⭐⭐":ok>=5?"⭐":"";SND.fanfare();if(ok>=8)confetti(80);
    sheet(`<h2>${ok} av 10</h2><div class="stars">${st||"💪"}</div><div class="row" id="er"></div>
-    <button class="big" id="home">${S.trip==="dit"?"Åk hem till Kristinestad":"Åk till Vasa igen"}</button><button class="big alt" id="again">Slutförhör igen</button>`);
+    ${midway?'<button class="big" id="cont">Kör vidare</button>':`<button class="big" id="home">${S.trip==="dit"?"Åk hem till Kristinestad":"Åk till Vasa igen"}</button>`}<button class="big alt" id="again">Slutförhör igen</button>`);
    say("juni",ok===10?"Alla rätt! Förhöret i morgon är redan löst, {n}.":ok>=8?"Jättebra! Bara några små spår kvar att följa upp.":"Bra kämpat! Vi kör en tur till, så sitter det.",$("#er"));
-   $("#home").onclick=()=>{const nt=S.trip==="dit"?"hem":"dit";S=Object.assign(fresh(nt),{w:S.w,m:S.m,allKnown:S.allKnown,stairsBest:S.stairsBest,trips:S.trips,sound:S.sound});save();close();start()};
-   $("#again").onclick=exam;return}
+   if(midway)$("#cont").onclick=()=>{close();if(pendingStop){const p=pendingStop;pendingStop=null;arrive(p)}else showQ()};
+   else $("#home").onclick=()=>{const nt=S.trip==="dit"?"hem":"dit";S=Object.assign(fresh(nt),{w:S.w,m:S.m,allKnown:S.allKnown,stairsBest:S.stairsBest,trips:S.trips,sound:S.sound});save();close();start()};
+   $("#again").onclick=()=>exam(midway);return}
   const n=qs[i],a=7*n,opts=[a,a-7,a+7,a+1].filter(v=>v>0).sort(()=>Math.random()-.5);
   sheet(`<p class="sub">Slutförhör · fråga ${i+1} av 10</p><h2 style="font-size:56px">${Math.random()<.5?"7 × "+n:n+" × 7"}</h2><div class="opts" id="eo"></div><div class="row" id="ex"></div>`);
   $("#eo").innerHTML=opts.map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");
