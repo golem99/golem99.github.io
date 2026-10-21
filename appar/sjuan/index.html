@@ -190,7 +190,7 @@ body.typing #qtext{font-size:clamp(40px,12vw,64px)}
 @keyframes spin{from{transform:scale(0) rotate(-200deg)}}
 
 /* trollet */
-.troll{position:relative;width:170px;height:170px;margin:18px auto 6px;transition:transform .4s;z-index:0}
+.troll{position:relative;width:170px;height:170px;margin:30px auto 14px;transition:transform .4s;z-index:0}
 .troll svg,.troll img{width:100%;height:100%;object-fit:contain}
 .troll.hit{animation:trollhit .45s ease}
 @keyframes trollhit{30%{transform:translateX(18px) rotate(10deg) scale(.92)}}
@@ -752,7 +752,7 @@ function weakAll(n){
  const sc=k=>{const x=S.F[k];return (known(k)&&!due(k)?10:0)+(x?x.s*2-x.bad:0)+Math.random()*1.5};
  return ks.sort((a,b)=>sc(a)-sc(b)).slice(0,n).map(k=>k.split("x").map(Number));
 }
-const trollImg=(v)=>`<div class="troll" id="troll"><img class="tb" src="img/troll-bridge.webp" alt="" style="display:none;position:absolute;inset:-20% -40% -6%;width:180%;height:126%;object-fit:cover;border-radius:22px;z-index:-1" onload="this.style.display='block'" onerror="this.remove()">${TROLL}<img class="tf" src="img/${v}.webp" alt="" style="display:none;position:absolute;inset:0" onload="this.style.display='block';const s=this.parentNode.querySelector('svg');if(s)s.style.visibility='hidden'" onerror="this.remove()"></div>`;
+const trollImg=(v)=>`<div class="troll" id="troll"><img class="tb" src="img/troll-bridge.webp" alt="" style="display:none;position:absolute;inset:-8% -40% -6%;width:180%;height:114%;object-fit:cover;border-radius:22px;z-index:-1" onload="this.style.display='block'" onerror="this.remove()">${TROLL}<img class="tf" src="img/${v}.webp" alt="" style="display:none;position:absolute;inset:0" onload="this.style.display='block';const s=this.parentNode.querySelector('svg');if(s)s.style.visibility='hidden'" onerror="this.remove()"></div>`;
 function setTroll(v){const t=$("#troll");if(!t)return;const i=t.querySelector(".tf");if(i&&!i.src.endsWith(v+".webp")){const n=new Image();n.onload=()=>{i.src=n.src};n.src="img/"+v+".webp"}}
 function trollFight(){
  document.body.classList.remove("typing");
