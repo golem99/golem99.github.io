@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Sjuan till Vasa</title>
+<title>Tabellresan</title>
 <meta name="theme-color" content="#ffd6e8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Sjuan">
+<meta name="apple-mobile-web-app-title" content="Tabellresan">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{
   --sky1:#bfe6ff;--sky2:#fff1f7;--ink:#3a2340;--soft:#7a5f80;--card:#ffffff;--line:#f3d2e2;
-  --pink:#ff5fa2;--pink2:#ffc1dc;--ok:#2fb879;--bad:#ff7b6b;--btn:#fff;--btnInk:#3a2340;
-  --road:#5d5566;--grass:#9fdc8c;--hill:#7cc6a0;--hill2:#b6e3c6;
+  --pink:#ff5fa2;--pink2:#ffc1dc;--ok:#2fb879;--bad:#ff7b6b;--btn:#fff;--btnInk:#3a2340;--gold:#f5b400;
+  --road:#5d5566;--grass:#9fdc8c;--hill:#7cc6a0;--hill2:#b6e3c6;--noa:#3B6FD8;
 }
 @media (prefers-color-scheme:dark){:root{
   --sky1:#1b1f4a;--sky2:#3d2650;--ink:#fbeaf3;--soft:#cdb3d6;--card:#2a1f33;--line:#4b3557;
@@ -25,12 +25,56 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--sky2);color:var(--ink);
   font-family:ui-rounded,"SF Pro Rounded","Nunito","Varela Round",system-ui,-apple-system,"Segoe UI",sans-serif;overscroll-behavior:none}
-body{display:flex;flex-direction:column;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none}
+body{height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none}
 button{font:inherit;color:inherit;border:0;cursor:pointer}
+.view{display:none;flex-direction:column;height:100dvh;overflow:hidden}
+.view.on{display:flex}
 
-/* ---------- landskap ---------- */
-#scene{position:relative;height:34vh;min-height:190px;max-height:300px;flex:none;overflow:hidden;
+/* ================= Startsidan ================= */
+#home{overflow-y:auto;padding:calc(10px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));gap:14px}
+.top{display:flex;align-items:center;gap:12px}
+.me-av{width:62px;height:62px;border-radius:50%;background:var(--card);border:3px solid var(--pink);display:grid;place-items:center;overflow:hidden;flex:none;box-shadow:0 3px 0 var(--line);position:relative}
+.me-av img{width:100%;height:100%;object-fit:cover}
+.me-av .edit{position:absolute;right:-2px;bottom:-2px;background:var(--pink);color:#fff;border-radius:50%;width:22px;height:22px;font-size:12px;display:grid;place-items:center}
+.top h1{margin:0;font-size:28px;line-height:1}
+.top p{margin:3px 0 0;color:var(--soft);font-size:14px}
+.top .snd{margin-left:auto}
+.iconbtn{width:42px;height:42px;border-radius:50%;background:var(--card);font-size:19px;box-shadow:0 2px 0 var(--line);flex:none}
+.card{background:var(--card);border-radius:22px;padding:14px;box-shadow:0 3px 0 var(--line)}
+.card h3{margin:0 0 8px;font-size:17px}
+.card .muted{color:var(--soft);font-size:14px;margin:0}
+.bar{height:12px;border-radius:12px;background:var(--line);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--pink);border-radius:12px;transition:width .6s}
+.day{display:flex;align-items:center;gap:12px}
+.day .stamp{font-size:34px;flex:none}
+.cont{display:block;width:100%;padding:16px;border-radius:20px;background:var(--pink);color:#fff;font-size:20px;font-weight:900;box-shadow:0 5px 0 #d13f80;text-align:left}
+.cont small{display:block;font-weight:700;font-size:13px;opacity:.9}
+.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tab{position:relative;text-align:left;padding:12px 12px 10px;border-radius:20px;background:var(--btn);box-shadow:0 4px 0 var(--line);min-height:86px}
+.tab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.tab b{display:block;font-size:30px;line-height:1}
+.tab .to{display:block;font-size:13px;color:var(--soft);margin-top:3px}
+.tab .dots{display:flex;gap:3px;margin-top:8px}
+.tab .dots i{flex:1;height:6px;border-radius:4px;background:var(--line)}
+.tab .dots i.k{background:var(--pink)}
+.tab .got{position:absolute;right:10px;top:10px;font-size:20px}
+.tab.mix{grid-column:1/-1;background:linear-gradient(120deg,#ffe3ef,#e6f2ff);min-height:70px}
+@media (prefers-color-scheme:dark){.tab.mix{background:linear-gradient(120deg,#4a2a44,#26315a)}}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mbtn{padding:16px 10px;border-radius:20px;background:var(--btn);box-shadow:0 4px 0 var(--line);font-weight:900;font-size:17px}
+.mbtn span{display:block;font-size:28px;margin-bottom:2px}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:10px}
+.grid i{aspect-ratio:1;border-radius:4px;background:var(--line)}
+.grid i.h{background:var(--pink2)}
+.grid i.k{background:var(--pink)}
+.grid i.g{background:var(--gold)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--soft);margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;background:var(--c)}
+
+/* ================= Landskap ================= */
+#scene{position:relative;height:32vh;min-height:180px;max-height:290px;flex:none;overflow:hidden;
   background:linear-gradient(var(--sky1),var(--sky2) 95%)}
+body.typing #scene{height:24vh;min-height:150px}
 .layer{position:absolute;left:0;right:0;background-repeat:repeat-x}
 #sun{position:absolute;right:12%;top:12%;width:46px;height:46px;border-radius:50%;background:#ffd86b;box-shadow:0 0 30px #ffe9a8}
 @media (prefers-color-scheme:dark){#sun{background:#f4f0d0;box-shadow:0 0 24px #fff6c8;width:36px;height:36px}}
@@ -39,72 +83,75 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
 #trees{bottom:24%;height:30%}
 #ground{bottom:0;height:28%;background:var(--grass)}
 #road{bottom:5%;height:18%;background-color:var(--road)}
-#bus{position:absolute;left:50%;bottom:12%;width:min(64vw,300px);transform:translateX(-50%);animation:bob .5s ease-in-out infinite alternate}
-#bus img{width:100%;display:block;filter:drop-shadow(0 6px 6px rgba(0,0,0,.18))}
+#bus{position:absolute;left:50%;bottom:12%;width:min(62vw,290px);transform:translateX(-50%);animation:bob .5s ease-in-out infinite alternate}
+#bus img.b{width:100%;display:block;filter:drop-shadow(0 6px 6px rgba(0,0,0,.18))}
 @keyframes bob{to{transform:translateX(-50%) translateY(-3px)}}
 #bus.hop{animation:hop .55s ease}
 @keyframes hop{0%{transform:translateX(-50%)}35%{transform:translateX(-50%) translateY(-22px) rotate(-3deg)}70%{transform:translateX(-50%) translateY(2px)}100%{transform:translateX(-50%)}}
 #bus.shake{animation:shake .4s ease}
 @keyframes shake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(-53%)}75%{transform:translateX(-47%)}}
-.seat{position:absolute;width:13%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;
+.seat{position:absolute;width:13%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;overflow:hidden;
   color:#fff;font-weight:900;font-size:min(4.2vw,20px);border:2px solid #fff;transform:scale(0);transition:transform .45s cubic-bezier(.3,1.8,.5,1)}
 .seat.on{transform:scale(1)}
-.seat i{position:absolute;bottom:18%;left:50%;width:46%;height:16%;border-radius:0 0 20px 20px;border:2px solid #fff;border-top:0;transform:translateX(-50%);opacity:.9}
-#km{position:absolute;left:10px;top:10px;background:var(--card);border-radius:14px;padding:5px 10px;font-weight:800;font-size:15px;box-shadow:0 2px 0 var(--line)}
-#sound{position:absolute;right:10px;top:10px;width:40px;height:40px;border-radius:50%;background:var(--card);font-size:19px;box-shadow:0 2px 0 var(--line)}
-#streak{position:absolute;left:10px;top:46px;font-weight:900;font-size:15px;color:#ff7a1a;opacity:0;transition:opacity .3s}
+.seat img{width:100%;height:100%;object-fit:cover}
+.seat.drv{background:#fff}
+#km{position:absolute;left:10px;top:calc(10px + env(safe-area-inset-top));background:var(--card);border-radius:14px;padding:5px 10px;font-weight:800;font-size:15px;box-shadow:0 2px 0 var(--line)}
+#gbtns{position:absolute;right:10px;top:calc(10px + env(safe-area-inset-top));display:flex;gap:8px}
+#streak{position:absolute;left:10px;top:calc(46px + env(safe-area-inset-top));font-weight:900;font-size:15px;color:#ff7a1a;opacity:0;transition:opacity .3s}
 #streak.on{opacity:1}
-#turbo{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%) scale(0);font-size:34px;font-weight:900;color:var(--pink);
-  text-shadow:0 3px 0 #fff;pointer-events:none}
+#turbo{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%) scale(0);font-size:34px;font-weight:900;color:var(--pink);text-shadow:0 3px 0 #fff;pointer-events:none}
 #turbo.go{animation:turbo 1.1s ease}
 @keyframes turbo{0%{transform:translate(-50%,-50%) scale(0) rotate(-10deg)}30%{transform:translate(-50%,-50%) scale(1.2) rotate(4deg)}70%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
 
-/* ---------- rutten ---------- */
+/* rutten */
 #route{flex:none;position:relative;height:38px;margin:6px 18px 0}
 #route .track{position:absolute;left:0;right:0;top:15px;height:8px;border-radius:8px;background:var(--line)}
 #route .fill{position:absolute;left:0;top:15px;height:8px;border-radius:8px;background:var(--pink);transition:width .6s ease}
 #route .dot{position:absolute;top:11px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--card);border:3px solid var(--line)}
 #route .dot.past{border-color:var(--pink);background:var(--pink)}
+#route .dot.tr{border-color:#6aa84f}
 #route .lbl{position:absolute;top:28px;font-size:10px;color:var(--soft);transform:translateX(-50%);white-space:nowrap}
 #route .me{position:absolute;top:2px;width:22px;margin-left:-11px;transition:left .6s ease;font-size:18px;line-height:1}
 
-#know{flex:none;display:flex;justify-content:center;gap:5px;margin:14px 14px 0;align-items:center}
+/* kan-raden */
+#know{flex:none;display:flex;justify-content:center;gap:5px;margin:12px 14px 0;align-items:center;min-height:28px}
 #know span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:900;background:var(--card);color:var(--soft);border:2px solid var(--line);transition:all .4s}
 #know span.half{border-color:var(--pink2)}
 #know span.yes{background:var(--pink);border-color:var(--pink);color:#fff;transform:scale(1.08)}
 #know span.pulse{animation:jump .5s ease}
-/* ---------- prat ---------- */
-#talk{flex:none;display:flex;gap:10px;align-items:flex-end;margin:16px 14px 0;min-height:64px}
-.face{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px;position:relative;border:3px solid #fff;box-shadow:0 2px 0 var(--line)}
-.face i{position:absolute;bottom:9px;left:50%;width:18px;height:7px;border-radius:0 0 20px 20px;border:2px solid #fff;border-top:0;transform:translateX(-50%)}
+#know .mixbar{flex:1;max-width:320px;font-size:13px;font-weight:800;color:var(--soft)}
+#know .mixbar .bar{margin-top:4px;height:10px}
+
+/* prat */
+#talk{flex:none;display:flex;gap:10px;align-items:flex-end;margin:14px 14px 0;min-height:64px}
+.face{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px;border:3px solid #fff;box-shadow:0 2px 0 var(--line);overflow:hidden}
+.face img{width:100%;height:100%;object-fit:cover}
 .bubble{background:var(--card);border-radius:18px 18px 18px 4px;padding:10px 13px;font-size:16px;line-height:1.3;box-shadow:0 2px 0 var(--line);animation:pop .3s ease}
 .bubble b{display:block;font-size:12px;color:var(--soft);margin-bottom:2px}
 @keyframes pop{from{transform:scale(.85);opacity:0}}
 
-/* ---------- fråga ---------- */
+/* fråga */
 #q{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 14px;min-height:0}
 #qtext{font-size:clamp(46px,15vw,76px);font-weight:900;letter-spacing:1px;text-align:center;line-height:1.05}
-#qtext .blank{display:inline-block;min-width:1.1em;border-bottom:6px solid var(--pink);color:var(--pink)}
+body.typing #qtext{font-size:clamp(40px,12vw,64px)}
+.blank{display:inline-block;min-width:1.1em;border-bottom:6px solid var(--pink);color:var(--pink)}
 #hint{min-height:22px;margin-top:6px;font-size:15px;color:var(--soft);text-align:center}
 #answers{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px calc(14px + env(safe-area-inset-bottom))}
-.ans{height:clamp(72px,11vh,96px);border-radius:22px;background:var(--btn);color:var(--btnInk);font-size:clamp(32px,10vw,44px);font-weight:900;
-  box-shadow:0 5px 0 var(--line);transition:transform .08s}
+.ans{height:clamp(72px,11vh,96px);border-radius:22px;background:var(--btn);color:var(--btnInk);font-size:clamp(32px,10vw,44px);font-weight:900;box-shadow:0 5px 0 var(--line);transition:transform .08s}
 .ans:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
 .ans.right{background:var(--ok);color:#fff;box-shadow:0 5px 0 #1d8a58;animation:jump .4s ease}
 .ans.wrong{background:var(--bad);color:#fff;box-shadow:0 5px 0 #c85546;animation:wob .35s ease}
 .ans.dim{opacity:.35}
 @keyframes jump{40%{transform:translateY(-8px) scale(1.04)}}
 @keyframes wob{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-
-#answers.pad,#eo{grid-template-columns:repeat(4,1fr);gap:8px}
-body.typing #scene{height:24vh;min-height:150px}
-body.typing #qtext{font-size:clamp(40px,12vw,64px)}
+.pad{display:grid;grid-template-columns:repeat(4,1fr)!important;gap:8px}
 .typed{grid-column:1/-1;height:58px;border-radius:18px;background:var(--card);border:3px dashed var(--pink2);display:grid;place-items:center;font-size:38px;font-weight:900;color:var(--pink)}
 .typed.right{background:var(--ok);color:#fff;border-color:var(--ok)}.typed.wrong{background:var(--bad);color:#fff;border-color:var(--bad);animation:wob .35s}
 .key{height:clamp(48px,7vh,62px);border-radius:16px;background:var(--btn);color:var(--btnInk);font-size:28px;font-weight:900;box-shadow:0 4px 0 var(--line)}
 .key:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
 .key.ok{background:var(--pink);color:#fff;box-shadow:0 4px 0 #d13f80;font-size:22px}
-/* ---------- rutor ---------- */
+
+/* ================= Rutor ================= */
 #ov{position:fixed;inset:0;background:rgba(40,15,45,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}
 #ov.on{display:flex}
 #sheet{width:100%;max-width:520px;background:var(--sky2);border-radius:28px 28px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));
@@ -113,19 +160,67 @@ body.typing #qtext{font-size:clamp(40px,12vw,64px)}
 #sheet h2{margin:0 0 4px;font-size:30px;text-align:center}
 #sheet .sub{text-align:center;color:var(--soft);margin:0 0 14px}
 #sheet .row{display:flex;gap:10px;align-items:flex-end;margin:10px 0}
-.big{display:block;width:100%;margin-top:12px;padding:18px;border-radius:20px;background:var(--pink);color:#fff;font-size:22px;font-weight:900;box-shadow:0 5px 0 #d13f80}
+.fact{background:var(--card);border-radius:16px;padding:10px 12px;font-size:15px;line-height:1.35;margin:10px 0;box-shadow:0 2px 0 var(--line)}
+.big{display:block;width:100%;margin-top:12px;padding:18px;border-radius:20px;background:var(--pink);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 #d13f80}
 .big.alt{background:var(--btn);color:var(--btnInk);box-shadow:0 5px 0 var(--line)}
 .big:active{transform:translateY(3px)}
+.big:disabled{opacity:.4}
 .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .opts .ans{height:64px;font-size:28px}
-.sticker{display:block;width:110px;margin:0 auto 4px;animation:spin .8s ease}
-@keyframes spin{from{transform:scale(0) rotate(-200deg)}}
 #stairs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
-#stairs button{height:62px;border-radius:16px;background:var(--btn);color:var(--btnInk);font-size:26px;font-weight:900;box-shadow:0 4px 0 var(--line)}
+#stairs button{height:62px;border-radius:16px;background:var(--btn);color:var(--btnInk);font-size:24px;font-weight:900;box-shadow:0 4px 0 var(--line)}
 #stairs button.done{background:var(--ok);color:#fff;box-shadow:0 4px 0 #1d8a58;transform:scale(.92)}
 #stairs button.no{animation:wob .3s}
 #stairInfo{text-align:center;font-size:20px;font-weight:800;margin-top:8px}
 .stars{text-align:center;font-size:44px;letter-spacing:4px;margin:6px 0}
+.chips{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.chip{height:54px;border-radius:16px;background:var(--btn);font-size:24px;font-weight:900;box-shadow:0 4px 0 var(--line)}
+.chip.on{background:var(--pink);color:#fff;box-shadow:0 4px 0 #d13f80}
+.avs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}
+.avs button{aspect-ratio:1;border-radius:50%;background:var(--card);padding:0;overflow:hidden;border:3px solid transparent;box-shadow:0 2px 0 var(--line)}
+.avs button.on{border-color:var(--pink);transform:scale(1.06)}
+.avs img{width:100%;height:100%;object-fit:cover}
+.inp{width:100%;font:inherit;font-size:22px;font-weight:800;padding:14px;border-radius:16px;border:3px solid var(--pink2);background:var(--card);color:var(--ink);text-align:center;margin-top:6px}
+.album{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.album div{text-align:center;font-size:12px;color:var(--soft)}
+.badge{position:relative;width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:40px;background:radial-gradient(circle at 35% 30%,#fff,var(--c,#ffc1dc));border:4px solid #fff;box-shadow:0 3px 0 var(--line);overflow:hidden}
+.badge img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;background:var(--card)}
+.badge.no{filter:grayscale(1);opacity:.35}
+.sticker{width:120px;margin:0 auto 6px;animation:spin .8s ease}
+@keyframes spin{from{transform:scale(0) rotate(-200deg)}}
+
+/* trollet */
+.troll{position:relative;width:150px;height:150px;margin:0 auto;transition:transform .4s}
+.troll svg,.troll img{width:100%;height:100%;object-fit:contain}
+.troll.hit{animation:trollhit .45s ease}
+@keyframes trollhit{30%{transform:translateX(18px) rotate(10deg) scale(.92)}}
+.troll.laugh{animation:laugh .5s ease}
+@keyframes laugh{25%,75%{transform:translateY(-8px)}50%{transform:translateY(0)}}
+.hp{text-align:center;font-size:26px;letter-spacing:3px;margin:4px 0}
+
+/* ================= Duellen ================= */
+#duel{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;background:var(--sky2)}
+#duel.on{display:flex}
+.half{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:10px 12px;gap:8px;min-height:0}
+.half.noa{transform:rotate(180deg);background:linear-gradient(#e6f0ff,var(--sky2))}
+@media (prefers-color-scheme:dark){.half.noa{background:linear-gradient(#1f2b52,var(--sky2))}}
+.half .hd{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:18px}
+.half .sc{font-size:30px}
+.half .dq{text-align:center;font-size:clamp(34px,10vw,52px);font-weight:900;flex:1;display:grid;place-items:center}
+.half .da{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.half .da .ans{height:clamp(52px,8vh,70px);font-size:30px}
+.half .da.pad .key{height:clamp(40px,6vh,52px);font-size:24px}
+.half .da.pad .typed{height:44px;font-size:30px}
+.half.frozen .da{opacity:.35;pointer-events:none}
+#mid{flex:none;height:44px;position:relative;margin:0 14px}
+#mid .rope{position:absolute;left:0;right:0;top:20px;height:4px;border-radius:4px;background:repeating-linear-gradient(90deg,#c9a26b 0 8px,#a07a45 8px 16px)}
+#mid .knot{position:absolute;top:6px;width:32px;height:32px;margin-left:-16px;border-radius:50%;background:var(--pink);border:3px solid #fff;transition:left .4s cubic-bezier(.3,1.6,.5,1);display:grid;place-items:center;font-size:16px}
+#mid .end{position:absolute;top:10px;font-size:20px}
+#count{position:absolute;inset:0;display:none;place-items:center;font-size:120px;font-weight:900;color:var(--pink);background:rgba(255,241,247,.7);z-index:3}
+#count.on{display:grid}
+.res{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;font-size:34px;font-weight:900;padding:20px}
+.half.done .res{display:flex}
+.half.done .dq,.half.done .da{visibility:hidden}
 
 .conf{position:fixed;top:-20px;width:10px;height:14px;border-radius:3px;z-index:30;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
@@ -133,51 +228,71 @@ body.typing #qtext{font-size:clamp(40px,12vw,64px)}
 </head>
 <body>
 
-<div id="scene">
-  <div id="sun"></div>
-  <div class="layer" id="clouds"></div>
-  <div class="layer" id="hills"></div>
-  <div class="layer" id="trees"></div>
-  <div class="layer" id="ground"></div>
-  <div class="layer" id="road"></div>
-  <div id="bus"><img src="img/bus.webp" alt="Den rosa bussen"></div>
-  <div id="km">0 km</div>
-  <div id="streak"></div>
-  <button id="sound" aria-label="Ljud på eller av">🔊</button>
-  <div id="turbo">TURBO! 🚀</div>
+<!-- ============ STARTSIDAN ============ -->
+<div id="home" class="view on"></div>
+
+<!-- ============ RESAN ============ -->
+<div id="game" class="view">
+  <div id="scene">
+    <div id="sun"></div>
+    <div class="layer" id="clouds"></div>
+    <div class="layer" id="hills"></div>
+    <div class="layer" id="trees"></div>
+    <div class="layer" id="ground"></div>
+    <div class="layer" id="road"></div>
+    <div id="bus"><img class="b" src="img/bus.webp" alt="Den rosa bussen"></div>
+    <div id="km">0 km</div>
+    <div id="streak"></div>
+    <div id="gbtns"><button class="iconbtn" id="sound" aria-label="Ljud på eller av">🔊</button><button class="iconbtn" id="homeBtn" aria-label="Till startsidan">🏠</button></div>
+    <div id="turbo">TURBO! 🚀</div>
+  </div>
+  <div id="route"></div>
+  <div id="know" aria-label="Det här kan du"></div>
+  <div id="talk"></div>
+  <div id="q"><div id="qtext"></div><div id="hint"></div></div>
+  <div id="answers"></div>
 </div>
 
-<div id="route"></div>
-<div id="know" aria-label="Det här kan du"></div>
-<div id="talk"></div>
-<div id="q"><div id="qtext"></div><div id="hint"></div></div>
-<div id="answers"></div>
+<!-- ============ DUELLEN ============ -->
+<div id="duel">
+  <div class="half noa" id="hNoa"></div>
+  <div id="mid"><div class="rope"></div><span class="end" style="left:-6px">🩷</span><span class="end" style="right:-6px">💙</span><div class="knot" id="knot">🚌</div></div>
+  <div class="half saga" id="hSaga"></div>
+  <div id="count"></div>
+</div>
 
 <div id="ov"><div id="sheet"></div></div>
 
 <script>
 "use strict";
 const NAME="Saga";
-const KM_PER=2;              // kilometer per rätt svar
 const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const fill=t=>t.replace(/\{n\}/g,NAME).replace(/\{a\}/g,(S.av&&S.av.name)||"din kompis");
+const FAST_CHOICE=5000, FAST_TYPED=8000;   // så snabbt måste det gå för att räknas som "kan"
+const NEED=3;                              // antal snabba rätt i rad
+const INT=[0,1,3,7,14,30];                 // dagar till nästa repetition
+const DAILY=25;                            // rätt svar för dagens resa
+const TABN=["","ettans","tvåans","treans","fyrans","femmans","sexans","sjuans","åttans","nians","tians"];
 
 /* ================= Gänget (efter Hjärtpoäng) ================= */
 const CH={
  juni:{name:"Juni",color:"#5FB3E0",
-  hop:"Hej {n}! Jag tar fram anteckningsblocket. Vårt fall i dag heter Sjuans tabell.",
+  hop:"Hej {n}! Jag tar fram anteckningsblocket. Vårt fall i dag: {T}.",
   right:["Rätt. Det skriver jag upp i anteckningsblocket.","Fallet är löst, {n}! 🔍","Elementärt, kära {n}.","Kommissarien skulle ha nickat. Fast han nickar hela tiden.","Precis rätt. Du borde bli detektiv.","Bevisen är tydliga: du kan det här."],
   wrong:["Ett spår som ledde fel. Det händer de bästa.","Inte riktigt. Men nu vet vi var svaret inte gömmer sig.","Hmm. Vi kollar bevisen en gång till."],
-  chat:["Jag har räknat 14 röda bilar. Det är 7 × 2. Knappast en slump.","Ett trappsteg är ungefär 17 centimeter. Jag har mätt.","Kommissarien är säkert sur att han inte fick följa med."]},
+  chat:["Jag har räknat 14 röda bilar. Det är 7 × 2. Knappast en slump.","Ett trappsteg är ungefär 17 centimeter. Jag har mätt.","Kommissarien är säkert sur att han inte fick följa med.","Jag misstänker att {a} är en mästerdetektiv i hemlighet."]},
  vincent:{name:"Vincent",color:"#3B6FD8",
   hop:"Tjena {n}! Får jag sitta här? Boss fick stanna hemma, han spyr i bilar.",
   right:["MÅÅÅL! ⚽","Boss skulle ha skällt av glädje!","Det där var värt en glass. Minst två.","Tunnelbollen satt!","Rakt upp i krysset, {n}!","Du är ju typ lagkapten nu."],
   wrong:["Stolpe ut! Nästa går in.","Ah, nära! Domaren blåser för omstart.","Ingen fara. Även proffsen missar ibland."],
-  chat:["Får man äta glass i en buss? Jag frågar för en kompis.","Om bussen gjorde mål varje gång vi passerar en skylt hade vi vunnit med 40–0.","Jag är hungrig. Det har jag varit sen Närpes."]},
+  chat:["Får man äta glass i en buss? Jag frågar för en kompis.","Om bussen gjorde mål varje gång vi passerar en skylt hade vi vunnit med 40–0.","Jag är hungrig. Det har jag varit sen vi åkte.","{a} skulle bli en grym målvakt."]},
  cleo:{name:"Cleo",color:"#E2559B",
   hop:"Hejsan {n}! Jag hörde att det här var den roligaste bussen i stan. Och jag hör allt.",
-  right:["Det här måste jag berätta för hela stan!","Hörde du? Det var RÄTT!","Okej, nu är du typ kändis.","Snyggt! Jag flätar ditt hår som belöning sen.","Skvallret stämde: {n} kan sjuan!","Jag visste det. Jag vet alltid sånt."],
+  right:["Det här måste jag berätta för hela stan!","Hörde du? Det var RÄTT!","Okej, nu är du typ kändis.","Snyggt! Jag flätar ditt hår som belöning sen.","Skvallret stämde: {n} kan det här!","Jag visste det. Jag vet alltid sånt."],
   wrong:["Skvallret säger att nästa blir rätt.","Pyttenära! Det där håller vi mellan oss.","Ingen såg det. Jo, jag. Men jag säger inget."],
-  chat:["Visste ni att det odlas jättemånga tomater i Närpes? I växthus. Tusentals.","Jag har hört att Vasa har en jättelång bro. Vi ska över den!","Louie har två kaniner. Det vet alla. Jag sa det i alla fall till alla."]},
+  chat:["Louie har två kaniner. Det vet alla. Jag sa det i alla fall till alla.","Har ni sett {a}? Supersöt. Det säger alla.","Jag vet vem som åt upp Antons bullar. Men jag säger inget."]},
  louie:{name:"Louie",color:"#D9483B",
   hop:"Öh. Hej {n}. Jag sätter mig längst bak. Med mina kaninhalsband i fickan, ifall att.",
   right:["…okej, det där var faktiskt grymt.","Mina kaniner hoppar av glädje. Båda två.","Rätt. Jag gjorde en tyst high five i luften.","Du är snabbare än en kanin på ett gurkfält.","Den där kunde jag inte. Nu kan jag. Tack.","Knasigt bra, {n}."],
@@ -187,14 +302,14 @@ const CH={
   hop:"Hej {n}! Hej buss! Hej allihop! Jag har extra bullar i ryggsäcken, säg till.",
   right:["Du förtjänar en bulle! Jag har en extra.","Pappa skulle säga att det nappar i dag!","Det där var en riktig storgädda, {n}!","Rätt! Bullen är din.","Hej, rätt svar! Jag hälsar på det också.","Wow. Det där ska jag berätta för pappa."],
   wrong:["Fisken slank iväg. Vi kastar igen!","Nära! Bullen väntar till nästa.","Inget napp den gången. Nästa!"],
-  chat:["Jag har räknat bullarna. Jag har sju. Sju gånger en bulle är sju bullar.","Pappa säger att det finns gädda i varenda å här.","Hej, kossorna där ute! Ingen hälsade tillbaka."]},
+  chat:["Jag har räknat bullarna. Jag har sju. Sju gånger en bulle är sju bullar.","Pappa säger att det finns gädda i varenda å här.","Hej, kossorna där ute! Ingen hälsade tillbaka.","Hej {a}! Vill du ha en bulle?"]},
  ella:{name:"Ella",color:"#F08A24",
   hop:"Hej {n}! Jag har en egen glädjedans. Den kommer användas mycket nu.",
   right:["Glädjedans! 💃","Jaaa! Alla får vara med på den här festen.","Du är superbra, {n}!","Jag snurrade tre varv i sätet.","Rätt! Bussen dansar också.","Det där förtjänar en applåd från hela bussen."],
   wrong:["Ingen fara. Jag har en tröstedans också.","Nästan! Vi tar nästa tillsammans.","Fel är bara rätt som inte hänt än."],
-  chat:["Jag har en åkdans. Den är mest axlar.","Om alla i bussen sjunger samtidigt blir det en kör på hjul.","Visste ni att man kan dansa sittande? Jag gör det nu."]},
+  chat:["Jag har en åkdans. Den är mest axlar.","Om alla i bussen sjunger samtidigt blir det en kör på hjul.","{a} och jag har hittat på en dans. Den heter Gånger-twisten."]},
  tove:{name:"Tove",color:"#3FAF8F",
-  hop:"Hej {n}. Jag tar med kameran. Det här blir en bra bild: Saga och sjuan.",
+  hop:"Hej {n}. Jag tar med kameran. Det här blir en bra bild: {n} och tabellerna.",
   right:["Klick! Den bilden sparar jag. 📸","Snyggt, {n}.","Det där skulle jag vilja rama in.","Rätt. Sixten skulle ha viftat på svansen.","Perfekt skärpa på det svaret.","Bra jobbat. På riktigt."],
   wrong:["Lite suddigt. Vi tar om bilden.","Ingen fara, jag har massor av film kvar.","Nästan. Nästa bild blir skarp."],
   chat:["Ljuset är fint här. Allt blir lite gyllene.","Jag tog en bild på en mås. Den ser misstänksam ut.","Sixten hade somnat redan. Han älskar bilturer."]},
@@ -205,45 +320,105 @@ const CH={
   chat:["Den här bussen har en motor som låter i G-dur. Tror jag.","Jag kan laga en cykel på sju minuter. Okej, sjuttio.","Om vi får punktering vet jag vad man gör."]},
  arvid:{name:"Arvid",color:"#2F8F6E",
   hop:"Hej {n}. Fun fact: det finns sju dagar i veckan. Det är ingen slump.",
-  right:["Korrekt. Min dammsugarrobot skulle vara imponerad.","Rätt! Det är matematiskt bevisat nu.","Du räknar snabbare än min dator.","Sjuan är ett primtal. Och du är en stjärna.","Exakt. Som en raket på rätt bana. 🚀","Det där gick med ljusets hastighet. Nästan."],
+  right:["Korrekt. Min dammsugarrobot skulle vara imponerad.","Rätt! Det är matematiskt bevisat nu.","Du räknar snabbare än min dator.","Perfekt svar. Och du är en stjärna.","Exakt. Som en raket på rätt bana. 🚀","Det där gick med ljusets hastighet. Nästan."],
   wrong:["Fel svar är bara data. Vi testar igen.","Nästan. Även rymdsonder missar ibland.","Ingen fara. Vi kör om beräkningen."],
-  chat:["Ljuset från solen tar ungefär åtta minuter hit. Vi har åkt längre än så nu.","Om bussen åkte i rymden skulle den heta Rosa Raketen.","Jag har programmerat i huvudet hela vägen. Det blev nästan en app."]}
+  chat:["Ljuset från solen tar ungefär åtta minuter hit. Vi har åkt längre än så nu.","Om bussen åkte i rymden skulle den heta Rosa Raketen.","Visste du att 6 × 7 och 7 × 6 är samma sak? Då behöver man bara lära sig hälften."]}
 };
+const ORDER=["juni","vincent","cleo","louie","anton","ella","tove","milo","arvid"];
 
-/* ================= Rutten ================= */
-const TRIPS={
- dit:{title:"Kristinestad → Vasa",total:98,stops:[
-  {km:0,town:"Kristinestad",who:"juni"},
-  {km:35,town:"Närpes",who:"vincent"},
-  {km:49,town:"Övermark",who:"cleo"},
-  {km:56,town:"Pörtom",who:"louie"},
-  {km:84,town:"Solf",who:"anton"},
-  {km:98,town:"Vasa",party:["ella","tove","milo","arvid"]}]},
- hem:{title:"Vasa → Kristinestad",total:98,stops:[
-  {km:0,town:"Vasa",who:"ella"},
-  {km:14,town:"Solf",who:"tove"},
-  {km:42,town:"Pörtom",who:"milo"},
-  {km:49,town:"Övermark",who:"arvid"},
-  {km:63,town:"Närpes",who:"juni"},
-  {km:98,town:"Kristinestad",party:["vincent","cleo","louie","anton"]}]}
+/* ================= Resorna =================
+   Svårare tabell = längre resa. need = antal rätt svar som behövs. */
+const DEST={
+ 1:{name:"Runt Kristinestad",short:"Runt stan",slug:"kristinestad",emoji:"⚓",c:"#9fd3ff",need:12,total:12,
+   stops:[[0,"Torget"],[3,"Rådhuset"],[6,"Kattpiskargränd"],[9,"Kyrkan"],[12,"Hamnen"]],
+   fact:"Kristinestad grundades år 1649. Kattpiskargränd är en så smal gränd att man nästan kan nudda husen på båda sidor."},
+ 2:{name:"Lappfjärd",short:"Lappfjärd",slug:"lappfjard",emoji:"⛪",c:"#ffe08a",need:15,total:16,
+   stops:[[0,"Kristinestad"],[6,"Älgskylten"],[11,"Bron"],[16,"Lappfjärd"]],
+   fact:"I Lappfjärd finns en jättestor kyrka. Den syns långt bort över fälten."},
+ 10:{name:"Kaskö",short:"Kaskö",slug:"kasko",emoji:"🏝️",c:"#a8e6cf",need:15,total:40,
+   stops:[[0,"Kristinestad"],[12,"Bensinmacken"],[25,"Älgkorsningen"],[40,"Kaskö"]],
+   fact:"Kaskö är Finlands minsta stad. Den ligger nästan helt på en ö."},
+ 5:{name:"Närpes",short:"Närpes",slug:"narpes",emoji:"🍅",c:"#ffb3a7",need:18,total:37,
+   stops:[[0,"Kristinestad"],[10,"Tjöck"],[25,"Växthusen"],[37,"Närpes"]],
+   fact:"I Närpes odlas jättemånga av Finlands tomater, i stora växthus som lyser på kvällen."},
+ 3:{name:"Seinäjoki",short:"Seinäjoki",slug:"seinajoki",emoji:"💃",c:"#d6b3ff",need:28,total:110,
+   stops:[[0,"Kristinestad"],[37,"Närpes"],[60,"Skogsvägen"],[85,"Kurikka"],[110,"Seinäjoki"]],
+   fact:"I Seinäjoki ordnas en stor tangofestival varje sommar. Hela stan dansar."},
+ 4:{name:"Jakobstad",short:"Jakobstad",slug:"jakobstad",emoji:"⛵",c:"#9fd3ff",need:30,total:200,
+   stops:[[0,"Kristinestad"],[37,"Närpes"],[100,"Vasa"],[150,"Nykarleby"],[200,"Jakobstad"]],
+   fact:"I Jakobstad finns Skata, en hel stadsdel med gamla trähus i alla färger."},
+ 6:{name:"Tammerfors",short:"Tammerfors",slug:"tammerfors",emoji:"🎢",c:"#ffd1dc",need:36,total:205,
+   stops:[[0,"Kristinestad"],[60,"Kauhajoki"],[120,"Parkano"],[185,"Ylöjärvi"],[205,"Tammerfors"]],
+   fact:"I Tammerfors finns nöjesparken Särkänniemi och ett jättehögt utsiktstorn, Näsinneula."},
+ 7:{name:"Vasa",short:"Vasa",slug:"vasa",emoji:"🌉",c:"#b3e5fc",need:40,total:98,
+   stops:[[0,"Kristinestad"],[35,"Närpes"],[49,"Övermark"],[56,"Pörtom"],[84,"Solf"],[98,"Vasa"]],
+   fact:"Nära Vasa finns Replotbron, Finlands längsta bro. Den går ut till skärgården."},
+ 8:{name:"Åbo",short:"Åbo",slug:"abo",emoji:"🏰",c:"#ffe08a",need:44,total:245,
+   stops:[[0,"Kristinestad"],[50,"Sastmola"],[100,"Björneborg"],[150,"Raumo"],[245,"Åbo"]],
+   fact:"Åbo är Finlands äldsta stad. Där finns ett riktigt slott, Åbo slott."},
+ 9:{name:"Helsingfors",short:"Helsingfors",slug:"helsingfors",emoji:"🎡",c:"#c5f0c0",need:50,total:400,
+   stops:[[0,"Kristinestad"],[100,"Björneborg"],[210,"Tammerfors"],[290,"Tavastehus"],[400,"Helsingfors"]],
+   fact:"Helsingfors är Finlands huvudstad. Där finns nöjesparken Linnanmäki och fästningen Sveaborg ute i havet."},
+ mix:{name:"Rovaniemi",short:"Rovaniemi",slug:"rovaniemi",emoji:"🎅",c:"#ffc9c9",need:60,total:610,
+   stops:[[0,"Kristinestad"],[100,"Vasa"],[220,"Karleby"],[400,"Uleåborg"],[500,"Kemi"],[610,"Rovaniemi"]],
+   fact:"Rovaniemi ligger vid polcirkeln. Där finns Tomtebyn, och man kan träffa tomten året om."}
 };
+const KEYS=[1,2,10,5,3,4,6,7,8,9];   // ordning på startsidan: lättast först
 
-/* sjuans knep */
-const TRICK={1:"7 × 1 är bara 7.",2:"7 × 2 = 14. Dubbla sju!",3:"7 × 3 = 21. Tre veckor har 21 dagar.",
- 4:"7 × 4 = 28. Dubbla 14!",5:"7 × 5 = 35. Hälften av 70.",6:"7 × 6 = 42. Sex sjuor, fyra-två.",
- 7:"7 × 7 = 49. Sju sjuor, fyra-nio.",8:"7 × 8 = 56. Tänk 5, 6, 7, 8!",9:"7 × 9 = 63. Ta 70 minus 7.",10:"7 × 10 = 70. Lägg till en nolla."};
+/* ================= Knep ================= */
+function trick(a,b){
+ const p=a*b;
+ if((a===7&&b===8)||(a===8&&b===7))return "7 × 8 = 56. Tänk 5, 6, 7, 8!";
+ if((a===6&&b===7)||(a===7&&b===6))return "6 × 7 = 42. Sex sjuor, fyra-två.";
+ if(a===b)return `${a} × ${a} = ${p}. Ett kvadrattal, som en fyrkant med ${a} rader och ${a} i varje.`;
+ const order=[10,1,2,5,9,4,3,8,6,7];
+ const t=order.find(x=>x===a||x===b),o=t===a?b:a;
+ const s={10:`Gånger tio: lägg till en nolla. ${o} blir ${p}.`,
+  1:`Gånger ett är talet självt: ${p}.`,
+  2:`Gånger två är dubbla: ${o} + ${o} = ${p}.`,
+  5:`Gånger fem är hälften av gånger tio: ${o*10} delat med två är ${p}.`,
+  9:`Gånger nio: ta gånger tio och minus en gång. ${o*10} − ${o} = ${p}.`,
+  4:`Gånger fyra: dubbla och dubbla igen. ${o} → ${o*2} → ${p}.`,
+  3:`Gånger tre: dubbla och lägg till en gång till. ${o*2} + ${o} = ${p}.`,
+  8:`Gånger åtta: dubbla tre gånger. ${o} → ${o*2} → ${o*4} → ${p}.`,
+  6:`Gånger sex: fem gånger och en gång till. ${o*5} + ${o} = ${p}.`,
+  7:`Gånger sju: fem gånger plus två gånger. ${o*5} + ${o*2} = ${p}.`}[t];
+ return `${a} × ${b} = ${p}. ${s}`;
+}
 
-/* ================= Sparat (bara i den här telefonen) ================= */
+/* ================= Sparat (bara i den här telefonen) =================
+   Samma nyckel som Sjuan. Gamla fält finns kvar; nya läggs till. */
 const KEY="sjuan.v1";
-let S;
-function fresh(trip){return{trip:trip||"dit",km:0,riders:[],streak:0,w:{},stairsBest:S?S.stairsBest:null,m:{},right:0,trips:S?S.trips||0:0,sound:S?S.sound:true,started:false}}
+let S=null;
 try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
-if(!S||!S.trip)S=fresh("dit");
+if(!S)S={};
+if(S.sound===undefined)S.sound=true;
 if(!S.m)S.m={};
+if(!S.F)S.F={};                  // gångertal: "6x7" → {s,b,d,ok,bad}
+if(!S.av)S.av={img:"",name:""};  // avatar
+if(!S.stk)S.stk={};              // klistermärken: slug → datum
+if(!S.day)S.day={d:0,r:0,done:false};
+if(!S.days)S.days=0;
+if(!S.duel)S.duel={saga:0,noa:0};
+if(!S.stairs)S.stairs={};
+if(!S.mixSel)S.mixSel=[2,5,10];
+function today(){const d=new Date();return Math.floor((d.getTime()-d.getTimezoneOffset()*60000)/864e5)}
+const fk=(a,b)=>Math.min(a,b)+"x"+Math.max(a,b);
+const F=k=>S.F[k]||(S.F[k]={s:0,b:0,d:0,ok:0,bad:0});
+const known=k=>!!S.F[k]&&S.F[k].s>=NEED;
+const due=k=>known(k)&&S.F[k].b>=1&&S.F[k].d<=today();
+const deep=k=>known(k)&&S.F[k].b>=3;
+// flytta över det hon lärde sig i Sjuan
+if(!S.migrated){
+ for(let n=1;n<=10;n++){const v=S.m[n]||0;if(v>0){const f=F(fk(7,n));f.s=Math.max(f.s,Math.min(v,NEED));if(f.s>=NEED){f.b=1;f.d=today()+1}}}
+ if(S.stairsBest)S.stairs[7]=S.stairsBest;
+ if(S.started&&S.trip==="dit"&&S.km>0&&S.km<98)S.tr={key:"7",tables:[7],km:S.km/98*40,riders:(S.riders||[]).slice(),party:["ella","tove","milo","arvid"],right:0,streak:0,troll:false,typedOk:0};
+ S.migrated=true;
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-const fill=t=>t.replace(/\{n\}/g,NAME);
-const pick=a=>a[Math.floor(Math.random()*a.length)];
-const T=()=>TRIPS[S.trip];
+save();
+function checkDay(){if(S.day.d!==today())S.day={d:today(),r:0,done:false}}
+checkDay();
 
 /* ================= Ljud ================= */
 let AC=null;
@@ -253,28 +428,121 @@ function tone(f,t0,d,type,vol){const a=ac();if(!a||!S.sound)return;const o=a.cre
  g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g);g.connect(a.destination);o.start(s);o.stop(s+d+.05)}
 const SND={
  right(){tone(1047,0,.18,"triangle");tone(1319,.09,.28,"triangle")},
+ fast(){tone(1047,0,.14,"triangle");tone(1319,.07,.14,"triangle");tone(1568,.14,.26,"triangle")},
  wrong(){tone(330,0,.2,"sine",.06);tone(262,.14,.3,"sine",.06)},
  horn(){tone(392,0,.16,"square",.035);tone(392,.22,.22,"square",.035)},
  turbo(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.06,.18,"triangle",.06))},
  step(i){const sc=[523,587,659,784,880,1047,1175,1319,1568,1760];tone(sc[i]||1760,0,.2,"triangle",.06)},
  fanfare(){[[523,0],[659,.15],[784,.3],[1047,.45],[784,.7],[1047,.85]].forEach(([f,t])=>tone(f,t,.3,"triangle",.07))},
+ learned(){[[784,0],[988,.1],[1175,.2],[1568,.32]].forEach(([f,t])=>tone(f,t,.25,"sine",.07))},
+ troll(){tone(150,0,.25,"sawtooth",.04);tone(120,.22,.35,"sawtooth",.04)},
+ hit(){tone(220,0,.08,"square",.04);tone(660,.05,.15,"triangle",.06)},
+ tick(){tone(660,0,.06,"sine",.05)},
  pop(){tone(880,0,.08,"sine",.05)}
 };
 function buzz(p){if(navigator.vibrate&&S.sound)try{navigator.vibrate(p)}catch(e){}}
-$("#sound").onclick=()=>{S.sound=!S.sound;save();$("#sound").textContent=S.sound?"🔊":"🔇";if(S.sound)SND.pop()};
-$("#sound").textContent=S.sound?"🔊":"🔇";
+function sndIcon(){document.querySelectorAll(".snd,#sound").forEach(b=>b.textContent=S.sound?"🔊":"🔇")}
+function toggleSound(){S.sound=!S.sound;save();sndIcon();if(S.sound)SND.pop()}
+$("#sound").onclick=toggleSound;
+
+/* ================= Hjälpare för bilder ================= */
+const AVS=["kitten","bunny","puppy","unicorn","dolphin","star","fox","panda","koala","owl","penguin","hedgehog","hamster","turtle","ladybug","elephant","seahorse","dragon","pegasus","moon","cloud","planet","cupcake-kitten","donut-puppy","strawberry-bunny","icecream-bear","fairy-squirrel"];
+const avSrc=id=>`img/avatars/${id}.webp`;
+function avHTML(){return S.av.img?`<img src="${avSrc(S.av.img)}" alt="">`:`<span style="font-size:28px">🙂</span>`}
+// klistermärke: egen bild om den finns, annars en ritad bricka
+function badge(key,got){const d=DEST[key];return `<div class="badge ${got?"":"no"}" style="--c:${d.c}">${d.emoji}<img src="img/sticker-${d.slug}.webp" alt="" onload="this.style.display='block'" onerror="this.remove()"></div>`}
+const TROLL=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><ellipse cx="100" cy="186" rx="62" ry="9" fill="#000" opacity=".12"/><path d="M60 40 Q70 10 90 30 Q100 5 110 30 Q130 10 140 40" fill="#ff8fc1"/><ellipse cx="100" cy="115" rx="70" ry="72" fill="#7cc576"/><ellipse cx="100" cy="135" rx="45" ry="40" fill="#a6dc9f"/><ellipse cx="32" cy="100" rx="14" ry="22" fill="#6ab364"/><ellipse cx="168" cy="100" rx="14" ry="22" fill="#6ab364"/><circle cx="75" cy="92" r="16" fill="#fff"/><circle cx="125" cy="92" r="16" fill="#fff"/><circle cx="78" cy="95" r="8" fill="#3a2340"/><circle cx="122" cy="95" r="8" fill="#3a2340"/><circle cx="81" cy="91" r="3" fill="#fff"/><circle cx="125" cy="91" r="3" fill="#fff"/><ellipse cx="100" cy="118" rx="20" ry="16" fill="#ff9aa8"/><path d="M70 140 Q100 165 130 140" stroke="#3a2340" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="86" y="142" width="10" height="11" rx="2" fill="#fff"/><rect x="104" y="142" width="10" height="11" rx="2" fill="#fff"/><circle cx="58" cy="122" r="8" fill="#ffb3c6" opacity=".7"/><circle cx="142" cy="122" r="8" fill="#ffb3c6" opacity=".7"/></svg>`;
+const trollHTML=()=>`<div class="troll" id="troll">${TROLL}<img src="img/troll.webp" alt="" style="display:none;position:absolute;inset:0" onload="this.style.display='block';this.previousElementSibling.remove()" onerror="this.remove()"></div>`;
+
+/* ================= Rutor ================= */
+function sheet(html){$("#sheet").innerHTML=html;$("#ov").classList.add("on");$("#sheet").scrollTop=0}
+function close(){$("#ov").classList.remove("on");$("#sheet").onclick=null}
+function say(id,text,el){const c=CH[id];(el||$("#talk")).innerHTML=`<div class="face" style="background:${c.color}">${c.name[0]}</div><div class="bubble"><b>${c.name}</b>${fill(text)}</div>`}
+function sayMe(text,el){(el||$("#talk")).innerHTML=`<div class="face" style="background:#fff">${avHTML()}</div><div class="bubble"><b>${S.av.name||NAME}</b>${fill(text)}</div>`}
+function confetti(n){const cols=["#ff5fa2","#ffd86b","#5FB3E0","#3FAF8F","#8A6BD1","#F08A24"];
+ for(let i=0;i<n;i++){const d=document.createElement("div");d.className="conf";d.style.left=Math.random()*100+"vw";d.style.background=pick(cols);
+  d.style.animationDuration=(1.6+Math.random()*1.8)+"s";d.style.animationDelay=Math.random()*.6+"s";document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}}
+function show(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id===id))}
+
+/* ================= Startsidan ================= */
+function tableKnown(t){let k=0;for(let n=1;n<=10;n++)if(known(fk(t,n)))k++;return k}
+function allFacts(){const a=[];for(let x=1;x<=10;x++)for(let y=x;y<=10;y++)a.push(fk(x,y));return a}
+function dueList(){return allFacts().filter(due)}
+function renderHome(){
+ checkDay();
+ const facts=allFacts(),k=facts.filter(known).length;
+ let grid="";for(let y=1;y<=10;y++)for(let x=1;x<=10;x++){const key=fk(x,y),f=S.F[key];grid+=`<i class="${deep(key)?"g":known(key)?"k":f&&f.s>0?"h":""}"></i>`}
+ const tr=S.tr,dl=dueList();
+ let h=`<div class="top"><button class="me-av" id="avBtn" aria-label="Välj avatar">${avHTML()}<span class="edit">✏️</span></button>
+   <div><h1>Tabellresan</h1><p>Hej ${NAME}${S.av.name?" och "+S.av.name:""}! 🚌</p></div><button class="iconbtn snd" id="hSnd">🔊</button></div>`;
+ if(tr&&DEST[tr.key])h+=`<button class="cont" id="contBtn"><small>Fortsätt resan</small>${DEST[tr.key].name} · ${Math.round(tr.km/DEST[tr.key].need*100)} %</button>`;
+ h+=`<div class="card day"><div class="stamp">${S.day.done?"⭐":"🗓️"}</div><div style="flex:1"><h3 style="margin:0">${S.day.done?"Dagens resa är klar!":"Dagens resa"}</h3>
+   <p class="muted">${S.day.done?`Bra jobbat! Du har gjort ${S.days} dagsresor.`:`${S.day.r} av ${DAILY} rätt i dag`}</p><div class="bar"><i style="width:${Math.min(100,S.day.r/DAILY*100)}%"></i></div></div></div>`;
+ if(dl.length)h+=`<button class="cont" id="repBtn" style="background:var(--ok);box-shadow:0 5px 0 #1d8a58"><small>${dl.length} tal vill hälsa på igen</small>Repetera en stund 🔁</button>`;
+ h+=`<div class="tabs">`;
+ KEYS.forEach(t=>{const d=DEST[t],kk=tableKnown(t);let dots="";for(let n=1;n<=10;n++)dots+=`<i class="${known(fk(t,n))?"k":""}"></i>`;
+  h+=`<button class="tab" data-t="${t}"><b>${t}:an</b><span class="to">→ ${d.short} ${d.emoji}</span><span class="dots">${dots}</span>${S.stk[d.slug]?`<span class="got">🏅</span>`:""}</button>`});
+ h+=`<button class="tab mix" data-t="mix"><b style="font-size:22px">Blandat 🎲</b><span class="to">Välj vilka tabeller du vill blanda → ${DEST.mix.short} ${DEST.mix.emoji}</span>${S.stk.rovaniemi?`<span class="got">🏅</span>`:""}</button></div>`;
+ h+=`<div class="row2"><button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button><button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>`;
+ h+=`<div class="card"><h3>Du kan ${k} av 55 gångertal</h3><p class="muted">6 × 7 och 7 × 6 är samma tal. Därför finns det bara 55 att lära, inte 100. Varje tabell du kan gör nästa lättare!</p>
+   <div class="grid">${grid}</div><div class="legend"><span style="--c:var(--pink2)">på väg</span><span style="--c:var(--pink)">kan</span><span style="--c:var(--gold)">sitter som berget</span></div></div>`;
+ h+=`<div class="card"><h3>Så funkar det</h3><p class="muted">Ett tal räknas som kunnat när du svarar rätt och snabbt tre gånger i rad. Sedan kommer det tillbaka efter en dag, tre dagar och en vecka, så att det fastnar för alltid.</p></div>`;
+ $("#home").innerHTML=h;sndIcon();
+ $("#hSnd").onclick=toggleSound;$("#avBtn").onclick=()=>avatarSheet(false);
+ if($("#contBtn"))$("#contBtn").onclick=()=>{show("game");resume()};
+ if($("#repBtn"))$("#repBtn").onclick=repeatRound;
+ $("#home").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{SND.pop();b.dataset.t==="mix"?mixSheet():tripSheet(b.dataset.t)});
+ $("#duelBtn").onclick=duelSheet;$("#albBtn").onclick=album;
+}
+
+function avatarSheet(first){
+ let sel=S.av.img||"";
+ sheet(`<h2>${first?"Välkommen!":"Din avatar"}</h2><p class="sub">Välj en kompis som kör bussen. Ge den ett eget namn!</p>
+  <div class="avs">${AVS.map(a=>`<button data-a="${a}" class="${a===sel?"on":""}"><img src="${avSrc(a)}" alt="${a}"></button>`).join("")}</div>
+  <input class="inp" id="avName" maxlength="16" placeholder="Vad heter den?" value="${(S.av.name||"").replace(/"/g,"")}">
+  <button class="big" id="avOk">Klart!</button>`);
+ $("#sheet").querySelectorAll(".avs button").forEach(b=>b.onclick=()=>{sel=b.dataset.a;$("#sheet").querySelectorAll(".avs button").forEach(x=>x.classList.toggle("on",x===b));SND.pop()});
+ $("#avOk").onclick=()=>{S.av={img:sel||"kitten",name:($("#avName").value||"").trim().slice(0,16)};save();SND.learned();close();renderHome()};
+}
+
+function album(){
+ const keys=[...KEYS,"mix"];
+ sheet(`<h2>Klistermärken</h2><p class="sub">Ett för varje resa du har gjort klart.</p><div class="album">${keys.map(k=>{const d=DEST[k],g=S.stk[d.slug];return `<div>${badge(k,g)}<div style="margin-top:4px">${g?d.short:"?"}</div></div>`}).join("")}</div><button class="big alt" id="aOk">Stäng</button>`);
+ $("#aOk").onclick=close;
+}
+
+function tripSheet(t){
+ t=+t;const d=DEST[t],kk=tableKnown(t);
+ const other=[];for(let n=1;n<=10;n++)if(n!==t&&known(fk(t,n)))other.push(n);
+ sheet(`${badge(t,true).replace('class="badge ','class="badge sticker ')}<h2>${TABN[t].replace(/^./,c=>c.toUpperCase())} tabell</h2><p class="sub">Resa till ${d.name} · ${d.total} km · ${d.need} rätt svar</p>
+  <div class="fact">${kk?`Du kan redan <b>${kk} av 10</b> tal i ${TABN[t]} tabell${other.length?` – en del tack vare andra tabeller, för ${t} × ${other[0]} är samma som ${other[0]} × ${t}`:""}. 🎉`:`Alla tal är nya. Gänget hjälper dig med knep längs vägen!`}</div>
+  <button class="big" id="go">Åk! 🚌</button><button class="big alt" id="no">Inte nu</button>`);
+ $("#sheet").querySelector(".badge").style.cssText+=";width:110px;margin:0 auto 6px";
+ $("#go").onclick=()=>{close();newTrip(String(t),[t])};$("#no").onclick=close;
+}
+function mixSheet(){
+ let sel=new Set(S.mixSel);
+ const draw=()=>{$("#chips").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="chip ${sel.has(n)?"on":""}" data-n="${n}">${n}</button>`).join("");
+  $("#chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const n=+b.dataset.n;sel.has(n)?sel.delete(n):sel.add(n);SND.pop();draw()});
+  $("#go").disabled=sel.size<2;$("#go").textContent=sel.size<2?"Välj minst två":"Åk till Rovaniemi! 🎅"};
+ sheet(`<h2>Blandat 🎲</h2><p class="sub">Välj tabellerna du vill blanda. Resan går ända till ${DEST.mix.name}, ${DEST.mix.total} km.</p><div class="chips" id="chips"></div>
+  <button class="big alt" id="all">Alla tabeller</button><button class="big" id="go"></button><button class="big alt" id="no">Inte nu</button>`);
+ draw();
+ $("#all").onclick=()=>{sel=new Set([1,2,3,4,5,6,7,8,9,10]);draw()};
+ $("#go").onclick=()=>{S.mixSel=[...sel].sort((a,b)=>a-b);save();close();newTrip("mix",S.mixSel)};$("#no").onclick=close;
+}
 
 /* ================= Landskap ================= */
 const svg=s=>"url(\"data:image/svg+xml,"+encodeURIComponent(s)+"\")";
 function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
 function paint(){
- const h=css("--hill"),h2=css("--hill2"),g=css("--grass");
+ const h=css("--hill"),h2=css("--hill2");
  $("#clouds").style.backgroundImage=svg(`<svg xmlns='http://www.w3.org/2000/svg' width='420' height='60'><g fill='white' opacity='.85'><ellipse cx='60' cy='30' rx='34' ry='13'/><ellipse cx='84' cy='22' rx='22' ry='14'/><ellipse cx='280' cy='38' rx='28' ry='10'/><ellipse cx='298' cy='31' rx='17' ry='11'/></g></svg>`);
  $("#hills").style.backgroundImage=svg(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='120' preserveAspectRatio='none'><path d='M0 120 L0 70 Q80 20 160 60 T330 50 T480 40 T600 70 L600 120Z' fill='${h2}'/><path d='M0 120 L0 95 Q100 55 200 90 T400 80 T600 95 L600 120Z' fill='${h}'/></svg>`);
  $("#hills").style.backgroundSize="600px 100%";
  const tree=(x,s)=>`<g transform='translate(${x} ${80-s*60}) scale(${s})'><rect x='-4' y='50' width='8' height='14' fill='#8a5a3c'/><path d='M0 0 L22 34 L10 34 L26 56 L-26 56 L-10 34 L-22 34Z' fill='#3e9a63'/></g>`;
- const house=x=>`<g transform='translate(${x} 44)'><rect width='34' height='26' fill='#e2554a'/><path d='M-4 2 L17 -14 L38 2Z' fill='#5b3b46'/><rect x='5' y='8' width='9' height='9' fill='#fff7c9'/><rect x='21' y='12' width='8' height='14' fill='#fff'/></g>`;
- $("#trees").style.backgroundImage=svg(`<svg xmlns='http://www.w3.org/2000/svg' width='520' height='80'>${tree(30,.9)}${tree(70,1.1)}${house(140)}${tree(230,.8)}${tree(300,1)}${tree(335,.75)}${house(400)}${tree(490,1.05)}</svg>`);
+ const house=(x,c)=>`<g transform='translate(${x} 44)'><rect width='34' height='26' fill='${c}'/><path d='M-4 2 L17 -14 L38 2Z' fill='#5b3b46'/><rect x='5' y='8' width='9' height='9' fill='#fff7c9'/><rect x='21' y='12' width='8' height='14' fill='#fff'/></g>`;
+ $("#trees").style.backgroundImage=svg(`<svg xmlns='http://www.w3.org/2000/svg' width='520' height='80'>${tree(30,.9)}${tree(70,1.1)}${house(140,"#e2554a")}${tree(230,.8)}${tree(300,1)}${tree(335,.75)}${house(400,"#f2c14e")}${tree(490,1.05)}</svg>`);
  $("#trees").style.backgroundSize="auto 100%";
  $("#road").style.backgroundImage=svg(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='20'><rect x='0' y='9' width='40' height='3' rx='1.5' fill='#fff' opacity='.85'/></svg>`);
  $("#road").style.backgroundPosition="0 50%";
@@ -283,224 +551,333 @@ paint();
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",paint);
 let speed=.35,target=.35,pos=0,last=0;
 function loop(t){const dt=Math.min(50,t-(last||t));last=t;speed+=(target-speed)*.05;pos+=speed*dt*.06;
- $("#clouds").style.backgroundPositionX=(-pos*.1)+"px";$("#hills").style.backgroundPositionX=(-pos*.3)+"px";
- $("#trees").style.backgroundPositionX=(-pos*1)+"px";$("#road").style.backgroundPositionX=(-pos*2.2)+"px";requestAnimationFrame(loop)}
+ if($("#game").classList.contains("on")){$("#clouds").style.backgroundPositionX=(-pos*.1)+"px";$("#hills").style.backgroundPositionX=(-pos*.3)+"px";
+ $("#trees").style.backgroundPositionX=(-pos*1)+"px";$("#road").style.backgroundPositionX=(-pos*2.2)+"px"}requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
 function boost(x){target=x||3;setTimeout(()=>target=.35,700)}
 function busAnim(c){const b=$("#bus");b.classList.remove("hop","shake");void b.offsetWidth;b.classList.add(c);setTimeout(()=>b.classList.remove(c),600)}
 
-/* platser i bussens fönster (procent av bilden) */
-const SEATS=[[16,44],[31,44],[48,44],[64,44],[87,44]];
+/* platser i bussens fönster (procent av bilden); längst fram kör avataren */
+const SEATS=[[16,44],[31,44],[48,44],[64,44]],DRIVER=[87,44];
 function drawSeats(){
  const b=$("#bus");b.querySelectorAll(".seat").forEach(e=>e.remove());
- S.riders.forEach((id,i)=>{const p=SEATS[i]||SEATS[SEATS.length-1];const d=document.createElement("div");
-  d.className="seat";d.style.left=(p[0]-6.5)+"%";d.style.top=(p[1]-11)+"%";d.style.background=CH[id].color;d.textContent=CH[id].name[0];
-  b.appendChild(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))});
+ const add=(p,html,bg,cls)=>{const d=document.createElement("div");d.className="seat "+(cls||"");d.style.left=(p[0]-6.5)+"%";d.style.top=(p[1]-11)+"%";d.style.background=bg;d.innerHTML=html;b.appendChild(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))};
+ if(S.av.img)add(DRIVER,`<img src="${avSrc(S.av.img)}" alt="">`,"#fff","drv");
+ S.tr.riders.slice(-4).forEach((id,i)=>add(SEATS[i],CH[id].name[0],CH[id].color));
 }
 
-/* ================= Rutt-raden ================= */
+/* ================= Resan ================= */
+let P=[],cur=null,lock=false,retry=[],sinceChat=0,pendingStop=null,qStart=0;
+const D=()=>DEST[S.tr.key];
+const kmOf=x=>x/D().need*D().total;           // rätt svar → kilometer
+const stopX=s=>s[0]/D().total*D().need;       // kilometer → rätt svar
+function buildPool(){P=[];S.tr.tables.forEach(t=>{for(let n=1;n<=10;n++)P.push([t,n])})}
+function poolKeys(){return [...new Set(P.map(([a,b])=>fk(a,b)))]}
+function newTrip(key,tables){
+ const i=Object.keys(DEST).indexOf(key),off=(i*2)%9,rot=ORDER.slice(off).concat(ORDER.slice(0,off));
+ const d=DEST[key],nRiders=d.stops.length-1;
+ S.tr={key,tables,km:0,riders:[],hop:rot.slice(0,nRiders),party:rot.slice(nRiders,nRiders+3),right:0,streak:0,troll:false,seen:[]};
+ save();show("game");buildPool();retry=[];
+ drawRoute();drawSeats();drawKnow();$("#talk").innerHTML="";$("#qtext").innerHTML="";$("#answers").innerHTML="";$("#hint").textContent="";
+ arrive(0);
+}
+function resume(){
+ if(!S.tr.hop){const i=Object.keys(DEST).indexOf(S.tr.key),off=(i*2)%9,rot=ORDER.slice(off).concat(ORDER.slice(0,off));S.tr.hop=rot.slice(0,D().stops.length-1);S.tr.seen=S.tr.seen||[0];
+  D().stops.forEach((s,idx)=>{if(idx>0&&idx<D().stops.length-1&&stopX(s)<=S.tr.km)S.tr.seen.push(idx)})}
+ if(!S.tr.seen)S.tr.seen=[0];
+ buildPool();retry=[];drawRoute();drawSeats();drawKnow();
+ const id=pick(S.tr.riders.length?S.tr.riders:["juni"]);say(id,"Välkommen tillbaka, {n}! Vi fortsätter där vi var.");showQ();
+}
+$("#homeBtn").onclick=()=>{close();document.body.classList.remove("typing");show("home");renderHome()};
+
+function trollAt(){return D().need-Math.max(4,Math.round(D().need*.08))}
 function drawRoute(){
- const t=T(),r=$("#route");let h=`<div class="track"></div><div class="fill" style="width:${S.km/t.total*100}%"></div>`;
- let lastX=-99;t.stops.forEach((s,i)=>{const x=s.km/t.total*100;const show=x-lastX>=13||i===t.stops.length-1;if(show)lastX=x;h+=`<div class="dot ${S.km>=s.km?"past":""}" style="left:${x}%"></div>`+(show?`<div class="lbl" style="left:${Math.min(92,Math.max(8,x))}%">${s.town}</div>`:"")});
- h+=`<div class="me" style="left:${S.km/t.total*100}%">🩷</div>`;r.innerHTML=h;
- $("#km").textContent=Math.min(S.km,t.total)+" av "+t.total+" km";
+ const d=D(),r=$("#route"),pct=Math.min(1,S.tr.km/d.need)*100;
+ let h=`<div class="track"></div><div class="fill" style="width:${pct}%"></div>`;
+ let lastX=-99;d.stops.forEach((s,i)=>{const x=s[0]/d.total*100;const show=x-lastX>=13||i===d.stops.length-1;if(show)lastX=x;
+  h+=`<div class="dot ${pct>=x?"past":""}" style="left:${x}%"></div>`+(show?`<div class="lbl" style="left:${Math.min(91,Math.max(9,x))}%">${s[1]}</div>`:"")});
+ const tx=trollAt()/d.need*100;h+=`<div class="dot tr ${S.tr.troll?"past":""}" style="left:${tx}%;top:11px"></div><div class="lbl" style="left:${tx}%;top:-6px">🧌</div>`;
+ h+=`<div class="me" style="left:${pct}%">🩷</div>`;r.innerHTML=h;
+ $("#km").textContent=Math.round(kmOf(Math.min(S.tr.km,d.need)))+" av "+d.total+" km";
 }
-
-/* ================= Prat ================= */
-function say(id,text,el){const c=CH[id];(el||$("#talk")).innerHTML=`<div class="face" style="background:${c.color}">${c.name[0]}</div><div class="bubble"><b>${c.name}</b>${fill(text)}</div>`}
-const speaker=()=>pick(S.riders.length?S.riders:["juni"]);
-
-/* ================= Kan hon det? =================
-   Ett tal räknas som kunnat när hon svarat rätt på det tre gånger i rad.
-   Ett fel nollställer just det talet. */
-const NEED=3;
-const known=n=>(S.m[n]||0)>=NEED;
 function drawKnow(pulse){
- let h="";for(let n=1;n<=10;n++){const v=S.m[n]||0;h+=`<span class="${known(n)?"yes":v>0?"half":""} ${pulse===n?"pulse":""}">${known(n)?"✓":n}</span>`}
- $("#know").innerHTML=h;
+ const t=S.tr.tables;
+ if(t.length===1){let h="";for(let n=1;n<=10;n++){const k=fk(t[0],n),f=S.F[k];h+=`<span class="${known(k)?"yes":f&&f.s>0?"half":""} ${pulse===k?"pulse":""}">${known(k)?"✓":n}</span>`}$("#know").innerHTML=h}
+ else{const ks=poolKeys(),k=ks.filter(known).length;$("#know").innerHTML=`<div class="mixbar">Du kan ${k} av ${ks.length} tal på den här resan<div class="bar"><i style="width:${k/ks.length*100}%"></i></div></div>`}
 }
-function learn(n,ok){
- const was=known(n);S.m[n]=ok?(S.m[n]||0)+1:0;drawKnow(n);
- if(ok&&!was&&known(n)){
-  const all=[1,2,3,4,5,6,7,8,9,10].every(known);
-  if(all&&!S.allKnown){S.allKnown=true;save();setTimeout(mastered,250);return true}
-  setTimeout(()=>{say(speaker(),`Nu kan du 7 × ${n}! Den lyser rosa nu. 🩷`);SND.pop()},40);return true;
- }
- return false;
+const speaker=()=>pick(S.tr.riders.length?S.tr.riders:["juni"]);
+
+/* --- lärandet: rätt och snabbt tre gånger = kan --- */
+function learn(k,ok,fast){
+ const f=F(k),was=known(k);let fresh=false;
+ if(ok){f.ok++;if(fast){if(!was){f.s++;if(f.s>=NEED){f.b=1;f.d=today()+1;fresh=true}}else if(f.d<=today()){f.b=Math.min(5,f.b+1);f.d=today()+INT[f.b]}}}
+ else{f.bad++;if(was){f.s=NEED-1;f.b=0}else f.s=0}
+ save();return fresh;
 }
-function mastered(){
- SND.fanfare();confetti(120);busAnim("hop");boost(8);
- sheet(`<img class="sticker" src="img/sticker-trophy.webp" alt=""><h2>Du kan sjuans tabell!</h2><p class="sub">Alla tio har lysts upp. Förhöret i morgon blir en lätt match.</p>
-  <div class="row" id="m1"></div><div class="row" id="m2"></div><button class="big" id="mx">Slutförhör: 10 frågor</button><button class="big alt" id="mg">Kör vidare</button>`);
- say("juni","Fallet är officiellt löst. Jag skriver in det i anteckningsblocket med guldpenna.",$("#m1"));
- say(S.riders.find(r=>r!=="juni")||"vincent","Vi kör vidare och håller det varmt. Proffs tränar fast de redan kan!",$("#m2"));
- $("#mx").onclick=()=>exam(true);
- $("#mg").onclick=()=>{close();if(pendingStop){const p=pendingStop;pendingStop=null;arrive(p)}else showQ()};
+function weight([a,b]){
+ const k=fk(a,b),f=S.F[k];const one=S.tr.tables.length===1;
+ let w=!known(k)?3+Math.min(3,(f?f.bad:0)*.5):(due(k)?3:.4);
+ if(!(one&&(S.tr.tables[0]===1||S.tr.tables[0]===10))&&(a===1||b===1||a===10||b===10))w*=.5;
+ return w;
 }
-/* ================= Frågor ================= */
-let pendingStop=null,cur=null,lock=false,retry=[],sinceChat=0,qCount=0;
-function pickN(){
- for(let i=0;i<retry.length;i++){retry[i].wait--;}
- const r=retry.findIndex(x=>x.wait<=0);if(r>=0)return retry.splice(r,1)[0].n;
- let tot=0;const ws=[];for(let n=1;n<=10;n++){const w=(S.w[n]||1)*(n===1||n===10?.6:1)*(known(n)?.45:1);ws.push(w);tot+=w}
- let x=Math.random()*tot;for(let n=1;n<=10;n++){x-=ws[n-1];if(x<=0)return n}return 7;
+function pickFact(){
+ for(const r of retry)r.wait--;
+ const ri=retry.findIndex(x=>x.wait<=0);if(ri>=0)return retry.splice(ri,1)[0].f;
+ const ws=P.map(weight),tot=ws.reduce((a,b)=>a+b,0);let x=Math.random()*tot;
+ for(let i=0;i<P.length;i++){x-=ws[i];if(x<=0)return P[i]}return P[0];
 }
-function makeQ(){
- let n=pickN();if(cur&&n===cur.n&&Math.random()<.7)n=pickN();
- const f=pick(["a","a","b","b","c","d"]);let text,ans,pool;
- if(f==="a"){text=`7 × ${n}`;ans=7*n}
- else if(f==="b"){text=`${n} × 7`;ans=7*n}
- else if(f==="c"){text=`7 × <span class="blank">?</span> = ${7*n}`;ans=n}
- else{text=`<span class="blank">?</span> × 7 = ${7*n}`;ans=n}
- if(ans===n){pool=[n-1,n+1,n+2,n-2,n+3].filter(v=>v>=1&&v<=10&&v!==n)}
- else{pool=[ans-7,ans+7,ans-1,ans+1,ans+14,ans-14,Number(String(ans).split("").reverse().join(""))].filter(v=>v>0&&v!==ans&&v<=84)}
- pool=[...new Set(pool)].sort(()=>Math.random()-.5);
- const opts=[ans,...pool.slice(0,3)].sort(()=>Math.random()-.5);
- return{n,text,ans,opts};
+function makeQ(f){
+ const [t,n]=f||pickFact(),p=t*n;
+ const form=pick(["a","a","b","b","c","d"]);let text,ans;
+ if(form==="a"){text=`${t} × ${n}`;ans=p}else if(form==="b"){text=`${n} × ${t}`;ans=p}
+ else if(form==="c"){text=`${t} × <span class="blank">?</span> = ${p}`;ans=n}else{text=`<span class="blank">?</span> × ${t} = ${p}`;ans=n}
+ let pool;
+ if(ans===n)pool=[n-1,n+1,n+2,n-2,n+3].filter(v=>v>=1&&v<=10&&v!==n);
+ else pool=[p-t,p+t,p-n,p+n,p-1,p+1,p+10,p-10,Number(String(p).split("").reverse().join(""))].filter(v=>v>0&&v!==p&&v<=100);
+ pool=shuffle([...new Set(pool)]);
+ return{t,n,k:fk(t,n),text,ans,opts:shuffle([ans,...pool.slice(0,3)])};
 }
-/* sifferblock: hon skriver svaret själv */
 function pad(el,ans,onDone){
  let v="";el.classList.add("pad");
  el.innerHTML=`<div class="typed">&nbsp;</div>`+[1,2,3,4,5,6,7,8,9,0,"⌫","OK"].map(k=>`<button class="key ${k==="OK"?"ok":""}" data-k="${k}">${k}</button>`).join("");
  const t=el.querySelector(".typed");let done=false;
  el.querySelectorAll(".key").forEach(b=>b.onclick=()=>{if(done)return;const k=b.dataset.k;
   if(k==="⌫")v=v.slice(0,-1);else if(k==="OK"){if(!v)return;done=true;const ok=+v===ans;t.classList.add(ok?"right":"wrong");if(!ok)t.innerHTML=`${v} → ${ans}`;onDone(ok);return}
-  else if(v.length<2)v+=k;SND.pop();t.innerHTML=v||"&nbsp;"});
+  else if(v.length<3)v+=k;SND.tick();t.innerHTML=v||"&nbsp;"});
 }
 function showQ(){
+ if(S.tr.km>=trollAt()&&!S.tr.troll)return trollFight();
  cur=makeQ();lock=false;$("#qtext").innerHTML=cur.text;$("#hint").textContent="";
  const A=$("#answers");A.classList.remove("pad");document.body.classList.remove("typing");
- if(S.right>=4&&cur.ans>10&&Math.random()<.33){cur.typed=true;document.body.classList.add("typing");$("#hint").textContent="Skriv svaret själv ✏️";pad(A,cur.ans,ok=>answer(ok?cur.ans:-1,null));return}
- $("#answers").innerHTML=cur.opts.map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");
- $("#answers").querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(+b.dataset.v,b));
+ if(S.tr.right>=4&&cur.ans>10&&Math.random()<.33){cur.typed=true;document.body.classList.add("typing");$("#hint").textContent="Skriv svaret själv ✏️";pad(A,cur.ans,ok=>answer(ok?cur.ans:-1,null))}
+ else{A.innerHTML=cur.opts.map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");A.querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(+b.dataset.v,b))}
+ qStart=performance.now();
 }
+function countDay(){checkDay();S.day.r++;if(!S.day.done&&S.day.r>=DAILY){S.day.done=true;S.days++;save();return true}return false}
 function answer(v,btn){
- if(lock)return;lock=true;ac();qCount++;
- const all=$("#answers").querySelectorAll(".ans");
+ if(lock)return;lock=true;ac();
+ const all=$("#answers").querySelectorAll(".ans"),ms=performance.now()-qStart,fast=ms<=(cur.typed?FAST_TYPED:FAST_CHOICE);
  if(v===cur.ans){
   if(btn){btn.classList.add("right");all.forEach(b=>{if(b!==btn)b.classList.add("dim")})}
-  S.streak++;S.right++;S.w[cur.n]=Math.max(1,(S.w[cur.n]||1)-1);
-  const fresh1=learn(cur.n,true);let add=KM_PER+(cur.typed?1:0);SND.right();buzz(25);busAnim("hop");boost(2.6);
-  if(S.streak>0&&S.streak%5===0){add+=4;setTimeout(()=>{SND.turbo();const t=$("#turbo");t.classList.remove("go");void t.offsetWidth;t.classList.add("go");boost(7)},250);
+  S.tr.streak++;S.tr.right++;const fresh=learn(cur.k,true,fast);drawKnow(cur.k);const dayDone=countDay();
+  let add=1+(cur.typed?.5:0);fast?SND.fast():SND.right();buzz(25);busAnim("hop");boost(2.6);
+  if(fast&&!fresh)$("#hint").textContent="⚡ Snabbt!";else if(!fast)$("#hint").textContent="Rätt! Nu lite snabbare nästa gång.";
+  if(dayDone)setTimeout(()=>{confetti(60);SND.fanfare();say(speaker(),`⭐ Dagens resa är klar, {n}! ${DAILY} rätt i dag!`)},200);
+  else if(fresh){const [a,b]=[Math.min(cur.t,cur.n),Math.max(cur.t,cur.n)];setTimeout(()=>{SND.learned();say(speaker(),`Nu kan du ${a} × ${b}${a!==b?` – och ${b} × ${a} på köpet`:""}! 🩷`)},150)}
+  else if(S.tr.streak%5===0){add+=2;setTimeout(()=>{SND.turbo();const t=$("#turbo");t.classList.remove("go");void t.offsetWidth;t.classList.add("go");boost(7)},250);
    say(speaker(),pick(["TURBO! {n} har fem rätt i rad!","Fem i rad! Bussen fick raketfart! 🚀","Turboläge! Håll i hatten!"]))}
-  else if(fresh1){/* hon har precis lärt sig talet, säg inget annat */}
   else if(++sinceChat>=7&&Math.random()<.6){sinceChat=0;const id=speaker();say(id,pick(CH[id].chat))}
   else{const id=speaker();say(id,pick(CH[id].right))}
-  move(add,900);
+  move(add,950);
  }else{
   if(btn){btn.classList.add("wrong");all.forEach(b=>{if(+b.dataset.v===cur.ans)b.classList.add("right");else if(b!==btn)b.classList.add("dim")})}
-  S.streak=0;learn(cur.n,false);S.w[cur.n]=(S.w[cur.n]||1)+3;retry.push({n:cur.n,wait:2});
+  S.tr.streak=0;learn(cur.k,false);drawKnow(cur.k);retry.push({f:[cur.t,cur.n],wait:2});
   SND.wrong();buzz([30,40,30]);busAnim("shake");
-  $("#hint").textContent=TRICK[cur.n];const id=speaker();say(id,pick(CH[id].wrong));
-  save();showStreak();setTimeout(showQ,2600);
+  $("#hint").textContent=trick(cur.t,cur.n);const id=speaker();say(id,pick(CH[id].wrong));
+  save();showStreak();setTimeout(showQ,3000);
  }
 }
-function showStreak(){const s=$("#streak");if(S.streak>=2){s.textContent="🔥 "+S.streak+" i rad";s.classList.add("on")}else s.classList.remove("on")}
+function showStreak(){const s=$("#streak");if(S.tr&&S.tr.streak>=2){s.textContent="🔥 "+S.tr.streak+" i rad";s.classList.add("on")}else s.classList.remove("on")}
 function move(add,delay){
- const t=T(),before=S.km;S.km=Math.min(t.total,S.km+add);save();showStreak();drawRoute();
- const stop=t.stops.find(s=>s.km>before&&s.km<=S.km);
- setTimeout(()=>{if($("#ov").classList.contains("on")){pendingStop=stop||null;return}if(stop)arrive(stop);else showQ()},delay);
+ const d=D(),before=S.tr.km;S.tr.km=Math.min(d.need,S.tr.km+add);save();showStreak();drawRoute();
+ const idx=d.stops.findIndex((s,i)=>i>0&&!S.tr.seen.includes(i)&&stopX(s)<=S.tr.km&&(i<d.stops.length-1||S.tr.troll));
+ setTimeout(()=>{if($("#ov").classList.contains("on")){pendingStop=idx>=0?idx:null;return}if(idx>=0)arrive(idx);else showQ()},delay);
 }
 
-/* ================= Rutor ================= */
-function sheet(html){$("#sheet").innerHTML=html;$("#ov").classList.add("on")}
-function close(){$("#ov").classList.remove("on")}
-
-function arrive(stop){
- SND.horn();boost(.05);
- if(stop.party)return finish(stop);
- const id=stop.who,c=CH[id];
- if(!S.riders.includes(id))S.riders.push(id);save();drawSeats();busAnim("hop");
- const left=T().total-stop.km,n=left/7,asker=S.riders.length>1?S.riders[S.riders.length-1]:id,answerer=S.riders.find(r=>r!==asker)||"juni";
- const canAsk=stop.km>0&&Number.isInteger(n)&&n>=1&&n<=10;
- let h=`<h2>${stop.town}</h2><p class="sub">${stop.km===0?"Nu åker vi! 🚌":"Ny kompis hoppar på!"}</p><div class="row" id="r1"></div>`;
- if(stop.km===0)h+=`<div class="row" id="r2"></div>`;
- if(canAsk)h+=`<div class="row" id="r2"></div><div class="row" id="r3"></div><div class="opts" id="bonus"></div>`;
- h+=`<button class="big" id="go" ${canAsk?'style="display:none"':""}>Kör vidare</button><button class="big alt" id="st" ${canAsk?'style="display:none"':""}>Spela Sjuans trappa</button>`;
- sheet(h);say(id,c.hop,$("#r1"));
- if(stop.km===0)say(id,"Det är 98 kilometer till "+T().stops[T().stops.length-1].town+". Varje rätt svar tar oss två kilometer. Kör!",$("#r2"));
- if(canAsk){
-  setTimeout(()=>{say(asker,"Är vi framme snart?",$("#r2"));SND.pop();
-   setTimeout(()=>{say(answerer,`Nej. Det är ${n} sjuor kvar. Hur många kilometer är det, ${NAME}?`,$("#r3"));
-    const a=7*n,opts=[a,a-7,a+7,a+1].filter(v=>v>0).sort(()=>Math.random()-.5);
+function arrive(idx){
+ const d=D(),stop=d.stops[idx];S.tr.seen.push(idx);save();SND.horn();boost(.05);
+ if(idx===d.stops.length-1)return finish();
+ const id=S.tr.hop[idx],c=CH[id];if(!S.tr.riders.includes(id))S.tr.riders.push(id);save();drawSeats();busAnim("hop");
+ const T=S.tr.tables.length===1?TABN[S.tr.tables[0]]+" tabell":"blandade tabeller";
+ let h=`<h2>${stop[1]}</h2><p class="sub">${idx===0?"Nu åker vi! 🚌":"Ny kompis hoppar på!"}</p><div class="row" id="r1"></div><div class="row" id="r2"></div><div class="row" id="r3"></div><div class="opts" id="bonus"></div>`;
+ h+=`<button class="big" id="go" style="display:none">Kör vidare</button><button class="big alt" id="st" style="display:none">Spela trappan 🪜</button>`;
+ sheet(h);say(id,c.hop.replace("{T}",T),$("#r1"));
+ const reveal=()=>{$("#go").style.display="";$("#st").style.display=""};
+ if(idx===0){
+  setTimeout(()=>{if(S.av.img)sayMe(`Jag kör! Hej allihop, jag heter ${S.av.name||"Bussföraren"}! 🚌`,$("#r2"));
+   say(id,`Det är ${d.total} kilometer till ${d.name}. Men se upp – det sägs bo ett troll under en bro på vägen…`,$("#r3"));reveal()},700);
+ }else{
+  setTimeout(()=>{say(S.tr.riders.length>1?S.tr.riders[S.tr.riders.length-1]:id,"Är vi framme snart?",$("#r2"));SND.pop();
+   setTimeout(()=>{const ans=S.tr.riders.find(r=>r!==id)||"juni";const q=makeQ();
+    say(ans,`Nej! Men svarar du rätt får bussen fart: <b>${q.t} × ${q.n}</b>?`,$("#r3"));
+    const a=q.t*q.n,opts=shuffle([...new Set([a,a+q.t,Math.max(1,a-q.t),a+1])]);
     $("#bonus").innerHTML=opts.map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");
-    let done=false;
-    $("#bonus").querySelectorAll(".ans").forEach(b=>b.onclick=()=>{if(done)return;done=true;
-     if(+b.dataset.v===a){b.classList.add("right");SND.right();say(answerer,`Rätt, ${a} kilometer! Bonus: två kilometer gratis. 🎁`,$("#r3"));S.km=Math.min(T().total,S.km+2);save();drawRoute()}
-     else{b.classList.add("wrong");$("#bonus").querySelectorAll(".ans").forEach(x=>{if(+x.dataset.v===a)x.classList.add("right")});SND.wrong();say(answerer,`Nästan! 7 × ${n} = ${a}. ${TRICK[n].split(". ").slice(1).join(". ")}`,$("#r3"))}
-     $("#go").style.display="";$("#st").style.display="";});
+    let dn=false;$("#bonus").querySelectorAll(".ans").forEach(b=>b.onclick=()=>{if(dn)return;dn=true;
+     if(+b.dataset.v===a){b.classList.add("right");SND.right();say(ans,`Rätt! Bonus: bussen hoppar fram en bit. 🎁`,$("#r3"));S.tr.km=Math.min(d.need,S.tr.km+1);countDay();save();drawRoute()}
+     else{b.classList.add("wrong");$("#bonus").querySelectorAll(".ans").forEach(x=>{if(+x.dataset.v===a)x.classList.add("right")});SND.wrong();say(ans,`Nästan! ${trick(q.t,q.n)}`,$("#r3"))}
+     learn(q.k,+b.dataset.v===a,false);reveal()});
    },900)},700);
  }
- $("#sheet").onclick=e=>{if(e.target.id==="go"){close();showQ();boost(3)}if(e.target.id==="st")stairs(()=>arrive2())};
- function arrive2(){close();showQ();boost(3)}
+ $("#go").onclick=()=>{close();continueTrip()};$("#st").onclick=()=>stairs(()=>{close();continueTrip()});
 }
+function continueTrip(){if(pendingStop!=null){const p=pendingStop;pendingStop=null;arrive(p)}else{showQ();boost(3)}}
 
-/* ----- Sjuans trappa: tryck 7, 14, 21 … 70 i ordning ----- */
+/* --- trappan: tryck t, 2t, 3t … 10t i ordning --- */
 function stairs(done){
- const nums=[1,2,3,4,5,6,7,8,9,10].map(n=>n*7).sort(()=>Math.random()-.5);
- sheet(`<h2>Sjuans trappa</h2><p class="sub">Tryck 7, 14, 21 … ända upp till 70. Så fort du kan!</p><div class="row" id="sr"></div>
+ const t=pick(S.tr.tables.filter(x=>x>1).length?S.tr.tables.filter(x=>x>1):S.tr.tables);
+ const nums=shuffle([1,2,3,4,5,6,7,8,9,10].map(n=>n*t));
+ sheet(`<h2>${TABN[t].replace(/^./,c=>c.toUpperCase())} trappa</h2><p class="sub">Tryck ${t}, ${2*t}, ${3*t} … ända upp till ${10*t}. Så fort du kan!</p><div class="row" id="sr"></div>
   <div id="stairs">${nums.map(v=>`<button data-v="${v}">${v}</button>`).join("")}</div><div id="stairInfo">0,0 s</div>
   <button class="big" id="sd" style="display:none">Kör vidare</button>`);
- say("juni","Jag räknar trappsteg hela tiden. Nu är det din tur. Starta med 7!",$("#sr"));
- let next=7,t0=0,timer=null;
+ say("juni",`Jag räknar trappsteg hela tiden. Nu är det din tur. Börja med ${t}!`,$("#sr"));
+ let next=t,t0=0,timer=null;
  $("#stairs").querySelectorAll("button").forEach(b=>b.onclick=()=>{
   const v=+b.dataset.v;if(b.classList.contains("done"))return;
   if(v===next){if(!t0){t0=performance.now();timer=setInterval(()=>$("#stairInfo").textContent=((performance.now()-t0)/1000).toFixed(1).replace(".",",")+" s",100)}
-   b.classList.add("done");SND.step(next/7-1);buzz(15);next+=7;
-   if(next>70){clearInterval(timer);const s=(performance.now()-t0)/1000,str=s.toFixed(1).replace(".",",");
-    const rec=!S.stairsBest||s<S.stairsBest;if(rec)S.stairsBest=s;save();SND.fanfare();confetti(40);
-    $("#stairInfo").textContent=str+" sekunder"+(rec?" – nytt rekord! 🏆":" (rekord: "+S.stairsBest.toFixed(1).replace(".",",")+" s)");
+   b.classList.add("done");SND.step(next/t-1);buzz(15);next+=t;
+   if(next>10*t){clearInterval(timer);const s=(performance.now()-t0)/1000,best=S.stairs[t],rec=!best||s<best;if(rec)S.stairs[t]=s;save();SND.fanfare();confetti(40);
+    $("#stairInfo").textContent=s.toFixed(1).replace(".",",")+" sekunder"+(rec?" – nytt rekord! 🏆":" (rekord: "+best.toFixed(1).replace(".",",")+" s)");
     say("juni",rec?"Nytt rekord! Det skriver jag upp med extra stora bokstäver.":"Bra! Jag har antecknat tiden. Rekordet står sig. Än så länge.",$("#sr"));
     $("#sd").style.display="";$("#sd").onclick=done}
   }else{b.classList.remove("no");void b.offsetWidth;b.classList.add("no");SND.wrong();$("#stairInfo").textContent="Leta efter "+next+"!"}
  });
 }
 
-/* ----- Framme ----- */
-function finish(stop){
- S.trips=(S.trips||0)+1;save();SND.fanfare();confetti(90);
- let h=`<img class="sticker" src="img/sticker-trophy.webp" alt=""><h2>Framme i ${stop.town}!</h2><p class="sub">${S.right} rätt på vägen. Hela gänget väntar!</p>`;
- stop.party.forEach((id,i)=>h+=`<div class="row" id="p${i}"></div>`);
- h+=`<button class="big" id="exam">Slutförhör: 10 frågor</button><button class="big alt" id="st2">Spela Sjuans trappa</button>`;
- sheet(h);
- const lines=["Där är ni! Vi har väntat i en evighet. Typ i tio minuter.","Välkomna! Jag tog en bild när bussen svängde in.","Bussen låter fortfarande bra. Jag lyssnade på motorn.","Ni kom fram exakt i tid. Jag har räknat ut det."];
- stop.party.forEach((id,i)=>say(id,lines[i%4],$("#p"+i)));
- $("#exam").onclick=()=>exam(false);$("#st2").onclick=()=>stairs(()=>finish(stop));
+/* --- Tabelltrollet: fem rätt på de svåraste talen --- */
+function weakest(n){
+ const ks=P.map(f=>({f,k:fk(f[0],f[1])}));
+ const score=({k})=>{const x=S.F[k];return (known(k)?10:0)+(x?x.s*2-x.bad:0)+Math.random()*1.5};
+ const seen=new Set(),out=[];ks.sort((a,b)=>score(a)-score(b)).forEach(o=>{if(!seen.has(o.k)&&out.length<n){seen.add(o.k);out.push(o.f)}});
+ while(out.length<n)out.push(pick(P));return out;
 }
-function exam(midway){
- let i=0,ok=0;const qs=[1,2,3,4,5,6,7,8,9,10].sort(()=>Math.random()-.5);
+function trollFight(){
+ document.body.classList.remove("typing");
+ const qs=weakest(5);let hp=5,i=0;
+ const TAUNT=["Hohoho! Ingen kommer över min bro utan att räkna!","Jag har samlat på de svåraste talen. Alla är mina!","Brrr, jag har väntat i hundra år på någon att räkna med."];
+ const OUCH=["Aj! Det där kunde du.","Nej men! Rätt igen?!","Mitt favorittal! Hur visste du?","Usch, du är ju jättebra!","Okej, okej…"];
+ const HAHA=["Hihihi! Fel! Men du får försöka igen.","Hohoho! Det talet är mitt!","Haha! Det var nära i alla fall."];
+ sheet(`<h2>Tabelltrollet!</h2><p class="sub">Svara rätt fem gånger så släpper trollet över er.</p>${trollHTML()}<div class="hp" id="hp"></div>
+  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:52px;margin:8px 0"></h2><div id="tp" style="display:grid"></div>`);
+ SND.troll();$("#tr1").innerHTML=`<div class="bubble"><b>Trollet</b>${pick(TAUNT)}</div>`;
+ const hpDraw=()=>$("#hp").textContent="💚".repeat(hp)+"🤍".repeat(5-hp);
  const next=()=>{
-  if(i>=10){const st=ok>=10?"⭐⭐⭐":ok>=8?"⭐⭐":ok>=5?"⭐":"";SND.fanfare();if(ok>=8)confetti(80);
-   sheet(`<h2>${ok} av 10</h2><div class="stars">${st||"💪"}</div><div class="row" id="er"></div>
-    ${midway?'<button class="big" id="cont">Kör vidare</button>':`<button class="big" id="home">${S.trip==="dit"?"Åk hem till Kristinestad":"Åk till Vasa igen"}</button>`}<button class="big alt" id="again">Slutförhör igen</button>`);
-   say("juni",ok===10?"Alla rätt! Förhöret i morgon är redan löst, {n}.":ok>=8?"Jättebra! Bara några små spår kvar att följa upp.":"Bra kämpat! Vi kör en tur till, så sitter det.",$("#er"));
-   if(midway)$("#cont").onclick=()=>{close();if(pendingStop){const p=pendingStop;pendingStop=null;arrive(p)}else showQ()};
-   else $("#home").onclick=()=>{const nt=S.trip==="dit"?"hem":"dit";S=Object.assign(fresh(nt),{w:S.w,m:S.m,allKnown:S.allKnown,stairsBest:S.stairsBest,trips:S.trips,sound:S.sound});save();close();start()};
-   $("#again").onclick=()=>exam(midway);return}
-  const n=qs[i],a=7*n,opts=[a,a-7,a+7,a+1].filter(v=>v>0).sort(()=>Math.random()-.5);
-  sheet(`<p class="sub">Slutförhör · fråga ${i+1} av 10 · skriv svaret</p><h2 style="font-size:56px">${Math.random()<.5?"7 × "+n:n+" × 7"}</h2><div id="eo" style="display:grid"></div><div class="row" id="ex"></div>`);
-  pad($("#eo"),a,good=>{
-   if(good){ok++;SND.right();S.w[n]=Math.max(1,(S.w[n]||1)-1);setTimeout(()=>{i++;next()},700)}
-   else{SND.wrong();S.w[n]=(S.w[n]||1)+3;$("#ex").innerHTML=`<div class="bubble">${TRICK[n]}</div>`;setTimeout(()=>{i++;next()},2300)}
-   save()});
+  hpDraw();if(hp<=0)return win();
+  const [t,n]=qs[i%qs.length],a=t*n,flip=Math.random()<.5;$("#tq").textContent=flip?`${n} × ${t}`:`${t} × ${n}`;const t0=performance.now();
+  pad($("#tp"),a,ok=>{
+   learn(fk(t,n),ok,performance.now()-t0<=FAST_TYPED);
+   const tr=$("#troll");tr.classList.remove("hit","laugh");void tr.offsetWidth;
+   if(ok){hp--;i++;countDay();SND.hit();buzz(30);tr.classList.add("hit");tr.style.transform=`scale(${.6+hp*.08})`;$("#tr1").innerHTML=`<div class="bubble"><b>Trollet</b>${pick(OUCH)}</div>`;setTimeout(next,900)}
+   else{SND.troll();tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;$("#tr1").innerHTML=`<div class="bubble"><b>Trollet</b>${pick(HAHA)}<br><small>${trick(t,n)}</small></div>`;setTimeout(next,2800)}
+  });
+ };
+ const win=()=>{S.tr.troll=true;save();drawRoute();SND.fanfare();confetti(70);
+  sheet(`<h2>Ni kom över bron!</h2>${trollHTML()}<div class="row" id="w1"></div><div class="row" id="w2"></div><button class="big" id="wgo">Kör vidare 🚌</button>`);
+  $("#w1").innerHTML=`<div class="bubble"><b>Trollet</b>Okej då… ni får åka över. Jag ska nog öva lite själv också. Hejdå, ${NAME}!</div>`;
+  say(speaker(),"Vi klarade det! Trollet vinkar till och med. 👋",$("#w2"));
+  $("#wgo").onclick=()=>{close();const d=D(),li=d.stops.length-1;if(S.tr.km>=d.need&&!S.tr.seen.includes(li))arrive(li);else{showQ();boost(4)}}};
+ next();
+}
+
+/* --- framme --- */
+function finish(){
+ const d=D(),first=!S.stk[d.slug];S.stk[d.slug]=today();S.trips=(S.trips||0)+1;
+ const party=S.tr.party||[];save();SND.fanfare();confetti(100);
+ let h=`<div style="width:120px;margin:0 auto 6px" class="sticker">${badge(S.tr.key,true)}</div><h2>Framme i ${d.name}!</h2><p class="sub">${first?"Nytt klistermärke! 🏅":"Klistermärket har du redan – snyggt jobbat igen!"}</p>
+  <div class="fact">📮 ${d.fact}</div>`;
+ party.forEach((id,i)=>h+=`<div class="row" id="p${i}"></div>`);
+ h+=`<button class="big" id="exam">Slutförhör: 10 frågor ✏️</button><button class="big alt" id="hm">Till startsidan</button>`;
+ sheet(h);
+ const lines=["Där är ni! Vi har väntat i en evighet. Typ i tio minuter.","Välkomna! Jag tog en bild när bussen svängde in.","Bussen låter fortfarande bra. Jag lyssnade på motorn."];
+ party.forEach((id,i)=>say(id,lines[i%3],$("#p"+i)));
+ $("#exam").onclick=()=>exam(weakest(10),()=>goHome());$("#hm").onclick=goHome;
+}
+function goHome(){S.tr=null;save();close();document.body.classList.remove("typing");show("home");renderHome()}
+
+/* --- slutförhör / repetition: skriv själv --- */
+function exam(list,after,title){
+ let i=0,ok=0;
+ const next=()=>{
+  if(i>=list.length){const n=list.length,st=ok===n?"⭐⭐⭐":ok>=n*.8?"⭐⭐":ok>=n/2?"⭐":"💪";SND.fanfare();if(ok>=n*.8)confetti(80);
+   sheet(`<h2>${ok} av ${n}</h2><div class="stars">${st}</div><div class="row" id="er"></div><button class="big" id="eok">Klart</button><button class="big alt" id="again">En gång till</button>`);
+   say("juni",ok===n?"Alla rätt! Fallet är löst, {n}.":ok>=n*.8?"Jättebra! Bara några små spår kvar att följa upp.":"Bra kämpat! Talen du missade kommer tillbaka snart, så sitter de.",$("#er"));
+   $("#eok").onclick=after;$("#again").onclick=()=>exam(shuffle(list),after,title);return}
+  const [t,n]=list[i],a=t*n,t0=performance.now();
+  sheet(`<p class="sub">${title||"Slutförhör"} · fråga ${i+1} av ${list.length} · skriv svaret</p><h2 style="font-size:56px">${Math.random()<.5?t+" × "+n:n+" × "+t}</h2><div id="eo" style="display:grid"></div><div class="row" id="ex"></div>`);
+  pad($("#eo"),a,good=>{learn(fk(t,n),good,performance.now()-t0<=FAST_TYPED);countDay();
+   if(good){ok++;SND.right();setTimeout(()=>{i++;next()},700)}
+   else{SND.wrong();$("#ex").innerHTML=`<div class="bubble">${trick(t,n)}</div>`;setTimeout(()=>{i++;next()},2600)}});
  };next();
 }
+function repeatRound(){
+ const ks=shuffle(dueList()).slice(0,8),list=ks.map(k=>k.split("x").map(Number));
+ exam(list,()=>{close();renderHome()},"Repetition");
+}
 
-function confetti(n){const cols=["#ff5fa2","#ffd86b","#5FB3E0","#3FAF8F","#8A6BD1","#F08A24"];
- for(let i=0;i<n;i++){const d=document.createElement("div");d.className="conf";d.style.left=Math.random()*100+"vw";d.style.background=pick(cols);
-  d.style.animationDuration=(1.6+Math.random()*1.8)+"s";d.style.animationDelay=Math.random()*.6+"s";document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}}
+/* ================= Duell mot Noa =================
+   Ni sitter på varsin kortsida. Ni turas om att svara.
+   Svårigheten justeras i smyg efter ställningen så att det blir jämnt. */
+let DU=null;
+const GOAL=8;
+function duelSheet(){
+ let sel=new Set(S.duelSel||[2,5,10]);
+ const draw=()=>{$("#chips").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="chip ${sel.has(n)?"on":""}" data-n="${n}">${n}</button>`).join("");
+  $("#chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const n=+b.dataset.n;sel.has(n)?sel.delete(n):sel.add(n);SND.pop();draw()});$("#go").disabled=!sel.size};
+ sheet(`<h2>Duell mot Noa ⚔️</h2><p class="sub">Lägg telefonen platt och sätt er på varsin kortsida. Ni turas om. Först till ${GOAL} vinner!</p>
+  <div class="fact">🩷 <b>${NAME}</b> får frågor från sina egna tabeller.<br>💙 <b>Noa</b> får svårare frågor och mindre tid.<br>Den som leder får det lite svårare, så det blir jämnt hela vägen.</div>
+  <p class="sub" style="margin:10px 0 0">${NAME}s tabeller:</p><div class="chips" id="chips"></div>
+  <p class="sub">Ställning hittills: ${NAME} ${S.duel.saga} – ${S.duel.noa} Noa</p>
+  <button class="big" id="go">Starta duellen!</button><button class="big alt" id="no">Inte nu</button>`);
+ draw();$("#no").onclick=close;$("#go").onclick=()=>{S.duelSel=[...sel];save();close();startDuel()};
+}
+function startDuel(){
+ const first=S.duelFirst==="n"?"s":"n";S.duelFirst=first;save();   // varannan duell börjar den andra
+ DU={s:0,n:0,on:false,turn:first,timer:null};$("#duel").classList.add("on");
+ $("#hSaga").className="half saga";$("#hNoa").className="half noa";
+ const tpl=(w,name)=>`<div class="res" id="res${w}"></div><div class="dq" id="dq${w}"></div><div class="bar" style="margin:0"><i id="tb${w}" style="width:0;transition:none"></i></div><div class="da" id="da${w}"></div><div class="hd"><span>${name}</span><span class="sc" id="sc${w}">0</span></div>`;
+ $("#hSaga").innerHTML=tpl("S","🩷 "+(S.av.name?NAME+" & "+S.av.name:NAME));$("#hNoa").innerHTML=tpl("N","💙 Noa");
+ knot();let c=3;const cnt=$("#count");cnt.classList.add("on");cnt.textContent=c;SND.tick();
+ const iv=setInterval(()=>{c--;if(c>0){cnt.textContent=c;SND.tick()}else{clearInterval(iv);cnt.textContent="Kör!";SND.turbo();setTimeout(()=>{cnt.classList.remove("on");DU.on=true;turn()},500)}},800);
+}
+function knot(){const p=50+(DU.s-DU.n)*(45/GOAL);$("#knot").style.left=Math.max(4,Math.min(96,p))+"%"}
+// nivåer: den som leder får svårare, den som ligger efter lättare
+function lvl(){const d=DU.s-DU.n;return{s:Math.max(0,Math.min(2,1+Math.floor(d/2))),n:Math.max(0,Math.min(3,1+Math.floor(-d/2)+1))}}
+function sagaQ(L){
+ const tabs=S.duelSel||[2,5,10],t=pick(tabs),n=1+Math.floor(Math.random()*10),p=t*n;
+ if(L===0)return{k:fk(t,n),text:`${t} × ${n}`,ans:p,typed:false,time:14000};
+ if(L===1)return Math.random()<.7?{k:fk(t,n),text:Math.random()<.5?`${n} × ${t}`:`${t} × ${n}`,ans:p,typed:false,time:11000}:{k:fk(t,n),text:`${t} × ? = ${p}`,ans:n,typed:false,time:12000};
+ return{k:fk(t,n),text:Math.random()<.5?`${n} × ${t}`:`${t} × ${n}`,ans:p,typed:true,time:12000};
+}
+function noaQ(L){
+ const r=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+ if(L<=1){const t=r(3,9),n=r(3,9);return{text:`${t} × ${n}`,ans:t*n,typed:true,time:L?6000:8000}}
+ if(L===2){const t=r(6,9),n=r(4,9);return Math.random()<.5?{text:`? × ${t} = ${t*n}`,ans:n,typed:true,time:6000}:{text:`${t} × ${n}`,ans:t*n,typed:true,time:4500}}
+ const t=r(11,15),n=r(3,9);return Math.random()<.5?{text:`${t} × ${n}`,ans:t*n,typed:true,time:8000}:{text:`${t*n} : ${n}`,ans:t,typed:true,time:8000};
+}
+function turn(){
+ if(!DU.on)return;
+ const me=DU.turn,w=me==="s"?"S":"N",o=me==="s"?"N":"S",L=lvl();
+ const q=me==="s"?sagaQ(L.s):noaQ(L.n);
+ $("#dq"+o).innerHTML=`<span style="font-size:22px;color:var(--soft)">${me==="s"?NAME:"Noa"} svarar …</span>`;$("#da"+o).innerHTML="";$("#da"+o).classList.remove("pad");$("#tb"+o).style.transition="none";$("#tb"+o).style.width="0";
+ $("#hSaga").style.opacity=me==="s"?1:.55;$("#hNoa").style.opacity=me==="n"?1:.55;
+ $("#dq"+w).innerHTML=q.text.replace("?",'<span class="blank">?</span>');
+ const da=$("#da"+w),tb=$("#tb"+w),t0=performance.now();let done=false;
+ tb.style.transition="none";tb.style.width="100%";requestAnimationFrame(()=>requestAnimationFrame(()=>{tb.style.transition=`width ${q.time}ms linear`;tb.style.width="0"}));
+ const fin=ok=>{if(done)return;done=true;clearTimeout(DU.timer);
+  if(me==="s"&&q.k)learn(q.k,ok,performance.now()-t0<=FAST_CHOICE+2000);
+  if(ok){me==="s"?DU.s++:DU.n++;$("#sc"+w).textContent=me==="s"?DU.s:DU.n;SND.right();buzz(25);knot();
+   if((me==="s"?DU.s:DU.n)>=GOAL)return setTimeout(()=>endDuel(me),500)}
+  else{SND.wrong();if(!q.typed)da.querySelectorAll(".ans").forEach(x=>{if(+x.dataset.v===q.ans)x.classList.add("right")});
+   if(q.typed&&!da.querySelector(".typed.wrong")){const tt=da.querySelector(".typed");if(tt){tt.classList.add("wrong");tt.textContent="⏰ "+q.ans}}}
+  DU.turn=me==="s"?"n":"s";setTimeout(turn,ok?800:1700)};
+ if(q.typed){da.classList.remove("pad");pad(da,q.ans,fin)}
+ else{const p=q.ans,pool=shuffle([...new Set([p-1,p+1,p+2,p-2,p+10,p-10].filter(v=>v>0&&v!==p))]);
+  da.classList.remove("pad");da.innerHTML=shuffle([p,...pool.slice(0,3)]).map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");
+  da.querySelectorAll(".ans").forEach(b=>b.onclick=()=>{if(done)return;const ok=+b.dataset.v===p;b.classList.add(ok?"right":"wrong");fin(ok)})}
+ DU.timer=setTimeout(()=>fin(false),q.time);
+}
+function endDuel(w){
+ DU.on=false;clearTimeout(DU.timer);w==="s"?S.duel.saga++:S.duel.noa++;save();SND.fanfare();confetti(90);
+ $("#hSaga").style.opacity=1;$("#hNoa").style.opacity=1;
+ const mk=(won)=>`<div>${won?"🏆 Du vann!":"Bra kämpat!"}</div><div style="font-size:18px;color:var(--soft)">${NAME} ${S.duel.saga} – ${S.duel.noa} Noa totalt</div>
+   <button class="big" style="max-width:260px" data-a="again">Igen!</button><button class="big alt" style="max-width:260px;margin-top:0" data-a="quit">Sluta</button>`;
+ $("#resS").innerHTML=mk(w==="s");$("#resN").innerHTML=mk(w==="n");$("#hSaga").classList.add("done");$("#hNoa").classList.add("done");
+ document.querySelectorAll("#duel .res .big").forEach(b=>b.onclick=()=>{if(b.dataset.a==="again")startDuel();else{$("#duel").classList.remove("on");renderHome()}});
+}
 
 /* ================= Start ================= */
-function start(){
- drawRoute();drawSeats();drawKnow();$("#talk").innerHTML="";
- if(!S.started){S.started=true;save();arrive(T().stops[0]);$("#qtext").innerHTML="";$("#answers").innerHTML="";
-  // första frågan startar när rutan stängs
- }else{const id=speaker();say(id,"Välkommen tillbaka, {n}! Vi fortsätter där vi var.");showQ()}
-}
-// Ljud kräver en första touch på iPhone
 document.addEventListener("touchstart",()=>ac(),{once:true});
-start();
-
+renderHome();
+if(!S.av.img)setTimeout(()=>avatarSheet(true),400);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
