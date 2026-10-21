@@ -446,7 +446,7 @@ function toggleSound(){S.sound=!S.sound;save();sndIcon();if(S.sound)SND.pop()}
 $("#sound").onclick=toggleSound;
 
 /* ================= Hjälpare för bilder ================= */
-const NEWAVS=["reindeer","bear-cub","seal","moose-calf","arctic-fox","lynx-kitten","swan","squirrel-skater","troll-baby","snow-owl"];
+const NEWAVS=["reindeer","bear-cub","seal","moose-calf","arctic-fox","lynx-kitten","swan","squirrel-skater","troll-baby","snow-owl","mountain-hare","duckling"];
 const AVS=["kitten","bunny","puppy","unicorn","dolphin","star","fox","panda","koala","owl","penguin","hedgehog","hamster","turtle","ladybug","elephant","seahorse","dragon","pegasus","moon","cloud","planet","cupcake-kitten","donut-puppy","strawberry-bunny","icecream-bear","fairy-squirrel"];
 const avSrc=id=>`img/avatars/${id}.webp`;
 function avHTML(){return S.av.img?`<img src="${avSrc(S.av.img)}" alt="">`:`<span style="font-size:28px">🙂</span>`}
