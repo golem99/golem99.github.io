@@ -273,6 +273,17 @@ async function init(){
   cine.scene.position.set(67,0,11.5);outS.add(cine.scene);myhome.scene.position.set(84.4,0,28.8);myhome.scene.rotation.y=-Math.PI/2;outS.add(myhome.scene);
   cine.scene.traverse(o=>{if(o.name==='Cinema_Roof')o.visible=true});
   outS.add(props.scene,way.scene,churchY.scene);
+  // a fuller town around the square: rows of Love's houses facing in, then trees and hills further out
+  const ring=[['House_White',56.4,45,Math.PI],['House_Yellow_B',77.6,45.5,Math.PI],['House_Blue',50.5,46,Math.PI],['House_Red',84,46,Math.PI],
+    ['House_Yellow',47.5,18,Math.PI/2],['House_White',47.5,25.5,Math.PI/2],['House_Red',47.5,33,Math.PI/2],['House_Yellow_B',47.5,40.5,Math.PI/2],
+    ['House_Blue',91,40,-Math.PI/2],['House_Yellow',91,47,-Math.PI/2],['House_White',56,7,0],['House_Blue',49,7,0],['House_Red',57,54,Math.PI],['House_Yellow',70,54,Math.PI],['House_White',80,55,Math.PI]];
+  for(const[n,x,z,r]of ring){const h=town.scene.getObjectByName(n);if(h){const c=h.clone();c.position.set(x,-.02,z);c.rotation.set(0,r,0);outS.add(c)}}
+  const treeG=new THREE.IcosahedronGeometry(1,2),trunkG=new THREE.CylinderGeometry(.12,.18,1,8);
+  const autumn=['#d39b4f','#c9783f','#b85c3a','#e0b45a','#7f8f3e','#9c4a2a','#a9a050'];
+  for(let i=0;i<140;i++){const a=R01(0,Math.PI*2),rr=R01(30,75),x=66+Math.cos(a)*rr,z=30+Math.sin(a)*rr*.9;if(x>40&&x<96&&z>-10&&z<60&&Math.random()<.85)continue;
+    const h=R01(3,7);const tr=new THREE.Mesh(trunkG,M('#6b4f3a'));tr.scale.set(1,h*.5,1);tr.position.set(x,h*.25,z);outS.add(tr);
+    const cr=new THREE.Mesh(treeG,M(rnd(autumn)));cr.scale.set(R01(1.6,2.6),R01(2,3.2),R01(1.6,2.6));cr.position.set(x,h*.55+1.5,z);cr.castShadow=true;outS.add(cr)}
+  for(let i=0;i<9;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),M(rnd(['#7d8a4a','#8a8f55','#6f7d46'])));hill.scale.set(R01(25,45),R01(6,12),R01(20,35));const a=i/9*Math.PI*2;hill.position.set(66+Math.cos(a)*120,-3,30+Math.sin(a)*110);outS.add(hill)}
   for(const[n,x,y,z,r]of[['Church',67,-.2,-22,0],['House_Red',63,-.2,-8,-Math.PI/2],['House_Yellow',63,-.2,-.6,-Math.PI/2],['House_White',100,-.2,23,Math.PI],['House_Yellow_B',104,-.2,17,Math.PI],['House_Blue',124,-.2,16,Math.PI]]){
     const h=town.scene.getObjectByName(n);if(h){const c=h.clone();c.position.set(x,y,z);c.rotation.set(0,r,0);outS.add(c)}}
   gullsG.scene.traverse(o=>{if(o.name.startsWith('gull')&&o.parent===gullsG.scene)gulls.push(o)});
