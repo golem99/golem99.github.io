@@ -166,7 +166,7 @@ function stonework({w=1024,h=512,rows=5,base=[30,8,52],mortar='#6f655b',brick=fa
     const rh=h/rows;
     for(let r=0;r<rows;r++){let x=-(r%2)*R01(20,60);while(x<w){const bw=brick?w/6*R01(.9,1.1):R01(w/7,w/3.5);const pad=brick?4:R01(5,9);
       const [hh,ss,ll]=base;const L=ll+R01(-9,9),H=hh+R01(-6,6),S=ss+R01(-4,6);
-      const x0=x+pad,y0=r*rh+pad,bw2=bw-pad*2,bh=rh-pad*2,rad=brick?6:R01(14,26);
+      const x0=x+pad,y0=r*rh+pad+R01(-3,3),bw2=bw-pad*2,bh=rh-pad*2+R01(-4,2),rad=brick?5:R01(5,12);
       const gr=g.createLinearGradient(0,y0,0,y0+bh);gr.addColorStop(0,`hsl(${H},${S}%,${L+7}%)`);gr.addColorStop(1,`hsl(${H},${S}%,${L-7}%)`);
       g.fillStyle=gr;g.beginPath();g.roundRect(x0,y0,bw2,bh,rad);g.fill();
       // speckles and chips
@@ -175,18 +175,22 @@ function stonework({w=1024,h=512,rows=5,base=[30,8,52],mortar='#6f655b',brick=fa
       const bgr=bg.createRadialGradient(x0+bw2/2,y0+bh/2,2,x0+bw2/2,y0+bh/2,Math.max(bw2,bh)*.6);bgr.addColorStop(0,'#fff');bgr.addColorStop(1,'#888');bg.fillStyle=bgr;bg.beginPath();bg.roundRect(x0,y0,bw2,bh,rad);bg.fill();
       x+=bw}}
     // moss creeping at the bottom
-    for(let i=0;i<900;i++){const x=Math.random()*w,y=h-Math.pow(Math.random(),2.2)*h*.35;g.fillStyle=`hsla(${R01(75,100)},${R01(35,55)}%,${R01(25,40)}%,${R01(.3,.8)})`;g.beginPath();g.arc(x,y,R01(2,7),0,7);g.fill()}
+    for(let i=0;i<60;i++){const x=Math.random()*w,y=h-Math.pow(Math.random(),1.6)*h*.4,r=R01(20,70);const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,`hsla(${R01(70,95)},40%,${R01(26,36)}%,.55)`);gr.addColorStop(1,'hsla(80,40%,30%,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,2*r,2*r)}
+    for(let i=0;i<2500;i++){const x=Math.random()*w,y=h-Math.pow(Math.random(),2.5)*h*.3;g.fillStyle=`hsla(${R01(70,100)},45%,${R01(22,38)}%,${R01(.15,.4)})`;g.fillRect(x,y,R01(1,3),R01(1,3))}
   });
   return [col,bump];
 }
 function cobbles(){const w=1024,h=1024;const bump=canvas(w,h,g=>{g.fillStyle='#000';g.fillRect(0,0,w,h)});const bg=bump.getContext('2d');
-  const col=canvas(w,h,g=>{g.fillStyle='#5d5246';g.fillRect(0,0,w,h);
-    for(let i=0;i<3000;i++){g.fillStyle=`hsla(${R01(70,95)},40%,${R01(22,34)}%,.5)`;g.fillRect(Math.random()*w,Math.random()*h,3,3)}
-    const s=64;for(let y=0;y<h/s;y++)for(let x=0;x<w/s+1;x++){const ox=(y%2)*s/2,cx=x*s+ox+R01(-4,4),cy=y*s+s/2+R01(-4,4),rw=s*R01(.38,.46),rh=s*R01(.36,.44);
-      const L=R01(52,70),H=R01(25,40),S=R01(8,18);const gr=g.createRadialGradient(cx-rw*.3,cy-rh*.35,2,cx,cy,rw*1.2);gr.addColorStop(0,`hsl(${H},${S}%,${L+12}%)`);gr.addColorStop(1,`hsl(${H},${S}%,${L-12}%)`);
-      g.fillStyle=gr;g.beginPath();g.ellipse(cx,cy,rw,rh,R01(-.3,.3),0,7);g.fill();
-      for(let k=0;k<30;k++){g.fillStyle=`rgba(0,0,0,${Math.random()*.12})`;g.fillRect(cx+R01(-rw,rw)*.8,cy+R01(-rh,rh)*.8,2,2)}
-      const b=bg.createRadialGradient(cx,cy,1,cx,cy,rw);b.addColorStop(0,'#fff');b.addColorStop(1,'#333');bg.fillStyle=b;bg.beginPath();bg.ellipse(cx,cy,rw,rh,0,0,7);bg.fill()}});
+  const col=canvas(w,h,g=>{g.fillStyle='#6d6153';g.fillRect(0,0,w,h);
+    for(let i=0;i<5000;i++){g.fillStyle=`hsla(${R01(25,45)},${R01(10,25)}%,${R01(25,45)}%,.35)`;g.fillRect(Math.random()*w,Math.random()*h,2,2)}
+    const s=44;for(let y=-1;y<h/s+1;y++)for(let x=-1;x<w/s+1;x++){const cx=x*s+(y%2)*s/2+R01(-6,6),cy=y*s+s/2+R01(-6,6);const n=7,rr=s*.44;
+      const pts=[];for(let k=0;k<n;k++){const a=k/n*Math.PI*2+R01(-.25,.25);const r=rr*R01(.78,1.05);pts.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r*R01(.85,1)])}
+      const L=R01(40,58),H=R01(22,38),S=R01(8,20);const gr=g.createRadialGradient(cx-rr*.3,cy-rr*.35,2,cx,cy,rr*1.3);gr.addColorStop(0,`hsl(${H},${S}%,${L+8}%)`);gr.addColorStop(1,`hsl(${H},${S}%,${L-10}%)`);
+      g.fillStyle=gr;g.beginPath();pts.forEach(([px,py],k)=>{const [qx,qy]=pts[(k+1)%n];const mx=(px+qx)/2,my=(py+qy)/2;k?g.quadraticCurveTo(px,py,mx,my):g.moveTo(mx,my)});g.closePath();g.fill();
+      for(let k=0;k<40;k++){g.fillStyle=`rgba(${Math.random()<.5?0:255},${Math.random()<.5?0:255},0,${Math.random()*.05})`;g.fillRect(cx+R01(-rr,rr)*.7,cy+R01(-rr,rr)*.7,2,2)}
+      const bgr=bg.createRadialGradient(cx,cy,1,cx,cy,rr);bgr.addColorStop(0,'#eee');bgr.addColorStop(1,'#444');bg.fillStyle=bgr;bg.beginPath();pts.forEach(([px,py],k)=>k?bg.lineTo(px,py):bg.moveTo(px,py));bg.closePath();bg.fill()}
+    // soft wet/dirty patches
+    for(let i=0;i<18;i++){const x=Math.random()*w,y=Math.random()*h,r=R01(60,180);const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(40,30,20,.18)');gr.addColorStop(1,'rgba(40,30,20,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,2*r,2*r)}});
   return [col,bump]}
 function earthTex(){return canvas(1024,1024,(g,w,h)=>{g.fillStyle='#6b4a32';g.fillRect(0,0,w,h);
   for(let i=0;i<9000;i++){g.fillStyle=`hsla(${R01(20,32)},${R01(25,45)}%,${R01(18,42)}%,${R01(.2,.6)})`;g.beginPath();g.arc(Math.random()*w,Math.random()*h,R01(1,6),0,7);g.fill()}
@@ -201,7 +205,7 @@ const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85});
 function box(p,s,c,parent=outS){const m=new THREE.Mesh(new THREE.BoxGeometry(...s),M(c));m.position.set(...p);m.castShadow=m.receiveShadow=true;parent.add(m);return m}
 function cyl(p,r,h,c,parent=outS,r2){const m=new THREE.Mesh(new THREE.CylinderGeometry(r2??r,r,h,28),M(c));m.position.set(...p);m.castShadow=m.receiveShadow=true;parent.add(m);return m}
 function buildSquare(){
-  const [cc,cb]=cobbles();const ct=tex(cc,[70,80]),cbt=tex(cb,[70,80],false);
+  const [cc,cb]=cobbles();const ct=tex(cc,[110,128]),cbt=tex(cb,[110,128],false);
   const g=new THREE.Mesh(new THREE.PlaneGeometry(60,70),new THREE.MeshStandardMaterial({map:ct,bumpMap:cbt,bumpScale:2.2,roughness:.92}));g.rotation.x=-Math.PI/2;g.position.set(66,-.01,30);g.receiveShadow=true;outS.add(g);
   // fountain
   cyl([66,.3,27],1.3,.6,'#c9c4ba');cyl([66,.58,27],1.12,.06,'#7fc4d6');cyl([66,.95,27],.26,.8,'#bdb6aa',outS,.18);cyl([66,1.38,27],.55,.1,'#c9c4ba');
@@ -246,7 +250,7 @@ function buildFalling(){const N=180,g=new THREE.BufferGeometry(),p=new Float32Ar
   falling=new THREE.Points(g,new THREE.PointsMaterial({map:lt,size:.14,transparent:true,alphaTest:.3,depthWrite:false}));outS.add(falling)}
 function buildSiiliCorner(){buildFalling();
   // stone plinth facing over the house base, near the hole
-  const [sc,sb]=stonework({rows:4,base:[32,7,50]});
+  const [sc,sb]=stonework({rows:5,base:[30,9,46]});
   const plinth=new THREE.Mesh(new THREE.PlaneGeometry(6.2,.8),new THREE.MeshStandardMaterial({map:tex(sc,[4,1]),bumpMap:tex(sb,[4,1],false),bumpScale:3,roughness:.95}));
   plinth.position.set(63.5,.4,41.71);plinth.rotation.y=Math.PI;plinth.receiveShadow=true;outS.add(plinth);
   // Juni's brick wall above the plinth
@@ -332,7 +336,7 @@ async function init(){
   await buildHome();
   // siili
   const inner=sg.scene; inner.scale.setScalar(.15); inner.traverse(o=>{if(o.isMesh){const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>{m.clippingPlanes=SIILI_CLIP})}}); inner.position.y=.62*.15; siili=new THREE.Group(); siili.add(inner);
-  inner.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o; if(o.isBone&&o.name==='head') headBone=o; if(o.isBone&&o.name==='body') bodyBone=o});
+  inner.traverse(o=>{if(o.isMesh&&/tongue|mouth_inside/.test(o.name))o.visible=false;if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o; if(o.isBone&&o.name==='head') headBone=o; if(o.isBone&&o.name==='body') bodyBone=o});
   mixer=new THREE.AnimationMixer(inner);
   for(const c of sg.animations){const a=mixer.clipAction(c);actions[c.name]=a;if(!['idle','walk'].includes(c.name)){a.setLoop(THREE.LoopOnce);a.clampWhenFinished=true}}
   play('idle');
