@@ -329,12 +329,12 @@ async function buildHome(){
   const brick=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,.5,48,1,true,-Math.PI*.32,Math.PI*.64),new THREE.MeshStandardMaterial({map:tex(bc,[2,1]),bumpMap:tex(bb,[2,1],false),bumpScale:3,roughness:.9,side:THREE.BackSide}));
   brick.position.set(0,.25,.05);brick.rotation.y=Math.PI;brick.receiveShadow=true;H.add(brick);
   // stones bedded in the walls
-  for(let i=0;i<22;i++){const a=R01(-Math.PI*.95,-Math.PI*.05),y=R01(.02,.32);const sh=.6*Math.sqrt(Math.max(.05,1-(y/.62)**2));const st=new THREE.Mesh(rockGeo(R01(.02,.045)),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(R01(.05,.09),R01(.12,.25),R01(.22,.36)),roughness:.9}));
-    st.position.set(Math.cos(a)*.95*sh/.6*1.0,y,Math.sin(a)*.8*sh/.6*1.0);st.castShadow=true;H.add(st)}
+  for(let i=0;i<30;i++){const a=R01(-Math.PI*1.05,Math.PI*.05);const r=R01(.025,.06);const st=new THREE.Mesh(rockGeo(r),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(R01(.05,.09),R01(.12,.25),R01(.24,.38)),roughness:.9}));
+    st.position.set(Math.cos(a)*.86,r*.35,Math.sin(a)*.7);st.scale.y=.7;st.castShadow=true;H.add(st)}
   // roots hanging from the ceiling
   const rootM=new THREE.MeshStandardMaterial({color:'#7a5236',roughness:.9});
-  for(let i=0;i<26;i++){const x=R01(-.75,.75),z=R01(-.6,.15);let y=.6*Math.sqrt(Math.max(0,1-(x/.95)**2-(z/.8)**2));const pts=[];
-    for(let k=0;k<7;k++){pts.push(new THREE.Vector3(x+Math.sin(k*1.3+i)*.02,y-k*R01(.025,.05),z+Math.cos(k*1.1+i)*.02))}
+  for(let i=0;i<14;i++){const side=Math.random()<.5?-1:1;const x=side*R01(.35,.75),z=R01(-.6,-.1);let y=.6*Math.sqrt(Math.max(0,1-(x/.95)**2-(z/.8)**2));const pts=[];
+    for(let k=0;k<7;k++){pts.push(new THREE.Vector3(x+Math.sin(k*.9+i)*.012,y-k*R01(.015,.03),z+Math.cos(k*.8+i)*.012))}
     const r=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),24,R01(.002,.006),6),rootM);r.castShadow=true;H.add(r);
     if(Math.random()<.5){const tip=new THREE.Mesh(new THREE.SphereGeometry(.004,6,4),rootM);tip.position.copy(pts[6]);H.add(tip)}}
   // the entrance tunnel at the left, with cool daylight
