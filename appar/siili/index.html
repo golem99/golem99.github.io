@@ -339,7 +339,8 @@ async function init(){
   $('#loading').textContent='';
 }
 /* ---------- Siili's burrow, built by hand ---------- */
-const HOME_SPOTS={pulla:[.34,.0,-.22,.11],pallo:[-.46,.0,.1,.12],matto:[0,.003,.02,.55],mato:[-.5,.0,-.3,.2],kukka:[.56,.0,-.4,.2],lamppu:[-.3,.0,-.52,.18],kuppi:[.5,.0,.12,.07],sukka:[.2,.0,-.5,.3]};
+const HOME_SPOTS={pulla:[-.4,.096,-.25,.11],pallo:[-.3,.0,.28,.12],matto:[0,.003,.05,.55],mato:[-.6,.0,.1,.2],kukka:[.62,.0,-.08,.2],lamppu:[.18,.098,-.66,.18],kuppi:[-.26,.096,-.28,.07],sukka:[.47,.07,-.58,.3]};
+const FURN=[['painted_wooden_table',-.33,0,-.26,.15,.62],['painted_wooden_chair_01',-.3,0,-.1,Math.PI+.2,1],['painted_wooden_stool',-.52,0,-.3,.4,1],['painted_wooden_shelves',-.7,0,-.38,1.1,1],['painted_wooden_cabinet',-.12,0,-.7,-.05,1],['painted_wooden_nightstand',.18,0,-.66,-.15,1],['vintage_day_bed',.47,0,-.58,-.45,1],['wooden_bucket_01',.04,0,-.62,0,1],['wicker_basket_01',.7,0,-.33,0,1],['mantel_clock_01',-.12,.189,-.71,-.05,1],['ceramic_vase_01',-.7,.12,-.38,0,1],['wooden_lantern_01',-.62,0,-.06,0,1]];
 function rockGeo(r,detail=2,amp=.25){const g=new THREE.IcosahedronGeometry(r,detail);const p=g.attributes.position;const seed=Math.random()*100;
   for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const n=1+amp*(Math.sin(x*9/r+seed)*Math.sin(y*7/r+seed*.7)*Math.sin(z*8/r+seed*1.3));p.setXYZ(i,x*n,y*n,z*n)}g.computeVertexNormals();return g}
 async function buildHome(){
