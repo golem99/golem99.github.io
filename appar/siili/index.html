@@ -291,9 +291,9 @@ async function init(){
     m.position.set(0,0,0);m.rotation.y=Math.random()*6}catch(e){}}));
   homeRoot.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true} if(o.name.startsWith('thing_')) things[o.name.slice(6)]=o; if(o.isLight&&o.intensity>100) o.intensity/=40});
   // siili
-  siili=sg.scene; siili.scale.setScalar(.15);
-  siili.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o; if(o.isBone&&o.name==='head') headBone=o; if(o.isBone&&o.name==='body') bodyBone=o});
-  mixer=new THREE.AnimationMixer(siili);
+  const inner=sg.scene; inner.scale.setScalar(.15); inner.position.y=.62*.15; siili=new THREE.Group(); siili.add(inner);
+  inner.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o; if(o.isBone&&o.name==='head') headBone=o; if(o.isBone&&o.name==='body') bodyBone=o});
+  mixer=new THREE.AnimationMixer(inner);
   for(const c of sg.animations){const a=mixer.clipAction(c);actions[c.name]=a;if(!['idle','walk'].includes(c.name)){a.setLoop(THREE.LoopOnce);a.clampWhenFinished=true}}
   play('idle');
   $('#loading').textContent='';
@@ -342,12 +342,12 @@ function learn(fi){st.words[fi]=(st.words[fi]||0)+1;save()}
 
 /* ---------- Siili movement ---------- */
 const tmp=new THREE.Vector3();
-function face(p){const d=tmp.copy(p).sub(siili.position);siili.rotation.y=Math.atan2(d.x,d.z)}
+let yawTarget=null;function face(p,instant){const d=tmp.copy(p).sub(siili.position);const y=Math.atan2(d.x,d.z);if(instant){siili.rotation.y=y;yawTarget=null}else yawTarget=y}
 async function walkTo(p,speed=.12,stop=.08){
-  face(p);play('walk',.15);const start=siili.position.clone();const target=p.clone();target.y=start.y;
+  face(p);await sleep(260);play('walk',.15);const start=siili.position.clone();const target=p.clone();target.y=start.y;
   const dir=target.clone().sub(start);const len=Math.max(0,dir.length()-stop);dir.normalize();
-  const t0=performance.now();const dur=len/speed*1000;
-  await new Promise(r=>{(function step(){const k=Math.min(1,(performance.now()-t0)/dur);siili.position.copy(start).addScaledVector(dir,len*k);if(k<1)requestAnimationFrame(step);else r()})()});
+  const t0=performance.now();const dur=len/speed*1000+300;
+  await new Promise(r=>{(function step(){const u=Math.min(1,(performance.now()-t0)/dur);const k=u<.15?u*u/.3:u>.85?1-(1-u)*(1-u)/.3:(u-.075)/.85;siili.position.copy(start).addScaledVector(dir,len*Math.min(1,k));if(k<1)requestAnimationFrame(step);else r()})()});
   play('idle',.2);
 }
 /* camera moves */
@@ -388,8 +388,8 @@ async function runPart(i){if(running)return;running=true;$('#part').textContent=
   $('#doneB').onclick=()=>{$('#done').classList.add('hidden');renderMenu();$('#menu').classList.remove('hidden')}}
 async function fadeTo(s){$('#fade').style.opacity=1;await sleep(650);useScene(s);$('#fade').style.opacity=0}
 function putSiiliOut(){outS.add(siili);siili.position.set(HOLE.x,0,HOLE.z-.05);siili.rotation.y=Math.PI}
-function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0}
-async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0.04,0.17,0.85);camLook.set(0,0.06,-0.1)}
+function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0;yawTarget=null}
+async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0.02,0.1,0.72);camLook.set(0,0.07,-0.05)}
 
 async function flyIn(){
   const P=new THREE.CatmullRomCurve3([[96,22,-6],[86,13,8],[76,7,19],[71,3.2,31],[67.6,1.2,37.9],[65.4,.45,40],[64.95,.3,40.75]].map(a=>new THREE.Vector3(...a)));
@@ -408,6 +408,7 @@ async function partIntro(){
   setMusic('home');sfx('rustle',.6);ask('Det prasslar under trappan … klicka på hålet!');
   await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
   putSiiliOut(); siili.position.z=HOLE.z+.12; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1,0); face(cam.position);
+  camTo(new THREE.Vector3(64.92,.11,40.95),new THREE.Vector3(64.62,.09,41.35),1800);
   await say('r1-01'); play('scared'); await say('r1-02');
   play('wave'); await say('r1-03'); showWord('Siili','igelkott'); await say('r1-04');
   play('nod'); await say('r1-10');
@@ -517,6 +518,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
   if(mixer)mixer.update(dt);
   if(an&&!audio.paused){an.getByteTimeDomainData(buf);let s=0;for(const v of buf){const d=(v-128)/128;s+=d*d}const rms=Math.sqrt(s/buf.length);level+=(Math.min(1,rms*7)-level)*.5}else level*=.8;
   if(jaw)jaw.rotateX(level*.42);
+  if(siili&&yawTarget!==null){let dy=yawTarget-siili.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));siili.rotation.y+=dy*Math.min(1,dt*6);if(Math.abs(dy)<.002)yawTarget=null}
   if(siili&&siili.parent&&headBone){
     // look at the pointer (or the camera when the pointer is still), small and soft
     siili.getWorldPosition(_sp);ray.setFromCamera(mouse,cam);_pl.setFromNormalAndCoplanarPoint(new THREE.Vector3(0,1,0),_sp);
