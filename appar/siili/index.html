@@ -156,7 +156,10 @@ Object.assign(hk.shadow.camera,{left:-1,right:1,top:1,bottom:-1}); homeS.add(hk)
 /* ---------- painted textures (canvas) ---------- */
 function canvas(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);return c}
 function tex(c,rep=[1,1],srgb=true){const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(...rep);if(srgb)t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t}
-function skyTex(){return tex(canvas(16,256,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#8fb4d6');gr.addColorStop(.55,'#e8d2b8');gr.addColorStop(1,'#f3c99a');g.fillStyle=gr;g.fillRect(0,0,w,h)}))}
+function skyTex(){const t=tex(canvas(2048,1024,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h*.5);gr.addColorStop(0,'#7fa6cf');gr.addColorStop(.7,'#d9cdbd');gr.addColorStop(1,'#f2c597');g.fillStyle=gr;g.fillRect(0,0,w,h*.5);g.fillStyle='#e9c9a2';g.fillRect(0,h*.5,w,h*.5);
+  for(let i=0;i<46;i++){const cx=Math.random()*w,cy=R01(h*.12,h*.44),sc=R01(.5,1.4);for(let k=0;k<14;k++){const x=cx+R01(-120,120)*sc,y=cy+R01(-18,14)*sc,r=R01(26,60)*sc;
+    const c=g.createRadialGradient(x,y-r*.3,0,x,y,r);const warm=cy>h*.33;c.addColorStop(0,warm?'rgba(255,236,214,.75)':'rgba(255,250,244,.7)');c.addColorStop(.6,warm?'rgba(244,206,176,.35)':'rgba(236,236,246,.3)');c.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=c;g.fillRect(x-r,y-r,2*r,2*r)}}}));
+  t.wrapS=THREE.RepeatWrapping;t.repeat.set(1,1);t.mapping=THREE.EquirectangularReflectionMapping;return t}
 const R01=(a,b)=>a+Math.random()*(b-a);
 // stones laid in rows: returns [colorCanvas,bumpCanvas]
 function stonework({w=1024,h=512,rows=5,base=[30,8,52],mortar='#6f655b',brick=false}){
@@ -332,6 +335,9 @@ async function init(){
   for(const[x,z,r]of[[59.2,35,Math.PI/2],[73,21.5,-Math.PI/2],[73.3,24.9,-Math.PI/2]]){const l=lamp.scene.clone();l.position.set(x,0,z);l.rotation.y=r;outS.add(l)}
   outS.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
   filmifyScene(outS);
+  outS.traverse(o=>{if(!o.isMesh)return;const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){if(!m||!m.name)continue;
+    if(/glass_dark/.test(m.name)&&!m.userData.glow){m.userData.glow=1;m.emissive=new THREE.Color('#ffb46a');m.emissiveIntensity=.35}
+    if(/^lamp$|lamp_glow/.test(m.name)&&m.emissive){m.emissiveIntensity=Math.max(m.emissiveIntensity,1.6)}}});
   // home
   await buildHome();
   // siili
