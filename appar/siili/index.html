@@ -172,7 +172,7 @@ const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85});
 function box(p,s,c,parent=outS){const m=new THREE.Mesh(new THREE.BoxGeometry(...s),M(c));m.position.set(...p);m.castShadow=m.receiveShadow=true;parent.add(m);return m}
 function cyl(p,r,h,c,parent=outS,r2){const m=new THREE.Mesh(new THREE.CylinderGeometry(r2??r,r,h,28),M(c));m.position.set(...p);m.castShadow=m.receiveShadow=true;parent.add(m);return m}
 function buildSquare(){
-  const [cc,cb]=cobbles();const ct=tex(cc,[24,28]),cbt=tex(cb,[24,28],false);
+  const [cc,cb]=cobbles();const ct=tex(cc,[70,80]),cbt=tex(cb,[70,80],false);
   const g=new THREE.Mesh(new THREE.PlaneGeometry(60,70),new THREE.MeshStandardMaterial({map:ct,bumpMap:cbt,bumpScale:2.2,roughness:.92}));g.rotation.x=-Math.PI/2;g.position.set(66,-.01,30);g.receiveShadow=true;outS.add(g);
   // fountain
   cyl([66,.3,27],1.3,.6,'#c9c4ba');cyl([66,.58,27],1.12,.06,'#7fc4d6');cyl([66,.95,27],.26,.8,'#bdb6aa',outS,.18);cyl([66,1.38,27],.55,.1,'#c9c4ba');
@@ -187,15 +187,15 @@ function leafGeo(){const sh=new THREE.Shape();sh.moveTo(0,0);sh.bezierCurveTo(.5
 function buildSiiliCorner(){
   // stone plinth facing over the house base, near the hole
   const [sc,sb]=stonework({rows:4,base:[32,7,50]});
-  const plinth=new THREE.Mesh(new THREE.PlaneGeometry(6.2,.8),new THREE.MeshStandardMaterial({map:tex(sc),bumpMap:tex(sb,[1,1],false),bumpScale:3,roughness:.95}));
+  const plinth=new THREE.Mesh(new THREE.PlaneGeometry(6.2,.8),new THREE.MeshStandardMaterial({map:tex(sc,[4,1]),bumpMap:tex(sb,[4,1],false),bumpScale:3,roughness:.95}));
   plinth.position.set(63.5,.4,41.728);plinth.rotation.y=Math.PI;plinth.receiveShadow=true;outS.add(plinth);
   // Juni's brick wall above the plinth
   const [bc,bb]=stonework({rows:14,base:[10,48,40],mortar:'#d6c7b2',brick:true});
-  const wall=new THREE.Mesh(new THREE.PlaneGeometry(6,2),new THREE.MeshStandardMaterial({map:tex(bc,[1,1]),bumpMap:tex(bb,[1,1],false),bumpScale:2,roughness:.9}));
+  const wall=new THREE.Mesh(new THREE.PlaneGeometry(6,2),new THREE.MeshStandardMaterial({map:tex(bc,[3,1]),bumpMap:tex(bb,[3,1],false),bumpScale:2,roughness:.9}));
   wall.position.set(63.5,1.8,41.79);wall.rotation.y=Math.PI;outS.add(wall);
   // steps get a stone texture too
   const [stc,stb]=stonework({rows:2,base:[35,5,64],mortar:'#8d867c'});
-  const sm=new THREE.MeshStandardMaterial({map:tex(stc,[2,1]),bumpMap:tex(stb,[2,1],false),bumpScale:2,roughness:.9});
+  const sm=new THREE.MeshStandardMaterial({map:tex(stc,[1,.5]),bumpMap:tex(stb,[1,.5],false),bumpScale:2,roughness:.9});
   box([63.5,.07,41.38],[1.5,.14,.8],'#b7b2a8').material=sm; box([63.5,.27,41.5],[1.3,.18,.55],'#b7b2a8').material=sm;
   const area=(n,fn)=>{for(let i=0;i<n;i++)fn(i)};
   // grass tufts along the wall and between cobbles
@@ -227,7 +227,7 @@ function buildSiiliCorner(){
 }
 let motes;
 /* the hole by the steps */
-const HOLE=new THREE.Vector3(64.6,0,41.735);
+const HOLE=new THREE.Vector3(64.6,0,41.72);
 function buildHole(){
   const g=new THREE.Mesh(new THREE.CircleGeometry(.12,24,0,Math.PI),new THREE.MeshBasicMaterial({color:'#120b07'}));
   g.position.set(HOLE.x,0,HOLE.z-.004);g.rotation.y=Math.PI;outS.add(g);
