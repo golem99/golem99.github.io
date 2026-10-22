@@ -925,16 +925,24 @@ function trollSay(list,el,extra){
 }
 function trollHp(){return (S.trollWins||0)>=3?15:10}   // hela rader: 10 hjärtan, 15 från tredje vinsten
 function weakAll(n){
- // inga gånger 1, 2 eller 10: de är för lätta för trollet
- const hard=k=>{const [a,b]=k.split("x").map(Number);return a>2&&b>2&&a<10&&b<10};
- let ks=Object.keys(S.F).filter(k=>S.F[k].ok+S.F[k].bad>0&&hard(k));
- if(ks.length<n){[3,4,5,6,7,8,9].forEach(t=>{for(let m=3;m<=9;m++){const k=fk(t,m);if(!ks.includes(k)&&ks.length<n*2)ks.push(k)}})}
- const sc=k=>{const x=S.F[k];return (known(k)&&!due(k)?10:0)+(x?x.s*2-x.bad:0)+Math.random()*1.5};
- return ks.sort((a,b)=>sc(a)-sc(b)).slice(0,n).map(k=>k.split("x").map(Number));
+ // Trollets tal: tre lätta (gånger 1, 2, 10 och små 5:or), ungefär hälften svåra hon övat på
+ // och resten tal hon redan kan, så att hon får vinna några. Börjar alltid med ett lätt.
+ const mid=k=>{const [a,b]=k.split("x").map(Number);return a>1&&b>1&&a<10&&b<10};
+ const seen=Object.keys(S.F).filter(k=>S.F[k].ok+S.F[k].bad>0&&mid(k));
+ const sc=k=>{const x=S.F[k];return (x?x.s*2-x.bad:0)+Math.random()*1.5};
+ const nEasy=Math.min(3,n),easyPool=[];
+ for(let m=1;m<=10;m++){easyPool.push(fk(2,m),fk(10,m),fk(1,m));if(m<=5)easyPool.push(fk(5,m))}
+ const easy=[...new Set(shuffle(easyPool))].filter(k=>k!=="2x5"||Math.random()<.5).slice(0,nEasy);
+ const weak=shuffle(seen.filter(k=>!known(k)&&!easy.includes(k))).sort((a,b)=>sc(a)-sc(b)),got=shuffle(seen.filter(k=>known(k)&&!easy.includes(k)));
+ const rest=n-nEasy,nw=Math.min(weak.length,Math.max(rest-got.length,Math.round(n*.5)));
+ let ks=[...weak.slice(0,nw),...got.slice(0,rest-nw)];
+ for(const t of [2,5,3,4])for(let m=2;m<=9&&ks.length<rest;m++){const k=fk(t,m);if(!ks.includes(k)&&!easy.includes(k))ks.push(k)}
+ const mixed=shuffle([...easy.slice(1),...ks]);
+ return [easy[0],...mixed].slice(0,n).map(k=>k.split("x").map(Number));
 }
 const trollImg=(v)=>`<div class="troll" id="troll"><img class="tb" src="img/troll-bridge.webp" alt="" style="display:none;position:absolute;inset:-8% -40% -6%;width:180%;height:114%;object-fit:cover;border-radius:22px;z-index:-1" onload="this.style.display='block'" onerror="this.remove()">${TROLL}<img class="tf" src="img/${v}.webp" alt="" style="display:none;position:absolute;inset:0" onload="this.style.display='block';const s=this.parentNode.querySelector('svg');if(s)s.style.visibility='hidden'" onerror="this.remove()"></div>`;
 function setTroll(v){const t=$("#troll");if(!t)return;const i=t.querySelector(".tf");if(i&&!i.src.endsWith(v+".webp")){const n=new Image();n.onload=()=>{i.src=n.src};n.src="img/"+v+".webp"}}
-const TROLL_TIME=10000;   // svarar hon rätt inom så här många ms blir det supersmäll (ingen tidsgräns)
+const TROLL_TIME=15000;   // svarar hon rätt inom så här många ms blir det supersmäll (ingen tidsgräns)
 let tq=0;
 function trollFight(){
  document.body.classList.remove("typing");
