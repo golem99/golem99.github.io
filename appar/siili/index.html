@@ -140,7 +140,7 @@ homeS.environment=envFrom('#e8b47c','#6a4228','#ffd2a0');homeS.environmentIntens
 function useScene(s){scene=s;rp.scene=s;gtao.scene=s;bokeh.scene=s}
 
 /* outdoor light: grey autumn afternoon */
-outS.background=skyTex(); outS.fog=new THREE.Fog('#e9cdb0',18,85);
+outS.background=skyTex(); outS.fog=new THREE.FogExp2('#e3cdb6',.012);
 outS.add(new THREE.HemisphereLight('#c6d4f0','#a0704a',1.35));
 const sun=new THREE.DirectionalLight('#ffcf9a',3.4); sun.position.set(52,9,30); sun.castShadow=true;
 sun.shadow.mapSize.set(4096,4096); Object.assign(sun.shadow.camera,{left:-5,right:5,top:5,bottom:-5,near:1,far:60}); sun.shadow.bias=-.0006; sun.shadow.normalBias=.02; sun.shadow.radius=9; sun.shadow.blurSamples=20; sun.target.position.set(64.5,0,41);
@@ -210,6 +210,33 @@ function buildSquare(){
   cyl([72.6,1.2,34],.22,2.4,'#8a6a4c');for(const[dx,dy,dz,r,c]of[[0,3.2,0,1.6,'#d39b4f'],[.8,2.8,.4,1.1,'#c9783f'],[-.7,3.6,-.3,1,'#e0b45a']]){const b=new THREE.Mesh(new THREE.IcosahedronGeometry(r,3),M(c));b.position.set(72.6+dx,dy,34+dz);b.castShadow=true;outS.add(b)}
   buildSiiliCorner();
 }
+/* film look for Love's flat-coloured models: painted variation, boards, tiles, bricks and grime, all in world space */
+const FILM_GLSL=`
+float fh(vec3 p){p=fract(p*.3183099+.1);p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float fn(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);
+ return mix(mix(mix(fh(i),fh(i+vec3(1,0,0)),f.x),mix(fh(i+vec3(0,1,0)),fh(i+vec3(1,1,0)),f.x),f.y),mix(mix(fh(i+vec3(0,0,1)),fh(i+vec3(1,0,1)),f.x),mix(fh(i+vec3(0,1,1)),fh(i+vec3(1,1,1)),f.x),f.y),f.z);}
+float fbm(vec3 p){float a=.5,s=0.;for(int i=0;i<4;i++){s+=a*fn(p);p*=2.03;a*=.5;}return s;}`;
+function filmify(m,kind){if(!m||m.userData.film||!m.isMeshStandardMaterial)return;m.userData.film=1;
+  m.onBeforeCompile=sh=>{sh.uniforms.kind={value:kind};
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vWP;varying vec3 vWN;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvWP=(modelMatrix*vec4(transformed,1.)).xyz;vWN=normalize(mat3(modelMatrix)*objectNormal);');
+    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vWP;varying vec3 vWN;uniform int kind;'+FILM_GLSL).replace('#include <color_fragment>',`#include <color_fragment>
+    vec3 P=vWP;vec3 N=abs(vWN);float big=fbm(P*.35),mid=fbm(P*2.1),fine=fn(P*18.);
+    vec3 c=diffuseColor.rgb;
+    c*=.86+.22*big+.08*(mid-.5)+.04*(fine-.5);
+    if(kind==1&&N.y<.6){float y=P.y/.16;float g=smoothstep(.0,.08,fract(y))*smoothstep(1.,.9,fract(y));float id=floor(y);c*=mix(.78,1.,g)*(.95+.1*fh(vec3(id,floor((P.x+P.z)*.8),2.)));c*=1.-.08*smoothstep(.85,1.,fract(y));}
+    if(kind==2){float row=(P.y*1.0+(N.y>.9?P.z:0.))/.22;float ry=fract(row);float rid=floor(row);float col=(P.x+P.z)/.28+rid*.5;float cx=fract(col);
+      c*=.72+.28*smoothstep(0.,.35,ry)*(1.-.35*ry);c*=mix(.8,1.,smoothstep(0.,.06,cx)*smoothstep(1.,.94,cx));c*=.9+.2*fh(vec3(rid,floor(col),5.));}
+    if(kind==3&&N.y<.6){float row=P.y/.075;float rid=floor(row);float col=(P.x+P.z)/.23+rid*.5;float m1=step(.12,fract(row))*step(.07,fract(col));
+      vec3 br=c*(.85+.3*fh(vec3(rid,floor(col),9.)));c=mix(vec3(.82,.76,.66),br,m1);}
+    if(kind==4){c*=.8+.35*fbm(P*6.);}
+    float grime=1.-smoothstep(0.,.7,P.y);c=mix(c,c*vec3(.72,.66,.58),grime*.55);
+    float drip=smoothstep(.55,.9,fbm(vec3(P.x*3.,P.y*.4,P.z*3.)))*(1.-N.y);c*=1.-.12*drip;
+    diffuseColor.rgb=c;`).replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(roughnessFactor*(.85+.3*fbm(vWP*1.7)),.35,1.);');
+  };m.needsUpdate=true}
+function filmifyScene(root){root.traverse(o=>{if(!o.isMesh)return;const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){if(!m)continue;const n=(m.name||'').toLowerCase();
+  if(/glow|glass|sky|screen|water|flame|lamp/.test(n))continue;
+  const k=/wall|falu|shop|cream|plank|wood|white|yellow|mint|pink/.test(n)?1:/tile|roof|sheet/.test(n)?2:/brick/.test(n)?3:/stone|step|mortar|church/.test(n)?4:0;
+  if(m.isMeshStandardMaterial){m.roughness=Math.max(m.roughness,.55);m.metalness=Math.min(m.metalness,.2)}filmify(m,k)}})}
 /* the corner by the steps, at Siili's height */
 function leafGeo(){const sh=new THREE.Shape();sh.moveTo(0,0);sh.bezierCurveTo(.5,.25,.45,.8,0,1);sh.bezierCurveTo(-.45,.8,-.5,.25,0,0);const geo=new THREE.ShapeGeometry(sh,8);
   const p=geo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setZ(i,x*x*.9+Math.sin(y*3)*.06)}geo.computeVertexNormals();return geo}
@@ -300,6 +327,7 @@ async function init(){
   const far=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:'#7d8a4a',roughness:1}));far.rotation.x=-Math.PI/2;far.position.set(66,-.05,30);far.receiveShadow=true;outS.add(far);
   for(const[x,z,r]of[[59.2,35,Math.PI/2],[73,21.5,-Math.PI/2],[73.3,24.9,-Math.PI/2]]){const l=lamp.scene.clone();l.position.set(x,0,z);l.rotation.y=r;outS.add(l)}
   outS.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  filmifyScene(outS);
   // home
   await buildHome();
   // siili
