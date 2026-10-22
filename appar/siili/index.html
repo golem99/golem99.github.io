@@ -275,7 +275,7 @@ function buildSiiliCorner(){buildFalling();
   area(70,()=>{const mm=new THREE.Mesh(new THREE.IcosahedronGeometry(R01(.008,.022),1),mossM.clone());mm.material.color.setHSL(R01(.2,.26),.5,R01(.16,.26));mm.scale.set(1.4,.6,1);mm.position.set(R01(61.6,67.4),.01,R01(41.62,41.72));mm.castShadow=mm.receiveShadow=true;outS.add(mm)});
   // pebbles
   const peb=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({roughness:.8}),300);
-  for(let i=0;i<300;i++){const r=R01(.004,.014);e.set(R01(0,3),R01(0,3),R01(0,3));q.setFromEuler(e);v.set(R01(62,67),r*.4,R01(39.8,41.7));sv.set(r,r*.7,r*R01(.8,1.2));m4.compose(v,q,sv);peb.setMatrixAt(i,m4);peb.setColorAt(i,new THREE.Color().setHSL(R01(.05,.1),R01(.05,.15),R01(.22,.45)))}
+  for(let i=0;i<300;i++){const r=R01(.004,.014);e.set(R01(0,3),R01(0,3),R01(0,3));q.setFromEuler(e);v.set(R01(62,67),r*.4,R01(39.8,41.7));sv.set(r,r*.7,r*R01(.8,1.2));m4.compose(v,q,sv);peb.setMatrixAt(i,m4);peb.setColorAt(i,new THREE.Color().setHSL(R01(.05,.1),R01(.08,.18),R01(.14,.28)))}
   peb.receiveShadow=true;outS.add(peb);
   // autumn leaves, curled
   const lg=leafGeo();const lc=['#d39b4f','#c9783f','#b85c3a','#e0b45a','#9c4a2a','#d9a441'];
@@ -295,8 +295,8 @@ const dotTex=()=>tex(canvas(32,32,(g)=>{const r=g.createRadialGradient(16,16,0,1
 const HOLE=new THREE.Vector3(64.6,0,41.72);
 function buildHole(){
   const g=new THREE.Mesh(new THREE.CircleGeometry(.12,24,0,Math.PI),new THREE.MeshBasicMaterial({color:'#120b07'}));
-  g.position.set(HOLE.x,0,HOLE.z-.004);g.rotation.y=Math.PI;outS.add(g);
-  const rim=new THREE.Mesh(new THREE.TorusGeometry(.125,.018,8,24,Math.PI),M('#8b7d6c'));rim.position.copy(g.position);rim.rotation.y=Math.PI;outS.add(rim);
+  g.position.set(HOLE.x,0,HOLE.z-.016);g.rotation.y=Math.PI;outS.add(g);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(.125,.018,8,24,Math.PI),M('#8b7d6c'));rim.position.copy(g.position);rim.position.z-=.004;rim.rotation.y=Math.PI;outS.add(rim);
   g.userData.hole=true;return g;
 }
 
