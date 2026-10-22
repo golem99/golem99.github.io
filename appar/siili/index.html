@@ -98,7 +98,7 @@ let LINES={};
 const R=new THREE.WebGLRenderer({antialias:true});
 R.setPixelRatio(Math.min(devicePixelRatio,2)); R.setSize(innerWidth,innerHeight);
 R.shadowMap.enabled=true; R.shadowMap.type=THREE.VSMShadowMap;
-R.toneMapping=THREE.ACESFilmicToneMapping; R.toneMappingExposure=1.05; R.outputColorSpace=THREE.SRGBColorSpace;
+R.toneMapping=THREE.AgXToneMapping; R.toneMappingExposure=1.15; R.outputColorSpace=THREE.SRGBColorSpace;
 document.body.prepend(R.domElement);
 const cam=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.02,400);
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
@@ -107,10 +107,10 @@ let scene=outS;
 const composer=new EffectComposer(R);const rp=new RenderPass(outS,cam);composer.addPass(rp);
 const gtao=new GTAOPass(outS,cam,innerWidth,innerHeight);gtao.updateGtaoMaterial({radius:.18,distanceExponent:1.4,thickness:1,scale:1});gtao.blendIntensity=.85;composer.addPass(gtao);
 const bokeh=new BokehPass(outS,cam,{focus:1,aperture:.0035,maxblur:.007});composer.addPass(bokeh);
-const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.28,.6,.88);composer.addPass(bloom);
+const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.22,.9,.9);composer.addPass(bloom);
 composer.addPass(new OutputPass());
 /* painted look: a soft Kuwahara filter plus a gentle grade and vignette */
-const paint=new ShaderPass({uniforms:{tDiffuse:{value:null},res:{value:new THREE.Vector2(innerWidth,innerHeight)},mixAmt:{value:.85},time:{value:0}},
+const paint=new ShaderPass({uniforms:{tDiffuse:{value:null},res:{value:new THREE.Vector2(innerWidth,innerHeight)},mixAmt:{value:.12},time:{value:0}},
  vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
  fragmentShader:`uniform sampler2D tDiffuse;uniform vec2 res;uniform float mixAmt;uniform float time;varying vec2 vUv;
  float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
@@ -129,6 +129,13 @@ const paint=new ShaderPass({uniforms:{tDiffuse:{value:null},res:{value:new THREE
 composer.addPass(paint);
 addEventListener('resize',()=>paint.uniforms.res.value.set(innerWidth,innerHeight));
 addEventListener('resize',()=>{composer.setSize(innerWidth,innerHeight)});
+function envFrom(top,bottom,warm){const es=new THREE.Scene();const g=new THREE.SphereGeometry(10,32,16);
+  const m=new THREE.ShaderMaterial({side:THREE.BackSide,uniforms:{a:{value:new THREE.Color(top)},b:{value:new THREE.Color(bottom)},w:{value:new THREE.Color(warm)}},
+   vertexShader:'varying vec3 p;void main(){p=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+   fragmentShader:'uniform vec3 a,b,w;varying vec3 p;void main(){vec3 c=mix(b,a,smoothstep(-.2,.6,p.y));c+=w*pow(max(0.,dot(p,normalize(vec3(-.6,.25,-.6)))),6.);gl_FragColor=vec4(c,1.);}'});
+  es.add(new THREE.Mesh(g,m));const pm=new THREE.PMREMGenerator(R);const t=pm.fromScene(es,.02).texture;pm.dispose();return t}
+outS.environment=envFrom('#9fc2e6','#a7835e','#ffcf96');outS.environmentIntensity=.55;
+homeS.environment=envFrom('#e8b47c','#6a4228','#ffd2a0');homeS.environmentIntensity=.45;
 function useScene(s){scene=s;rp.scene=s;gtao.scene=s;bokeh.scene=s}
 
 /* outdoor light: grey autumn afternoon */
@@ -230,14 +237,14 @@ function buildSiiliCorner(){buildFalling();
   let gi=0;const tuft=(x,z,n,hmax)=>{for(let k=0;k<n&&gi<6000;k++){e.set(R01(-.45,.45),R01(0,6),R01(-.45,.45));q.setFromEuler(e);v.set(x+R01(-.03,.03),0,z+R01(-.03,.03));const hs=R01(.4,1)*hmax;sv.set(1,hs,1);m4.compose(v,q,sv);grass.setMatrixAt(gi,m4);grass.setColorAt(gi,new THREE.Color().setHSL(R01(.18,.26),R01(.35,.6),R01(.28,.45)));gi++}};
   area(90,()=>tuft(R01(61.5,67.5),R01(41.55,41.7),R01(20,45),R01(.8,1.7)));
   area(160,()=>tuft(R01(61,68),R01(38.5,41.4),R01(6,14),R01(.3,.7)));
-  grass.count=gi;grass.castShadow=true;outS.add(grass);
+  grass.count=gi;grass.castShadow=false;outS.add(grass);
   // moss cushions at the plinth foot
   const mossM=new THREE.MeshStandardMaterial({color:'#5f7a2e',roughness:1});
   area(70,()=>{const mm=new THREE.Mesh(new THREE.IcosahedronGeometry(R01(.008,.022),1),mossM.clone());mm.material.color.setHSL(R01(.2,.26),.5,R01(.16,.26));mm.scale.set(1.4,.6,1);mm.position.set(R01(61.6,67.4),.01,R01(41.62,41.72));mm.castShadow=mm.receiveShadow=true;outS.add(mm)});
   // pebbles
   const peb=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({roughness:.8}),300);
   for(let i=0;i<300;i++){const r=R01(.004,.014);e.set(R01(0,3),R01(0,3),R01(0,3));q.setFromEuler(e);v.set(R01(62,67),r*.4,R01(39.8,41.7));sv.set(r,r*.7,r*R01(.8,1.2));m4.compose(v,q,sv);peb.setMatrixAt(i,m4);peb.setColorAt(i,new THREE.Color().setHSL(R01(.05,.1),R01(.05,.15),R01(.22,.45)))}
-  peb.castShadow=peb.receiveShadow=true;outS.add(peb);
+  peb.receiveShadow=true;outS.add(peb);
   // autumn leaves, curled
   const lg=leafGeo();const lc=['#d39b4f','#c9783f','#b85c3a','#e0b45a','#9c4a2a','#d9a441'];
   area(320,()=>{const l=new THREE.Mesh(lg,new THREE.MeshStandardMaterial({color:rnd(lc),roughness:.75,side:THREE.DoubleSide}));const sc=R01(.035,.075);l.scale.setScalar(sc);
@@ -391,6 +398,7 @@ function addPlaceholders(){
     g.traverse(o=>o.castShadow=true);things.sukka.add(g)}
 }
 let homeLamp,homeFlame,homeCandle;
+const rim=new THREE.SpotLight('#ffe4c0',3.5,1.6,.5,.9,1.2);rim.castShadow=false;const rimT=new THREE.Object3D();rim.target=rimT;
 let homeMotes,headBone,bodyBone,lookYaw=0,lookPitch=0,lookTarget=new THREE.Vector3(),bristle=0;
 function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
   if(a.loop===THREE.LoopOnce){const d=a.getClip().duration*1000;clearTimeout(play.t);if(name!=='curl'&&name!=='sad')play.t=setTimeout(()=>play('idle'),d+60)}}
@@ -597,6 +605,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
   if(mixer)mixer.update(dt);
   if(an&&!audio.paused){an.getByteTimeDomainData(buf);let s=0;for(const v of buf){const d=(v-128)/128;s+=d*d}const rms=Math.sqrt(s/buf.length);level+=(Math.min(1,rms*7)-level)*.5}else level*=.8;
   if(jaw)jaw.rotateX(level*.42);
+  if(siili&&siili.parent){if(rim.parent!==siili.parent){siili.parent.add(rim,rimT)}siili.getWorldPosition(_sp);const back=_sp.clone().sub(cam.position).setY(0).normalize();rim.position.copy(_sp).addScaledVector(back,.5).add(new THREE.Vector3(0,.32,0));rimT.position.copy(_sp).add(new THREE.Vector3(0,.08,0))}
   if(siili&&yawTarget!==null){let dy=yawTarget-siili.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));siili.rotation.y+=dy*Math.min(1,dt*6);if(Math.abs(dy)<.002)yawTarget=null}
   if(siili&&siili.parent&&headBone){
     // look at the pointer (or the camera when the pointer is still), small and soft
