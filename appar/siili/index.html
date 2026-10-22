@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Siili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3b2a22;--cream:#fff6e8;--rust:#c8643c;--moss:#6f8f4e;--sky:#bfe0ef;--card:#fffaf2;--shadow:0 10px 30px rgba(40,20,10,.25)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#1e1712;color:var(--ink);font-family:Nunito,system-ui,sans-serif;overflow:hidden}
+canvas{display:block}
+#ui{position:fixed;inset:0;pointer-events:none}
+.top{position:absolute;top:14px;left:16px;right:16px;display:flex;gap:12px;align-items:center}
+.pill{pointer-events:auto;background:rgba(255,246,232,.92);border-radius:999px;padding:8px 16px;box-shadow:var(--shadow);font-weight:800;display:flex;gap:8px;align-items:center}
+.pill button{all:unset;cursor:pointer;padding:2px 8px;border-radius:999px}
+.pill button:hover{background:#f1e2cc}
+.title{font-family:'Baloo 2';font-size:22px;letter-spacing:.5px}
+#paws{font-size:18px}
+.sp{flex:1}
+#sub{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);max-width:min(900px,92vw);text-align:center;transition:opacity .25s;opacity:0}
+#sub .fi{font-family:'Baloo 2';font-weight:800;font-size:clamp(22px,3vw,34px);color:#fff;text-shadow:0 2px 0 #3b2a22,0 0 18px rgba(0,0,0,.6)}
+#sub .sv{font-size:clamp(15px,1.8vw,20px);color:#ffe9c9;text-shadow:0 1px 6px rgba(0,0,0,.8);margin-top:4px}
+#ask{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--card);border-radius:18px;padding:10px 22px;box-shadow:var(--shadow);font-weight:800;font-size:20px;opacity:0;transition:.25s}
+#word{position:absolute;top:22%;left:50%;transform:translate(-50%,-50%) scale(.6);background:var(--card);border-radius:26px;padding:18px 34px;box-shadow:var(--shadow);text-align:center;opacity:0;transition:.35s cubic-bezier(.3,1.6,.5,1)}
+#word.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#word .fi{font-family:'Baloo 2';font-size:58px;font-weight:800;line-height:1;color:var(--rust)}
+#word .sv{font-size:22px;margin-top:6px;color:#7a6556}
+#cards{position:absolute;bottom:120px;left:50%;transform:translateX(-50%);display:flex;gap:16px;pointer-events:auto}
+.card{all:unset;cursor:pointer;background:var(--card);border-radius:22px;padding:14px 18px;min-width:130px;text-align:center;box-shadow:var(--shadow);transition:transform .15s}
+.card:hover{transform:translateY(-4px) rotate(-1deg)}
+.card .e{font-size:54px;line-height:1.1}
+.card .t{font-family:'Baloo 2';font-weight:800;font-size:24px}
+.card .s{font-size:14px;color:#8a7466}
+.card.wrong{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#hint{position:absolute;right:20px;bottom:24px;pointer-events:auto;all:unset;cursor:pointer;width:64px;height:64px;border-radius:50%;background:#ffd36b;box-shadow:var(--shadow);font:800 34px 'Baloo 2';text-align:center;line-height:64px;display:none}
+#hint{position:absolute}
+#menu,#start,#done{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:auto;background:radial-gradient(circle at 50% 40%,rgba(255,236,205,.92),rgba(58,40,28,.92))}
+.panel{background:var(--card);border-radius:30px;padding:30px 36px;box-shadow:var(--shadow);text-align:center;max-width:760px}
+.panel h1{font-family:'Baloo 2';font-size:52px;margin:0;color:var(--rust);line-height:1}
+.panel h2{font-family:'Baloo 2';margin:4px 0 18px;font-weight:700;color:#7a6556}
+.big{all:unset;cursor:pointer;background:var(--rust);color:#fff;font:800 24px 'Baloo 2';padding:12px 34px;border-radius:999px;box-shadow:0 6px 0 #8f3f22}
+.big:active{transform:translateY(3px);box-shadow:0 3px 0 #8f3f22}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 6px}
+.door{all:unset;cursor:pointer;border-radius:20px;padding:14px 10px;background:#f6e6cf;text-align:center}
+.door .n{font:800 26px 'Baloo 2';color:var(--rust)}
+.door .d{font-size:14px;color:#6c5648}
+.door.locked{opacity:.4;cursor:default}
+.door.done{background:#dcebc9}
+.hidden{display:none!important}
+#fade{position:absolute;inset:0;background:#1e1712;opacity:0;transition:opacity .6s;pointer-events:none}
+#loading{position:absolute;left:50%;top:60%;transform:translateX(-50%);color:#ffe9c9;font-weight:800}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="ui">
+  <div class="top">
+    <div class="pill"><span class="title">Siili</span><span id="part"></span></div>
+    <div class="sp"></div>
+    <div class="pill" id="paws">🐾 0</div>
+    <div class="pill"><button id="bSub" title="Svensk text">Text: på</button><button id="bSnd" title="Ljud">🔊</button><button id="bMenu" title="Meny">☰</button></div>
+  </div>
+  <div id="ask"></div>
+  <div id="word"><div class="fi"></div><div class="sv"></div></div>
+  <div id="cards"></div>
+  <div id="sub"><div class="fi"></div><div class="sv"></div></div>
+  <button id="hint" title="Ledtråd">?</button>
+  <div id="fade"></div>
+  <div id="start"><div class="panel"><h1>Siili</h1><h2>Kapitel 1 · Jee!</h2><p>Under trappan i Junis tegelhus bor en liten igelkott.<br>Han pratar finska. Du pratar svenska. Ni kan lära varandra!</p><button class="big" id="go">Börja</button><div id="loading">Laddar …</div></div></div>
+  <div id="menu" class="hidden"><div class="panel"><h1>Jee!</h1><h2>Kapitel 1 · Siilis hem</h2><div class="doors" id="doors"></div><button class="big" id="close">Fortsätt</button></div></div>
+  <div id="done" class="hidden"><div class="panel"><h1>Jee!</h1><h2 id="doneT"></h2><div style="font-size:90px">🦔⭐</div><button class="big" id="doneB">Vidare</button></div></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+/* ---------- state ---------- */
+const KEY='siili.v1';
+const st=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}})();
+st.done??=[]; st.paws??=0; st.words??={}; st.sub??=true; st.snd??=true;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+const $=s=>document.querySelector(s);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let LINES={};
+
+/* ---------- renderer and scenes ---------- */
+const R=new THREE.WebGLRenderer({antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2)); R.setSize(innerWidth,innerHeight);
+R.shadowMap.enabled=true; R.shadowMap.type=THREE.PCFSoftShadowMap;
+R.toneMapping=THREE.ACESFilmicToneMapping; R.toneMappingExposure=1.05; R.outputColorSpace=THREE.SRGBColorSpace;
+document.body.prepend(R.domElement);
+const cam=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.02,400);
+addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
+const outS=new THREE.Scene(), homeS=new THREE.Scene();
+let scene=outS;
+
+/* outdoor light: grey autumn afternoon */
+outS.background=new THREE.Color('#c9d6dd'); outS.fog=new THREE.Fog('#c9d6dd',25,90);
+outS.add(new THREE.HemisphereLight('#e8f0f4','#6d5a48',1.4));
+const sun=new THREE.DirectionalLight('#fff1dc',2.2); sun.position.set(48,30,22); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048); Object.assign(sun.shadow.camera,{left:-14,right:14,top:14,bottom:-14,near:1,far:90}); sun.target.position.set(64,0,38);
+outS.add(sun,sun.target);
+/* home light */
+homeS.background=new THREE.Color('#22170f');
+homeS.add(new THREE.HemisphereLight('#ffdcae','#3a2416',1.1));
+const hk=new THREE.DirectionalLight('#ffd9a8',1.2); hk.position.set(-0.6,1.4,-0.9); hk.castShadow=true; hk.shadow.mapSize.set(1024,1024);
+Object.assign(hk.shadow.camera,{left:-1,right:1,top:1,bottom:-1}); homeS.add(hk);
+
+/* ---------- simple builders for the square (from Love's TownSquare) ---------- */
+const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85});
+function box(p,s,c,parent=outS){const m=new THREE.Mesh(new THREE.BoxGeometry(...s),M(c));m.position.set(...p);m.castShadow=m.receiveShadow=true;parent.add(m);return m}
+function cyl(p,r,h,c,parent=outS,r2){const m=new THREE.Mesh(new THREE.CylinderGeometry(r2??r,r,h,28),M(c));m.position.set(...p);m.castShadow=m.receiveShadow=true;parent.add(m);return m}
+function cobbleTex(){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.fillStyle='#a99c88';g.fillRect(0,0,512,512);
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){const s=32,ox=(y%2)*16;g.fillStyle=`hsl(${30+Math.random()*10},${10+Math.random()*8}%,${55+Math.random()*12}%)`;g.beginPath();g.roundRect(x*s+ox+2,y*s+2,s-4,s-4,8);g.fill()}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;return t}
+function buildSquare(){
+  const t=cobbleTex();t.repeat.set(40,50);
+  const g=new THREE.Mesh(new THREE.PlaneGeometry(60,70),new THREE.MeshStandardMaterial({map:t,roughness:.95}));g.rotation.x=-Math.PI/2;g.position.set(66,-.01,30);g.receiveShadow=true;outS.add(g);
+  // fountain
+  cyl([66,.3,27],1.3,.6,'#c9c4ba');cyl([66,.58,27],1.12,.06,'#7fc4d6');cyl([66,.95,27],.26,.8,'#bdb6aa',outS,.18);cyl([66,1.38,27],.55,.1,'#c9c4ba');
+  // benches
+  for(const x of[63,69]){box([x,.45,31.5],[2.2,.08,.55],'#cd9866');box([x,.75,31.75],[2.2,.45,.06],'#cd9866');for(const d of[-.9,.9])box([x+d,.22,31.5],[.1,.44,.5],'#5a5560')}
+  // stalls
+  for(const[x,c]of[[61.2,'#e0557a'],[70.8,'#52b5b1']]){box([x,.5,23.2],[2,1,1],'#b98048');box([x,2.2,23.2],[2.3,.12,1.4],c);for(const d of[-.9,.9])box([x+d,1.4,23.7],[.08,1.7,.08],'#5a5560')}
+  // tree
+  cyl([72.6,1.2,34],.22,2.4,'#8a6a4c');const b=new THREE.Mesh(new THREE.SphereGeometry(1.6,20,14),M('#d39b4f'));b.position.set(72.6,3.2,34);b.castShadow=true;outS.add(b);
+  // fallen leaves near Siili's step
+  const lc=['#d39b4f','#c9783f','#b85c3a','#e0b45a'];
+  for(let i=0;i<70;i++){const l=new THREE.Mesh(new THREE.CircleGeometry(.03+Math.random()*.03,6),M(rnd(lc)));l.rotation.x=-Math.PI/2;l.rotation.z=Math.random()*6;l.position.set(62.6+Math.random()*3.2,.002+Math.random()*.004,40.2+Math.random()*1.6);l.receiveShadow=true;outS.add(l)}
+}
+/* the hole by the steps */
+const HOLE=new THREE.Vector3(64.55,0,41.78);
+function buildHole(){
+  const g=new THREE.Mesh(new THREE.CircleGeometry(.12,24,0,Math.PI),new THREE.MeshBasicMaterial({color:'#120b07'}));
+  g.position.set(HOLE.x,0,HOLE.z-.012);g.rotation.y=Math.PI;outS.add(g);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(.125,.018,8,24,Math.PI),M('#8b7d6c'));rim.position.copy(g.position);rim.rotation.y=Math.PI;outS.add(rim);
+  g.userData.hole=true;return g;
+}
+
+/* ---------- loading ---------- */
+const loader=new GLTFLoader();
+const load=u=>new Promise((res,rej)=>loader.load(u,res,undefined,rej));
+let siili,mixer,actions={},jaw,current,holeMesh,things={},homeRoot;
+async function init(){
+  LINES=await (await fetch('lines.json')).json();
+  const [sg,hg,town,props,way,lamp]=await Promise.all(['siili.glb','home.glb','love/town-houses.glb','love/square-props.glb','love/wayfinding.glb','love/street-lamp.glb'].map(load));
+  buildSquare(); holeMesh=buildHole();
+  const brick=town.scene.getObjectByName('House_Brick'); brick.position.set(63.5,0,44); brick.rotation.set(0,Math.PI,0); outS.add(brick);
+  for(const[n,x,z,ry]of[['House_White',56,46,Math.PI],['House_Yellow',73,46,Math.PI]]){const h=town.scene.getObjectByName(n);if(h){h.position.set(x,0,z);h.rotation.set(0,ry,0);outS.add(h)}}
+  outS.add(props.scene,way.scene);
+  for(const[x,z,r]of[[59.2,35,Math.PI/2],[73,21.5,-Math.PI/2],[73.3,24.9,-Math.PI/2]]){const l=lamp.scene.clone();l.position.set(x,0,z);l.rotation.y=r;outS.add(l)}
+  outS.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  // home
+  homeRoot=hg.scene; homeS.add(homeRoot);
+  homeRoot.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true} if(o.name.startsWith('thing_')) things[o.name.slice(6)]=o; if(o.isLight&&o.intensity>100) o.intensity/=40});
+  // siili
+  siili=sg.scene; siili.scale.setScalar(.15);
+  siili.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o});
+  mixer=new THREE.AnimationMixer(siili);
+  for(const c of sg.animations){const a=mixer.clipAction(c);actions[c.name]=a;if(!['idle','walk'].includes(c.name)){a.setLoop(THREE.LoopOnce);a.clampWhenFinished=true}}
+  play('idle');
+  $('#loading').textContent='';
+}
+function play(name,fade=.25){const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
+  if(a.loop===THREE.LoopOnce){const d=a.getClip().duration*1000;clearTimeout(play.t);if(name!=='curl'&&name!=='sad')play.t=setTimeout(()=>play('idle'),d+60)}}
+
+/* ---------- audio with mouth movement ---------- */
+let AC,an,buf=new Uint8Array(256),level=0;
+const audio=new Audio();audio.crossOrigin='anonymous';
+function initAudio(){AC=new AudioContext();const src=AC.createMediaElementSource(audio);an=AC.createAnalyser();an.fftSize=512;src.connect(an);an.connect(AC.destination)}
+function say(id,{word,sub=true}={}){
+  const L=LINES[id]; if(!L) return Promise.resolve();
+  showSub(L.fi,L.sv,sub);
+  if(!st.snd){return sleep(900+L.fi.length*45).then(()=>hideSub())}
+  audio.src=L.f; audio.currentTime=0;
+  return new Promise(r=>{let done=false;const end=()=>{if(done)return;done=true;hideSub();r()};audio.onended=end;audio.onerror=end;audio.play().catch(end);setTimeout(end,20000)});
+}
+function showSub(fi,sv,sub){$('#sub .fi').textContent=fi;$('#sub .sv').textContent=st.sub&&sub?sv:'';$('#sub').style.opacity=1}
+function hideSub(){$('#sub').style.opacity=0}
+function showWord(fi,sv,ms=2600){const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
+function ask(t){$('#ask').textContent=t;$('#ask').style.opacity=t?1:0}
+function addPaws(n){st.paws+=n;save();$('#paws').textContent='🐾 '+st.paws}
+function learn(fi){st.words[fi]=(st.words[fi]||0)+1;save()}
+
+/* ---------- Siili movement ---------- */
+const tmp=new THREE.Vector3();
+function face(p){const d=tmp.copy(p).sub(siili.position);siili.rotation.y=Math.atan2(d.x,d.z)}
+async function walkTo(p,speed=.12,stop=.08){
+  face(p);play('walk',.15);const start=siili.position.clone();const target=p.clone();target.y=start.y;
+  const dir=target.clone().sub(start);const len=Math.max(0,dir.length()-stop);dir.normalize();
+  const t0=performance.now();const dur=len/speed*1000;
+  await new Promise(r=>{(function step(){const k=Math.min(1,(performance.now()-t0)/dur);siili.position.copy(start).addScaledVector(dir,len*k);if(k<1)requestAnimationFrame(step);else r()})()});
+  play('idle',.2);
+}
+/* camera moves */
+let camFrom=null;
+function camTo(pos,look,ms=1200){const p0=cam.position.clone(),l0=camLook.clone();const t0=performance.now();
+  return new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/ms);k=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.position.lerpVectors(p0,pos,k);camLook.lerpVectors(l0,look,k);if(k<1)requestAnimationFrame(step);else r()})()})}
+const camLook=new THREE.Vector3(66,1,27);
+
+/* ---------- picking ---------- */
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let pickHandler=null,hoverHandler=null;
+R.domElement.addEventListener('pointerdown',e=>{if(!pickHandler)return;mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,cam);const hits=ray.intersectObjects(scene.children,true);pickHandler(hits)});
+R.domElement.addEventListener('pointermove',e=>{if(!hoverHandler)return;mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,cam);hoverHandler(ray)});
+function thingOf(hits){for(const h of hits){let o=h.object;while(o){if(o.name.startsWith('thing_'))return o.name.slice(6);o=o.parent}}return null}
+function waitPick(fn){return new Promise(r=>{pickHandler=hits=>{const v=fn(hits);if(v!==undefined){pickHandler=null;r(v)}}})}
+function cardsChoice(opts,{hint}={}){
+  const box_=$('#cards');box_.innerHTML='';
+  return new Promise(r=>{for(const o of opts){const b=document.createElement('button');b.className='card';b.innerHTML=`<div class="e">${o.e||''}</div><div class="t">${o.t}</div><div class="s">${st.sub?(o.s||''):''}</div>`;b.onclick=()=>r({o,b});box_.append(b)}})
+}
+const clearCards=()=>$('#cards').innerHTML='';
+
+/* ---------- vocabulary ---------- */
+const OBJ={pulla:{sv:'bulle',e:'🥐',desc:'h-07',anim:'happy',s:'s-10'},pallo:{sv:'boll',e:'⚽',desc:'h-04',anim:'happy',s:'s-11'},matto:{sv:'matta',e:'🟫',desc:'h-13',anim:'nod',s:'s-13'},
+ mato:{sv:'mask',e:'🪱',desc:'h-12',anim:'scared',s:'s-14'},kukka:{sv:'blomma',e:'🌸',desc:'h-11',anim:'sneeze',s:'s-12'},lamppu:{sv:'lampa',e:'💡',desc:'h-10',anim:'nod',s:'s-15'},
+ kuppi:{sv:'kopp',e:'☕',desc:'h-08',anim:'happy',s:'s-16'},sukka:{sv:'strumpa',e:'🧦',desc:'h-09',anim:'nod',s:'s-17'}};
+const PRAISE=['rec1-43','rec1-44','rec1-45','rec1-46','rec1-47','rec1-48','rec1-49','rec1-50','a-01','a-02','a-03'];
+const OOPS=['rec1-52','rec1-53','a-04','a-05','a-06'];
+let lastP;function praise(){let p;do p=rnd(PRAISE);while(p===lastP);lastP=p;return say(p)}
+
+/* ---------- parts ---------- */
+const PARTS=[{n:'Vid trappan',d:'Siili tittar ut',f:partIntro},{n:'Missä on …?',d:'Hitta sakerna',f:partFind},{n:'Miltä tuntuu?',d:'Ljudorden',f:partFeel},
+ {n:'Pitkä vai lyhyt?',d:'Långt eller kort',f:partLong},{n:'Opeta Siiliä!',d:'Lär Siili svenska',f:partTeach},{n:'Iltakierros',d:'Kvällsrundan',f:partEvening}];
+function renderMenu(){const d=$('#doors');d.innerHTML='';PARTS.forEach((p,i)=>{const open=i===0||st.done.includes(i-1)||st.done.includes(i);const b=document.createElement('button');b.className='door'+(st.done.includes(i)?' done':'')+(open?'':' locked');
+  b.innerHTML=`<div class="n">${i+1}</div><div><b>${p.n}</b></div><div class="d">${p.d}</div>`;if(open)b.onclick=()=>{$('#menu').classList.add('hidden');runPart(i)};d.append(b)})}
+let running=false;
+async function runPart(i){if(running)return;running=true;$('#part').textContent=`· ${i+1}. ${PARTS[i].n}`;try{await PARTS[i].f()}finally{running=false;ask('');clearCards();$('#hint').style.display='none'}
+  if(!st.done.includes(i)){st.done.push(i);save()}
+  $('#doneT').textContent=`${PARTS[i].n} – klart!`;$('#done').classList.remove('hidden');
+  $('#doneB').onclick=()=>{$('#done').classList.add('hidden');renderMenu();$('#menu').classList.remove('hidden')}}
+async function fadeTo(s){$('#fade').style.opacity=1;await sleep(650);scene=s;$('#fade').style.opacity=0}
+function putSiiliOut(){outS.add(siili);siili.position.set(HOLE.x,0,HOLE.z-.05);siili.rotation.y=Math.PI}
+function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=Math.PI}
+async function toHome(){await fadeTo(homeS);putSiiliHome();cam.position.set(0.12,0.42,-1.05);camLook.set(0,0.06,0.12)}
+
+/* part 0: arriving at the stairs */
+async function partIntro(){
+  scene=outS; outS.remove(siili);
+  cam.position.set(80,16,6); camLook.set(66,1,27);
+  await camTo(new THREE.Vector3(70,6,20),new THREE.Vector3(66,1,34),3500);
+  await camTo(new THREE.Vector3(64.25,.32,40.55),new THREE.Vector3(64.6,.1,41.8),3500);
+  ask('Det prasslar under trappan … klicka på hålet!');
+  await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
+  putSiiliOut(); siili.position.z=HOLE.z+.15; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.35),.1,0); face(cam.position);
+  await say('r1-01'); play('scared'); await say('r1-02');
+  play('wave'); await say('r1-03'); showWord('Siili','igelkott'); await say('r1-04');
+  play('nod'); await say('r1-10');
+  await say('r1-12');
+  // Saga teaches "hej"
+  ask('Siili undrar vad "moi" heter på svenska. Välj rätt ord!');
+  await say('s-00');
+  for(;;){const {o,b}=await cardsChoice(shuffle([{t:'hej',e:'👋'},{t:'tack',e:'🙏'},{t:'hejdå',e:'🌙'}]));
+    if(o.t==='hej'){clearCards();ask('');await say('s-04');learn('moi');addPaws(3);break}b.classList.add('wrong');play('shake');await say(rnd(OOPS))}
+  await say('r1-07'); play('sad'); await say('r1-08'); play('idle');
+  ask('');await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z+.2),.12,0);
+  await toHome(); await say('r1-05'); await say('r1-06');
+}
+
+/* part 1: find things, with clue ladder */
+async function partFind(){
+  if(scene!==homeS) await toHome();
+  const order=shuffle(Object.keys(OBJ)).slice(0,5);
+  for(const w of order){
+    const O=OBJ[w];let hints=0;const home=new THREE.Vector3(0,0.02,0.1);
+    ask(`Missä on …?`);await say(`${w}-2`);
+    const pos=new THREE.Vector3();things[w].getWorldPosition(pos);
+    const nextPick=()=>new Promise(r=>{pickHandler=hits=>{const t=thingOf(hits);if(t){pickHandler=null;r(t)}}});
+    const ladder=[async()=>{await say(`${w}-3`)},async()=>{face(pos);play('sniff');await say(`${w}-1`)},
+      async()=>{await walkTo(home.clone().lerp(pos,.5),.14,0);face(pos);play(O.anim);await say(`${w}-4`)},
+      async()=>{await say(O.desc)},async()=>{await say(`${w}-5`)},
+      async()=>{await walkTo(pos,.14,.12);play('nod');await say(`${w}-6`)}];
+    const hb=$('#hint');hb.style.display='block';let busy=false;
+    const giveHint=async()=>{if(busy||hints>=ladder.length)return;busy=true;await ladder[hints++]();busy=false};
+    hb.onclick=giveHint;
+    let auto=setInterval(()=>{if(!busy)giveHint()},11000);
+    for(;;){const t=await nextPick();
+      if(t===w)break;
+      clearInterval(auto);auto=setInterval(()=>{if(!busy)giveHint()},11000);
+      busy=true;play('shake');await say(`${t}-7`);showWord(t,OBJ[t].sv,1800);busy=false;
+      if(hints<2)await giveHint();
+    }
+    clearInterval(auto);pickHandler=null;hb.style.display='none';ask('');
+    const paws=hints<=1?3:hints<=3?2:1;addPaws(paws);learn(w);
+    await walkTo(pos,.16,.14);play('happy');showWord(w,O.sv);await praise();
+    await walkTo(home,.16,0);face(cam.position);
+  }
+}
+/* part 2: feelings */
+async function partFeel(){
+  if(scene!==homeS) await toHome();
+  const F={iloinen:{e:'😊',s:'glad',w:'k-02'},surullinen:{e:'😢',s:'ledsen',w:'k-03'},peloissaan:{e:'😨',s:'rädd',w:'k-04'},vihainen:{e:'😠',s:'arg',w:'k-05'}};
+  const scenes=shuffle([{a:'rec1-23',b:'k-10',an:'happy',f:'iloinen'},{a:'rec1-24',b:'k-09',an:'sad',f:'surullinen'},{a:'rec1-36',b:'k-08',an:'scared',f:'peloissaan'},
+    {a:'rec1-26',b:'k-07',an:'scared',f:'peloissaan'},{a:'rec1-31',b:'k-15',an:'shake',f:'vihainen'},{a:'rec1-33',b:'k-14',an:'happy',f:'iloinen'}]).slice(0,5);
+  await say('k-01');
+  for(const s of scenes){
+    play(s.an);await say(s.a);ask('Miltä Siilistä tuntuu?');let tries=0;
+    for(;;){const {o,b}=await cardsChoice(shuffle(Object.entries(F)).map(([k,v])=>({t:k,e:v.e,s:v.s})));
+      if(o.t===s.f){clearCards();ask('');play(s.an);await say(F[s.f].w);learn(s.f);addPaws(tries?1:3);await praise();break}
+      b.classList.add('wrong');tries++;play(s.an);await say(tries===1?s.b:s.a)}
+    play('idle');
+  }
+}
+/* part 3: long and short sounds */
+async function partLong(){
+  if(scene!==homeS) await toHome();
+  const P=[{a:{t:'tuli',e:'🔥',s:'eld',id:'rec1-58'},b:{t:'tuuli',e:'🌬️',s:'vind',id:'rec1-59'},h:'v-02'},
+           {a:{t:'mato',e:'🪱',s:'mask',id:'rec1-60'},b:{t:'matto',e:'🟫',s:'matta',id:'rec1-61'},h:'v-03'},
+           {a:{t:'kuka',e:'❓',s:'vem',id:'rec1-62'},b:{t:'kukka',e:'🌸',s:'blomma',id:'rec1-63'},h:'v-04'}];
+  await say('rec1-56');await say('v-01');
+  const rounds=shuffle([...P,...P]).slice(0,6);
+  for(const p of rounds){const ans=Math.random()<.5?p.a:p.b;ask('Vilket ord säger Siili?');
+    const replay=async()=>{await say(ans.id,{sub:false})};await replay();let tries=0;
+    const hb=$('#hint');hb.style.display='block';hb.onclick=async()=>{await say(p.h)};
+    for(;;){const {o,b}=await cardsChoice(shuffle([p.a,p.b]));if(o===ans){clearCards();hb.style.display='none';ask('');play('happy');showWord(ans.t,ans.s);learn(ans.t);addPaws(tries?1:3);await praise();break}
+      b.classList.add('wrong');tries++;play('shake');await say(rnd(OOPS));await replay()}
+  }
+  // Siili's mix-up
+  play('happy');await say('rec1-64');ask('Sa Siili rätt?');
+  for(;;){const {o,b}=await cardsChoice([{t:'Oikein',e:'👍',s:'rätt'},{t:'Väärin',e:'👎',s:'fel'}]);if(o.t==='Väärin'){clearCards();ask('');play('nod');await say('rec1-65');addPaws(3);break}b.classList.add('wrong');await say('rec1-64')}
+  await say('v-05');
+}
+/* part 4: teach Siili Swedish */
+async function partTeach(){
+  if(scene!==homeS) await toHome();
+  const words=shuffle(Object.keys(OBJ)).slice(0,5);const home=new THREE.Vector3(0,0.02,0.1);
+  for(const w of words){const pos=new THREE.Vector3();things[w].getWorldPosition(pos);
+    await walkTo(pos,.15,.14);play('sniff');showWord(w,'',2200);await say('s-00');
+    ask(`Vad heter ${w} på svenska?`);
+    const opts=shuffle([w,...shuffle(Object.keys(OBJ).filter(x=>x!==w)).slice(0,2)]).map(k=>({t:OBJ[k].sv,e:OBJ[k].e,k}));
+    let tries=0;for(;;){const {o,b}=await cardsChoice(opts);if(o.k===w){clearCards();ask('');await say(OBJ[w].s);play('happy');learn(w);addPaws(tries?1:3);break}
+      b.classList.add('wrong');tries++;play('shake');await say(`${o.k}-7`)}
+    await walkTo(home,.16,0);face(cam.position);
+  }
+}
+/* part 5: evening round */
+async function partEvening(){
+  if(scene!==homeS) await toHome();
+  const keys=shuffle(Object.keys(OBJ)).slice(0,4);
+  for(const w of keys){ask('Missä on …?');await say(`${w}-2`);const hb=$('#hint');hb.style.display='block';hb.onclick=()=>say(`${w}-4`);
+    for(;;){const t=await waitPick(h=>thingOf(h)??undefined);if(t===w){hb.style.display='none';ask('');play('happy');showWord(w,OBJ[w].sv);addPaws(2);await praise();break}play('shake');await say(`${t}-7`)}}
+  await say('e-01');await say('e-02');play('curl');await say('e-03');ask('Siili sover. Hyvää yötä!');await sleep(2500);
+}
+
+/* ---------- loop ---------- */
+const clock=new THREE.Clock();
+R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05);
+  if(mixer)mixer.update(dt);
+  if(an&&!audio.paused){an.getByteTimeDomainData(buf);let s=0;for(const v of buf){const d=(v-128)/128;s+=d*d}const rms=Math.sqrt(s/buf.length);level+=(Math.min(1,rms*7)-level)*.5}else level*=.8;
+  if(jaw)jaw.rotateX(level*.42);
+  cam.lookAt(camLook);R.render(scene,cam)});
+
+/* ---------- buttons ---------- */
+$('#bSub').onclick=()=>{st.sub=!st.sub;save();$('#bSub').textContent='Text: '+(st.sub?'på':'av')};
+$('#bSnd').onclick=()=>{st.snd=!st.snd;save();$('#bSnd').textContent=st.snd?'🔊':'🔇';if(!st.snd)audio.pause()};
+$('#bMenu').onclick=()=>{if(running)return;renderMenu();$('#menu').classList.remove('hidden')};
+$('#close').onclick=()=>$('#menu').classList.add('hidden');
+$('#bSub').textContent='Text: '+(st.sub?'på':'av');$('#bSnd').textContent=st.snd?'🔊':'🔇';$('#paws').textContent='🐾 '+st.paws;
+cam.position.set(80,16,6);
+const ready=init().catch(e=>{$('#loading').textContent='Kunde inte ladda: '+e.message;throw e});
+$('#go').onclick=async()=>{await ready;initAudio();$('#start').classList.add('hidden');if(!st.done.includes(0))runPart(0);else{renderMenu();$('#menu').classList.remove('hidden')}};
+</script>
+</body>
+</html>
