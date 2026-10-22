@@ -389,7 +389,7 @@ function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.ro
 async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0.04,0.17,0.85);camLook.set(0,0.06,-0.1)}
 
 async function flyIn(){
-  const P=new THREE.CatmullRomCurve3([[96,22,-6],[86,13,8],[75,7,18],[68.5,3.2,30],[66,1.1,37.5],[65.25,.45,39.9],[64.95,.3,40.75]].map(a=>new THREE.Vector3(...a)));
+  const P=new THREE.CatmullRomCurve3([[96,22,-6],[86,13,8],[76,7,19],[71,3.2,31],[67.6,1.2,37.9],[65.4,.45,40],[64.95,.3,40.75]].map(a=>new THREE.Vector3(...a)));
   const T=new THREE.CatmullRomCurve3([[66,1,24],[66,1,27],[66,1,30],[65,.8,38],[64.8,.25,41.2],[64.65,.1,41.65],[64.6,.08,41.73]].map(a=>new THREE.Vector3(...a)));
   const title=document.createElement('div');title.innerHTML='<div style="font:800 min(14vw,160px) Baloo\\ 2,sans-serif;color:#fff6e8;text-shadow:0 6px 0 #c8643c,0 0 40px rgba(0,0,0,.35)">Siili</div><div style="font:700 26px Baloo\\ 2;color:#fff6e8;text-shadow:0 2px 8px rgba(0,0,0,.6)">Kapitel 1 · Jee!</div>';
   Object.assign(title.style,{position:'absolute',left:0,right:0,top:'22%',textAlign:'center',opacity:0,transition:'opacity 1.2s, transform 1.2s',transform:'scale(.9)'});$('#ui').append(title);
