@@ -939,8 +939,9 @@ function trollPools(){
  if(got.length<6)for(const t of [2,5,3,4])for(let m=2;m<=9;m++){const k=fk(t,m);if(!weak.includes(k)&&!got.includes(k))got.push(k)}
  return {easy:[...new Set(easy)],weak,got};
 }
-function trollPick(P,used,first){
- const L=S.trollLvl,fresh=a=>{const f=a.filter(k=>!used.has(k));return f.length?f:a};
+// Uppförsbacke: varje fight börjar två nivåer under hennes nivå och slutar en över.
+function trollPick(P,used,first,prog){
+ const L=Math.max(0,Math.min(10,S.trollLvl-2+3*(prog||0))),fresh=a=>{const f=a.filter(k=>!used.has(k));return f.length?f:a};
  const pEasy=first?1:Math.max(.05,.35-.04*L),pHard=Math.min(.8,.15+.065*L);
  const r=Math.random();let k;
  if(r<pEasy)k=pick(fresh(P.easy));
@@ -963,7 +964,7 @@ function trollFight(){
  const hpDraw=()=>{$("#hp").innerHTML=Array.from({length:max},(_,j)=>`<span>${j<hp?"💚":"🤍"}</span>`).join("")};
  const next=()=>{
   hpDraw();if(hp<=0)return win();
-  for(const x of again)x.w--;const ai=again.findIndex(x=>x.w<=0);cur=ai>=0?again.splice(ai,1)[0].f:trollPick(P,used,i===0);
+  for(const x of again)x.w--;const ai=again.findIndex(x=>x.w<=0);cur=ai>=0?again.splice(ai,1)[0].f:trollPick(P,used,i===0,(max-hp)/max);
   const [t,n]=cur,a=t*n,flip=Math.random()<.5;$("#tq").textContent=flip?`${n} × ${t}`:`${t} × ${n}`;const t0=performance.now();
   // bonusstapel: svarar hon rätt innan den tagit slut blir det supersmäll (två hjärtan).
   // Ingen tidsgräns: det går alltid att tänka färdigt.
