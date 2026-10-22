@@ -33,7 +33,7 @@ canvas{display:block}
 .card .e{font-size:54px;line-height:1.1}
 .card .t{font-family:'Baloo 2';font-weight:800;font-size:24px}
 .card .s{font-size:14px;color:#8a7466}
-.card.wrong{animation:shake .4s}
+.card.wrong{animation:shake .4s;opacity:.55}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 #hint{all:unset;position:absolute;right:20px;bottom:24px;pointer-events:auto;cursor:pointer;width:64px;height:64px;border-radius:50%;background:#ffd36b;box-shadow:var(--shadow);font:800 34px 'Baloo 2';text-align:center;line-height:64px;display:none}
 #menu,#start,#done{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:auto;background:radial-gradient(circle at 50% 40%,rgba(255,236,205,.92),rgba(58,40,28,.92))}
@@ -166,9 +166,15 @@ async function init(){
   play('idle');
   $('#loading').textContent='';
 }
-function play(name,fade=.25){const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
+function play(name,fade=.25){if(name==='sniff')sfx('sniff',.35);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
   if(a.loop===THREE.LoopOnce){const d=a.getClip().duration*1000;clearTimeout(play.t);if(name!=='curl'&&name!=='sad')play.t=setTimeout(()=>play('idle'),d+60)}}
 
+/* ---------- music and sound effects ---------- */
+const music=new Audio();music.loop=true;let musicVol=.22;
+function setMusic(name){if(!st.snd){music.pause();return}const src='music/'+name+'.mp3';if(music.dataset.src===src)return;music.dataset.src=src;music.src=src;music.volume=0;music.play().catch(()=>{});fadeMusic(musicVol)}
+function fadeMusic(to,ms=800){const from=music.volume,t0=performance.now();(function f(){const k=Math.min(1,(performance.now()-t0)/ms);music.volume=Math.max(0,Math.min(1,from+(to-from)*k));if(k<1)requestAnimationFrame(f)})()}
+const SFX={};for(const n of['right','wrong','newword','fanfare','rustle','sniff','door']){SFX[n]=new Audio('sfx/'+n+'.mp3')}
+function sfx(n,v=.5){if(!st.snd)return;const a=SFX[n].cloneNode();a.volume=v;a.play().catch(()=>{})}
 /* ---------- audio with mouth movement ---------- */
 let AC,an,buf=new Uint8Array(256),level=0;
 const audio=new Audio();audio.crossOrigin='anonymous';
@@ -177,14 +183,14 @@ function say(id,{word,sub=true}={}){
   const L=LINES[id]; if(!L) return Promise.resolve();
   showSub(L.fi,L.sv,sub);
   if(!st.snd){return sleep(900+L.fi.length*45).then(()=>hideSub())}
-  audio.src=L.f; audio.currentTime=0;
-  return new Promise(r=>{let done=false;const end=()=>{if(done)return;done=true;hideSub();r()};audio.onended=end;audio.onerror=end;audio.play().catch(end);setTimeout(end,20000)});
+  audio.src=L.f; audio.currentTime=0; fadeMusic(musicVol*.45,250);
+  return new Promise(r=>{let done=false;const end=()=>{if(done)return;done=true;hideSub();fadeMusic(musicVol,600);r()};audio.onended=end;audio.onerror=end;audio.play().catch(end);setTimeout(end,20000)});
 }
 function showSub(fi,sv,sub){$('#sub .fi').textContent=fi;$('#sub .sv').textContent=st.sub&&sub?sv:'';$('#sub').style.opacity=1}
 function hideSub(){$('#sub').style.opacity=0}
-function showWord(fi,sv,ms=2600){const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
+function showWord(fi,sv,ms=2600){sfx('newword',.35);const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
 function ask(t){$('#ask').textContent=t;$('#ask').style.opacity=t?1:0}
-function addPaws(n){st.paws+=n;save();$('#paws').textContent='🐾 '+st.paws}
+function addPaws(n){sfx('right',.45);st.paws+=n;save();$('#paws').textContent='🐾 '+st.paws}
 function learn(fi){st.words[fi]=(st.words[fi]||0)+1;save()}
 
 /* ---------- Siili movement ---------- */
@@ -231,20 +237,21 @@ function renderMenu(){const d=$('#doors');d.innerHTML='';PARTS.forEach((p,i)=>{c
 let running=false;
 async function runPart(i){if(running)return;running=true;$('#part').textContent=`· ${i+1}. ${PARTS[i].n}`;try{await PARTS[i].f()}finally{running=false;ask('');clearCards();$('#hint').style.display='none'}
   if(!st.done.includes(i)){st.done.push(i);save()}
-  $('#doneT').textContent=`${PARTS[i].n} – klart!`;$('#done').classList.remove('hidden');
+  sfx('fanfare',.5);$('#doneT').textContent=`${PARTS[i].n} – klart!`;$('#done').classList.remove('hidden');
   $('#doneB').onclick=()=>{$('#done').classList.add('hidden');renderMenu();$('#menu').classList.remove('hidden')}}
 async function fadeTo(s){$('#fade').style.opacity=1;await sleep(650);scene=s;$('#fade').style.opacity=0}
 function putSiiliOut(){outS.add(siili);siili.position.set(HOLE.x,0,HOLE.z-.05);siili.rotation.y=Math.PI}
 function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0}
-async function toHome(){await fadeTo(homeS);putSiiliHome();cam.position.set(0.15,0.45,1.15);camLook.set(0,0.06,-0.12)}
+async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0.05,0.26,0.95);camLook.set(0,0.07,-0.1)}
 
 /* part 0: arriving at the stairs */
 async function partIntro(){
+  setMusic('theme');
   scene=outS; outS.remove(siili);
   cam.position.set(80,16,6); camLook.set(66,1,27);
   await camTo(new THREE.Vector3(70,6,20),new THREE.Vector3(66,1,34),3500);
   await camTo(new THREE.Vector3(64.95,.3,40.75),new THREE.Vector3(64.6,.08,41.73),3500);
-  ask('Det prasslar under trappan … klicka på hålet!');
+  setMusic('home');sfx('rustle',.6);ask('Det prasslar under trappan … klicka på hålet!');
   await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
   putSiiliOut(); siili.position.z=HOLE.z+.12; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1,0); face(cam.position);
   await say('r1-01'); play('scared'); await say('r1-02');
@@ -255,7 +262,7 @@ async function partIntro(){
   ask('Siili undrar vad "moi" heter på svenska. Välj rätt ord!');
   await say('s-00');
   for(;;){const {o,b}=await cardsChoice(shuffle([{t:'hej',e:'👋'},{t:'tack',e:'🙏'},{t:'hejdå',e:'🌙'}]));
-    if(o.t==='hej'){clearCards();ask('');await say('s-04');learn('moi');addPaws(3);break}b.classList.add('wrong');play('shake');await say(rnd(OOPS))}
+    if(o.t==='hej'){clearCards();ask('');await say('s-04');learn('moi');addPaws(3);break}b.classList.add('wrong');sfx('wrong',.4);play('shake');await say(rnd(OOPS))}
   await say('r1-07'); play('sad'); await say('r1-08'); play('idle');
   ask('');await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z+.2),.12,0);
   await toHome(); await say('r1-05'); await say('r1-06');
@@ -264,6 +271,7 @@ async function partIntro(){
 /* part 1: find things, with clue ladder */
 async function partFind(){
   if(scene!==homeS) await toHome();
+  setMusic('search');
   const order=shuffle(Object.keys(OBJ)).slice(0,5);
   for(const w of order){
     const O=OBJ[w];let hints=0;const home=new THREE.Vector3(0,0.02,0.1);
@@ -301,7 +309,7 @@ async function partFeel(){
     play(s.an);await say(s.a);ask('Miltä Siilistä tuntuu?');let tries=0;
     for(;;){const {o,b}=await cardsChoice(shuffle(Object.entries(F)).map(([k,v])=>({t:k,e:v.e,s:v.s})));
       if(o.t===s.f){clearCards();ask('');play(s.an);await say(F[s.f].w);learn(s.f);addPaws(tries?1:3);await praise();break}
-      b.classList.add('wrong');tries++;play(s.an);await say(tries===1?s.b:s.a)}
+      b.classList.add('wrong');sfx('wrong',.4);tries++;play(s.an);await say(tries===1?s.b:s.a)}
     play('idle');
   }
 }
@@ -317,11 +325,11 @@ async function partLong(){
     const replay=async()=>{await say(ans.id,{sub:false})};await replay();let tries=0;
     const hb=$('#hint');hb.style.display='block';hb.onclick=async()=>{await say(p.h)};
     for(;;){const {o,b}=await cardsChoice(shuffle([p.a,p.b]));if(o===ans){clearCards();hb.style.display='none';ask('');play('happy');showWord(ans.t,ans.s);learn(ans.t);addPaws(tries?1:3);await praise();break}
-      b.classList.add('wrong');tries++;play('shake');await say(rnd(OOPS));await replay()}
+      b.classList.add('wrong');sfx('wrong',.4);tries++;play('shake');await say(rnd(OOPS));await replay()}
   }
   // Siili's mix-up
   play('happy');await say('rec1-64');ask('Sa Siili rätt?');
-  for(;;){const {o,b}=await cardsChoice([{t:'Oikein',e:'👍',s:'rätt'},{t:'Väärin',e:'👎',s:'fel'}]);if(o.t==='Väärin'){clearCards();ask('');play('nod');await say('rec1-65');addPaws(3);break}b.classList.add('wrong');await say('rec1-64')}
+  for(;;){const {o,b}=await cardsChoice([{t:'Oikein',e:'👍',s:'rätt'},{t:'Väärin',e:'👎',s:'fel'}]);if(o.t==='Väärin'){clearCards();ask('');play('nod');await say('rec1-65');addPaws(3);break}b.classList.add('wrong');sfx('wrong',.4);await say('rec1-64')}
   await say('v-05');
 }
 /* part 4: teach Siili Swedish */
@@ -333,13 +341,14 @@ async function partTeach(){
     ask(`Vad heter ${w} på svenska?`);
     const opts=shuffle([w,...shuffle(Object.keys(OBJ).filter(x=>x!==w)).slice(0,2)]).map(k=>({t:OBJ[k].sv,e:OBJ[k].e,k}));
     let tries=0;for(;;){const {o,b}=await cardsChoice(opts);if(o.k===w){clearCards();ask('');await say(OBJ[w].s);play('happy');learn(w);addPaws(tries?1:3);break}
-      b.classList.add('wrong');tries++;play('shake');await say(`${o.k}-7`)}
+      b.classList.add('wrong');sfx('wrong',.4);tries++;play('shake');await say(`${o.k}-7`)}
     await walkTo(home,.16,0);face(cam.position);
   }
 }
 /* part 5: evening round */
 async function partEvening(){
   if(scene!==homeS) await toHome();
+  setMusic('evening');
   const keys=shuffle(Object.keys(OBJ)).slice(0,4);
   for(const w of keys){ask('Missä on …?');await say(`${w}-2`);const hb=$('#hint');hb.style.display='block';hb.onclick=()=>say(`${w}-4`);
     for(;;){const t=await waitPick(h=>thingOf(h)??undefined);if(t===w){hb.style.display='none';ask('');play('happy');showWord(w,OBJ[w].sv);addPaws(2);await praise();break}play('shake');await say(`${t}-7`)}}
@@ -356,7 +365,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05);
 
 /* ---------- buttons ---------- */
 $('#bSub').onclick=()=>{st.sub=!st.sub;save();$('#bSub').textContent='Text: '+(st.sub?'på':'av')};
-$('#bSnd').onclick=()=>{st.snd=!st.snd;save();$('#bSnd').textContent=st.snd?'🔊':'🔇';if(!st.snd)audio.pause()};
+$('#bSnd').onclick=()=>{st.snd=!st.snd;save();$('#bSnd').textContent=st.snd?'🔊':'🔇';if(!st.snd){audio.pause();music.pause()}else{music.play().catch(()=>{})}};
 $('#bMenu').onclick=()=>{if(running)return;renderMenu();$('#menu').classList.remove('hidden')};
 $('#close').onclick=()=>$('#menu').classList.add('hidden');
 $('#bSub').textContent='Text: '+(st.sub?'på':'av');$('#bSnd').textContent=st.snd?'🔊':'🔇';$('#paws').textContent='🐾 '+st.paws;
