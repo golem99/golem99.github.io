@@ -97,7 +97,7 @@ let LINES={};
 
 /* ---------- renderer and scenes ---------- */
 const R=new THREE.WebGLRenderer({antialias:true});
-R.setPixelRatio(Math.min(devicePixelRatio,2)); R.setSize(innerWidth,innerHeight);
+R.setPixelRatio(Math.min(devicePixelRatio,2)); R.setSize(innerWidth,innerHeight); R.localClippingEnabled=true;
 R.shadowMap.enabled=true; R.shadowMap.type=THREE.VSMShadowMap;
 R.toneMapping=THREE.AgXToneMapping; R.toneMappingExposure=1.15; R.outputColorSpace=THREE.SRGBColorSpace;
 document.body.prepend(R.domElement);
@@ -248,11 +248,11 @@ function buildSiiliCorner(){buildFalling();
   // stone plinth facing over the house base, near the hole
   const [sc,sb]=stonework({rows:4,base:[32,7,50]});
   const plinth=new THREE.Mesh(new THREE.PlaneGeometry(6.2,.8),new THREE.MeshStandardMaterial({map:tex(sc,[4,1]),bumpMap:tex(sb,[4,1],false),bumpScale:3,roughness:.95}));
-  plinth.position.set(63.5,.4,41.728);plinth.rotation.y=Math.PI;plinth.receiveShadow=true;outS.add(plinth);
+  plinth.position.set(63.5,.4,41.71);plinth.rotation.y=Math.PI;plinth.receiveShadow=true;outS.add(plinth);
   // Juni's brick wall above the plinth
   const [bc,bb]=stonework({rows:14,base:[10,48,40],mortar:'#d6c7b2',brick:true});
   const wall=new THREE.Mesh(new THREE.PlaneGeometry(6,2),new THREE.MeshStandardMaterial({map:tex(bc,[3,1]),bumpMap:tex(bb,[3,1],false),bumpScale:2,roughness:.9}));
-  wall.position.set(63.5,1.8,41.79);wall.rotation.y=Math.PI;outS.add(wall);
+  wall.position.set(63.5,1.8,41.785);wall.rotation.y=Math.PI;outS.add(wall);
   // steps get a stone texture too
   const [stc,stb]=stonework({rows:2,base:[35,5,64],mortar:'#8d867c'});
   const sm=new THREE.MeshStandardMaterial({map:tex(stc,[1,.5]),bumpMap:tex(stb,[1,.5],false),bumpScale:2,roughness:.9});
@@ -304,7 +304,7 @@ async function init(){
   LINES=await (await fetch('lines.json')).json();
   const [sg,town,props,way,lamp,cine,myhome,gullsG,churchY]=await Promise.all(['siili.glb','love/town-houses.glb','love/square-props.glb','love/wayfinding.glb','love/street-lamp.glb','love/cinema.glb','love/my-home.glb','love/gulls.glb','love/church-yard.glb'].map(load));
   buildSquare(); holeMesh=buildHole();
-  const brick=town.scene.getObjectByName('House_Brick'); brick.position.set(63.5,0,44); brick.rotation.set(0,Math.PI,0); outS.add(brick);
+  const brick=town.scene.getObjectByName('House_Brick');brick.traverse(o=>{if(o.isMesh&&/House_Brick_(step|stone_dark)/.test(o.name))o.visible=false}); brick.position.set(63.5,0,44); brick.rotation.set(0,Math.PI,0); outS.add(brick);
   cine.scene.position.set(67,0,11.5);outS.add(cine.scene);myhome.scene.position.set(84.4,0,28.8);myhome.scene.rotation.y=-Math.PI/2;outS.add(myhome.scene);
   cine.scene.traverse(o=>{if(o.name==='Cinema_Roof')o.visible=true});
   outS.add(props.scene,way.scene,churchY.scene);
@@ -331,7 +331,7 @@ async function init(){
   // home
   await buildHome();
   // siili
-  const inner=sg.scene; inner.scale.setScalar(.15); inner.position.y=.62*.15; siili=new THREE.Group(); siili.add(inner);
+  const inner=sg.scene; inner.scale.setScalar(.15); inner.traverse(o=>{if(o.isMesh){const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>{m.clippingPlanes=SIILI_CLIP})}}); inner.position.y=.62*.15; siili=new THREE.Group(); siili.add(inner);
   inner.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o; if(o.isBone&&o.name==='head') headBone=o; if(o.isBone&&o.name==='body') bodyBone=o});
   mixer=new THREE.AnimationMixer(inner);
   for(const c of sg.animations){const a=mixer.clipAction(c);actions[c.name]=a;if(!['idle','walk'].includes(c.name)){a.setLoop(THREE.LoopOnce);a.clampWhenFinished=true}}
@@ -435,6 +435,7 @@ function addPlaceholders(){
     g.traverse(o=>o.castShadow=true);things.sukka.add(g)}
 }
 let homeLamp,homeFlame,homeCandle,fairy=[];
+const WALL_CLIP=new THREE.Plane(new THREE.Vector3(0,0,-1),41.715);const SIILI_CLIP=[];
 const rim=new THREE.SpotLight('#ffe4c0',3.5,1.6,.5,.9,1.2);rim.castShadow=false;const rimT=new THREE.Object3D();rim.target=rimT;
 let homeMotes,headBone,bodyBone,lookYaw=0,lookPitch=0,lookTarget=new THREE.Vector3(),bristle=0;
 function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
@@ -442,10 +443,10 @@ function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx(
 
 /* ---------- music and sound effects ---------- */
 const music=new Audio();music.loop=true;let musicVol=.22;
-function setMusic(name){if(!st.snd){music.pause();return}const src='music/'+name+'.mp3';if(music.dataset.src===src)return;music.dataset.src=src;music.src=src;music.volume=0;music.play().catch(()=>{});fadeMusic(musicVol)}
+function setMusic(name,loop=true){music.loop=loop;if(!st.snd){music.pause();return}const src='music/'+name+'.mp3';if(music.dataset.src===src)return;music.dataset.src=src;music.src=src;music.volume=0;music.play().catch(()=>{});fadeMusic(name==='theme'?.5:musicVol)}
 function fadeMusic(to,ms=800){const from=music.volume,t0=performance.now();(function f(){const k=Math.min(1,(performance.now()-t0)/ms);music.volume=Math.max(0,Math.min(1,from+(to-from)*k));if(k<1)requestAnimationFrame(f)})()}
 const SFX={};for(const n of['right','wrong','newword','fanfare','rustle','sniff','door']){SFX[n]=new Audio('sfx/'+n+'.mp3')}
-function sfx(n,v=.5){if(!st.snd)return;const a=SFX[n].cloneNode();a.volume=v;a.play().catch(()=>{})}
+function sfx(n,v=.5){if(n==='wrong')streak=0;if(!st.snd)return;const a=SFX[n].cloneNode();a.volume=v;a.play().catch(()=>{})}
 /* ---------- audio with mouth movement ---------- */
 let AC,an,buf=new Uint8Array(256),level=0;
 const audio=new Audio();audio.crossOrigin='anonymous';
@@ -459,7 +460,7 @@ function say(id,{word,sub=true}={}){
 }
 function showSub(fi,sv,sub){$('#sub .fi').textContent=fi;$('#sub .sv').textContent=st.sub&&sub?sv:'';$('#sub').style.opacity=1}
 function hideSub(){$('#sub').style.opacity=0}
-function showWord(fi,sv,ms=2600){sfx('newword',.35);const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
+function showWord(fi,sv,ms=2600){sfx('newword',.35);if(sv&&!st.words[fi]&&Math.random()<.4)setTimeout(()=>{if(audio.paused)say('g-uusisana')},2700);const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
 function ask(t){$('#ask').textContent=t;$('#ask').style.opacity=t?1:0}
 function addPaws(n){sfx('right',.45);st.paws+=n;save();$('#paws').textContent='🐾 '+st.paws}
 function learn(fi){st.words[fi]=(st.words[fi]||0)+1;save()}
@@ -499,7 +500,8 @@ const camLook=new THREE.Vector3(66,1,27);
 
 /* ---------- picking ---------- */
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let pickHandler=null,hoverHandler=null;
-R.domElement.addEventListener('pointerdown',e=>{if(!pickHandler)return;mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,cam);const hits=ray.intersectObjects(scene.children,true);pickHandler(hits)});
+R.domElement.addEventListener('pointerdown',e=>{mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,cam);if(siili&&siili.parent&&audio.paused&&ray.intersectObject(siili,true).length){play(rnd(['happy','nod']));say(rnd(['g-giggle','g-laugh','g-hups','g-vau']));return}
+  if(!pickHandler)return;mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,cam);const hits=ray.intersectObjects(scene.children,true);pickHandler(hits)});
 R.domElement.addEventListener('pointermove',e=>{if(!hoverHandler)return;mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,cam);hoverHandler(ray)});
 function thingOf(hits){for(const h of hits){let o=h.object;while(o){if(o.name.startsWith('thing_'))return o.name.slice(6);o=o.parent}}return null}
 function waitPick(fn){return new Promise(r=>{pickHandler=hits=>{const v=fn(hits);if(v!==undefined){pickHandler=null;r(v)}}})}
@@ -513,9 +515,9 @@ const clearCards=()=>$('#cards').innerHTML='';
 const OBJ={pulla:{sv:'bulle',e:'🥐',desc:'h-07',anim:'happy',s:'s-10'},pallo:{sv:'boll',e:'⚽',desc:'h-04',anim:'happy',s:'s-11'},matto:{sv:'matta',e:'🟫',desc:'h-13',anim:'nod',s:'s-13'},
  mato:{sv:'mask',e:'🪱',desc:'h-12',anim:'scared',s:'s-14'},kukka:{sv:'blomma',e:'🌸',desc:'h-11',anim:'sneeze',s:'s-12'},lamppu:{sv:'lampa',e:'💡',desc:'h-10',anim:'nod',s:'s-15'},
  kuppi:{sv:'kopp',e:'☕',desc:'h-08',anim:'happy',s:'s-16'},sukka:{sv:'strumpa',e:'🧦',desc:'h-09',anim:'nod',s:'s-17'}};
-const PRAISE=['rec1-43','rec1-44','rec1-45','rec1-46','rec1-47','rec1-48','rec1-49','rec1-50','a-01','a-02','a-03'];
-const OOPS=['rec1-52','rec1-53','a-04','a-05','a-06'];
-let lastP;function praise(){let p;do p=rnd(PRAISE);while(p===lastP);lastP=p;return say(p)}
+const PRAISE=['rec1-43','rec1-44','rec1-45','rec1-46','rec1-47','rec1-48','rec1-49','rec1-50','a-01','a-02','a-03','g-hienoatyota','g-tosihyva','g-snyggt','g-jattebra'];
+const OOPS=['rec1-52','rec1-53','a-04','a-05','a-06','g-eihataa','g-yhdessa'];
+let lastP,streak=0;function praise(){streak++;if(streak===3){return say('g-kolme')}let p;do p=rnd(PRAISE);while(p===lastP);lastP=p;return say(p)}
 
 /* ---------- parts ---------- */
 const PARTS=[{n:'Vid trappan',d:'Siili tittar ut',f:partIntro},{n:'Missä on …?',d:'Hitta sakerna',f:partFind},{n:'Miltä tuntuu?',d:'Ljudorden',f:partFeel},
@@ -523,13 +525,13 @@ const PARTS=[{n:'Vid trappan',d:'Siili tittar ut',f:partIntro},{n:'Missä on …
 function renderMenu(){const d=$('#doors');d.innerHTML='';PARTS.forEach((p,i)=>{const open=i===0||st.done.includes(i-1)||st.done.includes(i);const b=document.createElement('button');b.className='door'+(st.done.includes(i)?' done':'')+(open?'':' locked');
   b.innerHTML=`<div class="n">${i+1}</div><div><b>${p.n}</b></div><div class="d">${p.d}</div>`;if(open)b.onclick=()=>{$('#menu').classList.add('hidden');runPart(i)};d.append(b)})}
 let running=false;
-async function runPart(i){if(running)return;running=true;$('#part').textContent=`· ${i+1}. ${PARTS[i].n}`;try{await PARTS[i].f()}finally{running=false;ask('');clearCards();$('#hint').style.display='none'}
+let greeted=false;async function runPart(i){if(running)return;running=true;if(i>0&&!greeted&&st.done.length){greeted=true;setTimeout(()=>{if(audio.paused)say(rnd(['g-moi-taas','g-moi-odotin']))},1600)}$('#part').textContent=`· ${i+1}. ${PARTS[i].n}`;try{await PARTS[i].f()}finally{running=false;ask('');clearCards();$('#hint').style.display='none'}
   if(!st.done.includes(i)){st.done.push(i);save()}
   sfx('fanfare',.5);$('#doneT').textContent=`${PARTS[i].n} – klart!`;$('#done').classList.remove('hidden');
   $('#doneB').onclick=()=>{$('#done').classList.add('hidden');renderMenu();$('#menu').classList.remove('hidden')}}
 async function fadeTo(s){$('#fade').style.opacity=1;await sleep(650);useScene(s);$('#fade').style.opacity=0}
-function putSiiliOut(){outS.add(siili);siili.position.set(HOLE.x,0,HOLE.z-.05);siili.rotation.y=Math.PI}
-function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0;yawTarget=null}
+function putSiiliOut(){SIILI_CLIP.length=0;SIILI_CLIP.push(WALL_CLIP);outS.add(siili);siili.position.set(HOLE.x,0,HOLE.z-.05);siili.rotation.y=Math.PI}
+function putSiiliHome(){SIILI_CLIP.length=0;homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0;yawTarget=null}
 async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0,0.2,1.05);camLook.set(0,0.06,-0.12)}
 
 async function flyIn(){
@@ -537,18 +539,24 @@ async function flyIn(){
   const T=new THREE.CatmullRomCurve3([[66,1,24],[66,1,27],[66,1,30],[65,.8,38],[64.8,.25,41.2],[64.65,.1,41.65],[64.6,.08,41.73]].map(a=>new THREE.Vector3(...a)));
   const title=document.createElement('div');title.innerHTML='<div style="font:800 min(14vw,160px) Baloo\\ 2,sans-serif;color:#fff6e8;text-shadow:0 6px 0 #c8643c,0 0 40px rgba(0,0,0,.35)">Siili</div><div style="font:700 26px Baloo\\ 2;color:#fff6e8;text-shadow:0 2px 8px rgba(0,0,0,.6)">Kapitel 1 · Jee!</div>';
   Object.assign(title.style,{position:'absolute',left:0,right:0,top:'22%',textAlign:'center',opacity:0,transition:'opacity 1.2s, transform 1.2s',transform:'scale(.9)'});$('#ui').append(title);
-  const D=15000,t0=performance.now();
-  setTimeout(()=>{title.style.opacity=1;title.style.transform='scale(1)'},600);setTimeout(()=>{title.style.opacity=0},5200);setTimeout(()=>title.remove(),7000);
+  const D=32000,t0=performance.now();
+  setTimeout(()=>{title.style.opacity=1;title.style.transform='scale(1)'},1500);setTimeout(()=>{title.style.opacity=0},9000);setTimeout(()=>title.remove(),11000);
   await new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/D);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;cam.position.copy(P.getPoint(e));camLook.copy(T.getPoint(e));if(k<1)requestAnimationFrame(step);else r()})()});
 }
 /* part 0: arriving at the stairs */
 async function partIntro(){
-  setMusic('theme');
+  setMusic('theme',false);
   useScene(outS); outS.remove(siili);
-  await flyIn();
+  const skip=document.createElement('button');skip.textContent='Hoppa över ›';Object.assign(skip.style,{position:'absolute',right:'20px',bottom:'24px',pointerEvents:'auto',font:'800 16px Nunito',background:'rgba(255,246,232,.85)',border:0,borderRadius:'999px',padding:'10px 18px',cursor:'pointer'});$('#ui').append(skip);
+  let skipped=false;const skipP=new Promise(r=>skip.onclick=()=>{skipped=true;r()});
+  await Promise.race([flyIn(),skipP]);
+  if(!skipped&&st.snd&&!music.paused&&music.duration)await Promise.race([new Promise(r=>music.addEventListener('ended',r,{once:true})),skipP,sleep(Math.max(0,(music.duration-music.currentTime)*1000+200))]);
+  skip.remove();cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);
   setMusic('home');sfx('rustle',.6);ask('Det prasslar under trappan … klicka på hålet!');
   await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
-  putSiiliOut(); siili.position.z=HOLE.z+.12; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1,0); face(cam.position);
+  putSiiliOut(); siili.position.set(HOLE.x,0,HOLE.z+.2); siili.rotation.y=Math.PI; play('sniff');
+  await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.02),.06); play('sniff'); await sleep(900);
+  play('walk',.2); await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1); play('idle',.25); face(cam.position);
   camTo(new THREE.Vector3(64.92,.11,40.95),new THREE.Vector3(64.62,.09,41.35),1800);
   await say('r1-01'); play('scared'); await say('r1-02');
   play('wave'); await say('r1-03'); showWord('Siili','igelkott'); await say('r1-04');
@@ -560,7 +568,7 @@ async function partIntro(){
   for(;;){const {o,b}=await cardsChoice(shuffle([{t:'hej',e:'👋'},{t:'tack',e:'🙏'},{t:'hejdå',e:'🌙'}]));
     if(o.t==='hej'){clearCards();ask('');await say('s-04');learn('moi');addPaws(3);break}b.classList.add('wrong');sfx('wrong',.4);play('shake');await say(rnd(OOPS))}
   await say('r1-07'); play('sad'); await say('r1-08'); play('idle');
-  ask('');await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z+.2),.12,0);
+  ask('');face(new THREE.Vector3(HOLE.x,0,HOLE.z));await sleep(400);play('walk',.2);await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.05),.12);await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z+.35),.1);
   await toHome(); await say('r1-05'); await say('r1-06');
 }
 
@@ -580,7 +588,7 @@ async function partFind(){
       async()=>{await walkTo(pos,.14,.16,w);play('nod');await say(`${w}-6`)}];
     const hb=$('#hint');hb.style.display='block';let busy=false;
     const giveHint=async()=>{if(busy||hints>=ladder.length)return;busy=true;await ladder[hints++]();busy=false};
-    hb.onclick=giveHint;
+    hb.onclick=()=>{if(hints===0&&audio.paused)say('g-vihje');giveHint()};
     let auto=setInterval(()=>{if(!busy)giveHint()},11000);
     for(;;){const t=await nextPick();
       if(t===w)break;
@@ -652,7 +660,8 @@ async function partEvening(){
 }
 
 /* ---------- loop ---------- */
-const clock=new THREE.Clock();
+const clock=new THREE.Clock();let lastAct=performance.now();addEventListener('pointerdown',()=>lastAct=performance.now());
+setInterval(()=>{if(!siili||!siili.parent||!audio.paused||performance.now()-lastAct<16000)return;lastAct=performance.now();const k=rnd([['g-hum','idle'],['g-hmm','sniff'],['g-yawn','sad'],['g-sniffs','sniff']]);play(k[1]);say(k[0],{sub:false})},3000);
 const _hp=new THREE.Vector3(),_pl=new THREE.Plane(),_ip=new THREE.Vector3(),_sp=new THREE.Vector3();
 addEventListener('pointermove',e=>{mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1)});
 R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
@@ -675,7 +684,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
   for(const gl of gulls){const u=gl.userData,a=t*.25+u.ph;gl.position.set(66+Math.cos(a)*u.r,u.h+Math.sin(a*2)*.6,28+Math.sin(a)*u.r*.7);gl.rotation.y=-a+Math.PI}
   if(falling&&scene===outS){const p=falling.geometry.attributes.position;for(let i=0;i<p.count;i++){let y=p.getY(i)-dt*R01(.25,.45);if(y<0)y=R01(4,9);p.setY(i,y);p.setX(i,p.getX(i)+Math.sin(t*1.3+i)*dt*.4)}p.needsUpdate=true}
   if(scene===outS){const hs=THREE.MathUtils.clamp(cam.position.y*1.6+2.5,3,28);const sc_=sun.shadow.camera;if(Math.abs(sc_.right-hs)>.05){sc_.left=-hs;sc_.right=hs;sc_.top=hs;sc_.bottom=-hs;sc_.updateProjectionMatrix()}
-    const f=new THREE.Vector3().lerpVectors(camLook,cam.position,.3);sun.target.position.copy(f);sun.position.copy(f).add(SUNOFF);sun.target.updateMatrixWorld()}
+    const f=new THREE.Vector3().lerpVectors(camLook,cam.position,.3);const tx=2*hs/4096;f.x=Math.round(f.x/tx)*tx;f.y=Math.round(f.y/tx)*tx;f.z=Math.round(f.z/tx)*tx;sun.target.position.copy(f);sun.position.copy(f).add(SUNOFF);sun.target.updateMatrixWorld()}
   const drift=new THREE.Vector3(Math.sin(t*.31)*.6+Math.sin(t*.73)*.3,Math.sin(t*.27)*.4+Math.sin(t*.9)*.2,Math.cos(t*.23)*.5).multiplyScalar(.004*Math.max(.25,Math.min(3,cam.position.y)));
   cam.lookAt(_ip.copy(camLook).add(drift));paint.uniforms.time.value=t;
   if(siili&&siili.parent){siili.getWorldPosition(_sp);bokeh.uniforms.focus.value=cam.position.distanceTo(_sp)}else bokeh.uniforms.focus.value=cam.position.distanceTo(camLook);

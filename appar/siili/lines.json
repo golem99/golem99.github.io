@@ -1143,5 +1143,240 @@
 "f": "audio/rec1-72.mp3",
 "fi": "Hmm, hmm, hmm...",
 "sv": ""
+},
+"g-giggle": {
+"f": "audio/g-giggle.mp3",
+"fi": "Hihihi!",
+"sv": ""
+},
+"g-laugh": {
+"f": "audio/g-laugh.mp3",
+"fi": "Hahaha!",
+"sv": ""
+},
+"g-laughbig": {
+"f": "audio/g-laughbig.mp3",
+"fi": "Hahahaha! Hups!",
+"sv": ""
+},
+"g-gasp": {
+"f": "audio/g-gasp.mp3",
+"fi": "Oi!",
+"sv": "Oj!"
+},
+"g-mita": {
+"f": "audio/g-mita.mp3",
+"fi": "Mitä?!",
+"sv": "Va?!"
+},
+"g-sigh": {
+"f": "audio/g-sigh.mp3",
+"fi": "Huoh...",
+"sv": ""
+},
+"g-yawn": {
+"f": "audio/g-yawn.mp3",
+"fi": "Aaah...",
+"sv": ""
+},
+"g-sniffs": {
+"f": "audio/g-sniffs.mp3",
+"fi": "Nuuh, nuuh...",
+"sv": ""
+},
+"g-sneeze": {
+"f": "audio/g-sneeze.mp3",
+"fi": "Aaa... tshiih!",
+"sv": ""
+},
+"g-hiccup": {
+"f": "audio/g-hiccup.mp3",
+"fi": "Hik! ... Hik!",
+"sv": ""
+},
+"g-brrr": {
+"f": "audio/g-brrr.mp3",
+"fi": "Brrr!",
+"sv": ""
+},
+"g-namnam": {
+"f": "audio/g-namnam.mp3",
+"fi": "Nam nam nam!",
+"sv": "Mums!"
+},
+"g-hmm": {
+"f": "audio/g-hmm.mp3",
+"fi": "Hmm... hmmm...",
+"sv": ""
+},
+"g-hum": {
+"f": "audio/g-hum.mp3",
+"fi": "Hmm-hmm-hmm, la-la-la...",
+"sv": ""
+},
+"g-snore": {
+"f": "audio/g-snore.mp3",
+"fi": "Khhh... pss...",
+"sv": ""
+},
+"g-jee3": {
+"f": "audio/g-jee3.mp3",
+"fi": "Jee! Jee! Jee!",
+"sv": "Jippi!"
+},
+"g-hups": {
+"f": "audio/g-hups.mp3",
+"fi": "Hups...",
+"sv": "Hoppsan ..."
+},
+"g-vau": {
+"f": "audio/g-vau.mp3",
+"fi": "Vau!",
+"sv": "Wow!"
+},
+"g-iik": {
+"f": "audio/g-iik.mp3",
+"fi": "Iik!",
+"sv": "Iii!"
+},
+"g-yok": {
+"f": "audio/g-yok.mp3",
+"fi": "Yök!",
+"sv": "Usch!"
+},
+"g-moi-taas": {
+"f": "audio/g-moi-taas.mp3",
+"fi": "Moi, Saga! Taas sinä! Hej igen!",
+"sv": "Hej igen, Saga!"
+},
+"g-moi-odotin": {
+"f": "audio/g-moi-odotin.mp3",
+"fi": "Moi moi! Minä odotin sinua!",
+"sv": "Hej hej! Jag väntade på dig!"
+},
+"g-aloitetaan": {
+"f": "audio/g-aloitetaan.mp3",
+"fi": "Aloitetaan! Nu börjar vi!",
+"sv": "Nu börjar vi!"
+},
+"g-valmis": {
+"f": "audio/g-valmis.mp3",
+"fi": "Valmis? ... Redo?",
+"sv": "Redo?"
+},
+"g-jatketaan": {
+"f": "audio/g-jatketaan.mp3",
+"fi": "Jatketaan!",
+"sv": "Vi fortsätter!"
+},
+"g-odota": {
+"f": "audio/g-odota.mp3",
+"fi": "Odota hetki...",
+"sv": "Vänta lite ..."
+},
+"g-mietin": {
+"f": "audio/g-mietin.mp3",
+"fi": "Hmm... minä mietin.",
+"sv": "Hm ... jag tänker."
+},
+"g-rauhassa": {
+"f": "audio/g-rauhassa.mp3",
+"fi": "Mieti rauhassa. Ingen brådska.",
+"sv": "Tänk i lugn och ro."
+},
+"g-eihataa": {
+"f": "audio/g-eihataa.mp3",
+"fi": "Ei hätää. Ingen fara!",
+"sv": "Ingen fara!"
+},
+"g-yhdessa": {
+"f": "audio/g-yhdessa.mp3",
+"fi": "Yritetään yhdessä.",
+"sv": "Vi försöker tillsammans."
+},
+"g-uudestaan": {
+"f": "audio/g-uudestaan.mp3",
+"fi": "Uudestaan? ... Igen?",
+"sv": "Igen?"
+},
+"g-vielakerran": {
+"f": "audio/g-vielakerran.mp3",
+"fi": "Vielä kerran!",
+"sv": "En gång till!"
+},
+"g-kuuntele": {
+"f": "audio/g-kuuntele.mp3",
+"fi": "Kuuntele tarkasti!",
+"sv": "Lyssna noga!"
+},
+"g-katso": {
+"f": "audio/g-katso.mp3",
+"fi": "Katso tarkasti!",
+"sv": "Titta noga!"
+},
+"g-vihje": {
+"f": "audio/g-vihje.mp3",
+"fi": "Vihje! ... Ledtråd!",
+"sv": "Ledtråd!"
+},
+"g-hienoatyota": {
+"f": "audio/g-hienoatyota.mp3",
+"fi": "Hienoa työtä! Bra jobbat!",
+"sv": "Bra jobbat!"
+},
+"g-kolme": {
+"f": "audio/g-kolme.mp3",
+"fi": "Kolme oikein peräkkäin! Tre rätt!",
+"sv": "Tre rätt i rad!"
+},
+"g-tosihyva": {
+"f": "audio/g-tosihyva.mp3",
+"fi": "Sinä olet tosi hyvä!",
+"sv": "Du är jättebra!"
+},
+"g-snyggt": {
+"f": "audio/g-snyggt.mp3",
+"fi": "Snyggt!",
+"sv": ""
+},
+"g-jattebra": {
+"f": "audio/g-jattebra.mp3",
+"fi": "Jättebra!",
+"sv": ""
+},
+"g-ihankototta": {
+"f": "audio/g-ihankototta.mp3",
+"fi": "Ihanko totta?",
+"sv": "På riktigt?"
+},
+"g-uusisana": {
+"f": "audio/g-uusisana.mp3",
+"fi": "Uusi sana! Nytt ord!",
+"sv": "Nytt ord!"
+},
+"g-uusitarra": {
+"f": "audio/g-uusitarra.mp3",
+"fi": "Uusi tarra! Ett klistermärke!",
+"sv": "Ett nytt klistermärke!"
+},
+"g-meteimme": {
+"f": "audio/g-meteimme.mp3",
+"fi": "Me teimme sen! Vi klarade det!",
+"sv": "Vi klarade det!"
+},
+"g-kiitos": {
+"f": "audio/g-kiitos.mp3",
+"fi": "Kiitos! Tack!",
+"sv": ""
+},
+"g-heippa": {
+"f": "audio/g-heippa.mp3",
+"fi": "Heippa, Saga! Hejdå!",
+"sv": "Hejdå, Saga!"
+},
+"g-hyvaayota": {
+"f": "audio/g-hyvaayota.mp3",
+"fi": "Hyvää yötä... God natt...",
+"sv": ""
 }
 }
