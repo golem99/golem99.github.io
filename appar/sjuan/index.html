@@ -203,8 +203,9 @@ body.typing #qtext{font-size:clamp(28px,min(12vw,44cqh),64px)}
 .tfrow{display:flex;align-items:center;justify-content:center;gap:12px}
 .tfrow .troll{margin:6px 0;width:min(150px,16vh);height:min(150px,16vh)}
 .tfrow .hp{font-size:min(22px,5.6vw);gap:2px 4px}
-.tbar{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin:0 auto 6px;max-width:260px}
-.tbar i{display:block;height:100%;width:100%;background:var(--pink);border-radius:8px}
+.tbw{display:flex;align-items:center;gap:6px;max-width:280px;margin:0 auto 6px;font-size:14px}
+.tbar{flex:1;height:8px;border-radius:8px;background:var(--line);overflow:hidden}
+.tbar i{display:block;height:100%;width:100%;background:var(--gold);border-radius:8px}
 
 /* ================= Duellen ================= */
 #duel{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;background:var(--sky2)}
@@ -933,28 +934,30 @@ function weakAll(n){
 }
 const trollImg=(v)=>`<div class="troll" id="troll"><img class="tb" src="img/troll-bridge.webp" alt="" style="display:none;position:absolute;inset:-8% -40% -6%;width:180%;height:114%;object-fit:cover;border-radius:22px;z-index:-1" onload="this.style.display='block'" onerror="this.remove()">${TROLL}<img class="tf" src="img/${v}.webp" alt="" style="display:none;position:absolute;inset:0" onload="this.style.display='block';const s=this.parentNode.querySelector('svg');if(s)s.style.visibility='hidden'" onerror="this.remove()"></div>`;
 function setTroll(v){const t=$("#troll");if(!t)return;const i=t.querySelector(".tf");if(i&&!i.src.endsWith(v+".webp")){const n=new Image();n.onload=()=>{i.src=n.src};n.src="img/"+v+".webp"}}
-const TROLL_TIME=10000;   // millisekunder per tal mot trollet
+const TROLL_TIME=10000;   // svarar hon rätt inom så här många ms blir det supersmäll (ingen tidsgräns)
 let tq=0;
 function trollFight(){
  document.body.classList.remove("typing");
  const max=trollHp(),qs=weakAll(max);let hp=max,i=0;
  sheet(`<h2 style="font-size:24px">Tabelltrollet!</h2><div class="tfrow">${trollImg("troll")}<div class="hp" id="hp"></div></div>
-  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:min(52px,7vh);margin:4px 0"></h2><div class="tbar"><i id="tbi"></i></div><div id="tp" style="display:grid"></div><button class="skip" id="tquit">Ge upp för den här gången</button>`);
+  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:min(52px,7vh);margin:4px 0"></h2><div class="tbw"><span>⚡</span><div class="tbar"><i id="tbi"></i></div></div><div id="tp" style="display:grid"></div><button class="skip" id="tquit">Ge upp för den här gången</button>`);
  $("#tquit").onclick=()=>{tq++;trollSay(TV.quit);$("#tquit").disabled=true;$("#tp").innerHTML="";setTimeout(()=>{close();renderHome()},S.sound?5200:2200)};
  const w=S.trollWins||0;trollSay(w>=3&&Math.random()<.6?TV.many:w>0&&Math.random()<.5?TV.again:TV.start);
  const hpDraw=()=>{$("#hp").innerHTML=Array.from({length:max},(_,j)=>`<span>${j<hp?"💚":"🤍"}</span>`).join("")};
  const next=()=>{
   hpDraw();if(hp<=0)return win();
   const [t,n]=qs[i%qs.length],a=t*n,flip=Math.random()<.5;$("#tq").textContent=flip?`${n} × ${t}`:`${t} × ${n}`;const t0=performance.now();
-  // tidsstapel: hinner hon inte svara skrattar trollet
+  // bonusstapel: svarar hon rätt innan den tagit slut blir det supersmäll (två hjärtan).
+  // Ingen tidsgräns: det går alltid att tänka färdigt.
   const my=++tq,bi=$("#tbi");bi.style.transition="none";bi.style.width="100%";void bi.offsetWidth;bi.style.transition=`width ${TROLL_TIME}ms linear`;bi.style.width="0%";
-  const tm=setTimeout(()=>{if(my!==tq||!$("#tp")||!$("#ov").classList.contains("on"))return;tq++;$("#tp").innerHTML="";res(false,true)},TROLL_TIME);
-  pad($("#tp"),a,ok=>{if(my!==tq)return;tq++;clearTimeout(tm);bi.style.transition="none";res(ok,false)});
-  function res(ok,late){
-   learn(fk(t,n),ok,!late&&performance.now()-t0<=FAST_TYPED);if(ok)countDay();
+  pad($("#tp"),a,ok=>{if(my!==tq)return;tq++;bi.style.transition="none";res(ok)});
+  function res(ok){
+   const ms=performance.now()-t0,quick=ms<=TROLL_TIME;
+   learn(fk(t,n),ok,ms<=FAST_TYPED);if(ok)countDay();
    const tr=$("#troll");tr.classList.remove("hit","laugh");void tr.offsetWidth;
-   if(ok){hp--;i++;SND.hit();buzz(30);setTroll("troll");tr.classList.add("hit");tr.style.transform=`scale(${.62+hp/max*.38})`;if(hp>0)trollSay(hp===1?TV.last:TV.right);setTimeout(next,hp===1?2400:1500)}
-   else{setTroll("troll-laugh");tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;trollSay(hp>=max-1?TV.wrong.concat(TV.wrongFull):TV.wrong,null,(late?"⏱️ Tiden tog slut! ":"")+trick(t,n));setTimeout(()=>{setTroll("troll");next()},3400)}
+   if(ok){const dmg=quick&&hp>1?2:1;hp-=dmg;i++;hpDraw();SND.hit();if(dmg>1)setTimeout(SND.hit,140);buzz(dmg>1?[30,40,30]:30);setTroll("troll");tr.classList.add("hit");tr.style.transform=`scale(${.62+hp/max*.38})`;
+    if(hp>0)trollSay(hp===1?TV.last:TV.right,null,dmg>1?"⚡ Supersmäll! Två hjärtan på en gång!":"");setTimeout(next,hp===1?2400:1500)}
+   else{setTroll("troll-laugh");tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;trollSay(hp>=max-1?TV.wrong.concat(TV.wrongFull):TV.wrong,null,trick(t,n));setTimeout(()=>{setTroll("troll");next()},3400)}
   }
  };
  const win=()=>{S.trollWins=(S.trollWins||0)+1;save();SND.fanfare();confetti(80);
