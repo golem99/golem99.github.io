@@ -222,6 +222,25 @@ body.typing #qtext{font-size:clamp(40px,12vw,64px)}
 .half.done .res{display:flex}
 .half.done .dq,.half.done .da{visibility:hidden}
 
+/* ================= Rutnätet (svartvitt med en accentfärg) ================= */
+body.gridq #scene{height:19vh;min-height:110px}
+body.gridq #talk,body.gridq #know{display:none}
+.gq{font-size:16px;font-weight:800;line-height:1.3;letter-spacing:0;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.gq svg{display:block;max-height:min(30vh,250px);max-width:100%;height:auto}
+.gd{fill:var(--ink)}.gd.b{fill:var(--pink)}.gd.f{fill:var(--soft);opacity:.22}
+.gcut{stroke:var(--soft);stroke-width:1.2;stroke-dasharray:3 3}
+.gq .lab{display:flex;gap:6px 16px;flex-wrap:wrap;justify-content:center;font-size:17px}
+.gq .lab span.b{color:var(--pink)}
+.gq .tot{font-size:26px;font-weight:900}
+.gq .muted{color:var(--soft);font-size:14px;font-weight:700}
+.ans.sm{font-size:clamp(24px,7.5vw,34px)}
+.nl{display:block;width:100%;max-width:360px;margin:6px auto 0}
+.nl .hop{fill:none;stroke:var(--pink);stroke-width:2}
+.nl .ax{stroke:var(--soft);stroke-width:1.5}
+.nl text{font-size:9px;font-weight:800;fill:var(--soft);text-anchor:middle}
+.nl text.on{fill:var(--ink)}
+.skip{display:block;margin:14px auto 0;background:none;color:var(--soft);font-size:14px;font-weight:700;text-decoration:underline}
+
 .conf{position:fixed;top:-20px;width:10px;height:14px;border-radius:3px;z-index:30;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 </style>
@@ -375,6 +394,51 @@ function tipFor(a,b){
  const order=[10,1,2,5,9,4,3,8,6,7];return TIP[order.find(x=>x===a||x===b)];
 }
 function trick(a,b){return `${a} × ${b} = ${a*b} · 💡 ${tipFor(a,b)}`}
+
+/* ================= Rutnätet =================
+   Gångertalet som prickar i rader. Tipset blir en bild: 7 = 5 + 2, 9 = 10 − 1 osv.
+   Raderna är det andra talet, varje rad har lika många som tabellen. */
+function strat(a,b){
+ if((a===7&&b===8)||(a===8&&b===7))return{t:7,n:8,kind:"add",p:5};
+ const order=[10,1,2,5,9,4,3,8,6,7],t=order.find(x=>x===a||x===b),n=t===a?b:a;
+ const P={2:1,3:2,4:2,6:5,7:5,8:4};
+ if(P[t])return{t,n,kind:"add",p:P[t]};
+ if(t===9)return{t,n,kind:"minus"};
+ if(t===5)return{t,n,kind:"half"};
+ return{t,n,kind:"plain"};
+}
+// rows × cols prickar; cls(r,c) ger "", "b" (accent) eller "f" (blek); split = kolumn där del två börjar
+function dots(rows,cols,o){
+ o=o||{};const c=12,g=o.split?8:0,w=cols*c+g,h=rows*c;
+ let s=`<svg viewBox="0 0 ${w} ${h}" width="${w*2}" height="${h*2}" aria-hidden="true">`;
+ for(let r=0;r<rows;r++)for(let k=0;k<cols;k++){
+  const x=k*c+6+(o.split&&k>=o.split?g:0),y=r*c+6;
+  const cl=o.cls?o.cls(r,k):(o.split&&k>=o.split?"b":(o.fade!=null&&k>=o.fade?"f":""));
+  s+=`<circle class="gd ${cl}" cx="${x}" cy="${y}" r="4"/>`}
+ if(o.split){const x=o.split*c+g/2;s+=`<line class="gcut" x1="${x}" y1="0" x2="${x}" y2="${h}"/>`}
+ return s+"</svg>";
+}
+// förklaringen: rutnätet delat enligt tipset, med delsummorna
+function gridParts(a,b,hideTotal){
+ const s=strat(a,b),{t,n}=s,q=hideTotal?"?":a*b;let g,lab,tot;
+ if(s.kind==="add"){const p=s.p,r=t-p;g=dots(n,t,{split:p});
+  lab=`<span>${n} × ${p} = ${n*p}</span><span class="b">${n} × ${r} = ${n*r}</span>`;tot=`${n*p} + ${n*r} = ${q}`}
+ else if(s.kind==="minus"){g=dots(n,10,{fade:9});lab=`<span>${n} × 10 = ${n*10}</span><span>en mindre i varje rad: − ${n}</span>`;tot=`${n*10} − ${n} = ${q}`}
+ else if(s.kind==="half"){g=dots(n,10,{fade:5});lab=`<span>${n} × 10 = ${n*10}</span><span>hälften är kvar</span>`;tot=`${n*10} : 2 = ${q}`}
+ else{g=dots(n,t);lab=`<span>${n} rader med ${t} i varje</span>`;tot=`${n} × ${t} = ${q}`}
+ return{s,g,lab,tot};
+}
+function explainHTML(a,b){
+ const x=gridParts(a,b);
+ return `<div class="gq"><div class="muted">${x.s.n} rader med ${x.s.t} i varje rad</div>${x.g}<div class="lab">${x.lab}</div><div class="lab">${x.tot}</div><div class="tot">${a} × ${b} = ${a*b}</div></div>`;
+}
+// tallinjen 0, t, 2t … 10t med hopp upp till k
+function numline(t,k){
+ const X=v=>12+v/(10*t)*296;let s=`<svg class="nl" viewBox="0 0 320 56" aria-hidden="true"><line class="ax" x1="8" y1="38" x2="312" y2="38"/>`;
+ for(let i=0;i<k;i++){const a=X(i*t),b=X((i+1)*t);s+=`<path class="hop" d="M${a} 38 Q${(a+b)/2} 14 ${b} 38"/>`}
+ for(let i=0;i<=10;i++)s+=`<line class="ax" x1="${X(i*t)}" y1="34" x2="${X(i*t)}" y2="42"/><text x="${X(i*t)}" y="53" class="${i<=k?"on":""}">${i<=k||i===10?i*t:""}</text>`;
+ return s+"</svg>";
+}
 
 /* ================= Sparat (bara i den här telefonen) =================
    Samma nyckel som Sjuan. Gamla fält finns kvar; nya läggs till. */
@@ -583,7 +647,47 @@ function newTrip(key,tables){
  S.tr={key,tables,km:0,riders:[],hop:rot.slice(0,nRiders),party:rot.slice(nRiders,nRiders+3),right:0,streak:0,troll:false,seen:[]};
  save();show("game");buildPool();retry=[];
  drawRoute();drawSeats();drawKnow();$("#talk").innerHTML="";$("#qtext").innerHTML="";$("#answers").innerHTML="";$("#hint").textContent="";
- arrive(0);
+ const wt=S.warm!==today()?warmTable():0;
+ if(wt)warmup(wt,()=>arrive(0));else arrive(0);
+}
+
+/* --- uppvärmning: dagens första resa. Rutnätet växer rad för rad
+   och tallinjen hoppar med, så att talstegen och raderna blir samma sak. --- */
+function warmTable(){const ts=S.tr.tables.filter(x=>x>1);if(!ts.length)return 0;return ts.slice().sort((x,y)=>tableKnown(x)-tableKnown(y))[0]}
+function warmup(t,done){
+ const end=()=>{S.warm=today();save();close();done()};
+ const Tn=TABN[t].replace(/^./,c=>c.toUpperCase());let k=0;
+ sheet(`<h2>Uppvärmning</h2><p class="sub">${Tn} tabell. Varje rad har ${t} prickar.</p>
+  <div class="gq" id="wg"></div><div id="wl"></div><p class="sub" id="wq" style="margin:8px 0 0;font-weight:800;color:var(--ink)"></p>
+  <div class="opts" id="wo" style="grid-template-columns:repeat(3,1fr)"></div><button class="big" id="wgo" style="display:none">Kör!</button><button class="skip" id="wsk">Hoppa över</button>`);
+ $("#wsk").onclick=end;
+ const draw=()=>{$("#wg").innerHTML=dots(10,t,{cls:(r)=>r<k?"":r===k?"b":"f"});$("#wl").innerHTML=numline(t,k)};
+ const step=()=>{
+  draw();const v=(k+1)*t;
+  $("#wq").textContent=k===0?`En rad med ${t}. Hur många prickar?`:`En rad till! Hur många prickar nu?`;
+  const opts=shuffle([...new Set([v,v+1,Math.max(1,v-1)])]);
+  $("#wo").innerHTML=opts.map(x=>`<button class="ans" data-v="${x}">${x}</button>`).join("");
+  $("#wo").querySelectorAll(".ans").forEach(b=>b.onclick=()=>{
+   if(+b.dataset.v===v){b.classList.add("right");SND.step(k);buzz(15);k++;
+    if(k<10)setTimeout(step,350);else setTimeout(final,450)}
+   else{b.classList.remove("wrong");void b.offsetWidth;b.classList.add("wrong");SND.wrong();
+    $("#wq").textContent=k===0?`Räkna prickarna i den rosa raden.`:`Förra raden var ${k*t}. Lägg till ${t}.`}});
+ };
+ const final=()=>{
+  k=10;$("#wg").innerHTML=dots(10,t);$("#wl").innerHTML=numline(t,10);SND.fanfare();
+  const n=3+Math.floor(Math.random()*7),right=`${n} × ${t}`,c2=t<10?t+1:t-1;
+  $("#wq").innerHTML=`Talstegen: ${[1,2,3].map(i=>i*t).join(", ")} … ${10*t}. Snyggt!`;
+  setTimeout(()=>{
+   $("#wg").innerHTML=dots(n,t);$("#wl").innerHTML="";
+   $("#wq").textContent="Vilket gångertal är det? Rader × i varje rad.";
+   const opts=shuffle([right,`${n+1} × ${t}`,`${n} × ${c2}`]);
+   $("#wo").innerHTML=opts.map(x=>`<button class="ans sm" data-v="${x}">${x}</button>`).join("");
+   let dn=false;$("#wo").querySelectorAll(".ans").forEach(b=>b.onclick=()=>{if(dn)return;
+    if(b.dataset.v===right){dn=true;b.classList.add("right");SND.right();$("#wq").textContent=`Ja! ${n} rader med ${t} = ${n*t}.`;$("#wsk").style.display="none";$("#wgo").style.display="";$("#wgo").onclick=end}
+    else{b.classList.add("wrong");SND.wrong();$("#wq").textContent=`Räkna raderna: det är ${n}. Varje rad har ${t}.`}});
+  },1600);
+ };
+ step();
 }
 function resume(){
  if(!S.tr.hop){const i=Object.keys(DEST).indexOf(S.tr.key),off=(i*2)%9,rot=ORDER.slice(off).concat(ORDER.slice(0,off));S.tr.hop=rot.slice(0,D().stops.length-1);S.tr.seen=S.tr.seen||[0];
@@ -592,7 +696,7 @@ function resume(){
  buildPool();retry=[];drawRoute();drawSeats();drawKnow();
  const id=pick(S.tr.riders.length?S.tr.riders:["juni"]);say(id,"Välkommen tillbaka, {n}! Vi fortsätter där vi var.");showQ();
 }
-$("#homeBtn").onclick=()=>{close();document.body.classList.remove("typing");show("home");renderHome()};
+$("#homeBtn").onclick=()=>{close();document.body.classList.remove("typing","gridq");show("home");renderHome()};
 
 function trollAt(){return D().need-Math.max(4,Math.round(D().need*.08))}
 function drawRoute(){
@@ -648,7 +752,52 @@ function pad(el,ans,onDone){
   if(k==="⌫")v=v.slice(0,-1);else if(k==="OK"){if(!v)return;done=true;const ok=+v===ans;t.classList.add(ok?"right":"wrong");if(!ok)t.innerHTML=`${v} → ${ans}`;onDone(ok);return}
   else if(v.length<3)v+=k;SND.tick();t.innerHTML=v||"&nbsp;"});
 }
+/* --- var femte fråga är en rutnätsfråga: se gångertalet i prickarna,
+   eller räkna ihop ett delat rutnät. Påverkar inte kan-logiken. --- */
+function gridQ(){
+ let f=null;for(let i=0;i<12;i++){const x=pickFact();if(x[0]>1&&x[1]>1){f=x;break}}if(!f)return false;
+ const [a,b]=f,s=strat(a,b),{t,n}=s;S.tr.gk=(S.tr.gk||0)+1;const split=s.kind!=="plain"&&S.tr.gk%2===0;
+ lock=false;cur={t:a,n:b,k:fk(a,b),grid:true};
+ document.body.classList.remove("typing");document.body.classList.add("gridq");$("#hint").textContent="";
+ const A=$("#answers");A.classList.remove("pad");let right,opts;
+ if(!split){
+  right=`${n} × ${t}`;
+  const c=[n<10?`${n+1} × ${t}`:null,n>2?`${n-1} × ${t}`:null,t<10?`${n} × ${t+1}`:null,t>2?`${n} × ${t-1}`:null].filter(Boolean);
+  opts=shuffle([right,...shuffle(c).slice(0,3)]);
+  $("#qtext").innerHTML=`<div class="gq"><div>Vilket gångertal är det?</div>${dots(n,t)}<div class="muted">rader × i varje rad</div></div>`;
+ }else{
+  const x=gridParts(a,b,true);right=String(a*b);
+  opts=shuffle([right,...shuffle([...new Set([a*b+t,a*b-t,a*b+n,a*b-n,a*b+1,a*b-1])].filter(v=>v>0&&v!==a*b)).slice(0,3).map(String)]);
+  $("#qtext").innerHTML=`<div class="gq"><div>Hur många prickar är det?</div>${x.g}<div class="lab">${x.lab}</div><div class="tot">${x.tot}</div></div>`;
+ }
+ A.innerHTML=opts.map(v=>`<button class="ans ${split?"":"sm"}" data-v="${v}">${v}</button>`).join("");
+ A.querySelectorAll(".ans").forEach(btn=>btn.onclick=()=>{
+  if(lock)return;lock=true;ac();const all=A.querySelectorAll(".ans");
+  if(btn.dataset.v===right){
+   btn.classList.add("right");all.forEach(o=>{if(o!==btn)o.classList.add("dim")});
+   S.tr.streak++;S.tr.right++;const dayDone=countDay();SND.right();buzz(25);busAnim("hop");boost(2.6);
+   $("#hint").textContent=pick(["Rätt! Du såg mönstret. 🔍","Rätt! Rutnätet ljuger aldrig.","Precis. Så ser det ut."]);
+   if(dayDone)setTimeout(()=>{confetti(60);SND.fanfare()},200);
+   move(1,1300);
+  }else{
+   btn.classList.add("wrong");all.forEach(o=>{if(o.dataset.v===right)o.classList.add("right");else if(o!==btn)o.classList.add("dim")});
+   S.tr.streak=0;SND.wrong();buzz([30,40,30]);busAnim("shake");save();showStreak();
+   setTimeout(()=>explain(a,b),1100);
+  }
+ });
+ qStart=performance.now();return true;
+}
+// efter fel svar: visa rutnätet delat enligt tipset, och vänta tills hon är klar
+function explain(a,b){
+ document.body.classList.remove("typing");document.body.classList.add("gridq");
+ $("#qtext").innerHTML=explainHTML(a,b);$("#hint").textContent="💡 "+tipFor(a,b);
+ const A=$("#answers");A.classList.remove("pad");
+ A.innerHTML=`<button class="big" id="nx" style="grid-column:1/-1;margin:0">Jag fattar! Vidare</button>`;
+ $("#nx").onclick=()=>{SND.pop();showQ()};
+}
 function showQ(){
+ document.body.classList.remove("gridq");
+ S.tr.qn=(S.tr.qn||0)+1;if(S.tr.qn%5===0&&gridQ())return;
  cur=makeQ();lock=false;$("#qtext").innerHTML=cur.text;$("#hint").textContent="";
  const A=$("#answers");A.classList.remove("pad");document.body.classList.remove("typing");
  if(S.tr.right>=4&&cur.ans>10&&Math.random()<.33){cur.typed=true;document.body.classList.add("typing");$("#hint").textContent="Skriv svaret själv ✏️";pad(A,cur.ans,ok=>answer(ok?cur.ans:-1,null))}
@@ -676,7 +825,7 @@ function answer(v,btn){
   S.tr.streak=0;learn(cur.k,false);drawKnow(cur.k);retry.push({f:[cur.t,cur.n],wait:2});
   SND.wrong();buzz([30,40,30]);busAnim("shake");
   $("#hint").textContent=trick(cur.t,cur.n);const id=speaker();say(id,pick(CH[id].wrong));
-  save();showStreak();setTimeout(showQ,3000);
+  save();showStreak();setTimeout(()=>explain(cur.t,cur.n),1100);
  }
 }
 function showStreak(){const s=$("#streak");if(S.tr&&S.tr.streak>=2){s.textContent="🔥 "+S.tr.streak+" i rad";s.classList.add("on")}else s.classList.remove("on")}
@@ -694,7 +843,7 @@ function arrive(idx){
  let h=`<h2>${stop[1]}</h2><p class="sub">${idx===0?"Nu åker vi! 🚌":"Ny kompis hoppar på!"}</p><div class="row" id="r1"></div><div class="row" id="r2"></div><div class="row" id="r3"></div><div class="opts" id="bonus"></div>`;
  h+=`<button class="big" id="go" style="display:none">Kör vidare</button><button class="big alt" id="st" style="display:none">Spela trappan 🪜</button>`;
  sheet(h);say(id,c.hop.replace("{T}",T),$("#r1"));
- const reveal=()=>{$("#go").style.display="";$("#st").style.display=""};
+ const reveal=()=>{if(!$("#go"))return;$("#go").style.display="";$("#st").style.display=""};
  if(idx===0){
   setTimeout(()=>{if(S.av.img)sayMe(`Jag kör! Hej allihop, jag heter ${S.av.name||"Bussföraren"}! 🚌`,$("#r2"));
    say(id,`Det är ${d.total} kilometer till ${d.name}. ${S.tr.tables.length===1?"💡 Tips: "+TIP[S.tr.tables[0]]:"💡 Tips: "+MIXTIP} Kör!`,$("#r3"));reveal()},700);
@@ -798,7 +947,7 @@ function finish(){
  party.forEach((id,i)=>say(id,lines[i%3],$("#p"+i)));
  $("#exam").onclick=()=>exam(weakest(10),()=>goHome());$("#hm").onclick=goHome;
 }
-function goHome(){S.tr=null;save();close();document.body.classList.remove("typing");show("home");renderHome()}
+function goHome(){S.tr=null;save();close();document.body.classList.remove("typing","gridq");show("home");renderHome()}
 
 /* --- slutförhör / repetition: skriv själv --- */
 function exam(list,after,title){
