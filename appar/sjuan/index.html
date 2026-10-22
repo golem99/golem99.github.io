@@ -131,9 +131,10 @@ body.typing #scene{height:24vh;min-height:150px}
 @keyframes pop{from{transform:scale(.85);opacity:0}}
 
 /* fråga */
-#q{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 14px;min-height:0}
-#qtext{font-size:clamp(46px,15vw,76px);font-weight:900;letter-spacing:1px;text-align:center;line-height:1.05}
-body.typing #qtext{font-size:clamp(40px,12vw,64px)}
+#q{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 14px;min-height:0;overflow:hidden;container-type:size}
+#qtext{font-size:clamp(30px,min(15vw,48cqh),76px);font-weight:900;letter-spacing:1px;text-align:center;line-height:1.05}
+body.typing #talk{display:none}
+body.typing #qtext{font-size:clamp(28px,min(12vw,44cqh),64px)}
 .blank{display:inline-block;min-width:1.1em;border-bottom:6px solid var(--pink);color:var(--pink)}
 #hint{min-height:22px;margin-top:6px;font-size:15px;color:var(--soft);text-align:center}
 #answers{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px calc(14px + env(safe-area-inset-bottom))}
@@ -181,7 +182,7 @@ body.typing #qtext{font-size:clamp(40px,12vw,64px)}
 .avs button.on{border-color:var(--pink);transform:scale(1.06)}
 .avs img{width:100%;height:100%;object-fit:cover}
 .inp{width:100%;font:inherit;font-size:22px;font-weight:800;padding:14px;border-radius:16px;border:3px solid var(--pink2);background:var(--card);color:var(--ink);text-align:center;margin-top:6px}
-.album{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.album{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
 .album div{text-align:center;font-size:12px;color:var(--soft)}
 .badge{position:relative;width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:40px;background:radial-gradient(circle at 35% 30%,#fff,var(--c,#ffc1dc));border:4px solid #fff;box-shadow:0 3px 0 var(--line);overflow:hidden}
 .badge img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;background:var(--card)}
@@ -190,13 +191,20 @@ body.typing #qtext{font-size:clamp(40px,12vw,64px)}
 @keyframes spin{from{transform:scale(0) rotate(-200deg)}}
 
 /* trollet */
-.troll{position:relative;width:170px;height:170px;margin:30px auto 14px;transition:transform .4s;z-index:0}
+.troll{position:relative;width:min(170px,19vh);height:min(170px,19vh);margin:14px auto 8px;transition:transform .4s;z-index:0}
 .troll svg,.troll img{width:100%;height:100%;object-fit:contain}
 .troll.hit{animation:trollhit .45s ease}
 @keyframes trollhit{30%{transform:translateX(18px) rotate(10deg) scale(.92)}}
 .troll.laugh{animation:laugh .5s ease}
 @keyframes laugh{25%,75%{transform:translateY(-8px)}50%{transform:translateY(0)}}
-.hp{text-align:center;font-size:26px;letter-spacing:3px;margin:4px 0}
+.hp{display:grid;grid-template-columns:repeat(5,auto);justify-content:center;gap:0 6px;font-size:min(24px,6.5vw);line-height:1.15;margin:4px 0}
+#tp .typed{height:44px;font-size:32px}
+#tp .key{height:clamp(42px,6.5vh,56px)}
+.tfrow{display:flex;align-items:center;justify-content:center;gap:12px}
+.tfrow .troll{margin:6px 0;width:min(150px,16vh);height:min(150px,16vh)}
+.tfrow .hp{font-size:min(22px,5.6vw);gap:2px 4px}
+.tbar{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin:0 auto 6px;max-width:260px}
+.tbar i{display:block;height:100%;width:100%;background:var(--pink);border-radius:8px}
 
 /* ================= Duellen ================= */
 #duel{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;background:var(--sky2)}
@@ -227,6 +235,8 @@ body.gridq #scene{height:19vh;min-height:110px}
 body.gridq #talk,body.gridq #know{display:none}
 .gq{font-size:16px;font-weight:800;line-height:1.3;letter-spacing:0;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .gq svg{display:block;max-height:min(30vh,250px);max-width:100%;height:auto}
+#q .gq svg{max-height:max(70px,min(250px,calc(100cqh - 120px)))}
+.gn{font-size:8px;font-weight:800;fill:var(--soft);text-anchor:end}
 .gd{fill:var(--ink)}.gd.b{fill:var(--pink)}.gd.f{fill:var(--soft);opacity:.22}
 .gcut{stroke:var(--soft);stroke-width:1.2;stroke-dasharray:3 3}
 .gq .lab{display:flex;gap:6px 16px;flex-wrap:wrap;justify-content:center;font-size:17px}
@@ -292,7 +302,8 @@ const fill=t=>t.replace(/\{n\}/g,NAME).replace(/\{a\}/g,(S.av&&S.av.name)||"din 
 const FAST_CHOICE=5000, FAST_TYPED=8000;   // så snabbt måste det gå för att räknas som "kan"
 const NEED=3;                              // antal snabba rätt i rad
 const INT=[0,1,3,7,14,30];                 // dagar till nästa repetition
-const DAILY=25;                            // rätt svar för dagens resa
+const DAILY=25;
+const TALK=.75;                            // hur ofta gänget pratar vid vanliga rätt svar (sänks gradvis)                            // rätt svar för dagens resa
 const TABN=["","ettans","tvåans","treans","fyrans","femmans","sexans","sjuans","åttans","nians","tians"];
 
 /* ================= Gänget (efter Hjärtpoäng) ================= */
@@ -409,8 +420,9 @@ function strat(a,b){
 }
 // rows × cols prickar; cls(r,c) ger "", "b" (accent) eller "f" (blek); split = kolumn där del två börjar
 function dots(rows,cols,o){
- o=o||{};const c=12,g=o.split?8:0,w=cols*c+g,h=rows*c;
- let s=`<svg viewBox="0 0 ${w} ${h}" width="${w*2}" height="${h*2}" aria-hidden="true">`;
+ o=o||{};const c=12,g=o.split?8:0,w=cols*c+g,h=rows*c,m=14;   // m = marginal för radnumren
+ let s=`<svg viewBox="${-m} 0 ${w+m} ${h}" width="${(w+m)*2}" height="${h*2}" aria-hidden="true">`;
+ for(let r=0;r<rows;r++)s+=`<text class="gn" x="-5" y="${r*c+9}">${r+1}</text>`;
  for(let r=0;r<rows;r++)for(let k=0;k<cols;k++){
   const x=k*c+6+(o.split&&k>=o.split?g:0),y=r*c+6;
   const cl=o.cls?o.cls(r,k):(o.split&&k>=o.split?"b":(o.fade!=null&&k>=o.fade?"f":""));
@@ -422,9 +434,9 @@ function dots(rows,cols,o){
 function gridParts(a,b,hideTotal){
  const s=strat(a,b),{t,n}=s,q=hideTotal?"?":a*b;let g,lab,tot;
  if(s.kind==="add"){const p=s.p,r=t-p;g=dots(n,t,{split:p});
-  lab=`<span>${n} × ${p} = ${n*p}</span><span class="b">${n} × ${r} = ${n*r}</span>`;tot=`${n*p} + ${n*r} = ${q}`}
- else if(s.kind==="minus"){g=dots(n,10,{fade:9});lab=`<span>${n} × 10 = ${n*10}</span><span>en mindre i varje rad: − ${n}</span>`;tot=`${n*10} − ${n} = ${q}`}
- else if(s.kind==="half"){g=dots(n,10,{fade:5});lab=`<span>${n} × 10 = ${n*10}</span><span>hälften är kvar</span>`;tot=`${n*10} : 2 = ${q}`}
+  lab=`<span>${n} rader med ${p} = ${n*p}</span><span class="b">${n} rader med ${r} = ${n*r}</span>`;tot=`${n*p} + ${n*r} = ${q}`}
+ else if(s.kind==="minus"){g=dots(n,10,{fade:9});lab=`<span>${n} rader med 10 = ${n*10}</span><span>de bleka tas bort: ${n} st</span>`;tot=`${n*10} − ${n} = ${q}`}
+ else if(s.kind==="half"){g=dots(n,10,{fade:5});lab=`<span>${n} rader med 10 = ${n*10}</span><span>de svarta är hälften</span>`;tot=`hälften av ${n*10} = ${q}`}
  else{g=dots(n,t);lab=`<span>${n} rader med ${t} i varje</span>`;tot=`${n} × ${t} = ${q}`}
  return{s,g,lab,tot};
 }
@@ -506,6 +518,10 @@ const LOCKED=["otter","beaver","frog","perch","pike","seagull","puffin","crayfis
  "calf","piglet","lamb","foal","goat-kid","chick","guinea-pig","dachshund","lop-rabbit","parakeet","goldfish","mouse-baker",
  "wizard-cat","robot","alien","friendly-ghost","baby-yeti","phoenix-chick","mushroom-sprite","ice-dragon","rainbow-snail","cactus-buddy","rocket-pug","tomte-gnome"];
 const NEWAVS=SHEET1;
+// avatarer som är upplåsta ur LOCKED. Från 22 oktober: en ny per två stjärnor.
+// avU0/avS0 sparas första gången, så att inget hon redan låst upp blir låst igen.
+function avOpen(){const st=stars();if(S.avS0===undefined){S.avS0=st;S.avU0=Math.min(LOCKED.length,st);save()}
+ return Math.min(LOCKED.length,Math.max(2,S.avU0+Math.floor((st-S.avS0)/2)))}
 function stars(){const k=Object.keys(S.F).filter(known).length;return (S.days||0)+(S.trips||0)+(S.trollWins||0)+Math.floor(k/5)}
 const AVS=["kitten","bunny","puppy","unicorn","dolphin","star","fox","panda","koala","owl","penguin","hedgehog","hamster","turtle","ladybug","elephant","seahorse","dragon","pegasus","moon","cloud","planet","cupcake-kitten","donut-puppy","strawberry-bunny","icecream-bear","fairy-squirrel"];
 const avSrc=id=>`img/avatars/${id}.webp`;
@@ -531,8 +547,8 @@ function allFacts(){const a=[];for(let x=1;x<=10;x++)for(let y=x;y<=10;y++)a.pus
 function dueList(){return allFacts().filter(due)}
 function renderHome(){
  checkDay();
- const st0=stars();if(S.seenStars===undefined)S.seenStars=st0;
- if(st0>S.seenStars&&st0<=LOCKED.length){const nw=LOCKED.slice(S.seenStars,st0);setTimeout(()=>{const im=new Image();im.onload=()=>{S.seenStars=st0;save();SND.learned();confetti(40);sheet(`<h2>Ny avatar! 🔓</h2><div style="width:140px;margin:0 auto" class="sticker"><img src="${avSrc(nw[nw.length-1])}" style="width:100%;border-radius:50%"></div><p class="sub">${nw.length>1?`Du har låst upp ${nw.length} nya avatarer!`:"Du har låst upp en ny avatar!"}</p><button class="big" id="nwOk">Byt avatar</button><button class="big alt" id="nwNo">Senare</button>`);$("#nwOk").onclick=()=>avatarSheet(false);$("#nwNo").onclick=close};im.src=avSrc(nw[nw.length-1])},500)}
+ const st0=avOpen();if(S.seenAv===undefined){S.seenAv=st0;save()}
+ if(st0>S.seenAv){const nw=LOCKED.slice(S.seenAv,st0);setTimeout(()=>{const im=new Image();im.onload=()=>{S.seenAv=st0;save();SND.learned();confetti(40);sheet(`<h2>Ny avatar! 🔓</h2><div style="width:140px;margin:0 auto" class="sticker"><img src="${avSrc(nw[nw.length-1])}" style="width:100%;border-radius:50%"></div><p class="sub">${nw.length>1?`Du har låst upp ${nw.length} nya avatarer!`:"Du har låst upp en ny avatar!"}</p><button class="big" id="nwOk">Byt avatar</button><button class="big alt" id="nwNo">Senare</button>`);$("#nwOk").onclick=()=>avatarSheet(false);$("#nwNo").onclick=close};im.src=avSrc(nw[nw.length-1])},500)}
  const facts=allFacts(),k=facts.filter(known).length;
  let grid="";for(let y=1;y<=10;y++)for(let x=1;x<=10;x++){const key=fk(x,y),f=S.F[key];grid+=`<i class="${deep(key)?"g":known(key)?"k":f&&f.s>0?"h":""}"></i>`}
  const tr=S.tr,dl=dueList();
@@ -561,11 +577,11 @@ function renderHome(){
 }
 
 function avatarSheet(first){
- let sel=S.av.img||"";const st=stars(),open=LOCKED.slice(0,st),locked=LOCKED.slice(st);
+ let sel=S.av.img||"";const st=avOpen(),open=LOCKED.slice(0,st),locked=LOCKED.slice(st);
  const btn=(a,lk)=>`<button data-a="${a}" class="${a===sel?"on":""}" ${lk?'disabled style="position:relative;opacity:.45;filter:grayscale(1)"':""}><img src="${avSrc(a)}" alt="${a}" onerror="this.parentNode.remove()">${lk?'<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:22px">🔒</span>':""}</button>`;
  sheet(`<h2>${first?"Välkommen!":"Din avatar"}</h2><p class="sub">Välj en kompis som kör bussen. Ge den ett eget namn!</p>
-  <div class="avs">${[...open.slice().reverse(),...SHEET1,...AVS].map(a=>btn(a,false)).join("")}${locked.map(a=>btn(a,true)).join("")}</div>
-  <p class="sub" style="font-size:13px">🔓 En ny avatar låses upp för varje klar dagens resa, varje avslutad resa, varje vinst mot trollet och var femte tal du lär dig.</p>
+  <div class="avs">${[...new Set([...(AVS.includes(sel)?[sel]:[]),...open.slice().reverse(),...SHEET1])].map(a=>btn(a,false)).join("")}${locked.slice(0,5).map(a=>btn(a,true)).join("")}</div>${locked.length>5?`<p class="sub" style="font-size:13px;margin:0">… och ${locked.length-5} till att låsa upp.</p>`:""}
+  <p class="sub" style="font-size:13px">🔓 Nya avatarer låses upp när du klarar dagens resa, kommer fram till resans mål, vinner över trollet och lär dig nya tal.</p>
   <input class="inp" id="avName" maxlength="16" placeholder="Vad heter den?" value="${(S.av.name||"").replace(/"/g,"")}">
   <button class="big" id="avOk">Klart!</button>`);
  $("#sheet").querySelectorAll(".avs button:not([disabled])").forEach(b=>b.onclick=()=>{sel=b.dataset.a;$("#sheet").querySelectorAll(".avs button").forEach(x=>x.classList.toggle("on",x===b));SND.pop()});
@@ -679,7 +695,7 @@ function warmup(t,done){
   $("#wq").innerHTML=`Talstegen: ${[1,2,3].map(i=>i*t).join(", ")} … ${10*t}. Snyggt!`;
   setTimeout(()=>{
    $("#wg").innerHTML=dots(n,t);$("#wl").innerHTML="";
-   $("#wq").textContent="Vilket gångertal är det? Rader × i varje rad.";
+   $("#wq").textContent="Vilket gångertal är det? Räkna raderna, och prickarna i en rad.";
    const opts=shuffle([right,`${n+1} × ${t}`,`${n} × ${c2}`]);
    $("#wo").innerHTML=opts.map(x=>`<button class="ans sm" data-v="${x}">${x}</button>`).join("");
    let dn=false;$("#wo").querySelectorAll(".ans").forEach(b=>b.onclick=()=>{if(dn)return;
@@ -702,8 +718,12 @@ function trollAt(){return D().need-Math.max(4,Math.round(D().need*.08))}
 function drawRoute(){
  const d=D(),r=$("#route"),pct=Math.min(1,S.tr.km/d.need)*100;
  let h=`<div class="track"></div><div class="fill" style="width:${pct}%"></div>`;
- let lastX=-99;d.stops.forEach((s,i)=>{const x=s[0]/d.total*100;const show=x-lastX>=13||i===d.stops.length-1;if(show)lastX=x;
-  h+=`<div class="dot ${pct>=x?"past":""}" style="left:${x}%"></div>`+(show?`<div class="lbl" style="left:${Math.min(91,Math.max(9,x))}%">${s[1]}</div>`:"")});
+ // etiketterna: räkna i pixlar så att två namn aldrig hamnar ovanpå varandra; första och sista visas alltid
+ const W=r.clientWidth||330,lw=t=>t.length*5.8+8,L=d.stops.map(s=>{const w=lw(s[1]),x=s[0]/d.total*W;return{x:Math.min(W-w/2,Math.max(w/2,x)),w}});
+ const shown=[0],last=d.stops.length-1,fits=(a,b)=>Math.abs(L[a].x-L[b].x)>=(L[a].w+L[b].w)/2+4;
+ for(let i=1;i<last;i++)if(fits(shown[shown.length-1],i)&&fits(i,last))shown.push(i);shown.push(last);
+ d.stops.forEach((s,i)=>{const x=s[0]/d.total*100;
+  h+=`<div class="dot ${pct>=x?"past":""}" style="left:${x}%"></div>`+(shown.includes(i)?`<div class="lbl" style="left:${L[i].x/W*100}%">${s[1]}</div>`:"")});
  h+=`<div class="me" style="left:${pct}%">🩷</div>`;r.innerHTML=h;
  $("#km").textContent=Math.round(kmOf(Math.min(S.tr.km,d.need)))+" av "+d.total+" km";
 }
@@ -764,7 +784,7 @@ function gridQ(){
   right=`${n} × ${t}`;
   const c=[n<10?`${n+1} × ${t}`:null,n>2?`${n-1} × ${t}`:null,t<10?`${n} × ${t+1}`:null,t>2?`${n} × ${t-1}`:null].filter(Boolean);
   opts=shuffle([right,...shuffle(c).slice(0,3)]);
-  $("#qtext").innerHTML=`<div class="gq"><div>Vilket gångertal är det?</div>${dots(n,t)}<div class="muted">rader × i varje rad</div></div>`;
+  $("#qtext").innerHTML=`<div class="gq"><div>Vilket gångertal är det?</div>${dots(n,t)}<div class="muted">Räkna raderna. Hur många prickar har varje rad?</div></div>`;
  }else{
   const x=gridParts(a,b,true);right=String(a*b);
   opts=shuffle([right,...shuffle([...new Set([a*b+t,a*b-t,a*b+n,a*b-n,a*b+1,a*b-1])].filter(v=>v>0&&v!==a*b)).slice(0,3).map(String)]);
@@ -804,6 +824,7 @@ function showQ(){
  else{A.innerHTML=cur.opts.map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");A.querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(+b.dataset.v,b))}
  qStart=performance.now();
 }
+function talkNow(){const k=S.tr.tk=(S.tr.tk||0)+1;return Math.floor(k*TALK)>Math.floor((k-1)*TALK)}
 function countDay(){checkDay();S.day.r++;if(!S.day.done&&S.day.r>=DAILY){S.day.done=true;S.days++;save();return true}return false}
 function answer(v,btn){
  if(lock)return;lock=true;ac();
@@ -817,6 +838,7 @@ function answer(v,btn){
   else if(fresh){const [a,b]=[Math.min(cur.t,cur.n),Math.max(cur.t,cur.n)];setTimeout(()=>{SND.learned();say(speaker(),`Nu kan du ${a} × ${b}${a!==b?` – och ${b} × ${a} på köpet`:""}! 🩷`)},150)}
   else if(S.tr.streak%5===0){add+=2;setTimeout(()=>{SND.turbo();const t=$("#turbo");t.classList.remove("go");void t.offsetWidth;t.classList.add("go");boost(7)},250);
    say(speaker(),pick(["TURBO! {n} har fem rätt i rad!","Fem i rad! Bussen fick raketfart! 🚀","Turboläge! Håll i hatten!"]))}
+  else if(!talkNow())$("#talk").innerHTML="";
   else if(++sinceChat>=7&&Math.random()<.6){sinceChat=0;const id=speaker();say(id,pick(CH[id].chat))}
   else{const id=speaker();say(id,pick(CH[id].right))}
   move(add,950);
@@ -900,36 +922,44 @@ function trollSay(list,el,extra){
  (el||$("#tr1")).innerHTML=`<div class="bubble"><b>Trollet</b>${TT[n]}${extra?`<br><small>${extra}</small>`:""}</div>`;
  try{if(tAudio){tAudio.pause();tAudio=null}if(S.sound){tAudio=new Audio(`audio/troll-${String(n).padStart(2,"0")}.mp3`);tAudio.volume=.8;tAudio.play().catch(()=>{})}}catch(e){}
 }
-function trollHp(){return Math.min(10,5+(S.trollWins||0))}
+function trollHp(){return (S.trollWins||0)>=3?15:10}   // hela rader: 10 hjärtan, 15 från tredje vinsten
 function weakAll(n){
- let ks=Object.keys(S.F).filter(k=>S.F[k].ok+S.F[k].bad>0);
- if(ks.length<n){[2,5,10,3,4].forEach(t=>{for(let m=1;m<=10;m++){const k=fk(t,m);if(!ks.includes(k))ks.push(k)}})}
+ // inga gånger 1, 2 eller 10: de är för lätta för trollet
+ const hard=k=>{const [a,b]=k.split("x").map(Number);return a>2&&b>2&&a<10&&b<10};
+ let ks=Object.keys(S.F).filter(k=>S.F[k].ok+S.F[k].bad>0&&hard(k));
+ if(ks.length<n){[3,4,5,6,7,8,9].forEach(t=>{for(let m=3;m<=9;m++){const k=fk(t,m);if(!ks.includes(k)&&ks.length<n*2)ks.push(k)}})}
  const sc=k=>{const x=S.F[k];return (known(k)&&!due(k)?10:0)+(x?x.s*2-x.bad:0)+Math.random()*1.5};
  return ks.sort((a,b)=>sc(a)-sc(b)).slice(0,n).map(k=>k.split("x").map(Number));
 }
 const trollImg=(v)=>`<div class="troll" id="troll"><img class="tb" src="img/troll-bridge.webp" alt="" style="display:none;position:absolute;inset:-8% -40% -6%;width:180%;height:114%;object-fit:cover;border-radius:22px;z-index:-1" onload="this.style.display='block'" onerror="this.remove()">${TROLL}<img class="tf" src="img/${v}.webp" alt="" style="display:none;position:absolute;inset:0" onload="this.style.display='block';const s=this.parentNode.querySelector('svg');if(s)s.style.visibility='hidden'" onerror="this.remove()"></div>`;
 function setTroll(v){const t=$("#troll");if(!t)return;const i=t.querySelector(".tf");if(i&&!i.src.endsWith(v+".webp")){const n=new Image();n.onload=()=>{i.src=n.src};n.src="img/"+v+".webp"}}
+const TROLL_TIME=10000;   // millisekunder per tal mot trollet
+let tq=0;
 function trollFight(){
  document.body.classList.remove("typing");
  const max=trollHp(),qs=weakAll(max);let hp=max,i=0;
- sheet(`<h2>Tabelltrollet!</h2><p class="sub">Svara rätt ${max} gånger så släpper trollet över dig.</p>${trollImg("troll")}<div class="hp" id="hp"></div>
-  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:52px;margin:8px 0"></h2><div id="tp" style="display:grid"></div><button class="big alt" id="tquit">Ge upp för den här gången</button>`);
- $("#tquit").onclick=()=>{trollSay(TV.quit);$("#tquit").disabled=true;$("#tp").innerHTML="";setTimeout(()=>{close();renderHome()},S.sound?5200:2200)};
+ sheet(`<h2 style="font-size:24px">Tabelltrollet!</h2><div class="tfrow">${trollImg("troll")}<div class="hp" id="hp"></div></div>
+  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:min(52px,7vh);margin:4px 0"></h2><div class="tbar"><i id="tbi"></i></div><div id="tp" style="display:grid"></div><button class="skip" id="tquit">Ge upp för den här gången</button>`);
+ $("#tquit").onclick=()=>{tq++;trollSay(TV.quit);$("#tquit").disabled=true;$("#tp").innerHTML="";setTimeout(()=>{close();renderHome()},S.sound?5200:2200)};
  const w=S.trollWins||0;trollSay(w>=3&&Math.random()<.6?TV.many:w>0&&Math.random()<.5?TV.again:TV.start);
- const hpDraw=()=>$("#hp").textContent="💚".repeat(hp)+"🤍".repeat(max-hp);
+ const hpDraw=()=>{$("#hp").innerHTML=Array.from({length:max},(_,j)=>`<span>${j<hp?"💚":"🤍"}</span>`).join("")};
  const next=()=>{
   hpDraw();if(hp<=0)return win();
   const [t,n]=qs[i%qs.length],a=t*n,flip=Math.random()<.5;$("#tq").textContent=flip?`${n} × ${t}`:`${t} × ${n}`;const t0=performance.now();
-  pad($("#tp"),a,ok=>{
-   learn(fk(t,n),ok,performance.now()-t0<=FAST_TYPED);countDay();
+  // tidsstapel: hinner hon inte svara skrattar trollet
+  const my=++tq,bi=$("#tbi");bi.style.transition="none";bi.style.width="100%";void bi.offsetWidth;bi.style.transition=`width ${TROLL_TIME}ms linear`;bi.style.width="0%";
+  const tm=setTimeout(()=>{if(my!==tq||!$("#tp")||!$("#ov").classList.contains("on"))return;tq++;$("#tp").innerHTML="";res(false,true)},TROLL_TIME);
+  pad($("#tp"),a,ok=>{if(my!==tq)return;tq++;clearTimeout(tm);bi.style.transition="none";res(ok,false)});
+  function res(ok,late){
+   learn(fk(t,n),ok,!late&&performance.now()-t0<=FAST_TYPED);if(ok)countDay();
    const tr=$("#troll");tr.classList.remove("hit","laugh");void tr.offsetWidth;
    if(ok){hp--;i++;SND.hit();buzz(30);setTroll("troll");tr.classList.add("hit");tr.style.transform=`scale(${.62+hp/max*.38})`;if(hp>0)trollSay(hp===1?TV.last:TV.right);setTimeout(next,hp===1?2400:1500)}
-   else{setTroll("troll-laugh");tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;trollSay(hp>=max-1?TV.wrong.concat(TV.wrongFull):TV.wrong,null,trick(t,n));setTimeout(()=>{setTroll("troll");next()},3400)}
-  });
+   else{setTroll("troll-laugh");tr.classList.add("laugh");qs.push(qs[i%qs.length]);i++;trollSay(hp>=max-1?TV.wrong.concat(TV.wrongFull):TV.wrong,null,(late?"⏱️ Tiden tog slut! ":"")+trick(t,n));setTimeout(()=>{setTroll("troll");next()},3400)}
+  }
  };
  const win=()=>{S.trollWins=(S.trollWins||0)+1;save();SND.fanfare();confetti(80);
   sheet(`<h2>Du vann över trollet!</h2>${trollImg("troll-friendly")}<div class="row" id="w1"></div><button class="big" id="wgo">${S.trollWins<6?"Utmana igen":"Utmana igen 💪"}</button><button class="big alt" id="whome">Till startsidan</button>`);
-  trollSay(S.trollWins===1?TV.winFirst:TV.win,$("#w1"),S.trollWins<6?`Nästa gång har trollet ${trollHp()} hjärtan.`:"");
+  trollSay(S.trollWins===1?TV.winFirst:TV.win,$("#w1"),S.trollWins<3?`Vinn ${3-S.trollWins===1?"en gång":(3-S.trollWins)+" gånger"} till, så får trollet 15 hjärtan.`:S.trollWins===3?"Nu har trollet 15 hjärtan!":"");
   $("#wgo").onclick=trollFight;$("#whome").onclick=()=>{close();renderHome()}};
  next();
 }
@@ -937,9 +967,9 @@ function trollFight(){
 /* --- framme --- */
 function finish(){
  const d=D(),first=!S.stk[d.slug];S.stk[d.slug]=today();S.trips=(S.trips||0)+1;
- const party=S.tr.party||[];save();SND.fanfare();confetti(100);
- let h=`<div style="width:120px;margin:0 auto 6px" class="sticker">${badge(S.tr.key,true)}</div><h2>Framme i ${d.name}!</h2><p class="sub">${first?"Nytt klistermärke! 🏅":"Klistermärket har du redan – snyggt jobbat igen!"}</p>
-  <img src="img/postcard-${d.slug}.webp" alt="" style="display:none;width:100%;border-radius:14px;margin-top:10px;box-shadow:0 3px 0 var(--line);transform:rotate(-1.5deg)" onload="this.style.display='block'" onerror="this.remove()"><div class="fact">📮 ${d.fact}</div>`;
+ const party=(S.tr.party||[]).slice(0,1);save();   // en välkomsthälsning räckerSND.fanfare();confetti(100);
+ let h=`<div style="width:96px;margin:0 auto 4px" class="sticker">${badge(S.tr.key,true)}</div><h2>Framme i ${d.name}!</h2><p class="sub">${first?"Nytt klistermärke! 🏅":"Klistermärket har du redan – snyggt jobbat igen!"}</p>
+  <img src="img/postcard-${d.slug}.webp" alt="" style="display:none;width:100%;max-height:28vh;object-fit:contain;border-radius:14px;margin-top:8px;transform:rotate(-1.5deg)" onload="this.style.display='block'" onerror="this.remove()"><div class="fact">📮 ${d.fact}</div>`;
  party.forEach((id,i)=>h+=`<div class="row" id="p${i}"></div>`);
  h+=`<button class="big" id="exam">Slutförhör: 10 frågor ✏️</button><button class="big alt" id="hm">Till startsidan</button>`;
  sheet(h);
