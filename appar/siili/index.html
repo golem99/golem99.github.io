@@ -224,12 +224,12 @@ function buildSiiliCorner(){buildFalling();
   box([63.5,.07,41.38],[1.5,.14,.8],'#b7b2a8').material=sm; box([63.5,.27,41.5],[1.3,.18,.55],'#b7b2a8').material=sm;
   const area=(n,fn)=>{for(let i=0;i<n;i++)fn(i)};
   // grass tufts along the wall and between cobbles
-  const blade=new THREE.ConeGeometry(.006,.09,3,1,true);blade.translate(0,.045,0);
+  const blade=new THREE.PlaneGeometry(.0045,.09,1,4);blade.translate(0,.045,0);{const p=blade.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i)/.09;p.setX(i,p.getX(i)*(1-y*.9));p.setZ(i,y*y*.025)}blade.computeVertexNormals()}
   const grassM=new THREE.MeshStandardMaterial({color:'#7b9a3c',roughness:.8,side:THREE.DoubleSide});
-  const grass=new THREE.InstancedMesh(blade,grassM,2600);const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sv=new THREE.Vector3();
-  let gi=0;const tuft=(x,z,n,hmax)=>{for(let k=0;k<n&&gi<2600;k++){e.set(R01(-.45,.45),R01(0,6),R01(-.45,.45));q.setFromEuler(e);v.set(x+R01(-.03,.03),0,z+R01(-.03,.03));const hs=R01(.4,1)*hmax;sv.set(1,hs,1);m4.compose(v,q,sv);grass.setMatrixAt(gi,m4);grass.setColorAt(gi,new THREE.Color().setHSL(R01(.18,.26),R01(.35,.6),R01(.28,.45)));gi++}};
-  area(60,()=>tuft(R01(61.5,67.5),R01(41.55,41.7),R01(10,26),R01(.9,1.8)));
-  area(70,()=>tuft(R01(61,68),R01(38.5,41.4),R01(4,10),R01(.4,.9)));
+  const grass=new THREE.InstancedMesh(blade,grassM,6000);const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sv=new THREE.Vector3();
+  let gi=0;const tuft=(x,z,n,hmax)=>{for(let k=0;k<n&&gi<6000;k++){e.set(R01(-.45,.45),R01(0,6),R01(-.45,.45));q.setFromEuler(e);v.set(x+R01(-.03,.03),0,z+R01(-.03,.03));const hs=R01(.4,1)*hmax;sv.set(1,hs,1);m4.compose(v,q,sv);grass.setMatrixAt(gi,m4);grass.setColorAt(gi,new THREE.Color().setHSL(R01(.18,.26),R01(.35,.6),R01(.28,.45)));gi++}};
+  area(90,()=>tuft(R01(61.5,67.5),R01(41.55,41.7),R01(20,45),R01(.8,1.7)));
+  area(160,()=>tuft(R01(61,68),R01(38.5,41.4),R01(6,14),R01(.3,.7)));
   grass.count=gi;grass.castShadow=true;outS.add(grass);
   // moss cushions at the plinth foot
   const mossM=new THREE.MeshStandardMaterial({color:'#5f7a2e',roughness:1});
@@ -248,9 +248,10 @@ function buildSiiliCorner(){buildFalling();
   for(const[x,z,s]of[[64.95,41.62,1],[65.03,41.6,.7],[64.9,41.55,.55]]){cyl([x,.02*s,z],.006*s,.04*s,'#efe6d6');const cap=new THREE.Mesh(new THREE.SphereGeometry(.018*s,16,8,0,Math.PI*2,0,Math.PI/2),M('#b8452e'));cap.position.set(x,.04*s,z);cap.castShadow=true;outS.add(cap)}
   // dust motes in the low sun
   const N=260,pg=new THREE.BufferGeometry(),pp=new Float32Array(N*3);for(let i=0;i<N;i++){pp[i*3]=R01(63.5,65.8);pp[i*3+1]=R01(.02,.9);pp[i*3+2]=R01(40,41.7)}
-  pg.setAttribute('position',new THREE.BufferAttribute(pp,3));motes=new THREE.Points(pg,new THREE.PointsMaterial({color:'#ffe2b0',size:.006,transparent:true,opacity:.7,depthWrite:false}));outS.add(motes);
+  pg.setAttribute('position',new THREE.BufferAttribute(pp,3));motes=new THREE.Points(pg,new THREE.PointsMaterial({map:dotTex(),color:'#ffe2b0',size:.012,transparent:true,opacity:.55,depthWrite:false,blending:THREE.AdditiveBlending}));outS.add(motes);
 }
 let motes;const gulls=[];
+const dotTex=()=>tex(canvas(32,32,(g)=>{const r=g.createRadialGradient(16,16,0,16,16,16);r.addColorStop(0,'rgba(255,240,210,1)');r.addColorStop(1,'rgba(255,240,210,0)');g.fillStyle=r;g.fillRect(0,0,32,32)}));
 /* the hole by the steps */
 const HOLE=new THREE.Vector3(64.6,0,41.72);
 function buildHole(){
@@ -310,7 +311,7 @@ function dressHome(){
   for(let i=0;i<5;i++){const b=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.005,16),M(rnd(['#3d7cc9','#e8c547','#5aa469','#e07a5f'])));b.position.set(.55+i*.028,.005,.05+R01(-.02,.02));b.castShadow=true;homeS.add(b)}
   // dust motes in lamplight
   const N=160,g=new THREE.BufferGeometry(),p=new Float32Array(N*3);for(let i=0;i<N;i++){p[i*3]=R01(-.6,.6);p[i*3+1]=R01(.03,.5);p[i*3+2]=R01(-.5,.3)}
-  g.setAttribute('position',new THREE.BufferAttribute(p,3));homeMotes=new THREE.Points(g,new THREE.PointsMaterial({color:'#ffd9a0',size:.004,transparent:true,opacity:.6,depthWrite:false}));homeS.add(homeMotes);
+  g.setAttribute('position',new THREE.BufferAttribute(p,3));homeMotes=new THREE.Points(g,new THREE.PointsMaterial({map:dotTex(),color:'#ffd9a0',size:.008,transparent:true,opacity:.5,depthWrite:false,blending:THREE.AdditiveBlending}));homeS.add(homeMotes);
 }
 let homeMotes,headBone,bodyBone,lookYaw=0,lookPitch=0,lookTarget=new THREE.Vector3(),bristle=0;
 function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
