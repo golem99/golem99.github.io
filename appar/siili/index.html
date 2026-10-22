@@ -310,7 +310,7 @@ async function init(){
   $('#loading').textContent='';
 }
 /* ---------- Siili's burrow, built by hand ---------- */
-const HOME_SPOTS={pulla:[.34,.0,-.22,.11],pallo:[-.46,.0,.1,.12],matto:[0,.0,.02,.55],mato:[-.5,.0,-.3,.2],kukka:[.56,.0,-.4,.2],lamppu:[-.3,.0,-.52,.18],kuppi:[.5,.0,.12,.07],sukka:[.2,.0,-.5,.3]};
+const HOME_SPOTS={pulla:[.34,.0,-.22,.11],pallo:[-.46,.0,.1,.12],matto:[0,.003,.02,.55],mato:[-.5,.0,-.3,.2],kukka:[.56,.0,-.4,.2],lamppu:[-.3,.0,-.52,.18],kuppi:[.5,.0,.12,.07],sukka:[.2,.0,-.5,.3]};
 function rockGeo(r,detail=2,amp=.25){const g=new THREE.IcosahedronGeometry(r,detail);const p=g.attributes.position;const seed=Math.random()*100;
   for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const n=1+amp*(Math.sin(x*9/r+seed)*Math.sin(y*7/r+seed*.7)*Math.sin(z*8/r+seed*1.3));p.setXYZ(i,x*n,y*n,z*n)}g.computeVertexNormals();return g}
 async function buildHome(){
@@ -322,15 +322,15 @@ async function buildHome(){
   // floor: packed earth, with a few flat stones and boards
   const floor=new THREE.Mesh(new THREE.CircleGeometry(1.1,64),new THREE.MeshStandardMaterial({map:tex(earthTex(),[3,3]),bumpMap:tex(earthTex(),[3,3],false),bumpScale:3,roughness:1,color:'#b48a66'}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;H.add(floor);
   const wT=tex(woodTex());
-  for(let i=0;i<7;i++){const w=R01(.05,.07),l=R01(.5,.8);const bd=new THREE.Mesh(new THREE.BoxGeometry(l,.012,w,6,1,1),new THREE.MeshStandardMaterial({map:wT,color:i%2?'#e2c7a6':'#cfae86',roughness:.8}));
-    bd.position.set(R01(-.1,.1),.006,-.2+i*.075);bd.rotation.y=R01(-.06,.06);bd.castShadow=bd.receiveShadow=true;H.add(bd)}
+  for(let i=0;i<4;i++){const w=R01(.05,.07),l=R01(.26,.32);const bd=new THREE.Mesh(new THREE.BoxGeometry(l,.012,w,6,1,1),new THREE.MeshStandardMaterial({map:wT,color:i%2?'#e2c7a6':'#cfae86',roughness:.8}));
+    bd.position.set(.62+R01(-.02,.02),.006,-.52+i*.058);bd.rotation.y=-.5+R01(-.06,.06);bd.castShadow=bd.receiveShadow=true;H.add(bd)}
   // back wall: the house's brick foundation, curved into the earth
   const [bc,bb]=stonework({rows:7,base:[10,42,38],mortar:'#cdbca5',brick:true});
   const brick=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,.5,48,1,true,-Math.PI*.32,Math.PI*.64),new THREE.MeshStandardMaterial({map:tex(bc,[2,1]),bumpMap:tex(bb,[2,1],false),bumpScale:3,roughness:.9,side:THREE.BackSide}));
   brick.position.set(0,.25,.05);brick.rotation.y=Math.PI;brick.receiveShadow=true;H.add(brick);
   // stones bedded in the walls
-  for(let i=0;i<46;i++){const a=R01(-Math.PI*.95,-Math.PI*.05),y=R01(.02,.5);const rr=.86-y*.25;const st=new THREE.Mesh(rockGeo(R01(.02,.05)),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(R01(.05,.11),R01(.05,.18),R01(.38,.6)),roughness:.85}));
-    st.position.set(Math.cos(a)*rr*.95,y,Math.sin(a)*rr*.8);st.castShadow=true;H.add(st)}
+  for(let i=0;i<22;i++){const a=R01(-Math.PI*.95,-Math.PI*.05),y=R01(.02,.32);const sh=.6*Math.sqrt(Math.max(.05,1-(y/.62)**2));const st=new THREE.Mesh(rockGeo(R01(.02,.045)),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(R01(.05,.09),R01(.12,.25),R01(.22,.36)),roughness:.9}));
+    st.position.set(Math.cos(a)*.95*sh/.6*1.0,y,Math.sin(a)*.8*sh/.6*1.0);st.castShadow=true;H.add(st)}
   // roots hanging from the ceiling
   const rootM=new THREE.MeshStandardMaterial({color:'#7a5236',roughness:.9});
   for(let i=0;i<26;i++){const x=R01(-.75,.75),z=R01(-.6,.15);let y=.6*Math.sqrt(Math.max(0,1-(x/.95)**2-(z/.8)**2));const pts=[];
@@ -351,7 +351,7 @@ async function buildHome(){
   const mbM=new THREE.MeshStandardMaterial({color:'#c8463a',roughness:.7});const bed=new THREE.Group();
   bed.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(.2,.04,.11),mbM),{castShadow:true}));const inner=new THREE.Mesh(new THREE.BoxGeometry(.19,.035,.1),M('#e9dcc2'));inner.position.y=.008;bed.add(inner);
   const lg=leafGeo();for(let i=0;i<5;i++){const lf=new THREE.Mesh(lg,new THREE.MeshStandardMaterial({color:rnd(['#d39b4f','#c9783f','#b85c3a']),side:THREE.DoubleSide}));lf.scale.setScalar(.07);lf.rotation.set(-Math.PI/2+.1,0,R01(0,6));lf.position.set(R01(-.05,.05),.03,R01(-.02,.02));bed.add(lf)}
-  bed.position.set(.62,.02,-.42);bed.rotation.y=-.5;H.add(bed);
+  bed.position.set(.62,.032,-.44);bed.rotation.y=-.5;H.add(bed);
   // stamps as paintings on the brick wall
   const stamp=(col,draw)=>tex(canvas(128,160,(g,w,h)=>{g.fillStyle='#fff8ea';g.fillRect(0,0,w,h);for(let x=0;x<w;x+=10){g.clearRect(x,0,5,4);g.clearRect(x,h-4,5,4)}for(let y=0;y<h;y+=10){g.clearRect(0,y,4,5);g.clearRect(w-4,y,4,5)}g.fillStyle=col;g.fillRect(12,12,w-24,h-24);draw(g,w,h)}));
   const st1=stamp('#9cc6e3',(g)=>{g.fillStyle='#fff';g.fillRect(12,62,104,14);g.fillRect(46,12,14,136);g.fillStyle='#1d4f9c';g.fillRect(12,66,104,7);g.fillRect(50,12,6,136)});
@@ -367,7 +367,7 @@ async function buildHome(){
   for(let i=0;i<7;i++){const bt=new THREE.Mesh(new THREE.CylinderGeometry(.01,.01,.004,18),M(rnd(['#3d7cc9','#e8c547','#5aa469','#e07a5f','#f4f1ea'])));bt.position.set(-.62+R01(-.06,.06),.002+i*.0042,.3+R01(-.01,.01));bt.castShadow=true;H.add(bt)}
   const dry=new THREE.Group();for(let i=0;i<5;i++){const st=new THREE.Mesh(new THREE.CylinderGeometry(.0015,.0015,.12,4),M('#8d7a4a'));st.position.set(R01(-.01,.01),-.06,R01(-.01,.01));st.rotation.z=R01(-.2,.2);
     const hd=new THREE.Mesh(new THREE.SphereGeometry(.008,8,6),M(rnd(['#c66f8a','#d9b44a','#e6e0d2'])));hd.position.set(st.position.x,-.12,st.position.z);dry.add(st,hd)}dry.position.set(.35,.5,-.55);H.add(dry);
-  for(let i=0;i<60;i++){const r=R01(.005,.015);const pb=new THREE.Mesh(rockGeo(r,1,.2),M(new THREE.Color().setHSL(R01(.05,.1),.1,R01(.4,.65)).getStyle()));const a=R01(0,Math.PI*2),d=R01(.55,.9);pb.position.set(Math.cos(a)*d*.9,r*.5,Math.sin(a)*d*.7-.05);pb.castShadow=true;H.add(pb)}
+  for(let i=0;i<40;i++){const r=R01(.004,.011);const pb=new THREE.Mesh(rockGeo(r,1,.2),M(new THREE.Color().setHSL(R01(.05,.1),.15,R01(.25,.42)).getStyle()));const a=R01(0,Math.PI*2),d=R01(.55,.9);pb.position.set(Math.cos(a)*d*.9,r*.3,Math.sin(a)*d*.7-.05);pb.castShadow=true;H.add(pb)}
   const web=tex(canvas(256,256,(g)=>{g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1;for(let i=0;i<9;i++){g.beginPath();g.moveTo(0,0);g.lineTo(Math.cos(i/16*Math.PI*1.1)*260,Math.sin(i/16*Math.PI*1.1)*260);g.stroke()}for(let r=20;r<250;r+=22){g.beginPath();for(let i=0;i<9;i++){const a=i/16*Math.PI*1.1;g.lineTo(Math.cos(a)*r,Math.sin(a)*r)}g.stroke()}}));
   const wb=new THREE.Mesh(new THREE.PlaneGeometry(.22,.22),new THREE.MeshBasicMaterial({map:web,transparent:true,opacity:.35,depthWrite:false}));wb.position.set(.6,.42,-.35);wb.rotation.set(-.3,-.8,Math.PI/2);H.add(wb);
   // the eight things
