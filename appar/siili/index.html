@@ -482,7 +482,7 @@ function planPath(from,to,skip){const obs=OBST().filter(o=>o.w!==skip&&Math.hypo
       const cost=c=>a.distanceTo(c)+c.distanceTo(b)+(blocked(a,c,obs)?1:0)+(blocked(c,b,obs)?1:0);
       pts.splice(i+1,0,cost(c1)<cost(c2)?c1:c2);changed=true;break}if(!changed)break}
   return pts.slice(1)}
-async function walkLeg(p,speed){face(p);await sleep(180);const start=siili.position.clone();const target=p.clone();target.y=start.y;
+async function walkLeg(p,speed){if(actions.walk)actions.walk.timeScale=THREE.MathUtils.clamp(speed/.11,.6,1.6);face(p);await sleep(180);const start=siili.position.clone();const target=p.clone();target.y=start.y;
   const dir=target.clone().sub(start);const len=dir.length();dir.normalize();if(len<.005)return;
   const t0=performance.now();const dur=len/speed*1000;
   await new Promise(r=>{(function step(){const u=Math.min(1,(performance.now()-t0)/dur);siili.position.copy(start).addScaledVector(dir,len*u);if(u<1)requestAnimationFrame(step);else r()})()})}
@@ -535,21 +535,21 @@ function putSiiliOut(){SIILI_CLIP.length=0;SIILI_CLIP.push(WALL_CLIP);outS.add(s
 function putSiiliHome(){SIILI_CLIP.length=0;homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0;yawTarget=null}
 async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0,0.2,1.05);camLook.set(0,0.06,-0.12)}
 
-async function flyIn(){
+let flyCancel=false;async function flyIn(){flyCancel=false;
   const P=new THREE.CatmullRomCurve3([[96,22,-6],[86,13,8],[76,7,19],[71,3.2,31],[67.6,1.2,37.9],[65.4,.45,40],[64.95,.3,40.75]].map(a=>new THREE.Vector3(...a)));
   const T=new THREE.CatmullRomCurve3([[66,1,24],[66,1,27],[66,1,30],[65,.8,38],[64.8,.25,41.2],[64.65,.1,41.65],[64.6,.08,41.73]].map(a=>new THREE.Vector3(...a)));
   const title=document.createElement('div');title.innerHTML='<div style="font:800 min(14vw,160px) Baloo\\ 2,sans-serif;color:#fff6e8;text-shadow:0 6px 0 #c8643c,0 0 40px rgba(0,0,0,.35)">Siili</div><div style="font:700 26px Baloo\\ 2;color:#fff6e8;text-shadow:0 2px 8px rgba(0,0,0,.6)">Kapitel 1 · Jee!</div>';
   Object.assign(title.style,{position:'absolute',left:0,right:0,top:'22%',textAlign:'center',opacity:0,transition:'opacity 1.2s, transform 1.2s',transform:'scale(.9)'});$('#ui').append(title);
   const D=32000,t0=performance.now();
   setTimeout(()=>{title.style.opacity=1;title.style.transform='scale(1)'},1500);setTimeout(()=>{title.style.opacity=0},9000);setTimeout(()=>title.remove(),11000);
-  await new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/D);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;cam.position.copy(P.getPoint(e));camLook.copy(T.getPoint(e));if(k<1)requestAnimationFrame(step);else r()})()});
+  await new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/D);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;if(flyCancel){r();return}cam.position.copy(P.getPoint(e));camLook.copy(T.getPoint(e));if(k<1)requestAnimationFrame(step);else r()})()});
 }
 /* part 0: arriving at the stairs */
 async function partIntro(){
   setMusic('theme',false);
   useScene(outS); outS.remove(siili);
   const skip=document.createElement('button');skip.textContent='Hoppa över ›';Object.assign(skip.style,{position:'absolute',right:'20px',bottom:'24px',pointerEvents:'auto',font:'800 16px Nunito',background:'rgba(255,246,232,.85)',border:0,borderRadius:'999px',padding:'10px 18px',cursor:'pointer'});$('#ui').append(skip);
-  let skipped=false;const skipP=new Promise(r=>skip.onclick=()=>{skipped=true;r()});
+  let skipped=false;const skipP=new Promise(r=>skip.onclick=()=>{skipped=true;flyCancel=true;document.querySelectorAll('#ui > div[style*="22%"]').forEach(e=>e.remove());r()});
   await Promise.race([flyIn(),skipP]);
   if(!skipped&&st.snd&&!music.paused&&music.duration)await Promise.race([new Promise(r=>music.addEventListener('ended',r,{once:true})),skipP,sleep(Math.max(0,(music.duration-music.currentTime)*1000+200))]);
   skip.remove();cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);
