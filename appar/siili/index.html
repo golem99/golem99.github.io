@@ -241,10 +241,11 @@ const load=u=>new Promise((res,rej)=>loader.load(u,res,undefined,rej));
 let siili,mixer,actions={},jaw,current,holeMesh,things={},homeRoot;
 async function init(){
   LINES=await (await fetch('lines.json')).json();
-  const [sg,hg,town,props,way,lamp]=await Promise.all(['siili.glb','home.glb','love/town-houses.glb','love/square-props.glb','love/wayfinding.glb','love/street-lamp.glb'].map(load));
+  const [sg,hg,town,props,way,lamp,cine,myhome]=await Promise.all(['siili.glb','home.glb','love/town-houses.glb','love/square-props.glb','love/wayfinding.glb','love/street-lamp.glb','love/cinema.glb','love/my-home.glb'].map(load));
   buildSquare(); holeMesh=buildHole();
   const brick=town.scene.getObjectByName('House_Brick'); brick.position.set(63.5,0,44); brick.rotation.set(0,Math.PI,0); outS.add(brick);
-  for(const[n,x,z,ry]of[['House_White',56,46,Math.PI],['House_Yellow',73,46,Math.PI]]){const h=town.scene.getObjectByName(n);if(h){h.position.set(x,0,z);h.rotation.set(0,ry,0);outS.add(h)}}
+  cine.scene.position.set(67,0,11.5);outS.add(cine.scene);myhome.scene.position.set(84.4,0,28.8);myhome.scene.rotation.y=-Math.PI/2;outS.add(myhome.scene);
+  cine.scene.traverse(o=>{if(o.name==='Cinema_Roof')o.visible=true});
   outS.add(props.scene,way.scene);
   for(const[x,z,r]of[[59.2,35,Math.PI/2],[73,21.5,-Math.PI/2],[73.3,24.9,-Math.PI/2]]){const l=lamp.scene.clone();l.position.set(x,0,z);l.rotation.y=r;outS.add(l)}
   outS.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
@@ -254,6 +255,9 @@ async function init(){
   homeRoot.traverse(o=>{if(o.isMesh){const n=o.material.name;if(n==='earth'){o.material.map=eT;o.material.color.set('#ffffff');o.material.needsUpdate=true}
     if(n.startsWith('plank')){o.material.map=wT;o.material.color.set(n==='plank'?'#e6d2bb':'#ffffff');o.material.needsUpdate=true}}});
   dressHome();
+  await Promise.all(Object.keys(things).map(async w=>{try{const g=await load('props_'+w+'.glb');const th=things[w];
+    th.traverse(o=>{if(o.isMesh)o.visible=false});const m=g.scene;m.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;o.visible=true}});th.add(m);
+    m.position.set(0,0,0);m.rotation.y=Math.random()*6}catch(e){}}));
   homeRoot.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true} if(o.name.startsWith('thing_')) things[o.name.slice(6)]=o; if(o.isLight&&o.intensity>100) o.intensity/=40});
   // siili
   siili=sg.scene; siili.scale.setScalar(.15);
