@@ -207,6 +207,30 @@ body.typing #qtext{font-size:clamp(28px,min(12vw,44cqh),64px)}
 .tbar{flex:1;height:8px;border-radius:8px;background:var(--line);overflow:hidden}
 .tbar i{display:block;height:100%;width:100%;background:var(--gold);border-radius:8px}
 
+
+/* ================= Låtarna ================= */
+.pl-now{display:flex;align-items:center;gap:12px;margin:4px 0 10px}
+.pl-badge{flex:none;width:54px;height:54px;border-radius:16px;background:var(--pink);color:#fff;font-weight:900;font-size:22px;display:grid;place-items:center;box-shadow:0 4px 0 #d13f80}
+.pl-now h3{margin:0;font-size:20px}.pl-now p{margin:0}
+.pl-bar{display:flex;align-items:center;gap:8px;font-size:12px;font-variant-numeric:tabular-nums}
+.pl-bar input{flex:1;accent-color:var(--pink)}
+.pl-ctl{display:flex;justify-content:center;align-items:center;gap:14px;margin:6px 0 10px}
+.pl-ctl button{width:52px;height:52px;border-radius:50%;background:var(--btn);box-shadow:0 4px 0 var(--line);font-size:22px}
+.pl-ctl .pl-play{width:72px;height:72px;font-size:30px;background:var(--pink);color:#fff;box-shadow:0 5px 0 #d13f80}
+.pl-ctl .on{background:var(--gold);color:#3a2a00}
+.pl-lyr{height:min(34vh,260px);overflow-y:auto;border-radius:18px;background:var(--btn);padding:10px 14px;scroll-behavior:smooth}
+.pl-lyr p{margin:0;padding:5px 0;font-size:17px;line-height:1.3;opacity:.45;transition:opacity .25s,transform .25s;transform-origin:left}
+.pl-lyr p.c{font-style:italic}
+.pl-lyr p.sec{font-size:12px;opacity:.5;padding-top:12px;text-transform:uppercase;letter-spacing:.06em}
+.pl-lyr p.cur{opacity:1;font-weight:900;color:var(--pink);transform:scale(1.04)}
+.pl-list{margin-top:10px;display:grid;gap:6px}
+.pl-list button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--btn);text-align:left;font-weight:800}
+.pl-list button.act{outline:3px solid var(--pink)}
+.pl-list b{flex:none;width:34px;height:34px;border-radius:10px;background:var(--pink2);display:grid;place-items:center}
+.pl-soon{opacity:.45}
+.pl-mini{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border-radius:18px;background:var(--btn);box-shadow:0 4px 0 var(--line);font-weight:800;text-align:left}
+.pl-mini span{flex:1}
+
 /* ================= Duellen ================= */
 #duel{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;background:var(--sky2)}
 #duel.on{display:flex}
@@ -565,7 +589,9 @@ function renderHome(){
   h+=`<button class="tab" data-t="${t}"><b>${t}:an</b><span class="to">→ ${d.short} ${d.emoji}</span><span class="to" style="font-size:11px">💡 ${TIP[t]}</span><span class="dots">${dots}</span>${S.stk[d.slug]?`<span class="got">🏅</span>`:""}</button>`});
  h+=`</div>`;
  h+=`<button class="cont" id="trollBtn" style="background:#5fae63;box-shadow:0 5px 0 #3f8a45"><small>${S.trollWins?`Du har vunnit ${S.trollWins} ${S.trollWins===1?"gång":"gånger"} · trollet har blivit ${trollHp()} hjärtan starkt`:"Trollet har samlat på dina svåraste tal"}</small>Utmana Tabelltrollet 🧌</button>
- <div class="row2"><button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button><button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>`;
+ <div class="row2"><button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button><button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>
+ <button class="cont" id="plBtn" style="background:#7a5cff;box-shadow:0 5px 0 #5a3fd6"><small>Lyssna och sjung med · funkar med högtalaren</small>Låtarna 🎵</button>`;
+ if(PL&&PL.a&&PL.a.src)h+=`<button class="pl-mini" id="plMini"><span>🎵 ${SONGS[PL.i].title}</span><i style="font-style:normal">${PL.a.paused?"▶️":"⏸"}</i></button>`;
  h+=`<div class="card"><h3>Du kan ${k} av 55 gångertal</h3><p class="muted">6 × 7 och 7 × 6 är samma tal. Därför finns det bara 55 att lära, inte 100. Varje tabell du kan gör nästa lättare!</p>
    <div class="grid">${grid}</div><div class="legend"><span style="--c:var(--pink2)">på väg</span><span style="--c:var(--pink)">kan</span><span style="--c:var(--gold)">sitter som berget</span></div></div>`;
  h+=`<div class="card"><h3>Så funkar det</h3><p class="muted">Ett tal räknas som kunnat när du svarar rätt och snabbt tre gånger i rad. Sedan kommer det tillbaka efter en dag, tre dagar och en vecka, så att det fastnar för alltid.</p></div>`;
@@ -575,6 +601,7 @@ function renderHome(){
  if($("#repBtn"))$("#repBtn").onclick=repeatRound;
  $("#home").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{SND.pop();b.dataset.t==="mix"?mixSheet():tripSheet(b.dataset.t)});
  $("#duelBtn").onclick=duelSheet;$("#trollBtn").onclick=trollFight;$("#albBtn").onclick=album;
+ $("#plBtn").onclick=plSheet;if($("#plMini"))$("#plMini").onclick=plSheet;
 }
 
 function avatarSheet(first){
@@ -986,6 +1013,78 @@ function trollFight(){
   $("#wgo").onclick=trollFight;$("#whome").onclick=()=>{close();renderHome()}};
  next();
 }
+
+
+/* --- Låtarna: en vanlig spelare. Fortsätter spela när rutan stängs,
+   styrs från låsskärmen och högtalaren (Media Session), upprepa av/alla/en. --- */
+var SONGS=[
+ {t:5,title:"Fem eller noll",file:"songs/song-5.mp3",style:"Reggae",lines:[
+  ["s","Intro"],[3.3,"Fem eller noll!",1],[9.6,"Mmm … fem eller noll. Nu kör vi, barn."],
+  ["s","Vers 1"],[14.5,"Ett gånger fem är fem,"],[16.8,"jag tror vi hinner hem."],[20.9,"Ett gånger fem är fem,",1],[22.7,"vi springer hela vägen hem!",1],
+  [27.3,"Två gånger fem är tio,"],[28.8,"min katt har gått på bio."],[32.8,"Två gånger fem är tio,",1],[35.5,"nu sjunger hon i trio!",1],
+  [39.8,"Tre gånger fem är femton,"],[42.8,"och katten heter Anton."],[45.8,"Tre gånger fem är femton,",1],[48.6,"han sover till i morgon!",1],
+  [51.9,"Fyra gånger fem är tjugo,"],[54.7,"min hamster heter Hugo."],[57.8,"Fyra gånger fem är tjugo,",1],[61.8,"han hoppar högt, vår Hugo!",1],
+  [64.5,"Fem gånger fem är tjugofem,"],[67.8,"en drake i vårt hem."],[70.5,"Fem gånger fem är tjugofem,",1],[73.7,"den nyser eld – ehem!",1],
+  ["s","Refräng"],[77.1,"Fem eller noll, fem eller noll,"],[80.5,"femman slutar alltid på fem eller noll."],[83.7,"Fem, tio, femton, tjugo, tjugofem,",1],[86.6,"tretti, trettifem, fyrtio, fyrtiofem, femtio!",1],
+  ["s","Vers 2"],[90.8,"Sex gånger fem är tretti,"],[93.6,"vi äter massa spaghetti."],[96.2,"Sex gånger fem är tretti,",1],[99.5,"och kastar ut konfetti!",1],
+  [102.7,"Sju gånger fem är trettifem,"],[105.5,"min näsa är full av slem."],[109.0,"Sju gånger fem är trettifem,",1],[111.9,"atjoo! En näsduk – vem?",1],
+  [115.9,"Åtta gånger fem är fyrtio,"],[118.8,"vi grillar korv på en patio."],[122.0,"Åtta gånger fem är fyrtio,",1],[125.3,"och farfar dansar till radio!",1],
+  [128.2,"Nio gånger fem är fyrtiofem,"],[130.9,"en dinosaurie på vandrarhem."],[134.6,"Nio gånger fem är fyrtiofem,",1],[137.1,"som inte hittar hem!",1],
+  [141.2,"Tio gånger fem är femtio,"],[144.8,"nu är vi klara i studio."],[147.5,"Tio gånger fem är femtio,",1],[151.0,"och sen hörs vi på radio!",1],
+  ["s","Refräng"],[155.4,"Fem eller noll, fem eller noll,"],[158.9,"femman slutar alltid på fem eller noll."],[162.1,"Fem, tio, femton, tjugo, tjugofem,",1],[165.4,"tretti, trettifem, fyrtio, fyrtiofem, femtio!",1],
+  ["s","Frågestund"],[169.1,"Sju gånger fem? Trettifem!"],[172.3,"Tre gånger fem? Femton!"],[175.5,"Nio gånger fem? Fyrtiofem!"],[178.6,"Fyra gånger fem? Tjugo!"],
+  ["s","Refräng"],[181.5,"Fem eller noll, fem eller noll,"],[185.8,"femman slutar alltid på fem eller noll."],[189.0,"Fem, tio, femton, tjugo, tjugofem,",1],[192.1,"tretti, trettifem, fyrtio, fyrtiofem, femtio!",1],
+  ["s","Slut"],[207.0,"Mmm … femtio. Bra sjunget, barn."]]}
+];
+var PL={a:null,i:0,rep:"all"};   // rep: off | all | one
+if(!S.plRep)S.plRep="all";PL.rep=S.plRep;
+const fmt=t=>isFinite(t)?Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0"):"0:00";
+function plAudio(){
+ if(PL.a)return PL.a;const a=PL.a=new Audio();a.preload="auto";
+ a.addEventListener("timeupdate",plTick);a.addEventListener("play",plUi);a.addEventListener("pause",plUi);
+ a.addEventListener("loadedmetadata",plTick);
+ a.addEventListener("ended",()=>{if(PL.rep==="one"){a.currentTime=0;a.play()}else if(PL.rep==="all"||PL.i<SONGS.length-1)plGo(PL.i+1,true);else plUi()});
+ if("mediaSession" in navigator){const m=navigator.mediaSession;
+  try{m.setActionHandler("play",()=>a.play());m.setActionHandler("pause",()=>a.pause());
+   m.setActionHandler("nexttrack",()=>plGo(PL.i+1,true));m.setActionHandler("previoustrack",()=>plPrev());
+   m.setActionHandler("seekto",d=>{a.currentTime=d.seekTime})}catch(e){}}
+ return a}
+function plGo(i,play){
+ const a=plAudio();PL.i=(i+SONGS.length)%SONGS.length;const so=SONGS[PL.i];a.src=so.file;
+ if("mediaSession" in navigator)try{navigator.mediaSession.metadata=new MediaMetadata({title:so.title,artist:so.t+":ans tabell",album:"Tabellresan",artwork:[{src:"icon-512.png",sizes:"512x512",type:"image/png"}]})}catch(e){}
+ if(play)a.play().catch(()=>{});plDraw()}
+function plPrev(){const a=plAudio();if(a.currentTime>4){a.currentTime=0}else plGo(PL.i-1,true)}
+function plToggle(){const a=plAudio();if(!a.src)plGo(PL.i,true);else if(a.paused)a.play().catch(()=>{});else a.pause()}
+function plSheet(){
+ sheet(`<h2 style="font-size:24px;margin-bottom:4px">Låtarna 🎵</h2><div id="plBox"></div>
+  <button class="big alt" id="plClose">Stäng · musiken spelar vidare</button>`);
+ $("#plClose").onclick=()=>{close();renderHome()};plDraw()}
+function plDraw(){
+ const box=$("#plBox");if(!box)return;const so=SONGS[PL.i],a=PL.a;
+ let ly="";so.lines.forEach((l,j)=>{ly+=l[0]==="s"?`<p class="sec">${l[1]}</p>`:`<p data-j="${j}" class="${l[2]?"c":""}">${l[1]}</p>`});
+ let li="";SONGS.forEach((x,j)=>li+=`<button data-i="${j}" class="${j===PL.i?"act":""}"><b>${x.t}</b><span style="flex:1">${x.title}<br><small class="muted">${x.t}:ans tabell · ${x.style}</small></span>${j===PL.i&&a&&!a.paused?"🔊":""}</button>`);
+ [6,7,8,9].filter(t=>!SONGS.some(x=>x.t===t)).forEach(t=>li+=`<button class="pl-soon" disabled><b>${t}</b><span>${t}:ans låt kommer snart</span></button>`);
+ const rl={off:"➡️",all:"🔁",one:"🔂"};
+ box.innerHTML=`<div class="pl-now"><div class="pl-badge">${so.t}</div><div><h3>${so.title}</h3><p class="muted">${so.t}:ans tabell · ${so.style}</p></div></div>
+  <div class="pl-bar"><span id="plCur">0:00</span><input type="range" id="plSeek" min="0" max="1000" value="0" aria-label="Spola"><span id="plDur">0:00</span></div>
+  <div class="pl-ctl"><button id="plPrev" aria-label="Föregående">⏮</button><button class="pl-play" id="plPlay" aria-label="Spela">${a&&!a.paused?"⏸":"▶️"}</button><button id="plNext" aria-label="Nästa">⏭</button><button id="plRep" class="${PL.rep!=="off"?"on":""}" aria-label="Upprepa">${rl[PL.rep]}</button></div>
+  <div class="pl-lyr" id="plLyr">${ly}</div><div class="pl-list">${li}</div>`;
+ $("#plPlay").onclick=plToggle;$("#plPrev").onclick=plPrev;$("#plNext").onclick=()=>plGo(PL.i+1,a&&!a.paused);
+ $("#plRep").onclick=()=>{PL.rep=S.plRep={off:"all",all:"one",one:"off"}[PL.rep];save();plDraw()};
+ $("#plSeek").oninput=e=>{const x=plAudio();if(x.duration)x.currentTime=e.target.value/1000*x.duration};
+ box.querySelectorAll(".pl-list button[data-i]").forEach(b=>b.onclick=()=>plGo(+b.dataset.i,true));
+ PL.cur=-1;plTick()}
+function plTick(){
+ const a=PL.a;if(!a||!$("#plBox"))return;
+ $("#plCur").textContent=fmt(a.currentTime);$("#plDur").textContent=fmt(a.duration);
+ if(a.duration&&document.activeElement!==$("#plSeek"))$("#plSeek").value=a.currentTime/a.duration*1000;
+ const L=SONGS[PL.i].lines;let c=-1;L.forEach((l,j)=>{if(l[0]!=="s"&&a.currentTime>=l[0])c=j});
+ if(c!==PL.cur){PL.cur=c;const box=$("#plLyr");box.querySelectorAll("p.cur").forEach(p=>p.classList.remove("cur"));
+  const p=box.querySelector(`p[data-j="${c}"]`);if(p){p.classList.add("cur");box.scrollTop=p.offsetTop-box.offsetTop-box.clientHeight/2+p.clientHeight/2}}
+}
+function plUi(){const b=$("#plPlay");if(b)b.textContent=PL.a&&!PL.a.paused?"⏸":"▶️";
+ if($("#plBox"))box_act();const m=$("#plMini");if(m)m.querySelector("i").textContent=PL.a&&!PL.a.paused?"⏸":"▶️";
+ function box_act(){$("#plBox").querySelectorAll(".pl-list button[data-i]").forEach(b=>{b.classList.toggle("act",+b.dataset.i===PL.i)})}}
 
 /* --- framme --- */
 function finish(){
