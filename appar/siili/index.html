@@ -133,6 +133,7 @@ outS.background=skyTex(); outS.fog=new THREE.Fog('#e9cdb0',18,85);
 outS.add(new THREE.HemisphereLight('#bcd3e6','#7a5a3e',1.15));
 const sun=new THREE.DirectionalLight('#ffcf9a',3.4); sun.position.set(52,9,30); sun.castShadow=true;
 sun.shadow.mapSize.set(4096,4096); Object.assign(sun.shadow.camera,{left:-5,right:5,top:5,bottom:-5,near:1,far:60}); sun.shadow.bias=-.0004; sun.shadow.normalBias=.02; sun.shadow.radius=4; sun.target.position.set(64.5,0,41);
+const SUNOFF=new THREE.Vector3(-12.5,9,-11);
 const fill=new THREE.DirectionalLight('#9fc0ff',.5); fill.position.set(80,12,60); outS.add(fill);
 outS.add(sun,sun.target);
 /* home light */
@@ -201,7 +202,11 @@ function buildSquare(){
 /* the corner by the steps, at Siili's height */
 function leafGeo(){const sh=new THREE.Shape();sh.moveTo(0,0);sh.bezierCurveTo(.5,.25,.45,.8,0,1);sh.bezierCurveTo(-.45,.8,-.5,.25,0,0);const geo=new THREE.ShapeGeometry(sh,8);
   const p=geo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setZ(i,x*x*.9+Math.sin(y*3)*.06)}geo.computeVertexNormals();return geo}
-function buildSiiliCorner(){
+let falling;
+function buildFalling(){const N=180,g=new THREE.BufferGeometry(),p=new Float32Array(N*3);for(let i=0;i<N;i++){p[i*3]=R01(55,80);p[i*3+1]=R01(0,9);p[i*3+2]=R01(15,44)}
+  g.setAttribute('position',new THREE.BufferAttribute(p,3));const lt=tex(canvas(64,64,(c)=>{c.translate(32,32);c.rotate(.6);c.fillStyle='#d9893f';c.beginPath();c.ellipse(0,0,26,13,0,0,7);c.fill();c.strokeStyle='#a4552a';c.lineWidth=2;c.beginPath();c.moveTo(-24,0);c.lineTo(24,0);c.stroke()}));
+  falling=new THREE.Points(g,new THREE.PointsMaterial({map:lt,size:.14,transparent:true,alphaTest:.3,depthWrite:false}));outS.add(falling)}
+function buildSiiliCorner(){buildFalling();
   // stone plinth facing over the house base, near the hole
   const [sc,sb]=stonework({rows:4,base:[32,7,50]});
   const plinth=new THREE.Mesh(new THREE.PlaneGeometry(6.2,.8),new THREE.MeshStandardMaterial({map:tex(sc,[4,1]),bumpMap:tex(sb,[4,1],false),bumpScale:3,roughness:.95}));
@@ -242,7 +247,7 @@ function buildSiiliCorner(){
   const N=260,pg=new THREE.BufferGeometry(),pp=new Float32Array(N*3);for(let i=0;i<N;i++){pp[i*3]=R01(63.5,65.8);pp[i*3+1]=R01(.02,.9);pp[i*3+2]=R01(40,41.7)}
   pg.setAttribute('position',new THREE.BufferAttribute(pp,3));motes=new THREE.Points(pg,new THREE.PointsMaterial({color:'#ffe2b0',size:.006,transparent:true,opacity:.7,depthWrite:false}));outS.add(motes);
 }
-let motes;
+let motes;const gulls=[];
 /* the hole by the steps */
 const HOLE=new THREE.Vector3(64.6,0,41.72);
 function buildHole(){
@@ -258,12 +263,18 @@ const load=u=>new Promise((res,rej)=>loader.load(u,res,undefined,rej));
 let siili,mixer,actions={},jaw,current,holeMesh,things={},homeRoot;
 async function init(){
   LINES=await (await fetch('lines.json')).json();
-  const [sg,hg,town,props,way,lamp,cine,myhome]=await Promise.all(['siili.glb','home.glb','love/town-houses.glb','love/square-props.glb','love/wayfinding.glb','love/street-lamp.glb','love/cinema.glb','love/my-home.glb'].map(load));
+  const [sg,hg,town,props,way,lamp,cine,myhome,gullsG,churchY]=await Promise.all(['siili.glb','home.glb','love/town-houses.glb','love/square-props.glb','love/wayfinding.glb','love/street-lamp.glb','love/cinema.glb','love/my-home.glb','love/gulls.glb','love/church-yard.glb'].map(load));
   buildSquare(); holeMesh=buildHole();
   const brick=town.scene.getObjectByName('House_Brick'); brick.position.set(63.5,0,44); brick.rotation.set(0,Math.PI,0); outS.add(brick);
   cine.scene.position.set(67,0,11.5);outS.add(cine.scene);myhome.scene.position.set(84.4,0,28.8);myhome.scene.rotation.y=-Math.PI/2;outS.add(myhome.scene);
   cine.scene.traverse(o=>{if(o.name==='Cinema_Roof')o.visible=true});
-  outS.add(props.scene,way.scene);
+  outS.add(props.scene,way.scene,churchY.scene);
+  for(const[n,x,y,z,r]of[['Church',67,-.2,-22,0],['House_Red',63,-.2,-8,-Math.PI/2],['House_Yellow',63,-.2,-.6,-Math.PI/2],['House_White',100,-.2,23,Math.PI],['House_Yellow_B',104,-.2,17,Math.PI],['House_Blue',124,-.2,16,Math.PI]]){
+    const h=town.scene.getObjectByName(n);if(h){const c=h.clone();c.position.set(x,y,z);c.rotation.set(0,r,0);outS.add(c)}}
+  gullsG.scene.traverse(o=>{if(o.name.startsWith('gull')&&o.parent===gullsG.scene)gulls.push(o)});
+  for(const [i,gl] of gulls.entries()){outS.add(gl);gl.userData.ph=i*1.1;gl.userData.r=R01(5,9);gl.userData.h=R01(7,11)}
+  // a grassy edge beyond the cobbles so the town does not end in nothing
+  const far=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:'#7d8a4a',roughness:1}));far.rotation.x=-Math.PI/2;far.position.set(66,-.05,30);far.receiveShadow=true;outS.add(far);
   for(const[x,z,r]of[[59.2,35,Math.PI/2],[73,21.5,-Math.PI/2],[73.3,24.9,-Math.PI/2]]){const l=lamp.scene.clone();l.position.set(x,0,z);l.rotation.y=r;outS.add(l)}
   outS.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
   // home
@@ -287,9 +298,9 @@ async function init(){
 function dressHome(){
   const rootM=new THREE.MeshStandardMaterial({color:'#8a6242',roughness:.9});
   for(let i=0;i<14;i++){const x=R01(-.7,.7),z=R01(-.55,.2);const pts=[];let y=.62-Math.abs(x)*.25;for(let k=0;k<6;k++){pts.push(new THREE.Vector3(x+R01(-.04,.04)+k*R01(-.01,.01),y-k*R01(.03,.06),z+R01(-.03,.03)))}
-    const r=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),20,R01(.004,.012),6),rootM);r.castShadow=true;homeS.add(r)}
+    const r=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),20,R01(.002,.006),6),rootM);r.castShadow=true;homeS.add(r)}
   const stoneM=new THREE.MeshStandardMaterial({color:'#9a8f82',roughness:.85});
-  for(let i=0;i<40;i++){const a=R01(0,Math.PI),rr=R01(.6,.8);const st=new THREE.Mesh(new THREE.DodecahedronGeometry(R01(.015,.045),1),stoneM.clone());st.material.color.setHSL(R01(.05,.1),.1,R01(.45,.65));
+  for(let i=0;i<0;i++){const a=R01(0,Math.PI),rr=R01(.6,.8);const st=new THREE.Mesh(new THREE.DodecahedronGeometry(R01(.015,.045),1),stoneM.clone());st.material.color.setHSL(R01(.05,.1),.1,R01(.45,.65));
     st.position.set(Math.cos(a)*rr*.85,R01(0,.45),-Math.sin(a)*rr*.75*.8);st.castShadow=true;homeS.add(st)}
   // a matchbox shelf with a candle-stub look and a button collection
   const mb=new THREE.Mesh(new THREE.BoxGeometry(.12,.035,.07),M('#d84b3a'));mb.position.set(.62,.02,-.12);homeS.add(mb);
@@ -375,15 +386,22 @@ async function runPart(i){if(running)return;running=true;$('#part').textContent=
 async function fadeTo(s){$('#fade').style.opacity=1;await sleep(650);useScene(s);$('#fade').style.opacity=0}
 function putSiiliOut(){outS.add(siili);siili.position.set(HOLE.x,0,HOLE.z-.05);siili.rotation.y=Math.PI}
 function putSiiliHome(){homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0}
-async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0.05,0.26,0.95);camLook.set(0,0.07,-0.1)}
+async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);putSiiliHome();cam.position.set(0.04,0.17,0.85);camLook.set(0,0.06,-0.1)}
 
+async function flyIn(){
+  const P=new THREE.CatmullRomCurve3([[96,22,-6],[86,13,8],[75,7,18],[68.5,3.2,30],[66,1.1,37.5],[65.25,.45,39.9],[64.95,.3,40.75]].map(a=>new THREE.Vector3(...a)));
+  const T=new THREE.CatmullRomCurve3([[66,1,24],[66,1,27],[66,1,30],[65,.8,38],[64.8,.25,41.2],[64.65,.1,41.65],[64.6,.08,41.73]].map(a=>new THREE.Vector3(...a)));
+  const title=document.createElement('div');title.innerHTML='<div style="font:800 min(14vw,160px) Baloo\\ 2,sans-serif;color:#fff6e8;text-shadow:0 6px 0 #c8643c,0 0 40px rgba(0,0,0,.35)">Siili</div><div style="font:700 26px Baloo\\ 2;color:#fff6e8;text-shadow:0 2px 8px rgba(0,0,0,.6)">Kapitel 1 · Jee!</div>';
+  Object.assign(title.style,{position:'absolute',left:0,right:0,top:'22%',textAlign:'center',opacity:0,transition:'opacity 1.2s, transform 1.2s',transform:'scale(.9)'});$('#ui').append(title);
+  const D=15000,t0=performance.now();
+  setTimeout(()=>{title.style.opacity=1;title.style.transform='scale(1)'},600);setTimeout(()=>{title.style.opacity=0},5200);setTimeout(()=>title.remove(),7000);
+  await new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/D);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;cam.position.copy(P.getPoint(e));camLook.copy(T.getPoint(e));if(k<1)requestAnimationFrame(step);else r()})()});
+}
 /* part 0: arriving at the stairs */
 async function partIntro(){
   setMusic('theme');
   useScene(outS); outS.remove(siili);
-  cam.position.set(80,16,6); camLook.set(66,1,27);
-  await camTo(new THREE.Vector3(70,6,20),new THREE.Vector3(66,1,34),3500);
-  await camTo(new THREE.Vector3(64.95,.3,40.75),new THREE.Vector3(64.6,.08,41.73),3500);
+  await flyIn();
   setMusic('home');sfx('rustle',.6);ask('Det prasslar under trappan … klicka på hålet!');
   await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
   putSiiliOut(); siili.position.z=HOLE.z+.12; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1,0); face(cam.position);
@@ -506,6 +524,10 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
   }
   if(motes){const a=motes.geometry.attributes.position;for(let i=0;i<a.count;i++){a.setY(i,a.getY(i)+Math.sin(t*.6+i)*.00012);a.setX(i,a.getX(i)+Math.cos(t*.4+i*1.7)*.00008)}a.needsUpdate=true}
   if(homeMotes){homeMotes.rotation.y=Math.sin(t*.05)*.05}
+  for(const gl of gulls){const u=gl.userData,a=t*.25+u.ph;gl.position.set(66+Math.cos(a)*u.r,u.h+Math.sin(a*2)*.6,28+Math.sin(a)*u.r*.7);gl.rotation.y=-a+Math.PI}
+  if(falling&&scene===outS){const p=falling.geometry.attributes.position;for(let i=0;i<p.count;i++){let y=p.getY(i)-dt*R01(.25,.45);if(y<0)y=R01(4,9);p.setY(i,y);p.setX(i,p.getX(i)+Math.sin(t*1.3+i)*dt*.4)}p.needsUpdate=true}
+  if(scene===outS){const hs=THREE.MathUtils.clamp(cam.position.y*1.6+2.5,3,28);const sc_=sun.shadow.camera;if(Math.abs(sc_.right-hs)>.05){sc_.left=-hs;sc_.right=hs;sc_.top=hs;sc_.bottom=-hs;sc_.updateProjectionMatrix()}
+    const f=new THREE.Vector3().lerpVectors(camLook,cam.position,.3);sun.target.position.copy(f);sun.position.copy(f).add(SUNOFF);sun.target.updateMatrixWorld()}
   cam.lookAt(camLook);
   if(siili&&siili.parent){siili.getWorldPosition(_sp);bokeh.uniforms.focus.value=cam.position.distanceTo(_sp)}else bokeh.uniforms.focus.value=cam.position.distanceTo(camLook);
   bokeh.uniforms.aperture.value=cam.position.y>2?.0002:.0035;
