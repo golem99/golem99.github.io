@@ -51,7 +51,7 @@ canvas{display:block}
 .door.done{background:#dcebc9}
 .hidden{display:none!important}
 #fade{position:absolute;inset:0;background:#1e1712;opacity:0;transition:opacity .6s;pointer-events:none}
-#loading{position:absolute;left:50%;top:60%;transform:translateX(-50%);color:#ffe9c9;font-weight:800}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 </head>
@@ -69,7 +69,7 @@ canvas{display:block}
   <div id="sub"><div class="fi"></div><div class="sv"></div></div>
   <button id="hint" title="Ledtråd">?</button>
   <div id="fade"></div>
-  <div id="start"><div class="panel"><h1>Siili</h1><h2>Kapitel 1 · Jee!</h2><p>Under trappan i Junis tegelhus bor en liten igelkott.<br>Han pratar finska. Du pratar svenska. Ni kan lära varandra!</p><button class="big" id="go">Börja</button><div id="loading">Laddar …</div></div></div>
+  <div id="start"><div class="panel"><h1>Siili</h1><h2>Kapitel 1 · Jee!</h2><p>Under trappan i Junis tegelhus bor en liten igelkott.<br>Han pratar finska. Du pratar svenska. Ni kan lära varandra!</p><button class="big" id="go">Börja</button><p id="loading" style="color:#8a7466;margin:12px 0 0">Laddar …</p></div></div>
   <div id="menu" class="hidden"><div class="panel"><h1>Jee!</h1><h2>Kapitel 1 · Siilis hem</h2><div class="doors" id="doors"></div><button class="big" id="close">Fortsätt</button></div></div>
   <div id="done" class="hidden"><div class="panel"><h1>Jee!</h1><h2 id="doneT"></h2><div style="font-size:90px">🦔⭐</div><button class="big" id="doneB">Vidare</button></div></div>
 </div>
@@ -135,10 +135,10 @@ function buildSquare(){
   for(let i=0;i<70;i++){const l=new THREE.Mesh(new THREE.CircleGeometry(.03+Math.random()*.03,6),M(rnd(lc)));l.rotation.x=-Math.PI/2;l.rotation.z=Math.random()*6;l.position.set(62.6+Math.random()*3.2,.002+Math.random()*.004,40.2+Math.random()*1.6);l.receiveShadow=true;outS.add(l)}
 }
 /* the hole by the steps */
-const HOLE=new THREE.Vector3(64.55,0,41.78);
+const HOLE=new THREE.Vector3(64.6,0,41.735);
 function buildHole(){
   const g=new THREE.Mesh(new THREE.CircleGeometry(.12,24,0,Math.PI),new THREE.MeshBasicMaterial({color:'#120b07'}));
-  g.position.set(HOLE.x,0,HOLE.z-.012);g.rotation.y=Math.PI;outS.add(g);
+  g.position.set(HOLE.x,0,HOLE.z-.004);g.rotation.y=Math.PI;outS.add(g);
   const rim=new THREE.Mesh(new THREE.TorusGeometry(.125,.018,8,24,Math.PI),M('#8b7d6c'));rim.position.copy(g.position);rim.rotation.y=Math.PI;outS.add(rim);
   g.userData.hole=true;return g;
 }
@@ -244,10 +244,10 @@ async function partIntro(){
   scene=outS; outS.remove(siili);
   cam.position.set(80,16,6); camLook.set(66,1,27);
   await camTo(new THREE.Vector3(70,6,20),new THREE.Vector3(66,1,34),3500);
-  await camTo(new THREE.Vector3(64.25,.32,40.55),new THREE.Vector3(64.6,.1,41.8),3500);
+  await camTo(new THREE.Vector3(64.95,.3,40.75),new THREE.Vector3(64.6,.08,41.73),3500);
   ask('Det prasslar under trappan … klicka på hålet!');
   await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
-  putSiiliOut(); siili.position.z=HOLE.z+.15; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.35),.1,0); face(cam.position);
+  putSiiliOut(); siili.position.z=HOLE.z+.12; await walkTo(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1,0); face(cam.position);
   await say('r1-01'); play('scared'); await say('r1-02');
   play('wave'); await say('r1-03'); showWord('Siili','igelkott'); await say('r1-04');
   play('nod'); await say('r1-10');
