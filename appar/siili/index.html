@@ -81,6 +81,7 @@ import {GTAOPass} from 'three/addons/postprocessing/GTAOPass.js';
 import {BokehPass} from 'three/addons/postprocessing/BokehPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 
 /* ---------- state ---------- */
@@ -148,8 +149,8 @@ const fill=new THREE.DirectionalLight('#9fc0ff',.5); fill.position.set(80,12,60)
 outS.add(sun,sun.target);
 /* home light */
 homeS.background=new THREE.Color('#22170f');
-homeS.add(new THREE.HemisphereLight('#ffd9b0','#8a5634',1.0));
-const hk=new THREE.DirectionalLight('#ffd9a8',.6); hk.position.set(.4,1.4,1.2); hk.castShadow=false; hk.shadow.mapSize.set(2048,2048); hk.shadow.radius=12; hk.shadow.blurSamples=20; homeS.fog=new THREE.Fog('#2c1c12',1.6,3.6);
+homeS.add(new THREE.HemisphereLight('#ffd2a0','#8a5634',1.1));
+const hk=new THREE.DirectionalLight('#ffd9a8',.6); hk.position.set(.4,1.4,1.2); hk.castShadow=false; hk.shadow.mapSize.set(2048,2048); hk.shadow.radius=12; hk.shadow.blurSamples=20; homeS.fog=new THREE.Fog('#3a2414',1.7,3.8);
 Object.assign(hk.shadow.camera,{left:-1,right:1,top:1,bottom:-1}); homeS.add(hk);
 
 /* ---------- painted textures (canvas) ---------- */
@@ -370,6 +371,21 @@ async function buildHome(){
   for(let i=0;i<40;i++){const r=R01(.004,.011);const pb=new THREE.Mesh(rockGeo(r,1,.2),M(new THREE.Color().setHSL(R01(.05,.1),.15,R01(.25,.42)).getStyle()));const a=R01(0,Math.PI*2),d=R01(.55,.9);pb.position.set(Math.cos(a)*d*.9,r*.3,Math.sin(a)*d*.7-.05);pb.castShadow=true;H.add(pb)}
   const web=tex(canvas(256,256,(g)=>{g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1;for(let i=0;i<9;i++){g.beginPath();g.moveTo(0,0);g.lineTo(Math.cos(i/16*Math.PI*1.1)*260,Math.sin(i/16*Math.PI*1.1)*260);g.stroke()}for(let r=20;r<250;r+=22){g.beginPath();for(let i=0;i<9;i++){const a=i/16*Math.PI*1.1;g.lineTo(Math.cos(a)*r,Math.sin(a)*r)}g.stroke()}}));
   const wb=new THREE.Mesh(new THREE.PlaneGeometry(.22,.22),new THREE.MeshBasicMaterial({map:web,transparent:true,opacity:.35,depthWrite:false}));wb.position.set(.6,.42,-.35);wb.rotation.set(-.3,-.8,Math.PI/2);H.add(wb);
+  // cosy: a string of tiny lights along the brick wall
+  {const pts=[];for(let i=0;i<=24;i++){const a=-Math.PI*.3+i/24*Math.PI*.6;pts.push(new THREE.Vector3(Math.sin(a)*.86,.47-Math.sin(i/24*Math.PI*3)*.03-Math.cos(a)*.02,-Math.cos(a)*.86+.05))}
+   const cv=new THREE.CatmullRomCurve3(pts);H.add(new THREE.Mesh(new THREE.TubeGeometry(cv,80,.0012,4),M('#3b2a1e')));
+   const cols=['#ffd27a','#ff9f6b','#ffe9a8','#ffb3c1','#bfe3ff'];fairy=[];
+   for(let i=0;i<18;i++){const p=cv.getPoint((i+.5)/18);const b=new THREE.Mesh(new THREE.SphereGeometry(.0065,10,8),new THREE.MeshBasicMaterial({color:cols[i%5]}));b.position.copy(p).add(new THREE.Vector3(0,-.008,0));H.add(b);fairy.push(b)}
+   const fl=new THREE.PointLight('#ffc27a',.6,1.2,1.5);fl.position.set(0,.42,-.6);H.add(fl)}
+  // a knitted cushion and a little woolly blanket by the bed
+  {const knit=tex(canvas(256,256,(g,w,h)=>{g.fillStyle='#c9604f';g.fillRect(0,0,w,h);for(let y=0;y<h;y+=12)for(let x=0;x<w;x+=10){g.fillStyle=`hsl(8,${50+Math.random()*10}%,${52+Math.random()*8}%)`;g.beginPath();g.ellipse(x+5,y+6,4,6,(y/12)%2?.4:-.4,0,7);g.fill()}
+     g.fillStyle='#f1e4cc';for(let x=0;x<w;x+=10){g.beginPath();g.ellipse(x+5,128,4,6,.4,0,7);g.fill()}}),[1,1]);
+   const cu=new THREE.Mesh(new RoundedBoxGeometry(.12,.04,.09,4,.018),new THREE.MeshPhysicalMaterial({map:knit,roughness:1,sheen:1,sheenRoughness:.6,sheenColor:new THREE.Color('#ffd6c8')}));cu.position.set(.4,.02,-.6);cu.rotation.y=-.3;cu.castShadow=true;H.add(cu);
+   const bl=new THREE.Mesh(new RoundedBoxGeometry(.16,.008,.12,2,.004),new THREE.MeshPhysicalMaterial({color:'#e9c46a',roughness:1,sheen:1,sheenRoughness:.5,sheenColor:new THREE.Color('#fff1c0')}));bl.position.set(.55,.06,-.42);bl.rotation.set(.05,-.5,.08);bl.castShadow=true;H.add(bl)}
+  // a stack of matchbox books and a basket of acorns
+  {const bc=['#3d6fa8','#d9a441','#7a9e5a','#b8463a'];for(let i=0;i<4;i++){const bk=new THREE.Mesh(new RoundedBoxGeometry(.07,.016,.05,2,.004),M(bc[i]));bk.position.set(-.6,.008+i*.017,-.18);bk.rotation.y=R01(-.25,.25);bk.castShadow=true;H.add(bk)}
+   const bas=new THREE.Mesh(new THREE.CylinderGeometry(.045,.035,.04,24,1,true),new THREE.MeshStandardMaterial({color:'#a8794a',roughness:1,side:THREE.DoubleSide}));bas.position.set(-.68,.02,.02);H.add(bas);
+   for(let i=0;i<5;i++){const ac=new THREE.Mesh(new THREE.SphereGeometry(.012,12,10),M('#9c6a3a'));ac.scale.y=1.3;ac.position.set(-.68+R01(-.022,.022),.04,.02+R01(-.022,.022));H.add(ac);const cap=new THREE.Mesh(new THREE.SphereGeometry(.0125,12,6,0,Math.PI*2,0,Math.PI/2),M('#5e4026'));cap.position.copy(ac.position).add(new THREE.Vector3(0,.008,0));H.add(cap)}}
   // the eight things
   for(const[w,[x,y,z,size]]of Object.entries(HOME_SPOTS)){const g=new THREE.Group();g.name='thing_'+w;g.position.set(x,y,z);H.add(g);things[w]=g}
   addPlaceholders();
@@ -397,7 +413,7 @@ function addPlaceholders(){
     const sock=new THREE.Mesh(tube,cream);g.add(sock);for(const t of[.1,.18,.82,.9]){const b=new THREE.Mesh(new THREE.TorusGeometry(.0262,.003,6,20),red);const p=tube.parameters.path.getPoint(t),tg=tube.parameters.path.getTangent(t);b.position.copy(p);b.position.y=.022;b.lookAt(p.clone().add(tg));b.scale.y=.55;g.add(b)}
     g.traverse(o=>o.castShadow=true);things.sukka.add(g)}
 }
-let homeLamp,homeFlame,homeCandle;
+let homeLamp,homeFlame,homeCandle,fairy=[];
 const rim=new THREE.SpotLight('#ffe4c0',3.5,1.6,.5,.9,1.2);rim.castShadow=false;const rimT=new THREE.Object3D();rim.target=rimT;
 let homeMotes,headBone,bodyBone,lookYaw=0,lookPitch=0,lookTarget=new THREE.Vector3(),bristle=0;
 function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
@@ -430,12 +446,29 @@ function learn(fi){st.words[fi]=(st.words[fi]||0)+1;save()}
 /* ---------- Siili movement ---------- */
 const tmp=new THREE.Vector3();
 let yawTarget=null;function face(p,instant){const d=tmp.copy(p).sub(siili.position);const y=Math.atan2(d.x,d.z);if(instant){siili.rotation.y=y;yawTarget=null}else yawTarget=y}
-async function walkTo(p,speed=.12,stop=.08){
-  face(p);await sleep(260);play('walk',.15);const start=siili.position.clone();const target=p.clone();target.y=start.y;
-  const dir=target.clone().sub(start);const len=Math.max(0,dir.length()-stop);dir.normalize();
-  const t0=performance.now();const dur=len/speed*1000+300;
-  await new Promise(r=>{(function step(){const u=Math.min(1,(performance.now()-t0)/dur);const k=u<.15?u*u/.3:u>.85?1-(1-u)*(1-u)/.3:(u-.075)/.85;siili.position.copy(start).addScaledVector(dir,len*Math.min(1,k));if(k<1)requestAnimationFrame(step);else r()})()});
-  play('idle',.2);
+/* obstacles in the burrow, so Siili walks round things instead of through them */
+const OBST=()=>scene!==homeS?[]:[...Object.entries(HOME_SPOTS).filter(([w])=>w!=='matto').map(([w,[x,,z]])=>({x,z,r:{pulla:.07,pallo:.08,mato:.11,kukka:.06,lamppu:.08,kuppi:.05,sukka:.14}[w]||.07,w})),
+  {x:.42,z:.32,r:.04},{x:-.22,z:.36,r:.04},{x:.62,z:-.44,r:.15},{x:.7,z:-.15,r:.04},{x:.74,z:.05,r:.07},{x:-.62,z:.3,r:.03},{x:-.1,z:.4,r:.05}];
+const BODY=.1;
+function blocked(a,b,obs){let best=null;for(const o of obs){const R=o.r+BODY;const dx=b.x-a.x,dz=b.z-a.z,L2=dx*dx+dz*dz||1e-6;let t=((o.x-a.x)*dx+(o.z-a.z)*dz)/L2;t=Math.max(0,Math.min(1,t));
+  const px=a.x+dx*t-o.x,pz=a.z+dz*t-o.z;if(px*px+pz*pz<R*R&&t>0&&t<1){if(!best||t<best.t)best={o,t}}}return best}
+function planPath(from,to,skip){const obs=OBST().filter(o=>o.w!==skip&&Math.hypot(o.x-to.x,o.z-to.z)>o.r+.02);let pts=[from.clone(),to.clone()];
+  for(let it=0;it<6;it++){let changed=false;for(let i=0;i<pts.length-1;i++){const hit=blocked(pts[i],pts[i+1],obs);if(!hit)continue;const o=hit.o,a=pts[i],b=pts[i+1];
+      const dx=b.x-a.x,dz=b.z-a.z,L=Math.hypot(dx,dz);const nx=-dz/L,nz=dx/L;const R=o.r+BODY+.04;
+      const c1=new THREE.Vector3(o.x+nx*R,0,o.z+nz*R),c2=new THREE.Vector3(o.x-nx*R,0,o.z-nz*R);
+      const cost=c=>a.distanceTo(c)+c.distanceTo(b)+(blocked(a,c,obs)?1:0)+(blocked(c,b,obs)?1:0);
+      pts.splice(i+1,0,cost(c1)<cost(c2)?c1:c2);changed=true;break}if(!changed)break}
+  return pts.slice(1)}
+async function walkLeg(p,speed){face(p);await sleep(180);const start=siili.position.clone();const target=p.clone();target.y=start.y;
+  const dir=target.clone().sub(start);const len=dir.length();dir.normalize();if(len<.005)return;
+  const t0=performance.now();const dur=len/speed*1000;
+  await new Promise(r=>{(function step(){const u=Math.min(1,(performance.now()-t0)/dur);siili.position.copy(start).addScaledVector(dir,len*u);if(u<1)requestAnimationFrame(step);else r()})()})}
+async function walkTo(p,speed=.12,stop=.08,skip){
+  const goal=p.clone();goal.y=siili.position.y;const d=goal.clone().sub(siili.position);const L=d.length();if(L>stop)goal.addScaledVector(d.normalize(),-stop);else{face(p);return}
+  const path=planPath(siili.position.clone(),goal,skip);
+  face(path[0]);await sleep(220);play('walk',.15);
+  for(const q of path){q.y=siili.position.y;await walkLeg(q,speed)}
+  play('idle',.2);face(p);
 }
 /* camera moves */
 let camFrom=null;
@@ -521,9 +554,9 @@ async function partFind(){
     const pos=new THREE.Vector3();things[w].getWorldPosition(pos);
     const nextPick=()=>new Promise(r=>{pickHandler=hits=>{const t=thingOf(hits);if(t){pickHandler=null;r(t)}}});
     const ladder=[async()=>{await say(`${w}-3`)},async()=>{face(pos);play('sniff');await say(`${w}-1`)},
-      async()=>{await walkTo(home.clone().lerp(pos,.5),.14,0);face(pos);play(O.anim);await say(`${w}-4`)},
+      async()=>{await walkTo(home.clone().lerp(pos,.5),.14,0,w);face(pos);play(O.anim);await say(`${w}-4`)},
       async()=>{await say(O.desc)},async()=>{await say(`${w}-5`)},
-      async()=>{await walkTo(pos,.14,.12);play('nod');await say(`${w}-6`)}];
+      async()=>{await walkTo(pos,.14,.16,w);play('nod');await say(`${w}-6`)}];
     const hb=$('#hint');hb.style.display='block';let busy=false;
     const giveHint=async()=>{if(busy||hints>=ladder.length)return;busy=true;await ladder[hints++]();busy=false};
     hb.onclick=giveHint;
@@ -536,7 +569,7 @@ async function partFind(){
     }
     clearInterval(auto);pickHandler=null;hb.style.display='none';ask('');
     const paws=hints<=1?3:hints<=3?2:1;addPaws(paws);learn(w);
-    await walkTo(pos,.16,.14);play('happy');showWord(w,O.sv);await praise();
+    await walkTo(pos,.16,.18,w);play('happy');showWord(w,O.sv);await praise();
     await walkTo(home,.16,0);face(cam.position);
   }
 }
@@ -579,7 +612,7 @@ async function partTeach(){
   if(scene!==homeS) await toHome();
   const words=shuffle(Object.keys(OBJ)).slice(0,5);const home=new THREE.Vector3(0,0.02,0.1);
   for(const w of words){const pos=new THREE.Vector3();things[w].getWorldPosition(pos);
-    await walkTo(pos,.15,.14);play('sniff');showWord(w,'',2200);await say('s-00');
+    await walkTo(pos,.15,.18,w);play('sniff');showWord(w,'',2200);await say('s-00');
     ask(`Vad heter ${w} på svenska?`);
     const opts=shuffle([w,...shuffle(Object.keys(OBJ).filter(x=>x!==w)).slice(0,2)]).map(k=>({t:OBJ[k].sv,e:OBJ[k].e,k}));
     let tries=0;for(;;){const {o,b}=await cardsChoice(opts);if(o.k===w){clearCards();ask('');await say(OBJ[w].s);play('happy');learn(w);addPaws(tries?1:3);break}
@@ -604,7 +637,6 @@ addEventListener('pointermove',e=>{mouse.set(e.clientX/innerWidth*2-1,-e.clientY
 R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
   if(mixer)mixer.update(dt);
   if(an&&!audio.paused){an.getByteTimeDomainData(buf);let s=0;for(const v of buf){const d=(v-128)/128;s+=d*d}const rms=Math.sqrt(s/buf.length);level+=(Math.min(1,rms*7)-level)*.5}else level*=.8;
-  if(jaw)jaw.rotateX(level*.42);
   if(siili&&siili.parent){if(rim.parent!==siili.parent){siili.parent.add(rim,rimT)}siili.getWorldPosition(_sp);const back=_sp.clone().sub(cam.position).setY(0).normalize();rim.position.copy(_sp).addScaledVector(back,.5).add(new THREE.Vector3(0,.32,0));rimT.position.copy(_sp).add(new THREE.Vector3(0,.08,0))}
   if(siili&&yawTarget!==null){let dy=yawTarget-siili.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));siili.rotation.y+=dy*Math.min(1,dt*6);if(Math.abs(dy)<.002)yawTarget=null}
   if(siili&&siili.parent&&headBone){
@@ -617,6 +649,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
   }
   if(motes){const a=motes.geometry.attributes.position;for(let i=0;i<a.count;i++){a.setY(i,a.getY(i)+Math.sin(t*.6+i)*.00012);a.setX(i,a.getX(i)+Math.cos(t*.4+i*1.7)*.00008)}a.needsUpdate=true}
   if(homeMotes){homeMotes.rotation.y=Math.sin(t*.05)*.05}
+  if(fairy.length&&scene===homeS){fairy.forEach((b,i)=>{const k=.75+.25*Math.sin(t*1.7+i*1.3);b.material.color.setScalar? null:null;b.scale.setScalar(.9+.2*k)})}
   if(homeCandle){const f=.85+Math.sin(t*13)*.06+Math.sin(t*7.3)*.05+Math.random()*.04;homeCandle.intensity=.9*f;homeFlame.scale.set(1,2*f,1)}
   for(const gl of gulls){const u=gl.userData,a=t*.25+u.ph;gl.position.set(66+Math.cos(a)*u.r,u.h+Math.sin(a*2)*.6,28+Math.sin(a)*u.r*.7);gl.rotation.y=-a+Math.PI}
   if(falling&&scene===outS){const p=falling.geometry.attributes.position;for(let i=0;i<p.count;i++){let y=p.getY(i)-dt*R01(.25,.45);if(y<0)y=R01(4,9);p.setY(i,y);p.setX(i,p.getX(i)+Math.sin(t*1.3+i)*dt*.4)}p.needsUpdate=true}
