@@ -777,7 +777,15 @@ $('#close').onclick=()=>$('#menu').classList.add('hidden');
 $('#bSub').textContent='Text: '+(st.sub?'på':'av');$('#bSnd').textContent=st.snd?'🔊':'🔇';$('#paws').textContent='🐾 '+st.paws;
 cam.position.set(80,16,6);
 const ready=init().catch(e=>{$('#loading').textContent='Kunde inte ladda: '+e.message;throw e});
-$('#go').onclick=async()=>{await ready;initAudio();$('#start').classList.add('hidden');if(!st.done.includes(0))runPart(0);else{renderMenu();$('#menu').classList.remove('hidden')}};
+async function introOnly(){setMusic('theme',false);useScene(outS);outS.remove(siili);await flyIn();
+  if(st.snd&&!music.paused&&music.duration)await Promise.race([new Promise(r=>music.addEventListener('ended',r,{once:true})),sleep(Math.max(0,(music.duration-music.currentTime)*1000+200))]);
+  document.querySelectorAll('#ui > div[style*="22%"]').forEach(e=>e.remove());
+  cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);setMusic('home');sfx('rustle',.6);await sleep(1500);
+  putSiiliOut();siili.position.set(HOLE.x,0,HOLE.z+.2);siili.rotation.y=Math.PI;play('sniff');
+  await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.02),.06);play('sniff');await sleep(900);
+  play('walk',.2);await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1);play('idle',.25);face(cam.position);await sleep(700);play('wave');await sleep(2500);play('happy');await sleep(2000);play('idle',.3);
+  const b=document.createElement('button');b.textContent='Se introt igen';b.className='big';Object.assign(b.style,{position:'absolute',left:'50%',bottom:'40px',transform:'translateX(-50%)',pointerEvents:'auto'});b.onclick=()=>location.reload();$('#ui').append(b)}
+$('#go').onclick=async()=>{await ready;initAudio();$('#start').classList.add('hidden');if(new URLSearchParams(location.search).has('intro')){introOnly();return}if(!st.done.includes(0))runPart(0);else{renderMenu();$('#menu').classList.remove('hidden')}};
 </script>
 </body>
 </html>
