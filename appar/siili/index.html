@@ -407,10 +407,10 @@ async function init(){
   // home
   await buildHome();
   // siili
-  const inner=sg.scene; inner.scale.setScalar(.15); inner.traverse(o=>{if(o.isMesh){const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>{m.clippingPlanes=SIILI_CLIP})}}); inner.position.y=.62*.15; siili=new THREE.Group(); siili.add(inner);
+  const inner=sg.scene; inner.scale.setScalar(.15); inner.traverse(o=>{if(o.isMesh){const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>{m.clippingPlanes=SIILI_CLIP})}}); inner.position.y=.62*.15; siili=new THREE.Group(); siili.add(inner);{const sh=new THREE.Mesh(new THREE.PlaneGeometry(.26,.32),new THREE.MeshBasicMaterial({map:tex(canvas(128,128,(g)=>{const gr=g.createRadialGradient(64,64,4,64,64,62);gr.addColorStop(0,'rgba(20,10,4,.75)');gr.addColorStop(.45,'rgba(20,10,4,.4)');gr.addColorStop(1,'rgba(20,10,4,0)');g.fillStyle=gr;g.fillRect(0,0,128,128)})),transparent:true,depthWrite:false,clippingPlanes:SIILI_CLIP,polygonOffset:true,polygonOffsetFactor:-4}));sh.rotation.x=-Math.PI/2;sh.position.y=.003;sh.renderOrder=2;siili.add(sh)}
   inner.traverse(o=>{if(o.isMesh&&/tongue|mouth_inside/.test(o.name))o.visible=false;if(o.isMesh){o.castShadow=true;o.frustumCulled=false} if(o.isBone&&o.name==='jaw') jaw=o; if(o.isBone&&o.name==='head') headBone=o; if(o.isBone&&o.name==='body') bodyBone=o});
   mixer=new THREE.AnimationMixer(inner);
-  for(const c of sg.animations){const a=mixer.clipAction(c);actions[c.name]=a;if(!['idle','walk'].includes(c.name)){a.setLoop(THREE.LoopOnce);a.clampWhenFinished=true}}
+  for(const c of sg.animations){if(c.name==='idle')for(const tr of c.tracks){if(/\.scale$/.test(tr.name)){for(let i=0;i<tr.values.length;i++)tr.values[i]=1+(tr.values[i]-1)*.15}}const a=mixer.clipAction(c);actions[c.name]=a;if(!['idle','walk'].includes(c.name)){a.setLoop(THREE.LoopOnce);a.clampWhenFinished=true}}
   play('idle');
   $('#loading').textContent='';
 }
@@ -515,7 +515,7 @@ let homeLamp,homeFlame,homeCandle,fairy=[];
 const WALL_CLIP=new THREE.Plane(new THREE.Vector3(0,0,-1),41.715);const SIILI_CLIP=[];
 const rim=new THREE.SpotLight('#ffe4c0',3.5,1.6,.5,.9,1.2);rim.castShadow=false;const rimT=new THREE.Object3D();rim.target=rimT;
 let homeMotes,headBone,bodyBone,lookYaw=0,lookPitch=0,lookTarget=new THREE.Vector3(),bristle=0;
-function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
+function play(name,fade=.25){if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);clearTimeout(play.t);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
   if(a.loop===THREE.LoopOnce){const d=a.getClip().duration*1000;clearTimeout(play.t);if(name!=='curl'&&name!=='sad')play.t=setTimeout(()=>play('idle'),d+60)}}
 
 /* ---------- music and sound effects ---------- */
@@ -621,15 +621,15 @@ let flyCancel=false;async function flyIn(){flyCancel=false;
   await new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/D);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;if(flyCancel){r();return}cam.position.copy(P.getPoint(e));camLook.copy(T.getPoint(e));if(k<1)requestAnimationFrame(step);else r()})()});
 }
 /* part 0: arriving at the stairs */
+function afterTheme(){if(st.snd&&!music.paused&&/theme/.test(music.dataset.src||'')){music.addEventListener('ended',()=>{if(/theme/.test(music.dataset.src||''))setMusic('home')},{once:true})}else setMusic('home')}
 async function partIntro(){
   setMusic('theme',false);
   useScene(outS); outS.remove(siili);
   const skip=document.createElement('button');skip.textContent='Hoppa över ›';Object.assign(skip.style,{position:'absolute',right:'20px',bottom:'24px',pointerEvents:'auto',font:'800 16px Nunito',background:'rgba(255,246,232,.85)',border:0,borderRadius:'999px',padding:'10px 18px',cursor:'pointer'});$('#ui').append(skip);
   let skipped=false;const skipP=new Promise(r=>skip.onclick=()=>{skipped=true;flyCancel=true;document.querySelectorAll('#ui > div[style*="22%"]').forEach(e=>e.remove());r()});
   await Promise.race([flyIn(),skipP]);
-  if(!skipped&&st.snd&&!music.paused&&music.duration)await Promise.race([new Promise(r=>music.addEventListener('ended',r,{once:true})),skipP,sleep(Math.max(0,(music.duration-music.currentTime)*1000+200))]);
   skip.remove();cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);
-  setMusic('home');sfx('rustle',.6);ask('Det prasslar under trappan … klicka på hålet!');
+  afterTheme();sfx('rustle',.6);ask('Det prasslar under trappan … klicka på hålet!');
   await waitPick(h=>h.some(x=>x.object===holeMesh)?true:undefined); ask('');
   putSiiliOut(); siili.position.set(HOLE.x,0,HOLE.z+.2); siili.rotation.y=Math.PI; play('sniff');
   await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.02),.06); play('sniff'); await sleep(900);
@@ -752,7 +752,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
     if(ray.ray.intersectPlane(_pl,_ip)){const local=siili.worldToLocal(_ip.clone());const yaw=Math.atan2(local.x,local.z);const tgt=THREE.MathUtils.clamp(yaw,-.55,.55);lookYaw+=(tgt-lookYaw)*.06}
     const talk=level>.05?Math.sin(t*9)*.05*level:0;
     
-    if(bodyBone){bristle*=.985;const b=1+bristle*.06+Math.sin(t*2.1)*.004+Math.sin(t*.37)*.003;bodyBone.scale.multiplyScalar(1).set(bodyBone.scale.x*b,bodyBone.scale.y,bodyBone.scale.z*b)}
+    if(bodyBone){bristle*=.985;const b=1+bristle*.06+Math.sin(t*2.1)*.0012;bodyBone.scale.multiplyScalar(1).set(bodyBone.scale.x*b,bodyBone.scale.y,bodyBone.scale.z*b)}
   }
   if(motes){const a=motes.geometry.attributes.position;for(let i=0;i<a.count;i++){a.setY(i,a.getY(i)+Math.sin(t*.6+i)*.00012);a.setX(i,a.getX(i)+Math.cos(t*.4+i*1.7)*.00008)}a.needsUpdate=true}
   if(homeMotes){homeMotes.rotation.y=Math.sin(t*.05)*.05}
@@ -780,13 +780,12 @@ $('#bSub').textContent='Text: '+(st.sub?'på':'av');$('#bSnd').textContent=st.sn
 cam.position.set(80,16,6);
 const ready=init().catch(e=>{$('#loading').textContent='Kunde inte ladda: '+e.message;throw e});
 async function introOnly(){setMusic('theme',false);useScene(outS);outS.remove(siili);await flyIn();
-  if(st.snd&&!music.paused&&music.duration)await Promise.race([new Promise(r=>music.addEventListener('ended',r,{once:true})),sleep(Math.max(0,(music.duration-music.currentTime)*1000+200))]);
   document.querySelectorAll('#ui > div[style*="22%"]').forEach(e=>e.remove());
-  cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);setMusic('home');sfx('rustle',.6);await sleep(1500);
+  cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);afterTheme();sfx('rustle',.6);await sleep(1200);
   putSiiliOut();siili.position.set(HOLE.x,0,HOLE.z+.2);siili.rotation.y=Math.PI;play('sniff');
   await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.02),.06);play('sniff');await sleep(900);
   play('walk',.2);await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1);play('idle',.25);face(cam.position);await sleep(700);play('wave');await sleep(2500);play('happy');await sleep(2000);play('idle',.3);
-  const b=document.createElement('button');b.textContent='Se introt igen';b.className='big';Object.assign(b.style,{position:'absolute',left:'50%',bottom:'40px',transform:'translateX(-50%)',pointerEvents:'auto'});b.onclick=()=>location.reload();$('#ui').append(b)}
+  const b=document.createElement('button');b.textContent='Spela ›';b.className='big';Object.assign(b.style,{position:'absolute',left:'50%',bottom:'40px',transform:'translateX(-50%)',pointerEvents:'auto'});b.style.zIndex=50;b.onclick=()=>{location.href=location.pathname};$('#ui').append(b)}
 $('#go').onclick=async()=>{st.snd=true;save();$('#bSnd').textContent='🔊';await ready;initAudio();$('#start').classList.add('hidden');if(new URLSearchParams(location.search).has('intro')){introOnly();return}if(!st.done.includes(0))runPart(0);else{renderMenu();$('#menu').classList.remove('hidden')}};
 </script>
 </body>
