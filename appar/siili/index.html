@@ -91,6 +91,7 @@ st.done??=[]; st.paws??=0; st.words??={}; st.sub??=true; st.snd??=true;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
 const $=s=>document.querySelector(s);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const R01=(a,b)=>a+Math.random()*(b-a);
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 let LINES={};
@@ -160,7 +161,6 @@ function skyTex(){const t=tex(canvas(2048,1024,(g,w,h)=>{const gr=g.createLinear
   for(let i=0;i<46;i++){const cx=Math.random()*w,cy=R01(h*.12,h*.44),sc=R01(.5,1.4);for(let k=0;k<14;k++){const x=cx+R01(-120,120)*sc,y=cy+R01(-18,14)*sc,r=R01(26,60)*sc;
     const c=g.createRadialGradient(x,y-r*.3,0,x,y,r);const warm=cy>h*.33;c.addColorStop(0,warm?'rgba(255,236,214,.75)':'rgba(255,250,244,.7)');c.addColorStop(.6,warm?'rgba(244,206,176,.35)':'rgba(236,236,246,.3)');c.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=c;g.fillRect(x-r,y-r,2*r,2*r)}}}));
   t.wrapS=THREE.RepeatWrapping;t.repeat.set(1,1);t.mapping=THREE.EquirectangularReflectionMapping;return t}
-const R01=(a,b)=>a+Math.random()*(b-a);
 // stones laid in rows: returns [colorCanvas,bumpCanvas]
 function stonework({w=1024,h=512,rows=5,base=[30,8,52],mortar='#6f655b',brick=false}){
   const bump=canvas(w,h,()=>{});const bg=bump.getContext('2d');bg.fillStyle='#000';bg.fillRect(0,0,w,h);
