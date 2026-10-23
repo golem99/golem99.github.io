@@ -151,7 +151,7 @@ file.onchange=async()=>{
   let b;try{b=JSON.parse(await f.text());if(b.format!=='love-backup'||!b.keys||typeof b.keys!=='object')throw Error('filen är ingen säkerhetskopia från Love')}catch(e){up.className='bad';up.textContent='Kunde inte läsa filen: '+e.message;return}
   const n=Object.keys(b.keys).filter(want).length;
   const when=new Date(b.created).toLocaleString('sv-SE');
-  if(!confirm('Läsa in säkerhetskopian från '+when+'?\n\n'+profiles(b.keys)+' profiler. Sparfilerna i webbläsaren byts ut mot kopians.\n\nDet som ligger sparat nu laddas först ner som en egen fil.\n\nÄr spelet stängt?'))return;
+  if(!confirm('Läsa in säkerhetskopian från '+when+'?\n\n'+pl(profiles(b.keys))+'. Sparfilerna i webbläsaren byts ut mot kopians.\n\nDet som ligger sparat nu laddas först ner som en egen fil.\n\nÄr spelet stängt?'))return;
   try{download(collect(),'love-before-restore-'+stamp()+'.json')}catch(e){up.className='bad';up.textContent='Kunde inte ladda ner det som ligger sparat nu, så inget har bytts ut: '+e;return}
   await new Promise(r=>setTimeout(r,800));
   const cur=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^love\.(save|polaroids|drawings)\./.test(k)||k==='love.save.v1'||k==='love.save.backup.v1'){if(!(k in b.keys))cur.push(k)}}
