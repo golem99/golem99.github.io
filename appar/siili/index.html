@@ -401,11 +401,11 @@ async function buildHome(){
   const web=tex(canvas(256,256,(g)=>{g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1;for(let i=0;i<9;i++){g.beginPath();g.moveTo(0,0);g.lineTo(Math.cos(i/16*Math.PI*1.1)*260,Math.sin(i/16*Math.PI*1.1)*260);g.stroke()}for(let r=20;r<250;r+=22){g.beginPath();for(let i=0;i<9;i++){const a=i/16*Math.PI*1.1;g.lineTo(Math.cos(a)*r,Math.sin(a)*r)}g.stroke()}}));
   const wb=new THREE.Mesh(new THREE.PlaneGeometry(.22,.22),new THREE.MeshBasicMaterial({map:web,transparent:true,opacity:.35,depthWrite:false}));wb.position.set(.6,.42,-.35);wb.rotation.set(-.3,-.8,Math.PI/2);H.add(wb);
   // cosy: a string of tiny lights along the brick wall
-  {const pts=[];for(let i=0;i<=24;i++){const a=-Math.PI*.3+i/24*Math.PI*.6;pts.push(new THREE.Vector3(Math.sin(a)*.86,.47-Math.sin(i/24*Math.PI*3)*.03-Math.cos(a)*.02,-Math.cos(a)*.86+.05))}
+  {const pts=[];for(let i=0;i<=24;i++){const a=-Math.PI*.3+i/24*Math.PI*.6;pts.push(new THREE.Vector3(Math.sin(a)*.66,.36-Math.sin(i/24*Math.PI*3)*.025,-Math.cos(a)*.6))}
    const cv=new THREE.CatmullRomCurve3(pts);H.add(new THREE.Mesh(new THREE.TubeGeometry(cv,80,.0012,4),M('#3b2a1e')));
    const cols=['#ffd27a','#ff9f6b','#ffe9a8','#ffb3c1','#bfe3ff'];fairy=[];
    for(let i=0;i<18;i++){const p=cv.getPoint((i+.5)/18);const b=new THREE.Mesh(new THREE.SphereGeometry(.0065,10,8),new THREE.MeshBasicMaterial({color:cols[i%5]}));b.position.copy(p).add(new THREE.Vector3(0,-.008,0));H.add(b);fairy.push(b)}
-   const fl=new THREE.PointLight('#ffc27a',.6,1.2,1.5);fl.position.set(0,.42,-.6);H.add(fl)}
+   const fl=new THREE.PointLight('#ffc27a',.7,1.2,1.5);fl.position.set(0,.3,-.45);H.add(fl)}
   // a knitted cushion and a little woolly blanket by the bed
   {const knit=tex(canvas(256,256,(g,w,h)=>{g.fillStyle='#c9604f';g.fillRect(0,0,w,h);for(let y=0;y<h;y+=12)for(let x=0;x<w;x+=10){g.fillStyle=`hsl(8,${50+Math.random()*10}%,${52+Math.random()*8}%)`;g.beginPath();g.ellipse(x+5,y+6,4,6,(y/12)%2?.4:-.4,0,7);g.fill()}
      g.fillStyle='#f1e4cc';for(let x=0;x<w;x+=10){g.beginPath();g.ellipse(x+5,128,4,6,.4,0,7);g.fill()}}),[1,1]);
