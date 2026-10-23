@@ -363,9 +363,9 @@ const dotTex=()=>tex(canvas(32,32,(g)=>{const r=g.createRadialGradient(16,16,0,1
 /* the hole by the steps */
 const HOLE=new THREE.Vector3(64.6,0,41.72);
 function buildHole(){
-  const g=new THREE.Mesh(new THREE.CircleGeometry(.12,24,0,Math.PI),new THREE.MeshBasicMaterial({color:'#120b07'}));
+  const g=new THREE.Mesh(new THREE.CircleGeometry(.17,32,0,Math.PI),new THREE.MeshBasicMaterial({color:'#120b07'}));
   g.position.set(HOLE.x,0,HOLE.z-.016);g.rotation.y=Math.PI;outS.add(g);
-  const rim=new THREE.Mesh(new THREE.TorusGeometry(.125,.018,8,24,Math.PI),M('#8b7d6c'));rim.position.copy(g.position);rim.position.z-=.004;rim.rotation.y=Math.PI;outS.add(rim);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(.176,.022,10,32,Math.PI),M('#8b7d6c'));rim.position.copy(g.position);rim.position.z-=.004;rim.rotation.y=Math.PI;outS.add(rim);
   g.userData.hole=true;return g;
 }
 
@@ -558,7 +558,7 @@ function planPath(from,to,skip){const obs=OBST().filter(o=>o.w!==skip&&Math.hypo
       const cost=c=>a.distanceTo(c)+c.distanceTo(b)+(blocked(a,c,obs)?1:0)+(blocked(c,b,obs)?1:0);
       pts.splice(i+1,0,cost(c1)<cost(c2)?c1:c2);changed=true;break}if(!changed)break}
   return pts.slice(1)}
-async function walkLeg(p,speed){if(actions.walk)actions.walk.timeScale=THREE.MathUtils.clamp(speed/.11,.6,1.6);face(p);await sleep(180);const start=siili.position.clone();const target=p.clone();target.y=start.y;
+async function walkLeg(p,speed){play('walk',.15);if(actions.walk)actions.walk.timeScale=THREE.MathUtils.clamp(speed/.045,1.2,2.8);face(p);await sleep(180);const start=siili.position.clone();const target=p.clone();target.y=start.y;
   const dir=target.clone().sub(start);const len=dir.length();dir.normalize();if(len<.005)return;
   const t0=performance.now();const dur=len/speed*1000;
   await new Promise(r=>{(function step(){const u=Math.min(1,(performance.now()-t0)/dur);siili.position.copy(start).addScaledVector(dir,len*u);if(u<1)requestAnimationFrame(step);else r()})()})}
@@ -751,7 +751,7 @@ R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedT
     siili.getWorldPosition(_sp);ray.setFromCamera(mouse,cam);_pl.setFromNormalAndCoplanarPoint(new THREE.Vector3(0,1,0),_sp);
     if(ray.ray.intersectPlane(_pl,_ip)){const local=siili.worldToLocal(_ip.clone());const yaw=Math.atan2(local.x,local.z);const tgt=THREE.MathUtils.clamp(yaw,-.55,.55);lookYaw+=(tgt-lookYaw)*.06}
     const talk=level>.05?Math.sin(t*9)*.05*level:0;
-    headBone.rotateZ(-lookYaw*.6);headBone.rotateX(Math.sin(t*.7)*.03+talk);
+    
     if(bodyBone){bristle*=.985;const b=1+bristle*.06+Math.sin(t*2.1)*.004+Math.sin(t*.37)*.003;bodyBone.scale.multiplyScalar(1).set(bodyBone.scale.x*b,bodyBone.scale.y,bodyBone.scale.z*b)}
   }
   if(motes){const a=motes.geometry.attributes.position;for(let i=0;i<a.count;i++){a.setY(i,a.getY(i)+Math.sin(t*.6+i)*.00012);a.setX(i,a.getX(i)+Math.cos(t*.4+i*1.7)*.00008)}a.needsUpdate=true}
