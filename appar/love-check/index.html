@@ -31,6 +31,17 @@ textarea{width:100%;height:160px;margin-top:12px;font:12px/1.4 ui-monospace,Cons
 
 <div class="card" id="summary"><p>Kontrollerar …</p></div>
 
+<div class="card" id="backupcard">
+<p class="big">Säkerhetskopia</p>
+<p>Laddar ner alla Loves sparfiler, profiler och bilder som en enda fil. Spara den till exempel i Dokument. Gör det gärna en gång i veckan.</p>
+<p><button id="dl">Ladda ner säkerhetskopia</button></p>
+<p id="dlmsg" class="muted"></p>
+<p style="margin-top:18px"><b>Läs in en säkerhetskopia</b></p>
+<p class="muted">Stäng spelet först. Det som ligger sparat nu laddas ner automatiskt innan något byts ut, så inget går förlorat.</p>
+<p><button id="pick">Välj fil att läsa in</button><input type="file" id="file" accept=".json,application/json" hidden></p>
+<p id="upmsg" class="muted"></p>
+</div>
+
 <div class="card" id="packcard">
 <p class="big">Gör plats i minnet</p>
 <p>Packar ihop Loves sparfiler så att de tar ungefär en tiondel så mycket plats. Ingenting tas bort, och spelet läser de packade filerna som vanligt. Låt spelet stå öppet i sin flik medan du trycker.</p>
@@ -121,6 +132,34 @@ btn.onclick=async()=>{
       localStorage.setItem(k,P+c);before+=raw.length*2;after+=(P.length+c.length)*2;n++}catch(e){fail.push(k+': '+e)}
   }
   msg.className='';msg.innerHTML='<b class="ok">Klart.</b> '+n+' sparfiler packade, från '+(before/1048576).toFixed(1)+' MB till '+(after/1048576).toFixed(1)+' MB.'+(fail.length?'<br><span class="bad">Lämnades som de var: '+fail.join('; ')+'</span>':'')+'<br>Vänta en halv minut så att spelet hinner spara, och stäng sedan spelets flik och öppna spelet igen.';
+};
+})();
+</script>
+<script>
+(()=>{
+const want=k=>k.startsWith('love.')&&k!=='love.saveError'&&k!=='love.check.tmp';
+const stamp=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'-'+z(d.getHours())+z(d.getMinutes())};
+function collect(){const keys={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(want(k))keys[k]=localStorage.getItem(k)}return{format:'love-backup',version:1,created:new Date().toISOString(),site:location.host,keys}}
+function download(obj,name){const blob=new Blob([JSON.stringify(obj)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);return blob.size}
+function profiles(keys){const ids=new Set();for(const k of Object.keys(keys)){const m=k.match(/^love\.save\.v1(?:\.(.+))?$/);if(m)ids.add(m[1]||'default')}return ids.size}
+const pl=n=>n===1?'1 profil':n+' profiler';const mb=n=>(n/1048576).toFixed(1)+' MB';
+document.getElementById('dl').onclick=()=>{try{const b=collect();const size=download(b,'love-backup-'+stamp()+'.json');document.getElementById('dlmsg').innerHTML='<b class="ok">Klart.</b> '+Object.keys(b.keys).length+' poster med '+pl(profiles(b.keys))+', '+mb(size)+'. Filen ligger bland dina nedladdade filer.'}catch(e){document.getElementById('dlmsg').textContent='Det gick inte: '+e}};
+const file=document.getElementById('file'),up=document.getElementById('upmsg');
+document.getElementById('pick').onclick=()=>file.click();
+file.onchange=async()=>{
+  const f=file.files[0];file.value='';if(!f)return;
+  let b;try{b=JSON.parse(await f.text());if(b.format!=='love-backup'||!b.keys||typeof b.keys!=='object')throw Error('filen är ingen säkerhetskopia från Love')}catch(e){up.className='bad';up.textContent='Kunde inte läsa filen: '+e.message;return}
+  const n=Object.keys(b.keys).filter(want).length;
+  const when=new Date(b.created).toLocaleString('sv-SE');
+  if(!confirm('Läsa in säkerhetskopian från '+when+'?\n\n'+profiles(b.keys)+' profiler. Sparfilerna i webbläsaren byts ut mot kopians.\n\nDet som ligger sparat nu laddas först ner som en egen fil.\n\nÄr spelet stängt?'))return;
+  try{download(collect(),'love-before-restore-'+stamp()+'.json')}catch(e){up.className='bad';up.textContent='Kunde inte ladda ner det som ligger sparat nu, så inget har bytts ut: '+e;return}
+  await new Promise(r=>setTimeout(r,800));
+  const cur=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^love\.(save|polaroids|drawings)\./.test(k)||k==='love.save.v1'||k==='love.save.backup.v1'){if(!(k in b.keys))cur.push(k)}}
+  let ok=0,fail=[];
+  // Skriv de stora posterna sist, så att små profiler och inställningar kommer in först.
+  const entries=Object.entries(b.keys).filter(([k])=>want(k)).sort((x,y)=>x[1].length-y[1].length);
+  for(const[k,v]of entries){try{localStorage.setItem(k,v);ok++}catch(e){fail.push(k)}}
+  up.className='';up.innerHTML=(fail.length?'<b class="bad">Delvis inläst.</b> ':'<b class="ok">Inläst.</b> ')+ok+' av '+n+' poster.'+(fail.length?' Fick inte plats: '+fail.join(', ')+'. Säg till Claude.':' Öppna spelet igen.')+(cur.length?'<br><span class="muted">'+cur.length+' sparfiler som inte fanns i kopian ligger kvar orörda.</span>':'');
 };
 })();
 </script>
