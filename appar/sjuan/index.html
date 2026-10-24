@@ -542,6 +542,16 @@ const SND={
  tick(){tone(660,0,.06,"sine",.05)},
  pop(){tone(880,0,.08,"sine",.05)}
 };
+/* hela talet uppläst efter fel svar (2026-10-24): audio/tal/a-b.mp3 (Steves ElevenLabs-röst),
+   annars telefonens svenska röst. Bara när ljudet är på. */
+const NUMW="noll ett två tre fyra fem sex sju åtta nio tio".split(" "),TENW={2:"tjugo",3:"trettio",4:"fyrtio",5:"femtio",6:"sextio",7:"sjuttio",8:"åttio",9:"nittio"},
+ TEENW={11:"elva",12:"tolv",13:"tretton",14:"fjorton",15:"femton",16:"sexton",17:"sjutton",18:"arton",19:"nitton"};
+const numW=n=>n<=10?NUMW[n]:n<20?TEENW[n]:n===100?"hundra":TENW[Math.floor(n/10)]+(n%10?NUMW[n%10]:"");
+let factAudio=null;
+function sayFact(a,b){if(!S.sound)return;try{if(factAudio)factAudio.pause();if(window.speechSynthesis)speechSynthesis.cancel()}catch(e){}
+ const tts=()=>{try{if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(`${NUMW[a]} gånger ${NUMW[b]} är ${numW(a*b)}`);u.lang="sv-SE";u.rate=.9;u.volume=.7;
+  const v=speechSynthesis.getVoices().find(x=>/^sv/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}};
+ try{factAudio=new Audio(`audio/tal/${a}-${b}.mp3`);factAudio.volume=.7;factAudio.onerror=tts;factAudio.play().catch(()=>{})}catch(e){tts()}}
 function buzz(p){if(navigator.vibrate&&S.sound)try{navigator.vibrate(p)}catch(e){}}
 function sndIcon(){document.querySelectorAll(".snd,#sound").forEach(b=>b.textContent=S.sound?"🔊":"🔇")}
 function toggleSound(){S.sound=!S.sound;save();sndIcon();if(S.sound)SND.pop()}
@@ -849,7 +859,7 @@ function gridQ(){
    move(1,1300);
   }else{
    btn.classList.add("wrong");all.forEach(o=>{if(o.dataset.v===right)o.classList.add("right");else if(o!==btn)o.classList.add("dim")});
-   S.tr.streak=0;SND.wrong();buzz([30,40,30]);busAnim("shake");save();showStreak();
+   S.tr.streak=0;SND.wrong();buzz([30,40,30]);busAnim("shake");setTimeout(()=>sayFact(a,b),450);save();showStreak();
    setTimeout(()=>explain(a,b),1100);
   }
  });
@@ -896,7 +906,7 @@ function answer(v,btn){
  }else{
   if(btn){btn.classList.add("wrong");all.forEach(b=>{if(+b.dataset.v===cur.ans)b.classList.add("right");else if(b!==btn)b.classList.add("dim")})}
   S.tr.streak=0;learn(cur.k,false);drawKnow(cur.k);retry.push({f:cur.form==='b'?[cur.n,cur.t]:[cur.t,cur.n],wait:2,flip:true},{f:[cur.t,cur.n],wait:6});
-  SND.wrong();buzz([30,40,30]);busAnim("shake");
+  SND.wrong();buzz([30,40,30]);busAnim("shake");{const c=cur;setTimeout(()=>c.form==='b'?sayFact(c.n,c.t):sayFact(c.t,c.n),450)}
   $("#hint").textContent=trick(cur.t,cur.n);const id=speaker();say(id,pick(CH[id].wrong));
   save();showStreak();setTimeout(()=>explain(cur.t,cur.n),1100);
  }
@@ -1157,7 +1167,7 @@ function vanish(t){
    if(all){SND.learned();confetti(20)}drawRows(0);$("#vgo").onclick=round;return}
   const n=queue.shift();drawRows(n);
   pad($("#vp"),t*n,ok=>{heart[n]=ok;total++;if(ok)got++;learn(fk(t,n),ok,true);countDay();drawRows(n);
-   if(ok){SND.right();buzz(25);setTimeout(next,650)}else{SND.wrong();$("#vmsg").textContent=trick(t,n);setTimeout(next,2600)}})};
+   if(ok){SND.right();buzz(25);setTimeout(next,650)}else{SND.wrong();setTimeout(()=>sayFact(t,n),450);$("#vmsg").textContent=trick(t,n);setTimeout(next,2600)}})};
  const done=()=>{const perfect=Object.values(heart).filter(x=>x).length;S.van=S.van||{};S.van[t]=Math.max(S.van[t]||0,perfect);save();SND.fanfare();confetti(perfect===10?90:40);
   sheet(`<h2>Hela ${t}:ans tabell!</h2><div class="stars">${"🩷".repeat(perfect)}${"🤍".repeat(10-perfect)}</div><p class="sub">${perfect===10?"Alla tio rader rätt på slutet. Den kan du utantill!":`${perfect} av 10 rader rätt på slutet. Kör en gång till, så sitter de andra också.`}</p>
    <button class="big" id="vagain">En gång till</button><button class="big alt" id="vhome">Till startsidan</button>`);
@@ -1175,7 +1185,7 @@ function exam(list,after,title){
   sheet(`<p class="sub">${title||"Slutförhör"} · fråga ${i+1} av ${list.length} · skriv svaret</p><h2 style="font-size:56px">${Math.random()<.5?t+" × "+n:n+" × "+t}</h2><div id="eo" style="display:grid"></div><div class="row" id="ex"></div>`);
   pad($("#eo"),a,good=>{learn(fk(t,n),good,quickOk(performance.now()-t0,FAST_TYPED));countDay();
    if(good){ok++;SND.right();setTimeout(()=>{i++;next()},700)}
-   else{SND.wrong();$("#ex").innerHTML=`<div class="bubble">${trick(t,n)}</div>`;setTimeout(()=>{i++;next()},2600)}});
+   else{SND.wrong();setTimeout(()=>sayFact(t,n),450);$("#ex").innerHTML=`<div class="bubble">${trick(t,n)}</div>`;setTimeout(()=>{i++;next()},2600)}});
  };next();
 }
 function repeatRound(){

@@ -1,6 +1,6 @@
 // Gör att spelet fungerar utan täckning när det väl laddats en gång.
 // Höj versionen vid varje ändring så att telefonerna hämtar det nya.
-const C = "tabellresan-v16";
+const C = "tabellresan-v17";
 const FILES = [
 "./",
 "index.html",
