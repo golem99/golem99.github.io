@@ -542,7 +542,13 @@ async function buildHome(){
     furn(H,'kaykit_table_medium',-1.0,0,.0,0,{h:.15}),
     furn(H,'kaykit_chair_A_wood',-1.22,0,.0,Math.PI/2,{h:.2}),
     furn(H,'kaykit_chair_A_wood',-.78,0,.0,-Math.PI/2,{h:.2}),
-    furn(H,'kaykit_rug_oval_A',-1.0,0,.02,0,{w:.5},{shadow:false}),
+    // 2026-10-24: the KayKit oval rug was a plain beige board too; a braided oval rag rug instead
+    (()=>{const rt=tex(canvas(512,512,(g,w,h)=>{const cols=['#c9785f','#e8d3b8','#7fa3b5','#e8d3b8','#d9a35e','#e8d3b8','#b8869a'];
+      for(let r=256,i=0;r>0;r-=13,i++){g.fillStyle=cols[i%cols.length];g.beginPath();g.arc(256,256,r,0,Math.PI*2);g.fill()}
+      for(let k=0;k<16000;k++){g.fillStyle=`rgba(${Math.random()<.5?'255,255,255':'70,40,30'},${(Math.random()*.1).toFixed(3)})`;g.fillRect(Math.random()*w,Math.random()*h,2,3)}}),[1,1]);
+     const r=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.005,64),new THREE.MeshStandardMaterial({map:rt,roughness:1}));
+     r.geometry.attributes.uv&&(()=>{const p=r.geometry.attributes.position,uv=r.geometry.attributes.uv;for(let i=0;i<p.count;i++)uv.setXY(i,p.getX(i)+.5,p.getZ(i)+.5);uv.needsUpdate=true})();
+     r.scale.set(.5,1,.36);r.position.set(-1.0,.0025,.02);r.receiveShadow=true;H.add(r);return r})(),
     // ---- living room ----
     furn(H,'kaykit_couch_pillows',.07,0,-.44,0,{h:.19}),
     furn(H,'kaykit_table_low',.08,0,-.18,0,{w:.26}),
@@ -557,7 +563,12 @@ async function buildHome(){
     // ---- bedroom ----
     furn(H,'kaykit_bed_single_A',1.0,0,-.38,0,{h:.14}),
     furn(H,'kaykit_cabinet_small_decorated',1.3,0,-.52,0,{h:.16}),
-    furn(H,'kaykit_rug_rectangle_stripes_A',1.0,0,.05,0,{w:.5},{shadow:false}),
+    // 2026-10-24: the KayKit rug showed as a flat beige board ("a plate under Siili"); a soft woven rug instead
+    (()=>{const rt=tex(canvas(512,384,(g,w,h)=>{g.fillStyle='#efe0cf';g.fillRect(0,0,w,h);
+      const cols=['#d79aa6','#efe0cf','#93b7c9','#efe0cf','#e2b277','#efe0cf'];let x=26,i=0;while(x<w-26){const sw=[22,34,14][i%3];g.fillStyle=cols[i%cols.length];g.fillRect(x,22,sw,h-44);x+=sw;i++}
+      for(let k=0;k<14000;k++){g.fillStyle=`rgba(${Math.random()<.5?'255,255,255':'70,40,30'},${(Math.random()*.09).toFixed(3)})`;g.fillRect(Math.random()*w,Math.random()*h,2,3)}
+      g.strokeStyle='#c98a7c';g.lineWidth=14;g.strokeRect(9,9,w-18,h-18);g.fillStyle='#efe0cf';for(let y=4;y<h;y+=9){g.fillRect(0,y,6,4);g.fillRect(w-6,y,6,4)}}),[1,1]);
+     const r=new THREE.Mesh(new RoundedBoxGeometry(.5,.005,.36,2,.0025),new THREE.MeshStandardMaterial({map:rt,roughness:1}));r.position.set(1.0,.0025,.06);r.receiveShadow=true;H.add(r);return r})(),
     furn(H,'tinytreats_slippers',.8,0,-.15,.4,{h:.025}),
     furn(H,'kaykit_shelf_B_large_decorated',.76,.42,B+.035,0,{w:.26}),
     furn(H,'kaykit_pictureframe_medium',1.02,.4,B+.012,0,{h:.13}),
