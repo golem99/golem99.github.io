@@ -174,6 +174,12 @@ body.typing #qtext{font-size:clamp(28px,min(12vw,44cqh),64px)}
 #stairs button.no{animation:wob .3s}
 #stairInfo{text-align:center;font-size:20px;font-weight:800;margin-top:8px}
 .stars{text-align:center;font-size:44px;letter-spacing:4px;margin:6px 0}
+.vt{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:8px 0}
+.vr{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 10px;border-radius:12px;background:var(--btn);font-size:19px;font-weight:800;box-shadow:0 3px 0 var(--line)}
+.vr.cur{outline:3px solid var(--pink);outline-offset:1px}
+.vr .va{min-width:1.8em;text-align:right;color:var(--pink)}.vr .va.gone{color:transparent;border-bottom:3px dashed var(--pink2)}
+.vr .vh{font-size:14px;width:1.2em;text-align:center}
+#vp{display:grid}#vp .typed{height:44px;font-size:32px}#vp .key{height:clamp(42px,6.5vh,56px)}
 .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
 .chip{height:54px;border-radius:16px;background:var(--btn);font-size:24px;font-weight:900;box-shadow:0 4px 0 var(--line)}
 .chip.on{background:var(--pink);color:#fff;box-shadow:0 4px 0 #d13f80}
@@ -328,7 +334,7 @@ const FAST_CHOICE=5000, FAST_TYPED=8000;   // så snabbt måste det gå för att
 const NEED=3;                              // antal snabba rätt i rad
 const INT=[0,1,3,7,14,30];                 // dagar till nästa repetition
 const DAILY=25;
-const TALK=.75;                            // hur ofta gänget pratar vid vanliga rätt svar (sänks gradvis)                            // rätt svar för dagens resa
+const TALK=.675;   // 2026-10-24: tio procent färre kommentarer (var .75)                            // hur ofta gänget pratar vid vanliga rätt svar (sänks gradvis)                            // rätt svar för dagens resa
 const TABN=["","ettans","tvåans","treans","fyrans","femmans","sexans","sjuans","åttans","nians","tians"];
 
 /* ================= Gänget (efter Hjärtpoäng) ================= */
@@ -484,6 +490,8 @@ let S=null;
 try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
 if(!S)S={};
 if(S.sound===undefined)S.sound=true;
+if(S.timer===undefined)S.timer=false;   // tidtagning: av som standard (2026-10-24)
+const quickOk=(ms,lim)=>!S.timer||ms<=lim;   // utan tidtagning räknas varje rätt svar
 if(!S.m)S.m={};
 if(!S.F)S.F={};                  // gångertal: "6x7" → {s,b,d,ok,bad}
 if(!S.av)S.av={img:"",name:""};  // avatar
@@ -589,18 +597,21 @@ function renderHome(){
   h+=`<button class="tab" data-t="${t}"><b>${t}:an</b><span class="to">→ ${d.short} ${d.emoji}</span><span class="to" style="font-size:11px">💡 ${TIP[t]}</span><span class="dots">${dots}</span>${S.stk[d.slug]?`<span class="got">🏅</span>`:""}</button>`});
  h+=`</div>`;
  h+=`<button class="cont" id="trollBtn" style="background:#5fae63;box-shadow:0 5px 0 #3f8a45"><small>${S.trollWins?`Du har vunnit ${S.trollWins} ${S.trollWins===1?"gång":"gånger"} · trollet har blivit ${trollHp()} hjärtan starkt`:"Trollet har samlat på dina svåraste tal"}</small>Utmana Tabelltrollet 🧌</button>
+ <button class="cont" id="vanBtn" style="background:#2fa3a0;box-shadow:0 5px 0 #1f7a78"><small>Läs hela tabellen – sedan försvinner svaren ett i taget</small>Försvinnande tabellen 🫥</button>
  <div class="row2"><button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button><button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>
  <button class="cont" id="plBtn" style="background:#7a5cff;box-shadow:0 5px 0 #5a3fd6"><small>Lyssna och sjung med · funkar med högtalaren</small>Låtarna 🎵</button>`;
  if(PL&&PL.a&&PL.a.src)h+=`<button class="pl-mini" id="plMini"><span>🎵 ${SONGS[PL.i].title}</span><i style="font-style:normal">${PL.a.paused?"▶️":"⏸"}</i></button>`;
  h+=`<div class="card"><h3>Du kan ${k} av 55 gångertal</h3><p class="muted">6 × 7 och 7 × 6 är samma tal. Därför finns det bara 55 att lära, inte 100. Varje tabell du kan gör nästa lättare!</p>
    <div class="grid">${grid}</div><div class="legend"><span style="--c:var(--pink2)">på väg</span><span style="--c:var(--pink)">kan</span><span style="--c:var(--gold)">sitter som berget</span></div></div>`;
- h+=`<div class="card"><h3>Så funkar det</h3><p class="muted">Ett tal räknas som kunnat när du svarar rätt och snabbt tre gånger i rad. Sedan kommer det tillbaka efter en dag, tre dagar och en vecka, så att det fastnar för alltid.</p></div>`;
+ h+=`<div class="card"><h3>Så funkar det</h3><p class="muted">Ett tal räknas som kunnat när du svarar rätt${S.timer?" och snabbt":""} tre gånger i rad. Sedan kommer det tillbaka efter en dag, tre dagar och en vecka, så att det fastnar för alltid.</p>
+   <button class="mbtn" id="timerBtn" style="width:100%;margin-top:10px">${S.timer?"⏱️ Tidtagning: på":"🐢 Tidtagning: av – ta den tid du behöver"}</button></div>`;
  $("#home").innerHTML=h;sndIcon();
  $("#hSnd").onclick=toggleSound;$("#avBtn").onclick=()=>avatarSheet(false);
  if($("#contBtn"))$("#contBtn").onclick=()=>{show("game");resume()};
  if($("#repBtn"))$("#repBtn").onclick=repeatRound;
  $("#home").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{SND.pop();b.dataset.t==="mix"?mixSheet():tripSheet(b.dataset.t)});
- $("#duelBtn").onclick=duelSheet;$("#trollBtn").onclick=trollFight;$("#albBtn").onclick=album;
+ $("#duelBtn").onclick=duelSheet;$("#vanBtn").onclick=vanishSheet;
+ $("#timerBtn").onclick=()=>{S.timer=!S.timer;save();SND.pop();renderHome()};$("#trollBtn").onclick=trollFight;$("#albBtn").onclick=album;
  $("#plBtn").onclick=plSheet;if($("#plMini"))$("#plMini").onclick=plSheet;
 }
 
@@ -775,11 +786,17 @@ function weight([a,b]){
  if(!(one&&(S.tr.tables[0]===1||S.tr.tables[0]===10))&&(a===1||b===1||a===10||b===10))w*=.5;
  return w;
 }
+// lätta tal: de hon redan kan, och gånger 1, 2, 5 och 10 (2026-10-24)
+const easyF=([a,b])=>known(fk(a,b))||Math.min(a,b)<=2||a===5||b===5||a===10||b===10;
 function pickFact(){
  for(const r of retry)r.wait--;
  const ri=retry.findIndex(x=>x.wait<=0);if(ri>=0)return retry.splice(ri,1)[0].f;
- const ws=P.map(weight),tot=ws.reduce((a,b)=>a+b,0);let x=Math.random()*tot;
- for(let i=0;i<P.length;i++){x-=ws[i];if(x<=0)return P[i]}return P[0];
+ // de första frågorna bara lätta, sedan ungefär var femte svår, och sakta fler (högst varannan)
+ const q=S.tr.qn||0,hardShare=q<6?0:Math.min(.5,.2+(S.tr.right||0)/150);
+ const easy=P.filter(easyF),hard=P.filter(f=>!easyF(f));
+ const want=Math.random()<hardShare?hard:easy,L=want.length?want:P;
+ const ws=L.map(weight),tot=ws.reduce((a,b)=>a+b,0);let x=Math.random()*tot;
+ for(let i=0;i<L.length;i++){x-=ws[i];if(x<=0)return L[i]}return L[0];
 }
 function makeQ(f){
  const [t,n]=f||pickFact(),p=t*n;
@@ -848,7 +865,7 @@ function showQ(){
  S.tr.qn=(S.tr.qn||0)+1;if(S.tr.qn%5===0&&gridQ())return;
  cur=makeQ();lock=false;$("#qtext").innerHTML=cur.text;$("#hint").textContent="";
  const A=$("#answers");A.classList.remove("pad");document.body.classList.remove("typing");
- if(S.tr.right>=4&&cur.ans>10&&Math.random()<.33){cur.typed=true;document.body.classList.add("typing");$("#hint").textContent="Skriv svaret själv ✏️";pad(A,cur.ans,ok=>answer(ok?cur.ans:-1,null))}
+ if(S.tr.right>=8&&cur.ans>10&&Math.random()<.25){cur.typed=true;document.body.classList.add("typing");$("#hint").textContent="Skriv svaret själv ✏️";pad(A,cur.ans,ok=>answer(ok?cur.ans:-1,null))}
  else{A.innerHTML=cur.opts.map(v=>`<button class="ans" data-v="${v}">${v}</button>`).join("");A.querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(+b.dataset.v,b))}
  qStart=performance.now();
 }
@@ -856,18 +873,18 @@ function talkNow(){const k=S.tr.tk=(S.tr.tk||0)+1;return Math.floor(k*TALK)>Math
 function countDay(){checkDay();S.day.r++;if(!S.day.done&&S.day.r>=DAILY){S.day.done=true;S.days++;save();return true}return false}
 function answer(v,btn){
  if(lock)return;lock=true;ac();
- const all=$("#answers").querySelectorAll(".ans"),ms=performance.now()-qStart,fast=ms<=(cur.typed?FAST_TYPED:FAST_CHOICE);
+ const all=$("#answers").querySelectorAll(".ans"),ms=performance.now()-qStart,fast=quickOk(ms,cur.typed?FAST_TYPED:FAST_CHOICE);
  if(v===cur.ans){
   if(btn){btn.classList.add("right");all.forEach(b=>{if(b!==btn)b.classList.add("dim")})}
   S.tr.streak++;S.tr.right++;const fresh=learn(cur.k,true,fast);drawKnow(cur.k);const dayDone=countDay();
-  let add=1+(cur.typed?.5:0);fast?SND.fast():SND.right();buzz(25);busAnim("hop");boost(2.6);
-  if(fast&&!fresh)$("#hint").textContent="⚡ Snabbt!";else if(!fast)$("#hint").textContent="Rätt! Nu lite snabbare nästa gång.";
+  let add=1+(cur.typed?.5:0);fast&&S.timer?SND.fast():SND.right();buzz(25);busAnim("hop");boost(2.6);
+  if(S.timer){if(fast&&!fresh)$("#hint").textContent="⚡ Snabbt!";else if(!fast)$("#hint").textContent="Rätt! Nu lite snabbare nästa gång."}
   if(dayDone)setTimeout(()=>{confetti(60);SND.fanfare();say(speaker(),`⭐ Dagens resa är klar, {n}! ${DAILY} rätt i dag!`)},200);
   else if(fresh){const [a,b]=[Math.min(cur.t,cur.n),Math.max(cur.t,cur.n)];setTimeout(()=>{SND.learned();say(speaker(),`Nu kan du ${a} × ${b}${a!==b?` – och ${b} × ${a} på köpet`:""}! 🩷`)},150)}
   else if(S.tr.streak%5===0){add+=2;setTimeout(()=>{SND.turbo();const t=$("#turbo");t.classList.remove("go");void t.offsetWidth;t.classList.add("go");boost(7)},250);
    say(speaker(),pick(["TURBO! {n} har fem rätt i rad!","Fem i rad! Bussen fick raketfart! 🚀","Turboläge! Håll i hatten!"]))}
   else if(!talkNow())$("#talk").innerHTML="";
-  else if(++sinceChat>=7&&Math.random()<.6){sinceChat=0;const id=speaker();say(id,pick(CH[id].chat))}
+  else if(++sinceChat>=8&&Math.random()<.55){sinceChat=0;const id=speaker();say(id,pick(CH[id].chat))}
   else{const id=speaker();say(id,pick(CH[id].right))}
   move(add,950);
  }else{
@@ -983,9 +1000,9 @@ let tq=0;
 function trollFight(){
  document.body.classList.remove("typing");
  if(typeof S.trollLvl!=="number")S.trollLvl=3;
- const max=trollHp(),P=trollPools(),used=new Set(),again=[];let hp=max,i=0,cur=null;
+ const max=trollHp(),P=trollPools(),used=new Set(),again=[];let hp=max,i=0,cur=null,run=0;
  sheet(`<h2 style="font-size:24px">Tabelltrollet!</h2><div class="tfrow">${trollImg("troll")}<div class="hp" id="hp"></div></div>
-  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:min(52px,7vh);margin:4px 0"></h2><div class="tbw"><span>⚡</span><div class="tbar"><i id="tbi"></i></div></div><div id="tp" style="display:grid"></div><button class="skip" id="tquit">Ge upp för den här gången</button>`);
+  <div class="row" id="tr1"></div><h2 id="tq" style="font-size:min(52px,7vh);margin:4px 0"></h2><div class="tbw" style="${S.timer?"":"display:none"}"><span>⚡</span><div class="tbar"><i id="tbi"></i></div></div><div id="tp" style="display:grid"></div><button class="skip" id="tquit">Ge upp för den här gången</button>`);
  $("#tquit").onclick=()=>{tq++;trollSay(TV.quit);$("#tquit").disabled=true;$("#tp").innerHTML="";setTimeout(()=>{close();renderHome()},S.sound?5200:2200)};
  const w=S.trollWins||0,rs=Math.random();trollSay(w>=3&&rs<.35?TV.many:max===15&&rs<.7?TV.start15:w>0&&rs<.85?TV.again:TV.start);
  const hpDraw=()=>{$("#hp").innerHTML=Array.from({length:max},(_,j)=>`<span>${j<hp?"💚":"🤍"}</span>`).join("")};
@@ -998,12 +1015,12 @@ function trollFight(){
   const my=++tq,bi=$("#tbi");bi.style.transition="none";bi.style.width="100%";void bi.offsetWidth;bi.style.transition=`width ${TROLL_TIME}ms linear`;bi.style.width="0%";
   pad($("#tp"),a,ok=>{if(my!==tq)return;tq++;bi.style.transition="none";res(ok)});
   function res(ok){
-   const ms=performance.now()-t0,quick=ms<=TROLL_TIME;
+   const ms=performance.now()-t0;run=ok?run+1:0;const quick=S.timer?ms<=TROLL_TIME:run%2===0;
    S.trollLvl=Math.max(0,Math.min(10,S.trollLvl+(ok?(quick?.25:.15):-.75)));
-   learn(fk(t,n),ok,ms<=FAST_TYPED);if(ok)countDay();
+   learn(fk(t,n),ok,quickOk(ms,FAST_TYPED));if(ok)countDay();
    const tr=$("#troll");tr.classList.remove("hit","laugh");void tr.offsetWidth;
    if(ok){const dmg=quick&&hp>1?2:1;hp-=dmg;i++;hpDraw();SND.hit();if(dmg>1)setTimeout(SND.hit,140);buzz(dmg>1?[30,40,30]:30);setTroll("troll");tr.classList.add("hit");tr.style.transform=`scale(${.62+hp/max*.38})`;
-    if(hp>0)trollSay(hp===1?TV.last:dmg>1?TV.super:TV.right,null,dmg>1?"⚡ Supersmäll! Två hjärtan på en gång!":"");setTimeout(next,hp===1?2400:1500)}
+    if(hp>0)trollSay(hp===1?TV.last:dmg>1?TV.super:TV.right,null,dmg>1?(S.timer?"⚡ Supersmäll! Två hjärtan på en gång!":"⚡ Två rätt i rad – supersmäll! Två hjärtan på en gång!"):"");setTimeout(next,hp===1?2400:1500)}
    else{setTroll("troll-laugh");tr.classList.add("laugh");again.push({f:cur,w:3});i++;trollSay(hp>=max-1?TV.wrong.concat(TV.wrongFull):TV.wrong,null,trick(t,n));setTimeout(()=>{setTroll("troll");next()},3400)}
   }
  };
@@ -1104,6 +1121,43 @@ function finish(){
 function goHome(){S.tr=null;save();close();document.body.classList.remove("typing","gridq");show("home");renderHome()}
 
 /* --- slutförhör / repetition: skriv själv --- */
+/* --- Försvinnande tabellen (2026-10-24): hela tabellen syns, sedan försvinner svaren
+   ett efter ett (de lätta först) och hon fyller i dem. Hjärta på varje rad hon klarar. --- */
+const VAN_STEPS=[1,2,3,4,6,8,10];   // hur många svar som är borta i varje omgång
+function vanishSheet(){let sel=S.vanT||7;
+ const draw=()=>{$("#chips").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="chip ${n===sel?"on":""}" data-n="${n}">${n}</button>`).join("");
+  $("#chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{sel=+b.dataset.n;SND.pop();draw()})};
+ sheet(`<h2>Försvinnande tabellen 🫥</h2><p class="sub">Läs hela tabellen. Sedan försvinner ett svar i taget, och du fyller i det som fattas. Till slut kan du hela tabellen utantill!</p>
+  <p class="sub" style="margin:10px 0 0">Vilken tabell?</p><div class="chips" id="chips"></div>
+  <button class="big" id="go">Börja</button><button class="big alt" id="no">Inte nu</button>`);
+ draw();$("#no").onclick=close;$("#go").onclick=()=>{S.vanT=sel;save();vanish(sel)};
+}
+function vanish(t){
+ const easyN=n=>n<=2||n===5||n===10;
+ const order=[...shuffle([1,2,3,4,5,6,7,8,9,10].filter(easyN)),...shuffle([1,2,3,4,5,6,7,8,9,10].filter(n=>!easyN(n)))];
+ const heart={};let step=-1,queue=[],total=0,got=0;
+ sheet(`<h2 style="font-size:24px;margin-bottom:0">${t}:ans tabell</h2><p class="sub" id="vmsg" style="margin:4px 0"></p><div class="vt" id="vt"></div><div id="vp"></div><button class="skip" id="vq">Sluta för den här gången</button>`);
+ $("#vq").onclick=()=>{close();renderHome()};
+ const gone=()=>step<0?[]:order.slice(0,VAN_STEPS[step]);
+ const drawRows=c=>{const g=gone();$("#vt").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="vr ${n===c?"cur":""}" style="order:${n<=5?n*2-1:(n-5)*2}"><span>${t} × ${n}</span><span class="va ${g.includes(n)&&n!==c?"gone":""}">${g.includes(n)&&n===c?"?":t*n}</span><span class="vh">${heart[n]===true?"🩷":heart[n]===false?"🤍":""}</span></div>`).join("")};
+ const round=()=>{step++;
+  if(step>=VAN_STEPS.length)return done();
+  queue=gone().slice().sort((a,b)=>a-b);
+  $("#vmsg").textContent=step===0?"Nu försvann ett svar. Vilket fattas?":`Omgång ${step+1} av ${VAN_STEPS.length}: nu fattas ${queue.length} svar.`;
+  next()};
+ const next=()=>{
+  if(!queue.length){const all=gone().every(n=>heart[n]===true);$("#vp").classList.remove("pad");$("#vp").innerHTML=`<button class="big" id="vgo">${step+1<VAN_STEPS.length?"Göm fler svar 🫥":"Se hur det gick"}</button>`;
+   $("#vmsg").textContent=all?pick(["Alla rätt! Snyggt!","Wow, du kom ihåg allt!","Perfekt! Du har det i huvudet."]):"Bra kämpat! Svaren du missade frågas igen.";
+   if(all){SND.learned();confetti(20)}drawRows(0);$("#vgo").onclick=round;return}
+  const n=queue.shift();drawRows(n);
+  pad($("#vp"),t*n,ok=>{heart[n]=ok;total++;if(ok)got++;learn(fk(t,n),ok,true);countDay();drawRows(n);
+   if(ok){SND.right();buzz(25);setTimeout(next,650)}else{SND.wrong();$("#vmsg").textContent=trick(t,n);setTimeout(next,2600)}})};
+ const done=()=>{const perfect=Object.values(heart).filter(x=>x).length;S.van=S.van||{};S.van[t]=Math.max(S.van[t]||0,perfect);save();SND.fanfare();confetti(perfect===10?90:40);
+  sheet(`<h2>Hela ${t}:ans tabell!</h2><div class="stars">${"🩷".repeat(perfect)}${"🤍".repeat(10-perfect)}</div><p class="sub">${perfect===10?"Alla tio rader rätt på slutet. Den kan du utantill!":`${perfect} av 10 rader rätt på slutet. Kör en gång till, så sitter de andra också.`}</p>
+   <button class="big" id="vagain">En gång till</button><button class="big alt" id="vhome">Till startsidan</button>`);
+  $("#vagain").onclick=()=>vanish(t);$("#vhome").onclick=()=>{close();renderHome()}};
+ drawRows(0);$("#vmsg").textContent="Läs hela tabellen högt en gång.";$("#vp").innerHTML=`<button class="big" id="vgo">Jag har läst – göm ett svar! 🫥</button>`;$("#vgo").onclick=round;
+}
 function exam(list,after,title){
  let i=0,ok=0;
  const next=()=>{
@@ -1113,7 +1167,7 @@ function exam(list,after,title){
    $("#eok").onclick=after;$("#again").onclick=()=>exam(shuffle(list),after,title);return}
   const [t,n]=list[i],a=t*n,t0=performance.now();
   sheet(`<p class="sub">${title||"Slutförhör"} · fråga ${i+1} av ${list.length} · skriv svaret</p><h2 style="font-size:56px">${Math.random()<.5?t+" × "+n:n+" × "+t}</h2><div id="eo" style="display:grid"></div><div class="row" id="ex"></div>`);
-  pad($("#eo"),a,good=>{learn(fk(t,n),good,performance.now()-t0<=FAST_TYPED);countDay();
+  pad($("#eo"),a,good=>{learn(fk(t,n),good,quickOk(performance.now()-t0,FAST_TYPED));countDay();
    if(good){ok++;SND.right();setTimeout(()=>{i++;next()},700)}
    else{SND.wrong();$("#ex").innerHTML=`<div class="bubble">${trick(t,n)}</div>`;setTimeout(()=>{i++;next()},2600)}});
  };next();
@@ -1166,14 +1220,14 @@ function noaQ(L){
 function turn(){
  if(!DU.on)return;
  const me=DU.turn,w=me==="s"?"S":"N",o=me==="s"?"N":"S",L=lvl();
- const q=me==="s"?sagaQ(L.s):noaQ(L.n);
+ const q=me==="s"?sagaQ(L.s):noaQ(L.n);if(me==="s"&&!S.timer)q.time=Math.round(q.time*1.6);
  $("#dq"+o).innerHTML=`<span style="font-size:22px;color:var(--soft)">${me==="s"?NAME:"Noa"} svarar …</span>`;$("#da"+o).innerHTML="";$("#da"+o).classList.remove("pad");$("#tb"+o).style.transition="none";$("#tb"+o).style.width="0";
  $("#hSaga").style.opacity=me==="s"?1:.55;$("#hNoa").style.opacity=me==="n"?1:.55;
  $("#dq"+w).innerHTML=q.text.replace("?",'<span class="blank">?</span>');
  const da=$("#da"+w),tb=$("#tb"+w),t0=performance.now();let done=false;
  tb.style.transition="none";tb.style.width="100%";requestAnimationFrame(()=>requestAnimationFrame(()=>{tb.style.transition=`width ${q.time}ms linear`;tb.style.width="0"}));
  const fin=ok=>{if(done)return;done=true;clearTimeout(DU.timer);
-  if(me==="s"&&q.k)learn(q.k,ok,performance.now()-t0<=FAST_CHOICE+2000);
+  if(me==="s"&&q.k)learn(q.k,ok,quickOk(performance.now()-t0,FAST_CHOICE+2000));
   if(ok){me==="s"?DU.s++:DU.n++;$("#sc"+w).textContent=me==="s"?DU.s:DU.n;SND.right();buzz(25);knot();
    if((me==="s"?DU.s:DU.n)>=GOAL)return setTimeout(()=>endDuel(me),500)}
   else{SND.wrong();if(!q.typed)da.querySelectorAll(".ans").forEach(x=>{if(+x.dataset.v===q.ans)x.classList.add("right")});
