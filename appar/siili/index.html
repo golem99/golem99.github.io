@@ -673,7 +673,7 @@ function play(name,fade=.25){if(name==='sad'||name==='curl'){faceMood=name==='sa
 
 /* ---------- music and sound effects ---------- */
 const music=new Audio();music.loop=true;let musicVol=.22;
-function setMusic(name,loop=true){music.loop=loop;if(!st.snd){music.pause();return}const src='music/'+name+'.mp3';if(music.dataset.src===src)return;music.dataset.src=src;music.src=src;music.volume=0;music.play().catch(()=>{});fadeMusic(name==='theme'?.5:musicVol)}
+function setMusic(name,loop=false){music.loop=false;if(!st.snd){music.pause();return}const src='music/'+name+'.mp3';if(music.dataset.src===src)return;music.dataset.src=src;music.src=src;music.volume=0;music.play().catch(()=>{});fadeMusic(name==='theme'?.5:musicVol)}
 function fadeMusic(to,ms=800){const from=music.volume,t0=performance.now();(function f(){const k=Math.min(1,(performance.now()-t0)/ms);music.volume=Math.max(0,Math.min(1,from+(to-from)*k));if(k<1)requestAnimationFrame(f)})()}
 const SFX={};for(const n of['right','wrong','newword','fanfare','rustle','sniff','door']){SFX[n]=new Audio('sfx/'+n+'.mp3')}
 function sfx(n,v=.5){if(n==='wrong')streak=0;if(!st.snd)return;const a=SFX[n].cloneNode();a.volume=v;a.play().catch(()=>{})}
@@ -797,6 +797,11 @@ function navPath(from,to,skip){
   // last step to the real goal when it's free (keeps "stop in front of the thing" exact)
   const ec=cell(to);if(free(...ec)&&out.length)out[out.length-1]=to.clone();
   return out.length?out:null}
+
+/* music (2026-10-24): every piece plays once and fades out over its last seconds, no looping */
+music.addEventListener('timeupdate',()=>{const d=music.duration;if(!isFinite(d)||music.loop)return;const left=d-music.currentTime;
+  if(left<5&&!music.__fading){music.__fading=true;fadeMusic(0,Math.max(300,left*1000))}});
+music.addEventListener('play',()=>{music.__fading=false});
 
 /* ---------- picking ---------- */
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let pickHandler=null,hoverHandler=null;
