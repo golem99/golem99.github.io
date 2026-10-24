@@ -455,7 +455,7 @@ const HOME_SPOTS={pulla:[-1.0,.152,.0,.08],pallo:[.2,.0,.32,.09],matto:[-.02,.00
 /* where Siili cannot walk: furniture and the two half walls between the rooms */
 const HOME_OBST=[{x:-1.3,z:-.5,r:.18},{x:-.95,z:-.5,r:.16},{x:-.68,z:-.5,r:.11},{x:-1.0,z:.0,r:.17},{x:-1.22,z:.0,r:.06},{x:-.78,z:.0,r:.06},
   {x:-.5,z:-.55,r:.06},{x:-.5,z:-.42,r:.06},{x:-.5,z:-.3,r:.06},{x:.5,z:-.55,r:.06},{x:.5,z:-.42,r:.06},{x:.5,z:-.3,r:.06},
-  {x:-.06,z:-.44,r:.13},{x:.2,z:-.44,r:.13},{x:.08,z:-.18,r:.1},{x:-.4,z:-.2,r:.08},{x:.42,z:-.5,r:.06},{x:-.36,z:-.52,r:.07},{x:.43,z:-.32,r:.06},{x:.34,z:.0,r:.1},
+  {x:-.06,z:-.44,r:.13},{x:.2,z:-.44,r:.13},{x:.08,z:-.18,r:.1},{x:-.4,z:-.2,r:.08},{x:.42,z:-.5,r:.06},{x:-.36,z:-.52,r:.07},{x:.43,z:-.32,r:.06},{x:.4,z:.1,r:.1},
   {x:1.0,z:-.48,r:.12},{x:1.0,z:-.26,r:.12},{x:1.3,z:-.52,r:.06},{x:1.4,z:.15,r:.05}];
 let homeCam='follow';
 function homeCamTarget(){
@@ -463,7 +463,7 @@ function homeCamTarget(){
   const x=siili&&siili.parent===homeS?THREE.MathUtils.clamp(siili.position.x,-1.0,1.0):0;
   return [new THREE.Vector3(x*.9,.32,1.22),new THREE.Vector3(x*.9,.1,-.18)];
 }
-function homeCamStep(dt){R.toneMappingExposure=scene===homeS?.95:1.15;if(scene!==homeS||homeCam==='free')return;const [p,l]=homeCamTarget();const k=1-Math.exp(-dt*(homeCam==='wide'?2.2:1.6));cam.position.lerp(p,k);camLook.lerp(l,k)}
+function homeCamStep(dt){R.toneMappingExposure=scene===homeS?.9:1.15;if(scene!==homeS||homeCam==='free')return;const [p,l]=homeCamTarget();const k=1-Math.exp(-dt*(homeCam==='wide'?2.2:1.6));cam.position.lerp(p,k);camLook.lerp(l,k)}
 function fitModel(m,{h,w}){const b=new THREE.Box3().setFromObject(m);const s=b.getSize(new THREE.Vector3());const k=h?h/s.y:w/Math.max(s.x,s.z);m.scale.multiplyScalar(k);
   const b2=new THREE.Box3().setFromObject(m);const c=b2.getCenter(new THREE.Vector3());m.position.x-=c.x;m.position.z-=c.z;m.position.y-=b2.min.y;return m}
 async function furn(H,f,x,y,z,ry,size,opts={}){
@@ -472,7 +472,7 @@ async function furn(H,f,x,y,z,ry,size,opts={}){
 }
 /* painted wallpapers: soft, slightly uneven, like a picture book */
 function wallpaper(kind){return canvas(512,512,(g,w,h)=>{
-  const bg={living:'#cfdcc4',kitchen:'#f1e3b4',bed:'#efd2d6'}[kind];g.fillStyle=bg;g.fillRect(0,0,w,h);
+  const bg={living:'#b9cdb0',kitchen:'#ecd79c',bed:'#e8bcc4'}[kind];g.fillStyle=bg;g.fillRect(0,0,w,h);
   for(let i=0;i<2500;i++){g.fillStyle=`rgba(${Math.random()<.5?'255,255,255':'90,70,60'},${Math.random()*.04})`;g.fillRect(Math.random()*w,Math.random()*h,R01(1,4),R01(1,4))}
   if(kind==='living'){for(let y=0;y<h;y+=64)for(let x=(y/64)%2?32:0;x<w;x+=64){g.save();g.translate(x+16,y+20);g.strokeStyle='#8fa98a';g.lineWidth=3;g.beginPath();g.moveTo(0,22);g.quadraticCurveTo(2,6,0,-8);g.stroke();
     g.fillStyle='#a7bf9e';for(const s of[-1,1]){g.beginPath();g.ellipse(s*7,4,7,3.5,s*.6,0,7);g.fill()}g.fillStyle='#f6f1e4';g.beginPath();g.arc(0,-10,4,0,7);g.fill();g.restore()}}
@@ -494,7 +494,7 @@ async function buildHome(){
   const H=homeS;homeS.background=new THREE.Color('#2a1d1a');
   const [kx0,kx1]=ROOM.kitchen,[lx0,lx1]=ROOM.living,[bx0,bx1]=ROOM.bed,B=ROOM.back,F=ROOM.front,WH=ROOM.h;
   // floor: one oak floor through all three rooms
-  {const t=tex(oakFloor(),[3,1]);const f=new THREE.Mesh(new THREE.PlaneGeometry(3,F-B),new THREE.MeshStandardMaterial({map:t,roughness:.62,color:'#e6cfb0'}));f.rotation.x=-Math.PI/2;f.position.set(0,0,(F+B)/2);f.receiveShadow=true;H.add(f);
+  {const t=tex(oakFloor(),[3,1]);const f=new THREE.Mesh(new THREE.PlaneGeometry(3,F-B),new THREE.MeshStandardMaterial({map:t,roughness:.62,color:'#d9b58f'}));f.rotation.x=-Math.PI/2;f.position.set(0,0,(F+B)/2);f.receiveShadow=true;H.add(f);
    // the doll's-house edge: a thick base under the floor
    const base=new THREE.Mesh(new THREE.BoxGeometry(3.04,.06,F-B+.04),M('#efe6d6'));base.position.set(0,-.031,(F+B)/2);H.add(base)}
   // walls: back wall per room with its wallpaper, white skirting, a picture rail and a dark cut edge on top
@@ -542,7 +542,7 @@ async function buildHome(){
     furn(H,'kaykit_table_medium',-1.0,0,.0,0,{h:.15}),
     furn(H,'kaykit_chair_A_wood',-1.22,0,.0,Math.PI/2,{h:.2}),
     furn(H,'kaykit_chair_A_wood',-.78,0,.0,-Math.PI/2,{h:.2}),
-    furn(H,'tinytreats_mat',-1.0,0,.0,0,{w:.55},{shadow:false}),
+    furn(H,'kaykit_rug_oval_A',-1.0,0,.02,0,{w:.5},{shadow:false}),
     // ---- living room ----
     furn(H,'kaykit_couch_pillows',.07,0,-.44,0,{h:.19}),
     furn(H,'kaykit_table_low',.08,0,-.18,0,{w:.26}),
@@ -563,6 +563,17 @@ async function buildHome(){
     furn(H,'kaykit_pictureframe_medium',1.02,.4,B+.012,0,{h:.13}),
     furn(H,'kaykit_cactus_medium_A',1.4,0,.15,0,{h:.12}),
   ]);
+  // little paintings in the empty frames: the lighthouse by the sea, a heart for Saga and a hedgehog family
+  {const art=(draw)=>tex(canvas(256,200,(g,w,h)=>{draw(g,w,h);g.strokeStyle='rgba(0,0,0,.15)';g.lineWidth=4;g.strokeRect(2,2,w-4,h-4)}));
+   const sea=art((g,w,h)=>{const s=g.createLinearGradient(0,0,0,h);s.addColorStop(0,'#f3c9a0');s.addColorStop(.55,'#cfe0ef');s.addColorStop(.56,'#5f8fb5');s.addColorStop(1,'#3e6f96');g.fillStyle=s;g.fillRect(0,0,w,h);
+     g.fillStyle='#fff3d6';g.beginPath();g.arc(70,70,22,0,7);g.fill();g.fillStyle='#f4efe6';g.fillRect(168,52,22,64);g.fillStyle='#c94b3e';for(let y=60;y<116;y+=16)g.fillRect(168,y,22,7);g.fillStyle='#3b2a20';g.fillRect(164,46,30,8);g.fillStyle='#ffd77a';g.fillRect(172,38,14,10);
+     g.fillStyle='#7d5a3c';g.beginPath();g.moveTo(140,118);g.lineTo(220,118);g.lineTo(236,130);g.lineTo(130,130);g.fill();g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=2;for(let i=0;i<6;i++){g.beginPath();g.moveTo(20+i*40,150+i%2*12);g.lineTo(44+i*40,150+i%2*12);g.stroke()}});
+   const heart=art((g,w,h)=>{g.fillStyle='#f6e7dc';g.fillRect(0,0,w,h);g.fillStyle='#e86a8c';g.beginPath();g.moveTo(128,160);g.bezierCurveTo(40,100,60,30,128,70);g.bezierCurveTo(196,30,216,100,128,160);g.fill();g.fillStyle='rgba(255,255,255,.4)';g.beginPath();g.arc(98,80,10,0,7);g.fill()});
+   const family=art((g,w,h)=>{g.fillStyle='#e9dcc2';g.fillRect(0,0,w,h);g.fillStyle='#b9d39a';g.fillRect(0,140,w,60);
+     const hog=(x,y,s)=>{g.fillStyle='#8a5a36';g.beginPath();g.ellipse(x,y,32*s,26*s,0,Math.PI,0);g.fill();for(let i=0;i<9;i++){g.beginPath();const a=Math.PI+i/8*Math.PI;g.moveTo(x+Math.cos(a)*28*s,y+Math.sin(a)*22*s);g.lineTo(x+Math.cos(a)*40*s,y+Math.sin(a)*34*s);g.lineTo(x+Math.cos(a+.2)*28*s,y+Math.sin(a+.2)*22*s);g.fill()}
+       g.fillStyle='#f2e2cc';g.beginPath();g.ellipse(x,y+6*s,22*s,20*s,0,0,7);g.fill();g.fillStyle='#2b1a12';g.beginPath();g.arc(x-8*s,y,3*s,0,7);g.arc(x+8*s,y,3*s,0,7);g.fill();g.beginPath();g.arc(x,y+8*s,4*s,0,7);g.fill()};
+     hog(80,120,1.1);hog(170,118,1.0);hog(126,138,.6)});
+   for(const[t,x,y,w,h]of[[sea,.04,.47,.095,.075],[heart,.26,.415,.05,.028],[family,1.02,.462,.085,.07]]){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:t,roughness:.85}));m.position.set(x,y,B+.03);H.add(m)}}
   // a tea set on the living-room table, and a teapot on the stove
   furn(H,'tinytreats-kitchen_kettle',-.9,.2,-.5,.4,{h:.05});furn(H,'tinytreats-kitchen_pot',-1.02,.2,-.47,0,{h:.03});
   furn(H,'tinytreats-kitchen_plate',.02,.056,-.17,0,{w:.06});
@@ -588,7 +599,7 @@ async function buildHome(){
    const tray=new THREE.Mesh(new THREE.BoxGeometry(.18,.008,.02),wood);tray.position.set(0,.085,.045);
    const chalk=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,.024,8),new THREE.MeshStandardMaterial({color:'#fffaf0',roughness:1}));chalk.rotation.z=Math.PI/2;chalk.position.set(.05,.092,.048);
    easel.add(frame,slate,tray,chalk);easel.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
-   easel.position.set(.34,0,.0);easel.rotation.y=-.35;easel.scale.setScalar(1.35);H.add(easel);homeBoard=easel}
+   easel.position.set(.4,0,.1);easel.rotation.y=-.55;easel.scale.setScalar(1.35);H.add(easel);homeBoard=easel}
   // the eight things
   for(const[w,[x,y,z,size]]of Object.entries(HOME_SPOTS)){const g=new THREE.Group();g.name='thing_'+w;g.position.set(x,y,z);H.add(g);things[w]=g}
   addPlaceholders();
@@ -626,13 +637,16 @@ let homeMotes,headBone,bodyBone,lookYaw=0,lookPitch=0,lookTarget=new THREE.Vecto
    loudness of the voice, the eyes blink every few seconds and change with the mood. */
 const MOUTHS=['O','A','laugh','E','sad','hmm'],EYES6=['closed','happy','wow','curious','sad','sleepy'];
 const faceParts={};let mouthShape='closed',eyeShape='open',mouthT=0,blinkAt=2,blinkEnd=0,faceMood=null;
+let faceBase=null;
 function facePatch(mesh,file,n){const t=new THREE.TextureLoader().load(file);t.colorSpace=THREE.SRGBColorSpace;t.repeat.set(1/n,1);t.anisotropy=8;
-  mesh.material=new THREE.MeshStandardMaterial({map:t,transparent:true,depthWrite:false,roughness:.9,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+  // same surface as the face itself, so the patch takes the light the same way
+  const m=faceBase?faceBase.clone():new THREE.MeshStandardMaterial({roughness:.9});m.map=t;m.normalMap=null;m.roughnessMap=null;m.metalnessMap=null;m.aoMap=null;m.transparent=true;m.depthWrite=false;
+  m.polygonOffset=true;m.polygonOffsetFactor=-8;m.polygonOffsetUnits=-8;m.clippingPlanes=SIILI_CLIP;mesh.material=m;
   mesh.renderOrder=3;mesh.castShadow=false;mesh.visible=false;return {mesh,t,n}}
 function showPatch(P,list,s){if(!P)return;const i=list.indexOf(s);if(i<0){P.mesh.visible=false;return}P.t.offset.x=i/P.n;P.mesh.visible=true}
 function drawMouth(s){showPatch(faceParts.mouth,MOUTHS,s)}
 function drawEyes(s){showPatch(faceParts.eye_r,EYES6,s);showPatch(faceParts.eye_l,EYES6,s)}
-function setupFace(inner){inner.traverse(o=>{if(!o.isMesh)return;if(o.name==='mouth')faceParts.mouth=facePatch(o,'face-mouth.png',6);
+function setupFace(inner){inner.traverse(o=>{if(o.isMesh&&!faceBase&&!/^(mouth|eye_r|eye_l|quill_shell)$/.test(o.name))faceBase=o.material});inner.traverse(o=>{if(!o.isMesh)return;if(o.name==='mouth')faceParts.mouth=facePatch(o,'face-mouth.png',6);
   if(o.name==='eye_r'||o.name==='eye_l')faceParts[o.name]=facePatch(o,`face-${o.name}.png`,6)})}
 /* a mood for a while: 'happy', 'wow', 'curious', 'sad', 'sleepy' (null = normal) */
 function setMood(m){faceMood=m}
@@ -646,9 +660,13 @@ function faceStep(dt,t){if(!faceParts.mouth)return;
   if(t>blinkAt){blinkEnd=t+.13;blinkAt=t+2.3+Math.random()*3.4;if(Math.random()<.18)blinkAt=t+.34}
   let e=mood||'open';if(t<blinkEnd&&e!=='happy')e='closed';if(e!==eyeShape){eyeShape=e;drawEyes(e)}}
 
-/* the four-legged Siili had curl, sneeze and sad; the two-legged one gets the nearest match */
-const ANIM_ALIAS={curl:'sitstand',sneeze:'scared',sad:'think'};
-function play(name,fade=.25){if(!actions[name]&&ANIM_ALIAS[name])name=ANIM_ALIAS[name];if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);clearTimeout(play.t);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
+/* the four-legged Siili had curl, sneeze and sad; the two-legged one gets the nearest match, plus a face */
+const ANIM_ALIAS={curl:'sitstand',sneeze:'scared',sad:'listen'};let moodT=0;
+function play(name,fade=.25){if(name==='sad'||name==='curl'){faceMood=name==='sad'?'sad':'sleepy';clearTimeout(moodT);if(name==='sad')moodT=setTimeout(()=>{if(faceMood==='sad')faceMood=null},3500)}else if(name!=='idle'&&faceMood==='sleepy')faceMood=null;
+  if(name==='happy'&&scene===homeS)name=rnd(['happy','happy','clap','thumbs','jump']);
+  if(name==='curl'&&actions.sitstand){const a=actions.sitstand;clearTimeout(play.t);a.reset();a.timeScale=-1;a.time=a.getClip().duration;a.setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;return}
+  if(name==='sitstand'&&actions.sitstand)actions.sitstand.timeScale=1;
+  if(!actions[name]&&ANIM_ALIAS[name])name=ANIM_ALIAS[name];if(name==='scared')bristle=1;if(name==='sniff')sfx('sniff',.35);clearTimeout(play.t);const a=actions[name];if(!a||current===a&&a.isRunning())return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();if(current&&current!==a)current.fadeOut(fade);current=a;
   if(a.loop===THREE.LoopOnce){const d=a.getClip().duration*1000;clearTimeout(play.t);if(name!=='curl'&&name!=='sad')play.t=setTimeout(()=>play('idle'),d+60)}}
 
 /* ---------- music and sound effects ---------- */
@@ -661,7 +679,8 @@ function sfx(n,v=.5){if(n==='wrong')streak=0;if(!st.snd)return;const a=SFX[n].cl
 let AC,an,buf=new Uint8Array(256),level=0;
 const audio=new Audio();audio.crossOrigin='anonymous';
 function initAudio(){AC=new AudioContext();const src=AC.createMediaElementSource(audio);an=AC.createAnalyser();an.fftSize=512;src.connect(an);an.connect(AC.destination)}
-function say(id,{word,sub=true}={}){
+function say(id,o={}){const idle=siili&&current===actions.idle&&scene===homeS&&Math.random()<.6;if(idle)play(rnd(['talk','talk2','present']),.3);return say0(id,o).then(v=>{if(idle&&(current===actions.talk||current===actions.talk2||current===actions.present))play('idle',.4);return v})}
+function say0(id,{word,sub=true}={}){
   const L=LINES[id]; if(!L) return Promise.resolve();
   showSub(L.fi,L.sv,sub);
   if(!st.snd){return sleep(900+L.fi.length*45).then(()=>hideSub())}
@@ -670,7 +689,7 @@ function say(id,{word,sub=true}={}){
 }
 function showSub(fi,sv,sub){$('#sub .fi').textContent=fi;$('#sub .sv').textContent=st.sub&&sub?sv:'';$('#sub').style.opacity=1}
 function hideSub(){$('#sub').style.opacity=0}
-function showWord(fi,sv,ms=2600){sfx('newword',.35);if(sv&&!st.words[fi]&&Math.random()<.4)setTimeout(()=>{if(audio.paused)say('g-uusisana')},2700);const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
+function showWord(fi,sv,ms=2600){sfx('newword',.35);if(scene===homeS)boardWrite(fi,sv||'');if(sv&&!st.words[fi]&&Math.random()<.4)setTimeout(()=>{if(audio.paused)say('g-uusisana')},2700);const w=$('#word');w.querySelector('.fi').textContent=fi;w.querySelector('.sv').textContent=sv;w.classList.add('on');clearTimeout(showWord.t);showWord.t=setTimeout(()=>w.classList.remove('on'),ms)}
 function ask(t){$('#ask').textContent=t;$('#ask').style.opacity=t?1:0}
 function addPaws(n){sfx('right',.45);st.paws+=n;save();$('#paws').textContent='🐾 '+st.paws}
 function learn(fi){st.words[fi]=(st.words[fi]||0)+1;save()}
@@ -734,7 +753,7 @@ const PARTS=[{n:'Vid trappan',d:'Siili tittar ut',f:partIntro},{n:'Missä on …
 function renderMenu(){const d=$('#doors');d.innerHTML='';PARTS.forEach((p,i)=>{const open=i===0||st.done.includes(i-1)||st.done.includes(i);const b=document.createElement('button');b.className='door'+(st.done.includes(i)?' done':'')+(open?'':' locked');
   b.innerHTML=`<div class="n">${i+1}</div><div><b>${p.n}</b></div><div class="d">${p.d}</div>`;if(open)b.onclick=()=>{$('#menu').classList.add('hidden');runPart(i)};d.append(b)})}
 let running=false;
-let greeted=false;async function runPart(i){if(running)return;running=true;if(i>0&&!greeted&&st.done.length){greeted=true;setTimeout(()=>{if(audio.paused)say(rnd(['g-moi-taas','g-moi-odotin']))},1600)}$('#part').textContent=`· ${i+1}. ${PARTS[i].n}`;try{await PARTS[i].f()}finally{running=false;ask('');clearCards();$('#hint').style.display='none'}
+let greeted=false;async function runPart(i){if(running)return;running=true;faceMood=null;if(actions.sitstand)actions.sitstand.timeScale=1;if(i>0&&!greeted&&st.done.length){greeted=true;setTimeout(()=>{if(audio.paused)say(rnd(['g-moi-taas','g-moi-odotin']))},1600)}$('#part').textContent=`· ${i+1}. ${PARTS[i].n}`;try{await PARTS[i].f()}finally{running=false;ask('');clearCards();$('#hint').style.display='none'}
   if(!st.done.includes(i)){st.done.push(i);save()}
   sfx('fanfare',.5);$('#doneT').textContent=`${PARTS[i].n} – klart!`;$('#done').classList.remove('hidden');
   $('#doneB').onclick=()=>{$('#done').classList.add('hidden');renderMenu();$('#menu').classList.remove('hidden')}}
@@ -871,7 +890,7 @@ async function partEvening(){
 
 /* ---------- loop ---------- */
 const clock=new THREE.Clock();let lastAct=performance.now();addEventListener('pointerdown',()=>lastAct=performance.now());
-setInterval(()=>{if(!siili||!siili.parent||!audio.paused||performance.now()-lastAct<16000)return;lastAct=performance.now();const k=rnd([['g-hum','idle'],['g-hmm','sniff'],['g-yawn','sad'],['g-sniffs','sniff']]);play(k[1]);say(k[0],{sub:false})},3000);
+setInterval(()=>{if(!siili||!siili.parent||!audio.paused||faceMood==='sleepy'||performance.now()-lastAct<16000)return;lastAct=performance.now();const k=rnd([['g-hum','idle'],['g-hmm','sniff'],['g-yawn','idle'],['g-sniffs','sniff']]);play(k[1]);say(k[0],{sub:false})},3000);
 const _hp=new THREE.Vector3(),_pl=new THREE.Plane(),_ip=new THREE.Vector3(),_sp=new THREE.Vector3();
 addEventListener('pointermove',e=>{mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1)});
 R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
