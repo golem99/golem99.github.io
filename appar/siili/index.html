@@ -1050,14 +1050,14 @@ function woodTex2(base='#9a7a58',grain='#6f5338',w=512,h=128){return canvas(w,h,
   for(let i=0;i<70;i++){g.strokeStyle=`rgba(${Math.random()<.5?'60,40,25':'255,240,220'},${(Math.random()*.18).toFixed(3)})`;g.lineWidth=R01(.5,2.5);g.beginPath();const y=Math.random()*h;g.moveTo(0,y);for(let x=0;x<=w;x+=32)g.lineTo(x,y+Math.sin(x*.02+i)*R01(1,4));g.stroke()}
   for(let i=0;i<6;i++){g.fillStyle='rgba(70,45,28,.35)';g.beginPath();g.ellipse(Math.random()*w,Math.random()*h,R01(4,9),R01(2,4),0,0,Math.PI*2);g.fill()}})}
 function buildHarbor(){if(harbBuilt)return;harbBuilt=true;const H=harbS;
-  H.background=outS.background;H.fog=new THREE.FogExp2('#dcc9b4',.035);
+  H.background=outS.background;H.fog=new THREE.FogExp2('#dcc9b4',.024);
   H.add(new THREE.HemisphereLight('#c9d8f0','#8a6a50',1.25));
   const sunH=new THREE.DirectionalLight('#ffd2a0',3);sunH.position.set(-6,7,5);sunH.castShadow=true;sunH.shadow.mapSize.set(2048,2048);
   Object.assign(sunH.shadow.camera,{left:-6,right:6,top:6,bottom:-6,near:.5,far:30});sunH.shadow.bias=-.0005;sunH.shadow.normalBias=.02;sunH.shadow.radius=6;sunH.target.position.set(0,0,-1);H.add(sunH,sunH.target);
   const fillH=new THREE.DirectionalLight('#9fc0ff',.45);fillH.position.set(6,4,-4);H.add(fillH);
   // --- the sea: a big plane with soft rolling waves (vertex shader) and a darker colour further out
   const wg=new THREE.PlaneGeometry(80,80,160,160);wg.rotateX(-Math.PI/2);
-  const wm=new THREE.MeshStandardMaterial({color:'#4f7f8c',roughness:.18,metalness:.05,transparent:true,opacity:.96});
+  const wm=new THREE.MeshPhysicalMaterial({color:'#3f6f7e',roughness:.12,metalness:0,clearcoat:.6,clearcoatRoughness:.2,envMap:outS.background,envMapIntensity:.9,transparent:true,opacity:.97});
   wm.onBeforeCompile=sh=>{sh.uniforms.uT={value:0};wm.userData.sh=sh;
     sh.vertexShader='uniform float uT;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       float w1=sin(position.x*.9+uT*1.1)*.035+sin(position.z*1.3-uT*1.4)*.03+sin((position.x+position.z)*2.7+uT*2.2)*.012;transformed.y+=w1;`)
@@ -1087,9 +1087,16 @@ function buildHarbor(){if(harbBuilt)return;harbBuilt=true;const H=harbS;
   const red='#9b2f24';
   for(const [x,w,rot] of[[-6.5,4.2,.05],[-1.6,3.6,-.03],[3.6,4.6,.02],[8.6,3.8,-.05]]){const g=new THREE.Group();const d=3.2,hh=2.4;
     const wall=new THREE.Mesh(new THREE.BoxGeometry(w,hh,d),new THREE.MeshStandardMaterial({map:tex(canvas(256,128,(c,cw,ch)=>{c.fillStyle=red;c.fillRect(0,0,cw,ch);for(let x2=0;x2<cw;x2+=12){c.fillStyle='rgba(0,0,0,.18)';c.fillRect(x2,0,2,ch)}}),[2,1]),roughness:.95}));wall.position.y=hh/2;
-    const roof=new THREE.Mesh(new THREE.CylinderGeometry(.01,w*.62,1.4,4,1),new THREE.MeshStandardMaterial({color:'#3a3634',roughness:.9}));roof.rotation.y=Math.PI/4;roof.scale.set(1,1,d/w*1.1);roof.position.y=hh+.68;
-    const door=new THREE.Mesh(new THREE.BoxGeometry(w*.4,hh*.75,.05),new THREE.MeshStandardMaterial({color:'#efe6d6',roughness:.8}));door.position.set(0,hh*.38,d/2+.02);
-    const trim=new THREE.Mesh(new THREE.BoxGeometry(w*.36,hh*.68,.06),new THREE.MeshStandardMaterial({color:red,roughness:.95}));trim.position.set(0,hh*.36,d/2+.04);
+    const rs=new THREE.Shape();rs.moveTo(-w/2-.25,0);rs.lineTo(0,1.3);rs.lineTo(w/2+.25,0);rs.lineTo(w/2+.1,0);rs.lineTo(0,1.12);rs.lineTo(-w/2-.1,0);rs.closePath();
+    const roof=new THREE.Mesh(new THREE.ExtrudeGeometry(rs,{depth:d+.5,bevelEnabled:false}),new THREE.MeshStandardMaterial({color:'#3a3634',roughness:.9}));roof.position.set(0,hh,-d/2-.25);
+    const gs=new THREE.Shape();gs.moveTo(-w/2,0);gs.lineTo(0,1.12);gs.lineTo(w/2,0);gs.closePath();
+    const gable=new THREE.Mesh(new THREE.ExtrudeGeometry(gs,{depth:d,bevelEnabled:false}),wall.material);gable.position.set(0,hh,-d/2);
+    const winM=new THREE.MeshStandardMaterial({color:'#2b3640',roughness:.2,metalness:.2}),frM=new THREE.MeshStandardMaterial({color:'#f4efe6',roughness:.8});
+    for(const wx of[-w*.33,w*.33]){const fr=new THREE.Mesh(new THREE.BoxGeometry(.62,.62,.05),frM);fr.position.set(wx,hh*.62,d/2+.03);const gl=new THREE.Mesh(new THREE.BoxGeometry(.5,.5,.06),winM);gl.position.set(wx,hh*.62,d/2+.04);
+      const cx=new THREE.Mesh(new THREE.BoxGeometry(.04,.5,.07),frM);cx.position.copy(gl.position);const cy=new THREE.Mesh(new THREE.BoxGeometry(.5,.04,.07),frM);cy.position.copy(gl.position);g.add(fr,gl,cx,cy)}
+    g.add(gable);
+    const door=new THREE.Mesh(new THREE.BoxGeometry(w*.4,hh*.75,.05),new THREE.MeshStandardMaterial({color:'#efe6d6',roughness:.8}));door.position.set(0,hh*.38,d/2+.02);door.scale.x=.55;
+    const trim=new THREE.Mesh(new THREE.BoxGeometry(w*.36,hh*.68,.06),new THREE.MeshStandardMaterial({color:red,roughness:.95}));trim.position.set(0,hh*.36,d/2+.04);trim.scale.x=.55;
     g.add(wall,roof,door,trim);g.position.set(x,-.05,PZ0-3.4);g.rotation.y=rot;g.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true}});H.add(g)}
   const trunkM=new THREE.MeshStandardMaterial({color:'#e8e2d6',roughness:.9}),leafM=[new THREE.MeshStandardMaterial({color:'#d9a441',roughness:.9}),new THREE.MeshStandardMaterial({color:'#c46a2e',roughness:.9})];
   for(let i=0;i<12;i++){const x=R01(-16,16),z=PZ0-R01(6,10),h=R01(4,7);const t=new THREE.Mesh(new THREE.CylinderGeometry(.12,.18,h,8),trunkM);t.position.set(x,h/2-.3,z);H.add(t);
@@ -1121,7 +1128,7 @@ function buildHarbor(){if(harbBuilt)return;harbBuilt=true;const H=harbS;
   harbBoat.position.set(14,-.48,-1.0);harbBoat.rotation.y=Math.PI*.5;H.add(harbBoat);
   // the Meshy boat (with its own Å) replaces the built one when it has loaded
   load('boat.glb').then(g=>{const m=g.scene;m.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true}});
-    const bx=new THREE.Box3().setFromObject(m),sz=bx.getSize(new THREE.Vector3());m.scale.multiplyScalar(3.0/Math.max(sz.x,sz.z));
+    const bx=new THREE.Box3().setFromObject(m),sz=bx.getSize(new THREE.Vector3());m.scale.multiplyScalar(2.6/Math.max(sz.x,sz.z));
     const b2=new THREE.Box3().setFromObject(m);m.rotation.y=sz.x>sz.z?Math.PI/2:0;m.position.y=-b2.min.y-.28;
     harbBoat.clear();harbBoat.add(m);harbA=null}).catch(()=>{});
   // two buckets on the pier, O (red) and U (blue), with the letter painted on
@@ -1132,16 +1139,18 @@ function buildHarbor(){if(harbBuilt)return;harbBuilt=true;const H=harbS;
     const handle=new THREE.Mesh(new THREE.TorusGeometry(.15,.008,6,32,Math.PI),new THREE.MeshStandardMaterial({color:'#8c8c8c',metalness:.6,roughness:.4}));handle.position.y=.24;
     g.add(b,bottom,handle);g.traverse(o=>{if(o.isMesh)o.castShadow=true});g.position.set(x,0,-.55);g.rotation.y=-Math.PI/2;g.scale.setScalar(.72);g.visible=false;H.add(g);return g};
   bucketO=mkBucket('O','#c94b3a',-.42);bucketU=mkBucket('U','#3f74b8',.12);
+  const hg=[];try{for(const gl of gulls.slice(0,3)){const c=gl.clone();H.add(c);hg.push(c)}}catch(e){}
   // waves move, the boat bobs
   (function tick(now){requestAnimationFrame(tick);if(scene!==harbS)return;const t=now/1000;if(wm.userData.sh)wm.userData.sh.uniforms.uT.value=t;
     if(harbBoat){harbBoat.position.y=-.48+Math.sin(t*1.3)*.035;harbBoat.rotation.z=Math.sin(t*1.1)*.035;harbBoat.rotation.x=Math.sin(t*.9)*.02;
-      if(harbA)harbA.rotation.y=Math.sin(t*.7)*.15}})(0);
+      if(harbA)harbA.rotation.y=Math.sin(t*.7)*.15}
+    hg.forEach((c,i)=>{const a=t*.22+i*2.1,r=5+i*1.5;c.position.set(Math.cos(a)*r+1,4+i*.7+Math.sin(a*2)*.4,-4+Math.sin(a)*r*.6);c.rotation.y=-a+Math.PI})})(0);
 }
 const HARB_CAM=[new THREE.Vector3(-.28,.36,.95),new THREE.Vector3(.3,.13,-.4)];
 function putSiiliHarbor(){SIILI_CLIP.length=0;harbS.add(siili);siili.position.set(.15,0,-.25);siili.rotation.y=.3;yawTarget=null}
 async function toHarbor(){buildHarbor();setMusic('home');await fadeTo(harbS);putSiiliHarbor();cam.position.copy(HARB_CAM[0]);camLook.copy(HARB_CAM[1])}
 function boatTo(x,z,ms){const p0=harbBoat.position.clone();const t0=performance.now();return new Promise(r=>{(function s(){const k=Math.min(1,(performance.now()-t0)/ms),e=1-Math.pow(1-k,3);harbBoat.position.x=p0.x+(x-p0.x)*e;harbBoat.position.z=p0.z+(z-p0.z)*e;if(k<1)requestAnimationFrame(s);else r()})()})}
-async function boatIn(){harbBoat.position.set(12,-.48,-1.6);harbBoat.rotation.y=Math.PI*.5;sfx('rustle',.25);await boatTo(1.85,-1.0,5200);
+async function boatIn(){harbBoat.position.set(12,-.48,-1.6);harbBoat.rotation.y=Math.PI*.5;sfx('rustle',.25);await boatTo(2.3,-1.5,5200);
   const r0=harbBoat.rotation.y,t0=performance.now();await new Promise(r=>{(function s(){const k=Math.min(1,(performance.now()-t0)/1200);harbBoat.rotation.y=r0+(0-r0)*(k*k*(3-2*k));if(k<1)requestAnimationFrame(s);else r()})()})}
 
 /* words and pictures */
