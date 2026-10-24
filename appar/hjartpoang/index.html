@@ -1034,7 +1034,7 @@ async function run(id,cv){const c=CHARS[id];
   const it=itemAt(cv.k);
   if(cv.stage===0){setReplies(it.opts.map(o=>[o[0],o[1]]),async o=>{setConv(id,{...cv,stage:1});await say(id,o[1]);stage2(id,{...cv,stage:1})});return}
   if(cv.stage===1){stage2(id,cv);return}}
-function stage2(id,cv){const extra=shuffleTake(SAGA_MSGS.filter(m=>m.k!=="bye"),2),list=[...shuffleTake(FOLLOW,2),...extra];
+function stage2(id,cv){const extra=shuffleTake(SAGA_MSGS.filter(m=>m.k!=="bye"),2),list=[...shuffleTake(FOLLOW.filter(m=>m.k!=="same"&&m.k!=="notme"),2),...extra]; /* Saga har just svarat själv, så "Jag med!" och "Inte jag!" passar inte */
   setReplies(list,async m=>{setConv(id,{...cv,stage:2,done:true});if(m.k==="bye"){await say(id,fill(pickFresh([...CHARS[id].chat.bye,...GEN.bye])));}else{await say(id,answerFor(id,m));await say(id,fill(pickFresh(CHARS[id].chat.bye)),700)}
     closedReplies("Samtalet är slut för i dag. Vad roligt att ni pratade!");renderChatList()})}
 function closeThread(){openThread=null;$("thread").hidden=true;renderChatList()}
