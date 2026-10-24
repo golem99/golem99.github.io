@@ -331,7 +331,10 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
 const fill=t=>t.replace(/\{n\}/g,NAME).replace(/\{a\}/g,(S.av&&S.av.name)||"din kompis");
 const FAST_CHOICE=5000, FAST_TYPED=8000;   // så snabbt måste det gå för att räknas som "kan"
-const NEED=3;                              // antal snabba rätt i rad
+const NEED=3;
+// tyst tidtagning (2026-10-24): utan synlig tid mäts svarstiden ändå. Ett långsamt rätt svar räknas inte mot "kan"
+// (men nollställer inget) och talet kommer snart tillbaka, omvänt, och en gång till lite senare.
+const UNSURE_CHOICE=8000, UNSURE_TYPED=12000;                              // antal snabba rätt i rad
 const INT=[0,1,3,7,14,30];                 // dagar till nästa repetition
 const DAILY=25;
 const TALK=.675;   // 2026-10-24: tio procent färre kommentarer (var .75)                            // hur ofta gänget pratar vid vanliga rätt svar (sänks gradvis)                            // rätt svar för dagens resa
@@ -690,7 +693,7 @@ function drawSeats(){
 }
 
 /* ================= Resan ================= */
-let P=[],cur=null,lock=false,retry=[],sinceChat=0,pendingStop=null,qStart=0;
+let flipNext=false,P=[],cur=null,lock=false,retry=[],sinceChat=0,pendingStop=null,qStart=0;
 const D=()=>S.tr.key==="mix"?Object.assign({},DEST.mix,{need:Math.min(60,20+6*S.tr.tables.length)}):DEST[S.tr.key];
 const kmOf=x=>x/D().need*D().total;           // rätt svar → kilometer
 const stopX=s=>s[0]/D().total*D().need;       // kilometer → rätt svar
@@ -790,7 +793,7 @@ function weight([a,b]){
 const easyF=([a,b])=>known(fk(a,b))||Math.min(a,b)<=2||a===5||b===5||a===10||b===10;
 function pickFact(){
  for(const r of retry)r.wait--;
- const ri=retry.findIndex(x=>x.wait<=0);if(ri>=0)return retry.splice(ri,1)[0].f;
+ const ri=retry.findIndex(x=>x.wait<=0);if(ri>=0){const r=retry.splice(ri,1)[0];flipNext=!!r.flip;return r.f}
  // de första frågorna bara lätta, sedan ungefär var femte svår, och sakta fler (högst varannan)
  const q=S.tr.qn||0,hardShare=q<6?0:Math.min(.5,.2+(S.tr.right||0)/150);
  const easy=P.filter(easyF),hard=P.filter(f=>!easyF(f));
@@ -799,15 +802,15 @@ function pickFact(){
  for(let i=0;i<L.length;i++){x-=ws[i];if(x<=0)return L[i]}return L[0];
 }
 function makeQ(f){
- const [t,n]=f||pickFact(),p=t*n;
- const form=pick(["a","a","b","b","c","d"]);let text,ans;
+ flipNext=false;const [t,n]=f||pickFact(),p=t*n;
+ const form=flipNext?"b":pick(["a","a","b","b","c","d"]);flipNext=false;let text,ans;
  if(form==="a"){text=`${t} × ${n}`;ans=p}else if(form==="b"){text=`${n} × ${t}`;ans=p}
  else if(form==="c"){text=`${t} × <span class="blank">?</span> = ${p}`;ans=n}else{text=`<span class="blank">?</span> × ${t} = ${p}`;ans=n}
  let pool;
  if(ans===n)pool=[n-1,n+1,n+2,n-2,n+3].filter(v=>v>=1&&v<=10&&v!==n);
  else pool=[p-t,p+t,p-n,p+n,p-1,p+1,p+10,p-10,Number(String(p).split("").reverse().join(""))].filter(v=>v>0&&v!==p&&v<=100);
  pool=shuffle([...new Set(pool)]);
- return{t,n,k:fk(t,n),text,ans,opts:shuffle([ans,...pool.slice(0,3)])};
+ return{t,n,form,k:fk(t,n),text,ans,opts:shuffle([ans,...pool.slice(0,3)])};
 }
 function pad(el,ans,onDone){
  let v="";el.classList.add("pad");
@@ -876,7 +879,10 @@ function answer(v,btn){
  const all=$("#answers").querySelectorAll(".ans"),ms=performance.now()-qStart,fast=quickOk(ms,cur.typed?FAST_TYPED:FAST_CHOICE);
  if(v===cur.ans){
   if(btn){btn.classList.add("right");all.forEach(b=>{if(b!==btn)b.classList.add("dim")})}
-  S.tr.streak++;S.tr.right++;const fresh=learn(cur.k,true,fast);drawKnow(cur.k);const dayDone=countDay();
+  const unsure=!S.timer&&ms>(cur.typed?UNSURE_TYPED:UNSURE_CHOICE);
+  {const f=F(cur.k);f.t=f.t?Math.round(f.t*.7+ms*.3):Math.round(ms)}   // ungefärlig svarstid per tal, för senare
+  if(unsure&&!retry.some(r=>fk(...r.f)===cur.k))retry.push({f:cur.form==='b'?[cur.n,cur.t]:[cur.t,cur.n],wait:2,flip:true},{f:[cur.t,cur.n],wait:6});
+  S.tr.streak++;S.tr.right++;const fresh=learn(cur.k,true,fast&&!unsure);drawKnow(cur.k);const dayDone=countDay();
   let add=1+(cur.typed?.5:0);fast&&S.timer?SND.fast():SND.right();buzz(25);busAnim("hop");boost(2.6);
   if(S.timer){if(fast&&!fresh)$("#hint").textContent="⚡ Snabbt!";else if(!fast)$("#hint").textContent="Rätt! Nu lite snabbare nästa gång."}
   if(dayDone)setTimeout(()=>{confetti(60);SND.fanfare();say(speaker(),`⭐ Dagens resa är klar, {n}! ${DAILY} rätt i dag!`)},200);
@@ -889,7 +895,7 @@ function answer(v,btn){
   move(add,950);
  }else{
   if(btn){btn.classList.add("wrong");all.forEach(b=>{if(+b.dataset.v===cur.ans)b.classList.add("right");else if(b!==btn)b.classList.add("dim")})}
-  S.tr.streak=0;learn(cur.k,false);drawKnow(cur.k);retry.push({f:[cur.t,cur.n],wait:2});
+  S.tr.streak=0;learn(cur.k,false);drawKnow(cur.k);retry.push({f:cur.form==='b'?[cur.n,cur.t]:[cur.t,cur.n],wait:2,flip:true},{f:[cur.t,cur.n],wait:6});
   SND.wrong();buzz([30,40,30]);busAnim("shake");
   $("#hint").textContent=trick(cur.t,cur.n);const id=speaker();say(id,pick(CH[id].wrong));
   save();showStreak();setTimeout(()=>explain(cur.t,cur.n),1100);
