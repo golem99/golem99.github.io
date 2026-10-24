@@ -139,7 +139,7 @@ function envFrom(top,bottom,warm){const es=new THREE.Scene();const g=new THREE.S
   es.add(new THREE.Mesh(g,m));const pm=new THREE.PMREMGenerator(R);const t=pm.fromScene(es,.02).texture;pm.dispose();return t}
 outS.environment=envFrom('#9fc2e6','#a7835e','#ffcf96');outS.environmentIntensity=.55;
 homeS.environment=envFrom('#e8b47c','#6a4228','#ffd2a0');homeS.environmentIntensity=.45;
-function useScene(s){scene=s;rp.scene=s;gtao.scene=s;bokeh.scene=s}
+function useScene(s){scene=s;rp.scene=s;gtao.scene=s;bokeh.scene=s;if(typeof perfHold==='function')perfHold()}
 
 /* outdoor light: grey autumn afternoon */
 outS.background=skyTex(); outS.fog=new THREE.FogExp2('#e3cdb6',.012);
@@ -527,7 +527,7 @@ async function buildHome(){
   win(-1.1,.42,.18,.15);win(-.12,.34,.2,.2);win(1.22,.36,.15,.15);
   // lights: low warm fill, a key over the living room, lamps that glow
   homeS.add(new THREE.HemisphereLight('#ffe2bf','#4a3040',.32));
-  {const key=new THREE.SpotLight('#ffd2a0',2.6,2.6,.8,.9,1.3);key.position.set(.2,.9,.8);key.target.position.set(0,0,-.15);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.radius=8;key.shadow.bias=-.001;H.add(key,key.target)}
+  {const key=new THREE.SpotLight('#ffd2a0',2.6,2.6,.8,.9,1.3);key.position.set(.2,.9,.8);key.target.position.set(0,0,-.15);key.castShadow=true;homeKey=key;key.shadow.mapSize.set(2048,2048);key.shadow.radius=8;key.shadow.bias=-.001;H.add(key,key.target)}
   const glow=(x,y,z,c,i,d)=>{const l=new THREE.PointLight(c,i,d,1.6);l.position.set(x,y,z);H.add(l);return l};
   homeLamp=glow(.42,.42,-.46,'#ffb766',1.8,1.3);glow(1.3,.26,-.48,'#ffb06a',1.0,.9);
   {const shade=new THREE.Mesh(new THREE.ConeGeometry(.045,.04,24,1,true),new THREE.MeshStandardMaterial({color:'#e9c46a',roughness:.6,side:THREE.DoubleSide,emissive:new THREE.Color('#ffb44a'),emissiveIntensity:.35}));shade.position.set(-1.0,.44,.0);H.add(shade);
@@ -717,7 +717,7 @@ async function walkLeg(p,speed){/* 2026-10-24: bigger rooms and a taller Siili: 
   await new Promise(r=>{(function step(){const u=Math.min(1,(performance.now()-t0)/dur);siili.position.copy(start).addScaledVector(dir,len*u);if(u<1)requestAnimationFrame(step);else r()})()})}
 async function walkTo(p,speed=.12,stop=.08,skip){
   const goal=p.clone();goal.y=siili.position.y;const d=goal.clone().sub(siili.position);const L=d.length();if(L>stop)goal.addScaledVector(d.normalize(),-stop);else{face(p);return}
-  const path=planPath(siili.position.clone(),goal,skip);
+  const path=(scene===homeS&&navPath(siili.position.clone(),goal,skip))||planPath(siili.position.clone(),goal,skip);
   face(path[0]);await sleep(220);play('walk',.15);
   for(const q of path){q.y=siili.position.y;await walkLeg(q,speed)}
   play('idle',.2);face(p);
@@ -727,6 +727,76 @@ let camFrom=null;
 function camTo(pos,look,ms=1200){const p0=cam.position.clone(),l0=camLook.clone();const t0=performance.now();
   return new Promise(r=>{(function step(){let k=Math.min(1,(performance.now()-t0)/ms);k=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.position.lerpVectors(p0,pos,k);camLook.lerpVectors(l0,look,k);if(k<1)requestAnimationFrame(step);else r()})()})}
 const camLook=new THREE.Vector3(66,1,27);
+
+/* ---------- smoother play (2026-10-24) ----------
+   Graphics quality in steps. The game starts at step 1 (no ambient-occlusion pass, at most 1.25x pixels) and steps
+   down by itself when the computer can't keep up, and remembers the step for next time. */
+const QSTEPS=[
+  {dpr:1.5, gtao:1,bokeh:1,paint:1,bloom:1,shadow:2048},
+  {dpr:1.25,gtao:0,bokeh:1,paint:1,bloom:1,shadow:2048},
+  {dpr:1,   gtao:0,bokeh:0,paint:1,bloom:1,shadow:2048},
+  {dpr:1,   gtao:0,bokeh:0,paint:0,bloom:0,shadow:1024},
+  {dpr:.75, gtao:0,bokeh:0,paint:0,bloom:0,shadow:1024}];
+// a saved step is tried one step better next time, so one bad moment doesn't stick forever
+let qStep=1;try{const v=localStorage.getItem('siili.q');if(v!==null)qStep=Math.max(1,Math.min(QSTEPS.length-1,+v-1))}catch(e){}
+function setQuality(s){qStep=Math.max(0,Math.min(QSTEPS.length-1,s));const q=QSTEPS[qStep];
+  R.setPixelRatio(Math.min(devicePixelRatio,q.dpr));composer.setPixelRatio(R.getPixelRatio());composer.setSize(innerWidth,innerHeight);
+  gtao.enabled=!!q.gtao;bokeh.enabled=!!q.bokeh;paint.enabled=!!q.paint;bloom.enabled=!!q.bloom;
+  for(const l of [sun,homeKey])if(l&&l.shadow){l.shadow.blurSamples=qStep?8:12;l.shadow.radius=(l===sun?9:8)*q.shadow/(l===sun?4096:2048)*(qStep?1:1.3);
+    if(l.shadow.mapSize.x!==q.shadow){l.shadow.mapSize.set(q.shadow,q.shadow);if(l.shadow.map){l.shadow.map.dispose();l.shadow.map=null}}}
+  try{localStorage.setItem('siili.q',String(qStep))}catch(e){}}
+let homeKey=null;
+/* frame watch: slow frames over a few seconds -> one step down. Pauses right after a scene change (shaders compile then). */
+let pf={n:0,sum:0,slow:0,t0:0,hold:0};
+function perfStep(rdt){if(window.__manual||window.__noAuto||document.hidden||!pf.t0){pf.t0=performance.now();return}
+  const now=performance.now();if(now<pf.hold){pf.n=pf.sum=pf.slow=0;return}
+  pf.n++;pf.sum+=rdt;if(rdt>.05)pf.slow++;
+  if(pf.sum>=4){const fps=pf.n/pf.sum;
+    if((fps<38||pf.slow>pf.n*.15)&&qStep<QSTEPS.length-1){setQuality(qStep+1);pf.hold=now+2500}
+    pf.n=pf.sum=pf.slow=0}}
+function perfHold(ms=3000){pf.hold=performance.now()+ms}
+
+/* ---------- walking round furniture (2026-10-24) ----------
+   A floor grid (2 cm squares) built from what actually stands in the home, widened by Siili's half width.
+   A* finds the way, then the path is straightened where he can see past things. */
+const NAV={c:.02,x0:-1.56,z0:-.64,nx:157,nz:62,body:.06};
+function navGrid(skip){const g=new Uint8Array(NAV.nx*NAV.nz);const skipObj=skip&&things[skip];const bb=new THREE.Box3();
+  homeS.updateMatrixWorld(true);
+  homeS.traverse(o=>{if(!o.isMesh)return;
+    for(let p=o;p;p=p.parent){if(!p.visible||p===siili||(skipObj&&p===skipObj))return}
+    const m=o.material;if(m&&(m.visible===false||(m.transparent&&m.opacity<.05)))return;
+    bb.setFromObject(o);if(bb.isEmpty())return;
+    if(bb.min.y>.13||bb.max.y-bb.min.y<.03)return;               // over his head, or flat (rugs, floor)
+    if((bb.max.x-bb.min.x)*(bb.max.z-bb.min.z)>.8)return;      // the floor or a whole-room piece
+    const r=NAV.body,i0=Math.max(0,Math.floor((bb.min.x-r-NAV.x0)/NAV.c)),i1=Math.min(NAV.nx-1,Math.ceil((bb.max.x+r-NAV.x0)/NAV.c)),
+      j0=Math.max(0,Math.floor((bb.min.z-r-NAV.z0)/NAV.c)),j1=Math.min(NAV.nz-1,Math.ceil((bb.max.z+r-NAV.z0)/NAV.c));
+    for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++)g[j*NAV.nx+i]=1});
+  for(let j=0;j<NAV.nz;j++){const z=NAV.z0+j*NAV.c;if(z>.48||z<ROOM.back+.05)for(let i=0;i<NAV.nx;i++)g[j*NAV.nx+i]=1}
+  for(let i=0;i<NAV.nx;i++){const x=NAV.x0+i*NAV.c;if(x<-1.47||x>1.47)for(let j=0;j<NAV.nz;j++)g[j*NAV.nx+i]=1}
+  return g}
+function navPath(from,to,skip){
+  const g=navGrid(skip),W=NAV.nx,H=NAV.nz;
+  const cell=v=>[Math.round((v.x-NAV.x0)/NAV.c),Math.round((v.z-NAV.z0)/NAV.c)];
+  const inb=(i,j)=>i>=0&&j>=0&&i<W&&j<H,free=(i,j)=>inb(i,j)&&!g[j*W+i];
+  const near=(i,j)=>{if(free(i,j))return[i,j];for(let r=1;r<45;r++)for(let dj=-r;dj<=r;dj++)for(let di=-r;di<=r;di++){if(Math.max(Math.abs(di),Math.abs(dj))!==r)continue;if(free(i+di,j+dj))return[i+di,j+dj]}return null};
+  let s=cell(from),e=cell(to);if(!inb(...s)||!inb(...e))return null;
+  const s0=s;s=near(...s);e=near(...e);if(!s||!e)return null;
+  const N=W*H,G=new Float32Array(N).fill(1e9),from_=new Int32Array(N).fill(-1),closed=new Uint8Array(N);
+  const heap=[],push=(k,f)=>{heap.push([f,k]);let i=heap.length-1;while(i){const p=(i-1)>>1;if(heap[p][0]<=heap[i][0])break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p}},
+    pop=()=>{const top=heap[0],last=heap.pop();if(heap.length){heap[0]=last;let i=0;for(;;){const l=2*i+1,r=l+1;let m=i;if(l<heap.length&&heap[l][0]<heap[m][0])m=l;if(r<heap.length&&heap[r][0]<heap[m][0])m=r;if(m===i)break;[heap[m],heap[i]]=[heap[i],heap[m]];i=m}}return top[1]};
+  const hh=(i,j)=>{const dx=Math.abs(i-e[0]),dy=Math.abs(j-e[1]);return Math.max(dx,dy)+.414*Math.min(dx,dy)};
+  const sk=s[1]*W+s[0],ek=e[1]*W+e[0];G[sk]=0;push(sk,hh(...s));let found=false;
+  while(heap.length){const k=pop();if(closed[k])continue;closed[k]=1;if(k===ek){found=true;break}const i=k%W,j=(k/W)|0;
+    for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const ni=i+di,nj=j+dj;if(!free(ni,nj))continue;
+      if(di&&dj&&(!free(i+di,j)||!free(i,j+dj)))continue;const nk=nj*W+ni,c=G[k]+(di&&dj?1.414:1);if(c<G[nk]){G[nk]=c;from_[nk]=k;push(nk,c+hh(ni,nj))}}}
+  if(!found)return null;
+  const cells=[];for(let k=ek;k!==-1;k=from_[k])cells.push([k%W,(k/W)|0]);cells.reverse();
+  const see=(a,b)=>{const n=Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])*2);for(let q=1;q<n;q++){const u=q/n;if(!free(Math.round(a[0]+(b[0]-a[0])*u),Math.round(a[1]+(b[1]-a[1])*u)))return false}return true};
+  const pts=[];let a=0;while(a<cells.length-1){let b=cells.length-1;while(b>a+1&&!see(cells[a],cells[b]))b--;pts.push(cells[b]);a=b}
+  const out=pts.map(([i,j])=>new THREE.Vector3(NAV.x0+i*NAV.c,0,NAV.z0+j*NAV.c));
+  // last step to the real goal when it's free (keeps "stop in front of the thing" exact)
+  const ec=cell(to);if(free(...ec)&&out.length)out[out.length-1]=to.clone();
+  return out.length?out:null}
 
 /* ---------- picking ---------- */
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let pickHandler=null,hoverHandler=null;
@@ -764,7 +834,31 @@ function putSiiliOut(){doorTarget=1;SIILI_CLIP.length=0;SIILI_CLIP.push(WALL_CLI
 function putSiiliHome(){SIILI_CLIP.length=0;homeS.add(siili);siili.position.set(0,0.02,0.1);siili.rotation.y=0;yawTarget=null}
 async function toHome(){sfx('door',.4);setMusic('home');await fadeTo(homeS);doorTarget=0;doorOpen=0;putSiiliHome();homeCam='follow';const [hp,hl]=homeCamTarget();cam.position.copy(hp);camLook.copy(hl)}
 
-let flyCancel=false;async function flyIn(){flyCancel=false;
+/* ---------- the intro as a film (2026-10-24) ----------
+   If intro.mp4 is in the folder, the flight over Kristinestad plays as a film (it starts at once on "Börja",
+   while the game loads behind it) and fades into the live scene at the stairs. Without the file, or if the
+   film can't play, the live flight runs as before. ?film runs the live flight at full quality with nothing
+   on screen, for recording the film. */
+const FILM_SRC='intro.mp4';let filmP=null;
+function startFilm(){if(filmP)return filmP;filmP=new Promise(done=>{
+  const v=document.createElement('video');v.src=FILM_SRC;v.muted=true;v.playsInline=true;v.preload='auto';
+  Object.assign(v.style,{position:'fixed',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:40,background:'#2a211b',transition:'opacity .8s'});
+  const title=document.createElement('div');title.innerHTML='<div style="font:800 min(14vw,160px) Baloo\\ 2,sans-serif;color:#fff6e8;text-shadow:0 6px 0 #c8643c,0 0 40px rgba(0,0,0,.35)">Siili</div><div style="font:700 26px Baloo\\ 2;color:#fff6e8;text-shadow:0 2px 8px rgba(0,0,0,.6)">Kapitel 1 · Jee!</div>';
+  Object.assign(title.style,{position:'fixed',left:0,right:0,top:'22%',textAlign:'center',opacity:0,transition:'opacity 1.2s, transform 1.2s',transform:'scale(.9)',zIndex:41,pointerEvents:'none'});
+  const skip=document.createElement('button');skip.textContent='Hoppa över ›';
+  Object.assign(skip.style,{position:'fixed',right:'20px',bottom:'24px',zIndex:42,font:'800 16px Nunito',background:'rgba(255,246,232,.85)',border:0,borderRadius:'999px',padding:'10px 18px',cursor:'pointer'});
+  let over=false;const end=async ok=>{if(over)return;over=true;skip.remove();title.style.opacity=0;
+    if(ok){await ready.catch(()=>{});useScene(outS);cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);await sleep(120);v.style.opacity=0;await sleep(800)}
+    v.remove();title.remove();done(ok)};
+  v.onerror=()=>end(false);v.onended=()=>end(true);skip.onclick=()=>{flyCancel=true;end(true)};
+  v.addEventListener('playing',()=>{setTimeout(()=>{title.style.opacity=1;title.style.transform='scale(1)'},1500);setTimeout(()=>{title.style.opacity=0},9000)},{once:true});
+  document.body.append(v,title,skip);v.play().catch(()=>end(false));
+  // the "Hoppa över" in the live intro also ends the film
+  (function watch(){if(over)return;if(flyCancel)return end(true);requestAnimationFrame(watch)})()});
+  return filmP}
+
+let flyCancel=false;async function flyIn(){const ok=await startFilm().catch(()=>false);filmP=null;if(ok)return;return flyLive()}
+async function flyLive(){flyCancel=false;
   const P=new THREE.CatmullRomCurve3([[96,22,-6],[86,13,8],[76,7,19],[71,3.2,31],[67.6,1.2,37.9],[65.4,.45,40],[64.95,.3,40.75]].map(a=>new THREE.Vector3(...a)));
   const T=new THREE.CatmullRomCurve3([[66,1,24],[66,1,27],[66,1,30],[65,.8,38],[64.8,.25,41.2],[64.65,.1,41.65],[64.6,.08,41.73]].map(a=>new THREE.Vector3(...a)));
   const title=document.createElement('div');title.innerHTML='<div style="font:800 min(14vw,160px) Baloo\\ 2,sans-serif;color:#fff6e8;text-shadow:0 6px 0 #c8643c,0 0 40px rgba(0,0,0,.35)">Siili</div><div style="font:700 26px Baloo\\ 2;color:#fff6e8;text-shadow:0 2px 8px rgba(0,0,0,.6)">Kapitel 1 · Jee!</div>';
@@ -895,7 +989,7 @@ const clock=new THREE.Clock();let lastAct=performance.now();addEventListener('po
 setInterval(()=>{if(!siili||!siili.parent||!audio.paused||faceMood==='sleepy'||performance.now()-lastAct<16000)return;lastAct=performance.now();const k=rnd([['g-hum','idle'],['g-hmm','sniff'],['g-yawn','idle'],['g-sniffs','sniff']]);play(k[1]);say(k[0],{sub:false})},3000);
 const _hp=new THREE.Vector3(),_pl=new THREE.Plane(),_ip=new THREE.Vector3(),_sp=new THREE.Vector3();
 addEventListener('pointermove',e=>{mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1)});
-R.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+R.setAnimationLoop(()=>{if(window.__manual)return;window.__frame()});window.__frame=(()=>{const rdt=window.__manual?window.__dt:clock.getDelta();if(window.__manual)clock.elapsedTime+=rdt;perfStep(rdt);const dt=Math.min(rdt,.05),t=clock.elapsedTime;
   if(mixer)mixer.update(dt);
   if(an&&!audio.paused){an.getByteTimeDomainData(buf);let s=0;for(const v of buf){const d=(v-128)/128;s+=d*d}const rms=Math.sqrt(s/buf.length);level+=(Math.min(1,rms*7)-level)*.5}else level*=.8;
   if(siili&&siili.parent){if(rim.parent!==siili.parent){siili.parent.add(rim,rimT)}siili.getWorldPosition(_sp);const back=_sp.clone().sub(cam.position).setY(0).normalize();rim.position.copy(_sp).addScaledVector(back,.5).add(new THREE.Vector3(0,.32,0));rimT.position.copy(_sp).add(new THREE.Vector3(0,.08,0))}
@@ -932,7 +1026,7 @@ $('#bMenu').onclick=()=>{if(running)return;renderMenu();$('#menu').classList.rem
 $('#close').onclick=()=>$('#menu').classList.add('hidden');
 $('#bSub').textContent='Text: '+(st.sub?'på':'av');$('#bSnd').textContent=st.snd?'🔊':'🔇';$('#paws').textContent='🐾 '+st.paws;
 cam.position.set(80,16,6);
-const ready=init().catch(e=>{$('#loading').textContent='Kunde inte ladda: '+e.message;throw e});
+const ready=init().then(()=>{setQuality(qStep);try{for(const S_ of[homeS,outS]){R.compile(S_,cam);S_.traverse(o=>{if(o.material)for(const m of[].concat(o.material))for(const k in m){const v=m[k];if(v&&v.isTexture)R.initTexture(v)}})}}catch(e){console.warn(e)}perfHold(4000)}).catch(e=>{$('#loading').textContent='Kunde inte ladda: '+e.message;throw e});
 async function introOnly(){setMusic('theme',false);useScene(outS);outS.remove(siili);await flyIn();
   document.querySelectorAll('#ui > div[style*="22%"]').forEach(e=>e.remove());
   cam.position.set(64.95,.3,40.75);camLook.set(64.6,.08,41.73);afterTheme();sfx('rustle',.6);await sleep(1200);
@@ -940,7 +1034,7 @@ async function introOnly(){setMusic('theme',false);useScene(outS);outS.remove(si
   await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.02),.06);play('sniff');await sleep(900);
   play('walk',.2);await walkLeg(new THREE.Vector3(HOLE.x,0,HOLE.z-.4),.1);play('idle',.25);face(cam.position);await sleep(700);play('wave');await sleep(2500);play('happy');await sleep(2000);play('idle',.3);
   const b=document.createElement('button');b.textContent='Spela ›';b.className='big';Object.assign(b.style,{position:'absolute',left:'50%',bottom:'40px',transform:'translateX(-50%)',pointerEvents:'auto'});b.style.zIndex=50;b.onclick=()=>{location.href=location.pathname};$('#ui').append(b)}
-$('#go').onclick=async()=>{st.snd=true;save();$('#bSnd').textContent='🔊';await ready;initAudio();$('#start').classList.add('hidden');if(new URLSearchParams(location.search).has('intro')){introOnly();return}if(!st.done.includes(0))runPart(0);else{renderMenu();$('#menu').classList.remove('hidden')}};
+$('#go').onclick=async()=>{st.snd=true;save();$('#bSnd').textContent='🔊';const qs_=new URLSearchParams(location.search);if(qs_.has('film')){$('#start').classList.add('hidden');await ready;window.__noAuto=true;setQuality(0);document.querySelectorAll('#ui,#menu,#loading').forEach(e=>e.style.display='none');useScene(outS);outS.remove(siili);await sleep(1500);await flyLive();return}if(!st.done.includes(0)||qs_.has('intro')){setMusic('theme',false);startFilm()}await ready;initAudio();$('#start').classList.add('hidden');if(new URLSearchParams(location.search).has('intro')){introOnly();return}if(!st.done.includes(0))runPart(0);else{renderMenu();$('#menu').classList.remove('hidden')}};
 </script>
 </body>
 </html>
