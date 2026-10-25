@@ -8,7 +8,7 @@
 const AUTO=/[?&]robot/.test(location.search);
 const pic6=(n,sz=110)=>`<img src="img6/${n}.webp" alt="" style="width:${sz}px;height:${sz}px;object-fit:cover;border-radius:16px;display:block;margin:0 auto">`;
 const has6=id=>!!LINES[id];
-async function tr6(id){await say(id);if(has6(id+'s')&&st.sub)await say(id+'s',{sub:false})}
+async function tr6(id){await say(id);if(has6(id+'s')&&st.sub&&!qActive())await say(id+'s',{sub:false})}
 async function sayIf6(id){if(has6(id))await say(id)}
 const optGLB6=f=>load(f).then(g=>g).catch(()=>null);
 function choose6(opts,{hint}={}){if(AUTO){const o=opts.find(x=>x.ok)||opts[0];return Promise.resolve({o,b:document.createElement('div')})}return cardsChoice(opts,{hint})}
@@ -54,7 +54,8 @@ function typeIt(answers,q){const box_=$('#type6'),inp=box_.querySelector('input'
   const A=[].concat(answers),best=A[0];if(AUTO){box_.style.display='none';return Promise.resolve(0)}
   setTimeout(()=>inp.focus(),50);let tries=0;
   return new Promise(res=>{const check=()=>{const v=fold6(inp.value);if(!v)return;const ok=A.some(a=>fold6(a)===v);const near=!ok&&A.some(a=>fold6(a).length>=5&&lev6(fold6(a),v)===1);
-      if(ok||near){box_.style.display='none';if(near)showWord(best,'så stavas det',2600);res(tries+(near?1:0));return}
+      if(ok){box_.style.display='none';res(tries);return}
+      if(near){tries++;sfx('wrong',.3);help.innerHTML='Nästan! Det stavas <b style="color:#c8643c;font-size:24px">'+best+'</b> – skriv det rätt.';inp.select();return}
       tries++;sfx('wrong',.4);inp.classList.remove('bad');void inp.offsetWidth;inp.classList.add('bad');
       if(tries===1)help.textContent='Försök igen! Det börjar med '+best.slice(0,2)+' …';else if(tries===2)help.textContent=best.split('').map((c,i)=>i%2?'_':c).join(' ');else{help.textContent='Skriv: '+best}};
     box_.querySelector('.ok').onclick=check;inp.onkeydown=e=>{if(e.key==='Enter')check()};
@@ -71,6 +72,35 @@ async function quizWords(list,{q,mk,after,n=6,type=0}){ /* list: [{fi,sv,img,say
       const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');hidePic();play('happy');showWord(w.fi,w.sv);learn(w.fi);addPaws(tries?1:3);if(after)await after(w,tries);else await praise();break}
       b.classList.add('wrong');sfx('wrong',.4);tries++;play('shake');await say(rnd(OOPS))}}
   hidePic()}
+
+
+/* ---------- rules for every chapter (2026-10-25 kväll, efter Sagas första runda) ----------
+   1) While a question is open, Siili's Swedish subtitle is not shown, and the answer cards never show Swedish
+      under the Finnish word (except free choices, where nothing is being tested).
+   2) Movement words in chapter 2 are shown as pictures (img2/move-*.webp) instead of hard-to-read animations.
+   3) The boat leaves the harbour slowly: it turns first, then picks up speed. */
+function qActive(){const a=$('#ask');return (a&&a.textContent.trim()!==''&&a.style.opacity!=='0')||$('#cards').children.length>0||$('#type6').style.display==='block'||pickHandler!==null||['#pal6','#grid6','#search6'].some(q=>{const e=$(q);return e&&e.style.display&&e.style.display!=='none'})}
+{const _s0=say0;say0=function(id,o={}){if(qActive())o={...o,sub:false};return _s0(id,o)}}
+cardsChoice=function(opts,{hint}={}){const box_=$('#cards');box_.innerHTML='';return new Promise(r=>{for(const o of opts){const b=document.createElement('button');b.className='card';b.innerHTML=`<div class="e">${o.e||''}</div><div class="t">${o.t}</div><div class="s">${st.sub&&o.free?(o.s||''):''}</div>`;b.onclick=()=>r({o,b});box_.append(b)}})};
+{const _bt=boatTo;boatTo=function(x,z,ms){if(!harbBoat||x<=harbBoat.position.x+3)return _bt(x,z,ms);
+  const b=harbBoat,p0=b.position.clone(),r0=b.rotation.y,r1=-Math.PI/2,turn=2600,go=ms*1.9,t0=performance.now();
+  return new Promise(res=>{(function s(){const t=performance.now()-t0;
+    if(t<turn){const k=t/turn,e=k*k*(3-2*k);b.rotation.y=r0+(r1-r0)*e;b.position.x=p0.x+e*.35;b.position.z=p0.z+Math.sin(e*Math.PI)*.25;requestAnimationFrame(s);return}
+    const k=Math.min(1,(t-turn)/go),e=k*k*k*(k*(6*k-15)+10);const px=p0.x+.35,pz=p0.z;b.position.x=px+(x-px)*e;b.position.z=pz+(z-pz)*e;b.rotation.z=Math.sin(t/700)*.03;if(k<1)requestAnimationFrame(s);else res()})()})}}
+const MV2={suit:'💨',hissun:'👉',hopo:'💬',mukkelis:'🤸',sikin:'🔀',kipin:'🏃',kiikun:'⚖️',nippa:'🤏'};const mvOK={};
+for(const k in MV2){const im=new Image();im.onload=()=>mvOK[k]=true;im.src='img2/move-'+k+'.webp'}
+const mvPic=(k,sz=96)=>mvOK[k]?`<img src="img2/move-${k}.webp" alt="" style="width:${sz}px;height:${sz}px;object-fit:cover;border-radius:16px;display:block;margin:0 auto">`:`<div style="font-size:${Math.round(sz*.6)}px;line-height:1.2">${MV2[k]}</div>`;
+async function c2MovesPic(){if(scene!==harbS){await toHarbor()}
+  bucketO.visible=bucketU.visible=false;siili.position.set(.15,0,-.25);face(cam.position);camTo(HARB_CAM[0],HARB_CAM[1],1000);setMusic('home');await say('c2-move');
+  const keys=shuffle(Object.keys(MOVES2));
+  for(const k of keys.slice(0,5)){if(mvOK[k])showPicSrc('img2/move-'+k+'.webp',MOVES2[k].t);else showWord(MOVES2[k].t,'',2400);play(MOVES2[k].a);await say('r-'+k);await sleep(600);hidePic();play('idle',.3)}
+  for(const k of shuffle(keys.slice(0,5))){if(mvOK[k])showPicSrc('img2/move-'+k+'.webp','');await say('c2-which');ask('Vilket ordpar passar bilden?');let tries=0;
+    const opts=shuffle([k,...shuffle(keys.filter(x=>x!==k)).slice(0,2)]).map(x=>({t:MOVES2[x].t,e:mvOK[k]?'':MV2[x],k:x,ok:x===k}));
+    for(;;){const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');hidePic();play(MOVES2[k].a);await say('r-'+k);learn(MOVES2[k].t);addPaws(tries?1:3);await praise();break}
+      b.classList.add('wrong');sfx('wrong',.4);tries++;await say(rnd(OOPS))}
+    play('idle',.3)}}
+function showPicSrc(src,cap){const p=$('#pic6');p.querySelector('img').src=src;p.querySelector('.cap').textContent=cap;p.classList.add('on')}
+PARTS2[3].f=c2MovesPic;
 
 /* ---------- shared scene helpers ---------- */
 function lightRoom6(S,{sky='#ffd8b0',ground='#6a5040',hemi=1,key='#ffd2a0',keyI=2.4,keyPos=[-4,6,3],shadow=4}={}){
@@ -138,7 +168,8 @@ function buildClass(){if(clsBuilt)return;clsBuilt=true;const S=clsS;S.background
     const pl=new THREE.PointLight('#ffe2b8',.9,5,1.6);pl.position.set(x,Y+2.6,z);S.add(pl);clsLamps.push([l,pl])}
   // Siili's own desk (he stands on it), and the rest of the class
   {const d=deskFallback();d.position.set(0,Y-.01,0);S.add(d)}
-  for(const [x,z] of[[-1.3,-.2],[1.3,-.2],[-1.3,-1.6],[0,-1.6],[1.3,-1.6],[-1.3,-3],[0,-3],[1.3,-3]])placeGLB6(S,'desk.glb',{x,y:Y,z,h:.8},deskFallback);
+  {const pos=[[-1.3,-.2],[1.3,-.2],[-1.3,-1.6],[0,-1.6],[1.3,-1.6],[-1.3,-3],[0,-3],[1.3,-3]];
+   optGLB6('desk.glb').then(g=>{for(const [x,z] of pos){let m;if(g){const inner=g.scene.clone(true);fitModel(inner,{h:.846});m=new THREE.Group();m.add(inner);m.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;if(o.material){o.material.roughness=Math.max(o.material.roughness??.6,.55);o.material.metalness=0}}})}else m=deskFallback();m.userData.deskM=true;m.position.set(x,Y,z);S.add(m)}})}
   // a teacher's desk with an apple
   bx6(S,1.2,.05,.6,M6('#8a6440'),2.4,Y+.75,-4.1);bx6(S,1.1,.7,.5,M6('#7a5434'),2.4,Y+.37,-4.1);
   {const ap=new THREE.Mesh(new THREE.SphereGeometry(.05,16,12),M6('#c23a2b',{roughness:.4}));ap.position.set(2.2,Y+.83,-4.0);S.add(ap)}
@@ -182,7 +213,7 @@ async function c6Intro(){await toClass();setMusic('search');play('sniff');await 
 async function c6What(){if(scene!==clsS)await toClass();setMusic('search');
   const keys=shuffle(ORDER6.filter(k=>IMG6(k))).slice(0,8);let n=0;
   for(const k of keys){n++;showPic(k);play('present');await say(rnd(['k6-06','k6-07','k6-08']));
-    if(n%3===0){const t=await typeIt([fi6(k)],'Skriv på finska vad det är!');hidePic();play('happy');await say(rnd(['k6-09','k6-10']));showWord(fi6(k),W6[k]);await tr6(L6(k).react);learn(fi6(k));addPaws(t?1:3);continue}
+    if(n%2===0){const t=await typeIt([fi6(k)],'Skriv på finska vad det är!');hidePic();play('happy');await say(rnd(['k6-09','k6-10']));showWord(fi6(k),W6[k]);await tr6(L6(k).react);learn(fi6(k));addPaws(t?1:3);continue}
     ask('Mikä tämä on? Välj rätt ord.');let tries=0;
     for(;;){const opts=shuffle([k,...shuffle(ORDER6.filter(x=>x!==k)).slice(0,2)]).map(x=>({t:fi6(x),ok:x===k}));const {o,b}=await choose6(opts);
       if(o.ok){clearCards();ask('');hidePic();play('happy');await say(rnd(['k6-09','k6-10']));showWord(fi6(k),W6[k]);await tr6(L6(k).react);learn(fi6(k));addPaws(tries?1:3);break}
@@ -200,15 +231,16 @@ async function c6Baskets(){if(scene!==clsS)await toClass();play('present');await
     for(;;){const {o,b}=await choose6(opts.map(x=>({...x,ok:x.g===G[k]})));if(o.ok){clearCards();ask('');hidePic();play('happy');
         if(k==='tomaatti')await tr6('k6-55');else if(G[k]==='x')await tr6(k==='raketti'?'k6-57':'k6-56');else await tr6({h:'k6-52',k:'k6-53',j:'k6-54'}[G[k]]);
         learn(fi6(k));addPaws(tries?1:3);break}
-      b.classList.add('wrong');sfx('wrong',.4);tries++;play('shake');await say(rnd(OOPS))}}}
+      b.classList.add('wrong');sfx('wrong',.4);tries++;play('shake');await say(rnd(OOPS))}}
+  for(const k of shuffle(['appelsiini','banaani','paaryna','sitruuna','tomaatti','kurkku','kakku','pulla','lettu']).slice(0,3)){showPic(k);const t=await typeIt([fi6(k),fi6(k).replace(/ä/g,'a')],'Skriv på finska: '+W6[k]);hidePic();showWord(fi6(k),W6[k]);addPaws(t?1:3);await praise()}}
 async function c6Kiosk(){if(scene!==clsS)await toClass();
-  if(!kioskG)kioskG=await placeGLB6(clsS,'kiosk.glb',{x:.2,y:0,z:-.18,ry:0,w:.34},()=>{const G=new THREE.Group();bx6(G,.32,.12,.12,M6('#c23a2b'),0,.06,0);bx6(G,.34,.012,.14,M6('#e8d6b4'),0,.125,0);
+  if(!kioskG)kioskG=await placeGLB6(clsS,'kiosk.glb',{x:.2,y:0,z:-.16,ry:-.25,w:.3},()=>{const G=new THREE.Group();bx6(G,.32,.12,.12,M6('#c23a2b'),0,.06,0);bx6(G,.34,.012,.14,M6('#e8d6b4'),0,.125,0);
     const aw=new THREE.Mesh(new THREE.BoxGeometry(.36,.01,.16),new THREE.MeshStandardMaterial({map:tex(canvas(128,32,(g,W,H)=>{for(let i=0;i<8;i++){g.fillStyle=i%2?'#fff':'#c23a2b';g.fillRect(i*W/8,0,W/8,H)}}))}));aw.position.set(0,.26,0);G.add(aw);for(const s of[-1,1])bx6(G,.01,.14,.01,M6('#8a6440'),s*.16,.19,.06);return G});
   siili.position.set(-.12,0,.02);face(new THREE.Vector3(.2,0,-.18));play('happy');await tr6('k6-58');
   const ORD=[['pulla','k6-59'],['banaani','k6-60'],['appelsiini','k6-61'],['paaryna','k6-62'],['lettu','k6-63'],['kakku','k6-64'],['sitruuna','k6-65'],['tomaatti','k6-66'],['kurkku','k6-67'],['ketsuppi','k6-68'],['sokeri','k6-69']];
-  for(const [k,id] of shuffle(ORD).slice(0,7)){face(cam.position);ask('Siili vill köpa något. Ge honom rätt sak!');const rep=()=>say(id,{sub:false});await rep();const hb=$('#hint');hb.style.display='block';hb.textContent='🔊';hb.onclick=rep;let tries=0;
+  let kn=0;for(const [k,id] of shuffle(ORD).slice(0,7)){face(cam.position);ask('Siili vill köpa något. Ge honom rätt sak!');const rep=()=>say(id,{sub:false});await rep();const hb=$('#hint');hb.style.display='block';hb.textContent='🔊';hb.onclick=rep;let tries=0;
     for(;;){const opts=shuffle([k,...shuffle(ORD.map(x=>x[0]).filter(x=>x!==k)).slice(0,3)]).map(x=>({t:'',e:pic6(x,92),ok:x===k}));const {o,b}=await choose6(opts);
-      if(o.ok){clearCards();ask('');hb.style.display='none';play('happy');showWord(fi6(k),W6[k]);await tr6(rnd(['k6-70','k6-71','k6-72']));learn(fi6(k));addPaws(tries?1:3);break}
+      if(o.ok){clearCards();ask('');hb.style.display='none';play('happy');if(++kn%3===0){const t=await typeIt([fi6(k),fi6(k).replace(/ä/g,'a')],'Skriv på finska vad Siili köpte!');addPaws(t?1:2)}showWord(fi6(k),W6[k]);await tr6(rnd(['k6-70','k6-71','k6-72']));learn(fi6(k));addPaws(tries?1:3);break}
       b.classList.add('wrong');sfx('wrong',.4);tries++;play('shake');await tr6('k6-73');await rep()}}
   $('#hint').textContent='?';play('idle');await tr6('k6-74')}
 async function c6Almost(){if(scene!==clsS)await toClass();if(kioskG)kioskG.visible=false;siili.position.set(0,0,0);face(cam.position);play('think');await tr6('k6-75');
@@ -216,6 +248,7 @@ async function c6Almost(){if(scene!==clsS)await toClass();if(kioskG)kioskG.visib
   for(const [f,s,id] of shuffle(LW).slice(0,6)){ask('Lyssna! Vilken bild är det?');await say(id,{sub:false});let tries=0;
     for(;;){const opts=shuffle([f,...shuffle(LW.map(x=>x[0]).filter(x=>x!==f)).slice(0,2)]).map(x=>({t:'',e:pic6(x,92),ok:x===f}));const {o,b}=await choose6(opts);
       if(o.ok){clearCards();ask('');play('happy');showWord(f,s);if(has6(id+'s'))await say(id+'s');learn(f);addPaws(tries?1:3);break}b.classList.add('wrong');sfx('wrong',.4);tries++;await say(id,{sub:false})}}
+  for(const [f,s] of shuffle([['bussi','buss'],['taksi','taxi'],['posti','post'],['pankki','bank'],['kahvi','kaffe']]).slice(0,3)){showPic(f);const t=await typeIt([f],'Skriv på finska: '+s);hidePic();showWord(f,s);addPaws(t?1:3);await praise()}
   if(kioskG)kioskG.visible=true}
 async function c6Teach(){if(scene!==clsS)await toClass();setMusic('home');
   showPic('appelsiini');play('present');await sayIf6('x6-52');ask('Är det en tomat?');
@@ -315,7 +348,8 @@ async function c7Search(){if(scene!==libS)await toLib();play('present');await tr
       sel.push(i);td(i).classList.add('sel');if(sel.length<2)continue;const [a,b]=sel;sel=[];bd.querySelectorAll('td.sel').forEach(t=>t.classList.remove('sel'));
       const P=place[w];if((a===P[0]&&b===P[P.length-1])||(b===P[0]&&a===P[P.length-1])){P.forEach(i=>td(i).classList.add('found'));found.add(w)}else{sfx('wrong',.4);ask('Inte där! Leta efter '+w.toUpperCase())}}
     bd.querySelector(`[data-w="${w}"]`).innerHTML=`<s>${w}</s>`;ask('');play('happy');await tr6('k7-54');learn(w);addPaws(2)}
-  await sleep(600);box_.style.display='none';camTo(LIB_CAM[0],LIB_CAM[1],900)}
+  await sleep(600);box_.style.display='none';camTo(LIB_CAM[0],LIB_CAM[1],900);
+  for(const w of shuffle(W7).slice(0,3)){showPic(w.img);const t=await typeIt([w.fi,w.fi.replace('ä','a')],'Skriv på finska: '+w.sv);hidePic();showWord(w.fi,w.sv);addPaws(t?1:3);await praise()}}
 async function c7Game(){if(scene!==libS)await toLib();
   if(!boardG)boardG=await placeGLB6(libS,'boardgame.glb',{x:.3,y:0,z:-.05,w:.42},()=>{const G=new THREE.Group();bx6(G,.4,.012,.4,M6('#e8d6b4'),0,.006,0);const cols=['#c23a2b','#f2c230','#4f9a4a','#3f74b8'];
     for(let i=0;i<14;i++){const a=i/14*Math.PI*1.7,r=.16-i*.008;const c=new THREE.Mesh(new THREE.CylinderGeometry(.016,.016,.004,16),M6(cols[i%4]));c.position.set(Math.cos(a)*r,.014,Math.sin(a)*r);G.add(c)}return G});
@@ -324,14 +358,24 @@ async function c7Game(){if(scene!==libS)await toLib();
   play('present');await tr6('k7-58');ask('Vad svarar du?');for(;;){const {o,b}=await choose6(shuffle([{t:'Minä leikin.',s:'Jag leker.',ok:true},{t:'Minä odotan.',s:'Jag väntar.'},{t:'Hyvää huomenta!',s:'God morgon!'}]));if(o.ok){clearCards();ask('');addPaws(2);break}b.classList.add('wrong');sfx('wrong',.4)}
   await tr6('k7-59');play('happy');await tr6('k7-60');ask('Vad svarar du?');for(;;){const {o,b}=await choose6(shuffle([{t:'Hyvä idea!',s:'Bra idé!',ok:true},{t:'Anteeksi!',s:'Förlåt!'},{t:'Apua!',s:'Hjälp!'}]));if(o.ok){clearCards();ask('');addPaws(2);break}b.classList.add('wrong');sfx('wrong',.4)}
   await tr6('k7-61');await tr6('k7-62');
-  // a little race: answer right and you move; Siili rolls the die
+  // the race, shown as a clear track: answer right and your pawn moves; then Siili rolls the die
   const Q=[...W7.map(w=>({sv:w.sv,fi:w.fi})),...Object.keys(W6).slice(0,10).map(k=>({sv:W6[k],fi:fi6(k)})),{sv:'Jag hjälper.',fi:'Minä autan.'},{sv:'Jag kan.',fi:'Minä osaan.'},{sv:'Jag vet.',fi:'Minä tiedän.'},{sv:'nästan',fi:'melkein'},{sv:'rätt',fi:'oikein'},{sv:'Fint!',fi:'Hienoa!'},{sv:'Vänta!',fi:'Odota!'},{sv:'Hjälp!',fi:'Apua!'}];
-  let me=0,him=0;const GOAL=6;const qs=shuffle(Q);let qi=0;
-  while(me<GOAL&&him<GOAL){await tr6('k7-63');const q=qs[qi++%qs.length];ask(`Vad är "${q.sv}" på finska?`);let tries=0;
-    for(;;){const opts=shuffle([q,...shuffle(Q.filter(x=>x!==q)).slice(0,2)]).map(x=>({t:x.fi,ok:x===q}));const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');break}b.classList.add('wrong');sfx('wrong',.4);tries++}
-    const d=tries?1:2;me+=d;addPaws(d);showWord('+'+d,'steg framåt',1200);if(me>=GOAL)break;
-    await tr6('k7-64');play('present');await tr6('k7-65');const roll=Math.random()<.18?6:1+Math.floor(Math.random()*2);if(roll===6){play('jump');await tr6('k7-66')}him+=roll===6?2:1;showWord('🦔 '+him+' / '+GOAL,'Siili',1200);await sleep(900)}
-  if(me>=GOAL){play('clap');await tr6('k7-68')}else{play('jump');await tr6('k7-67')}}
+  const GOAL=8;let me=0,him=0;const qs=shuffle(Q);let qi=0;
+  const tr=$('#race6')||(()=>{const d=document.createElement('div');d.id='race6';(document.getElementById('ui')||document.body).append(d);const c=document.createElement('style');c.textContent=`
+#race6{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--card);border-radius:22px;padding:10px 16px;box-shadow:var(--shadow);pointer-events:none;text-align:center;font:800 18px Nunito,sans-serif;display:none}
+#race6 .row{display:flex;gap:6px;align-items:center;margin:4px 0}#race6 .row .who{width:44px;font-size:30px}#race6 .sq{width:min(7vw,58px);height:44px;border-radius:12px;background:#fff6e8;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative}
+#race6 .sq.goal{background:#ffd36b}#race6 .msg{margin-top:6px;font-size:20px;color:var(--rust);min-height:26px}#race6 .die{display:inline-block;width:40px;height:40px;border-radius:9px;background:#fff;border:3px solid #4a3426;font:800 26px 'Baloo 2';line-height:36px;margin-left:8px}`;document.head.append(c);return d})();
+  const drawR=(msg,die)=>{const row=(who,pos)=>`<div class="row"><div class="who">${who}</div>`+Array.from({length:GOAL+1},(_,i)=>`<div class="sq ${i===GOAL?'goal':''}">${i===pos?who:(i===GOAL?'🏁':'')}</div>`).join('')+'</div>';
+    tr.innerHTML=`<div>Först till 🏁 vinner</div>${row('💗',me)}${row('🦔',him)}<div class="msg">${msg||''}${die?`<span class="die">${die}</span>`:''}</div>`;tr.style.display='block'};
+  drawR('Du börjar!');
+  while(me<GOAL&&him<GOAL){await tr6('k7-63');const q=qs[qi++%qs.length];drawR('Din tur! Svara rätt så går 💗 två steg.');ask(`Vad är "${q.sv}" på finska?`);let tries=0;
+    if(qi%3===0){const t=await typeIt([q.fi,q.fi.replace(/[!.?]/g,'')],`Skriv på finska: ${q.sv}`);tries=t;ask('')}
+    else for(;;){const opts=shuffle([q,...shuffle(Q.filter(x=>x!==q)).slice(0,2)]).map(x=>({t:x.fi,ok:x===q}));const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');break}b.classList.add('wrong');sfx('wrong',.4);tries++}
+    const d=tries?1:2;for(let k=0;k<d&&me<GOAL;k++){me++;drawR(`Rätt! 💗 går ${d} ${d>1?'steg':'steg'}.`);sfx('right',.3);await sleep(450)}addPaws(d);showWord(q.fi,q.sv,1500);await sleep(700);if(me>=GOAL)break;
+    drawR('Siilis tur. Han kastar tärningen …');await tr6('k7-64');play('present');await tr6('k7-65');let roll=1;for(let k=0;k<7;k++){roll=1+Math.floor(Math.random()*6);drawR('Siili kastar …',roll);await sleep(110)}
+    roll=Math.random()<.15?6:rnd([1,1,2,3]);drawR(roll===6?'En sexa! Siili går två steg.':'Siili går ett steg.',roll);if(roll===6){play('jump');await tr6('k7-66')}
+    const st_=roll===6?2:1;for(let k=0;k<st_&&him<GOAL;k++){him++;drawR(roll===6?'En sexa! Siili går två steg.':'Siili går ett steg.',roll);await sleep(450)}await sleep(900)}
+  drawR(me>=GOAL?'Du vann! 🎉':'Siili vann den här gången!');if(me>=GOAL){play('clap');await tr6('k7-68')}else{play('jump');await tr6('k7-67')}await sleep(1500);tr.style.display='none'}
 async function c7Teach(){if(scene!==libS)await toLib();if(boardG)boardG.visible=false;siili.position.set(0,0,0);face(cam.position);setMusic('home');
   showPic('kello');play('present');await sayIf6('x7-42');ask('Vad heter det på svenska?');for(;;){const {o,b}=await choose6(shuffle([{t:'klocka',ok:true},{t:'kell'},{t:'kello'}]));if(o.ok){clearCards();ask('');break}b.classList.add('wrong');sfx('wrong',.4)}
   play('think');await sayIf6('x7-43');hidePic();showPic('pallo');play('present');await sayIf6('x7-44');ask('Vad heter det på svenska?');for(;;){const {o,b}=await choose6(shuffle([{t:'boll',ok:true},{t:'pall'},{t:'bulle'}]));if(o.ok){clearCards();ask('');break}b.classList.add('wrong');sfx('wrong',.4)}
@@ -378,9 +422,10 @@ async function c8Says(){if(scene!==gymS)await toGym();play('present');await tr6(
   for(let r=0;r<8;r++){const k=rnd(VK);const right=Math.random()<.55;const shown=right?k:rnd(VK.filter(x=>x!==k&&V8[x].a!==V8[k].a));
     await say(vShort(k),{sub:false});play(V8[shown].a);showPic(V8[shown].img,'');await say('k8-29');ask('Gör Siili det han säger?');
     const {o}=await choose6([{t:'Oikein!',s:'rätt',e:'✔️',ok:right,v:true},{t:'Väärin!',s:'fel',e:'✖️',ok:!right,v:false}]);clearCards();ask('');hidePic();
-    if(o.ok){addPaws(2);await tr6(right?'k8-30':'k8-32');if(!right)await tr6('k8-31')}else{sfx('wrong',.4);showWord('minä '+k,V8[k].sv);await say(rnd(OOPS))}play('idle',.4)}}
+    if(o.ok){addPaws(2);await tr6(right?'k8-30':'k8-32');if(!right)await tr6('k8-31')}else{sfx('wrong',.4);showWord('minä '+k,V8[k].sv);await say(rnd(OOPS))}play('idle',.4)
+    if(r%3===2){showPic(V8[shown].img);const t=await typeIt(['minä '+shown,shown],'Vad gör Siili på bilden? Skriv på finska.');hidePic();showWord('minä '+shown,'jag '+V8[shown].sv);addPaws(t?1:3)}}}
 async function c8Choose(){if(scene!==gymS)await toGym();play('present');await tr6('k8-34');
-  for(let r=0;r<4;r++){ask('Vad ska Siili göra?');const opts=shuffle(VK).slice(0,3).map(k=>({t:'minä '+k,s:V8[k].sv,k,ok:true}));const {o}=await choose6(opts);clearCards();ask('');await tr6('k8-35');await doVerb(o.k,true);addPaws(1)}
+  for(let r=0;r<4;r++){ask('Vad ska Siili göra?');const opts=shuffle(VK).slice(0,3).map(k=>({t:'minä '+k,s:V8[k].sv,k,ok:true,free:true,e:pic6(V8[k].img,80)}));const {o}=await choose6(opts);clearCards();ask('');await tr6('k8-35');await doVerb(o.k,true);addPaws(1)}
   for(const k of shuffle(VK).slice(0,5)){play(V8[k].a);showPic(V8[k].img,'');await tr6('k8-33');ask('Vad gör Siili?');let tries=0;
     for(;;){const opts=shuffle([k,...shuffle(VK.filter(x=>x!==k)).slice(0,2)]).map(x=>({t:'minä '+x,ok:x===k}));const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');hidePic();await say(vShort(k));addPaws(tries?1:3);break}b.classList.add('wrong');sfx('wrong',.4);tries++}play('idle',.4)}
   // write like the crossword on p. 38
@@ -398,7 +443,8 @@ async function c8Bingo(){if(scene!==gymS)await toGym();play('happy');await tr6('
 async function c8Sina(){if(scene!==gymS)await toGym();play('present');
   for(const id of['k8-39','k8-40','k8-41','k8-42','k8-43','k8-44']){await tr6(id)}
   const R8={luen:'k8-46',laulan:'k8-47',hypin:'k8-48',nauran:'k8-49',taputan:'k8-50',vilkutan:'k8-51'};const SIN={luen:'luet',laulan:'laulat',hypin:'hypit',nauran:'naurat',taputan:'taputat',vilkutan:'vilkutat'};
-  for(let r=0;r<3;r++){await tr6('k8-45');ask('Vad gör du? Välj!');const {o}=await choose6(shuffle(Object.keys(R8)).slice(0,3).map(k=>({t:'',e:pic6(V8[k].img,92),k,ok:true})));clearCards();ask('');play('happy');showWord('sinä '+SIN[o.k],'du '+V8[o.k].sv);await say(R8[o.k]);addPaws(2)}}
+  for(let r=0;r<3;r++){await tr6('k8-45');ask('Vad gör du? Välj!');const {o}=await choose6(shuffle(Object.keys(R8)).slice(0,3).map(k=>({t:'',e:pic6(V8[k].img,92),k,ok:true,free:true})));clearCards();ask('');play('happy');showWord('sinä '+SIN[o.k],'du '+V8[o.k].sv);await say(R8[o.k]);addPaws(2)}
+  for(const k of shuffle(Object.keys(SIN)).slice(0,3)){showPic(V8[k].img);const t=await typeIt(['sinä '+SIN[k],SIN[k]],'Skriv på finska: Du '+V8[k].sv+'.');hidePic();showWord('sinä '+SIN[k],'du '+V8[k].sv);addPaws(t?1:3);await praise()}}
 async function c8Teach(){if(scene!==gymS)await toGym();setMusic('home');play('happy');await sayIf6('x8-19');ask('Gråter Siili?');
   await choose6([{t:'Ja',e:'😢'},{t:'Nej, du skrattar!',e:'😂',ok:true}]);clearCards();ask('');play('think');await sayIf6('x8-20');await sayIf6('x8-21');play('happy');await sayIf6('x8-22');addPaws(3);
   setMusic('evening');play('sad');await tr6('k8-52');play('curl');await tr6('k8-53');play('think');await tr6('k8-54');await sleep(800);await sticker6(8)}
@@ -460,7 +506,7 @@ async function c9Colour(){if(scene!==parkS)await toPark();
     g_.children[i].setAttribute('fill',COL9[k][0]);scarves[i%5].material.color.set(COL9[k][0]);ask('');play('happy');showWord(k,COL9[k][1],1300);learn(k);addPaws(tries?1:2);await sleep(300)}
   pal.style.display='none';await praise();await sleep(800);box_.style.display='none';
   // write three colours
-  for(const k of shuffle(CK).slice(0,3)){const t=await typeIt([k],'Skriv på finska: '+COL9[k][1]);showWord(k,COL9[k][1]);addPaws(t?1:3);await praise()}}
+  for(const k of shuffle(CK).slice(0,6)){const t=await typeIt([k],'Skriv på finska: '+COL9[k][1]);showWord(k,COL9[k][1]);addPaws(t?1:3);await praise()}}
 async function c9Onko(){if(scene!==parkS)await toPark();play('present');await tr6('k9-20');
   const Q=[['k9-22',true,'kurkku'],['k9-23',false,'banaani','k9-35'],['k9-24',false,'appelsiini','k9-36'],['k9-25',true,'tomaatti'],['k9-26',true,'sitruuna'],['k9-27',false,'appelsiini'],['k9-28',false,'banaani'],['k9-29',false,'paaryna'],['k9-30',false,'tomaatti'],['k9-31',true,'pulla'],['k9-32',false,null,'k9-37']];
   for(const [id,yes,img,react] of shuffle(Q).slice(0,8)){if(img)showPic(img);play('think');await say(id);ask('Vad svarar du?');let tries=0;
@@ -468,20 +514,20 @@ async function c9Onko(){if(scene!==parkS)await toPark();play('present');await tr
   await tr6('k9-21')}
 async function c9What(){if(scene!==parkS)await toPark();play('think');await tr6('k9-38');play('happy');await tr6('k9-39');
   const A=[['kissa','musta','k9-40','k9-49'],['koira','ruskea','k9-41','k9-50'],['hamsteri','oranssi','k9-42','k9-51'],['sammakko','vihreä','k9-43'],['ankka','keltainen','k9-44'],['mansikka','punainen','k9-45'],['kukka','liila','k9-46'],['lumiukko','valkoinen','k9-47']];
-  let n=0;for(const [img,c,id,fun] of shuffle(A).slice(0,7)){n++;showPic(img);await say(id);
-    if(n%2===0){await say('k9-48');const t=await typeIt([c,c.replace('ä','a')],'Skriv färgen på finska!');hidePic();showWord(c,COL9[c][1]);addPaws(t?1:3)}
-    else{ask('Minkävärinen?');for(;;){const opts=shuffle([c,...shuffle(CK.filter(x=>x!==c)).slice(0,2)]).map(x=>({t:x,e:`<div style="width:54px;height:54px;border-radius:50%;margin:0 auto;background:${COL9[x][0]}"></div>`,ok:x===c}));const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');hidePic();showWord(c,COL9[c][1]);addPaws(3);break}b.classList.add('wrong');sfx('wrong',.4)}}
+  let n=0;for(const [img,c,id,fun] of shuffle(A).slice(0,8)){n++;showPic(img);await say(id);
+    if(n%3!==1){await say('k9-48');const t=await typeIt([c,c.replace('ä','a')],'Skriv färgen på finska!');hidePic();showWord(c,COL9[c][1]);addPaws(t?1:3)}
+    else{ask('Minkävärinen? Välj det finska ordet.');for(;;){const opts=shuffle([c,...shuffle(CK.filter(x=>x!==c)).slice(0,3)]).map(x=>({t:x,ok:x===c}));const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');hidePic();showWord(c,COL9[c][1]);addPaws(3);break}b.classList.add('wrong');sfx('wrong',.4)}}
     play('happy');if(fun)await tr6(fun);else await praise();learn(c)}}
 async function c9More(){if(scene!==parkS)await toPark();
   for(const [id,yes,react] of[['k9-52',true],['k9-53',true],['k9-54',true],['k9-55',false,'k9-56'],['k9-57',true],['k9-58',false]]){play('think');await say(id);ask('On vai ei ole?');let tries=0;
     for(;;){const {o,b}=await choose6([{t:'On.',e:'👍',ok:yes},{t:'Ei ole.',e:'👎',ok:!yes}]);if(o.ok){clearCards();ask('');play(yes?'nod':'shake');await say(yes?'k9-33':'k9-34');if(react)await tr6(react);addPaws(tries?1:3);break}b.classList.add('wrong');sfx('wrong',.4);tries++}}
   for(const [id,a,b_,res] of[['k9-59','sininen','punainen','liila'],['k9-60','keltainen','sininen','vihreä'],['k9-61','punainen','keltainen','oranssi']]){
     clearTimeout(showWord.t);$('#word .fi').innerHTML=`<span style="color:${COL9[a][0]}">●</span> + <span style="color:${COL9[b_][0]}">●</span>`;$('#word .sv').textContent='';$('#word').classList.add('on');
-    await say(id);ask('Vilken färg blir det?');for(;;){const opts=shuffle([res,...shuffle(CK.filter(x=>x!==res&&x!==a&&x!==b_)).slice(0,2)]).map(x=>({t:x,e:`<div style="width:54px;height:54px;border-radius:50%;margin:0 auto;background:${COL9[x][0]}"></div>`,ok:x===res}));const {o,b}=await choose6(opts);
+    await say(id);ask('Vilken färg blir det? Svara på finska.');for(;;){const opts=shuffle([res,...shuffle(CK.filter(x=>x!==res&&x!==a&&x!==b_)).slice(0,2)]).map(x=>({t:x,ok:x===res}));const {o,b}=await choose6(opts);
       if(o.ok){clearCards();ask('');$('#word').classList.remove('on');play('jump');showWord(res,COL9[res][1]);await tr6('k9-62');addPaws(3);break}b.classList.add('wrong');sfx('wrong',.4)}}}
 async function c9Show2(){if(scene!==parkS)await toPark();setMusic('home');
   scarves.forEach((s,i)=>s.material.color.set(i%2?'#f4f1ea':'#2f62b8'));play('present');await tr6('k9-63');play('think');await tr6('k9-64');ask('Vilken är din favoritfärg?');
-  const {o}=await choose6(shuffle(CK).slice(0,4).map(k=>({t:k,s:COL9[k][1],e:`<div style="width:54px;height:54px;border-radius:50%;margin:0 auto;background:${COL9[k][0]}"></div>`,k,ok:true})));clearCards();ask('');st.fav=o.k;save();scarves[2].material.color.set(COL9[o.k][0]);play('happy');await tr6('k9-65');
+  const {o}=await choose6(shuffle(CK).slice(0,4).map(k=>({t:k,s:COL9[k][1],free:true,e:`<div style="width:54px;height:54px;border-radius:50%;margin:0 auto;background:${COL9[k][0]}"></div>`,k,ok:true})));clearCards();ask('');st.fav=o.k;save();scarves[2].material.color.set(COL9[o.k][0]);play('happy');await tr6('k9-65');
   play('present');await sayIf6('x9-20');ask('Är Siili blå?');await choose6([{t:'Ja',e:'💙'},{t:'Nej, blöt!',e:'💧',ok:true}]);clearCards();ask('');play('think');await sayIf6('x9-21');await sayIf6('x9-22');play('happy');await sayIf6('x9-23');addPaws(3);
   play('happy');await tr6('k9-66');siili.position.set(-.4,0,-.1);await camTo(new THREE.Vector3(.3,.3,.9),new THREE.Vector3(0,.12,-.2),900);play('walk');
   await new Promise(r=>{const t0=performance.now();(function s(){const k=Math.min(1,(performance.now()-t0)/2600);siili.position.x=-.4+k*.8;face(new THREE.Vector3(1,0,-.1));if(k<1)requestAnimationFrame(s);else r()})()});
@@ -491,11 +537,15 @@ const PARTS9=[{n:'Muotinäytös',d:'Halsdukar i alla färger',f:c9Show},{n:'Vär
 
 /* ================= Kapitel 10 · Nähdään huomenna!: kalaset i vardagsrummet ================= */
 let partyBuilt=false,owlG=null,sqG=null,cakeG=null,giftG=null,bouqG=null,ballG=null;
+
+async function spriteProp(img,h){const t=await new THREE.TextureLoader().loadAsync('img6/'+img+'.webp');t.colorSpace=THREE.SRGBColorSpace;const asp=t.image.width/t.image.height;
+  const sp=new THREE.Mesh(new THREE.PlaneGeometry(h*asp,h),new THREE.MeshStandardMaterial({map:t,transparent:true,alphaTest:.35,roughness:.85,side:THREE.DoubleSide}));sp.position.y=h/2;sp.castShadow=true;const m=new THREE.Group();m.add(sp);m.userData.sprite=sp;m.userData.billboard=true;return m}
 async function guest6(file,img,h){const g=await optGLB6(file);if(g){const inner=g.scene;fitModel(inner,{h});const m=new THREE.Group();m.add(inner);m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;for(const mt of[].concat(o.material))if(mt){mt.emissiveMap=null;mt.emissive?.set('#000');mt.roughness=Math.max(mt.roughness??.6,.6);mt.metalness=0}}});
     if(g.animations&&g.animations.length){const mx=new THREE.AnimationMixer(inner);m.userData.mixer=mx;m.userData.acts={};for(const c of g.animations){m.userData.acts[c.name.toLowerCase()]=mx.clipAction(c)}const idle=Object.keys(m.userData.acts).find(n=>/idle/.test(n))||Object.keys(m.userData.acts)[0];m.userData.acts[idle].play()}return m}
   const t=await new THREE.TextureLoader().loadAsync('img6/'+img+'.webp');t.colorSpace=THREE.SRGBColorSpace;const asp=t.image.width/t.image.height;
   const sp=new THREE.Mesh(new THREE.PlaneGeometry(h*asp,h),new THREE.MeshStandardMaterial({map:t,transparent:true,alphaTest:.4,roughness:.9,side:THREE.DoubleSide}));sp.position.y=h/2;sp.castShadow=true;const m=new THREE.Group();m.add(sp);m.userData.sprite=sp;return m}
-function guestAnim(m,re){if(!m||!m.userData.acts)return;const k=Object.keys(m.userData.acts).find(n=>re.test(n));if(!k)return;for(const a of Object.values(m.userData.acts))a.fadeOut(.3);m.userData.acts[k].reset().fadeIn(.3).play()}
+function guestAnim(m,re){if(!m||!m.userData.acts)return false;const k=Object.keys(m.userData.acts).find(n=>re.test(n));if(!k)return false;const A=m.userData.acts[k];for(const a of Object.values(m.userData.acts))if(a!==A)a.fadeOut(.3);A.reset().fadeIn(.3).play();
+  if(!/idle|walk|run|talk/.test(k)){A.setLoop(THREE.LoopOnce);A.clampWhenFinished=true;clearTimeout(m.userData.t);m.userData.t=setTimeout(()=>guestAnim(m,/idle/),A.getClip().duration*1000-200)}return true}
 async function buildParty(){if(partyBuilt)return;partyBuilt=true;const S=homeS;const P=new THREE.Group();P.name='party';
   const cols=['#e86a8a','#f2c230','#5ab0e0','#8ad07a','#b58ae0'];
   for(let i=0;i<9;i++){const x=R01(-.48,.48),z=R01(-.55,-.35),y=R01(.42,.52);const b=new THREE.Mesh(new THREE.SphereGeometry(.035,20,16),M6(cols[i%5],{roughness:.25}));b.scale.y=1.18;b.position.set(x,y,z);P.add(b);
@@ -503,16 +553,20 @@ async function buildParty(){if(partyBuilt)return;partyBuilt=true;const S=homeS;c
   for(let i=0;i<13;i++){const t=i/12,x=-.48+t*.96,y=.53-Math.sin(t*Math.PI)*.04;const f=new THREE.Mesh(new THREE.ConeGeometry(.012,.03,3),M6(cols[i%5]));f.rotation.x=Math.PI;f.position.set(x,y,-.58);P.add(f)}
   S.add(P);P.visible=false;homeS.userData.party=P;
   owlG=await guest6('owl.glb','owl',.27);owlG.position.set(.32,0,.18);owlG.visible=false;S.add(owlG);
-  sqG=await guest6('squirrel.glb','squirrel',.21);sqG.position.set(-.2,0,.3);sqG.visible=false;S.add(sqG);
-  cakeG=await placeGLB6(S,'cake.glb',{x:.16,y:0,z:.02,h:.07},()=>{const G=new THREE.Group();const c=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.05,32),M6('#fff4ec'));c.position.y=.025;G.add(c);for(let i=0;i<10;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(.007,10,8),M6('#d0302a'));const a=i/10*Math.PI*2;s.position.set(Math.cos(a)*.04,.053,Math.sin(a)*.04);G.add(s)}for(let i=0;i<5;i++){const k=new THREE.Mesh(new THREE.CylinderGeometry(.002,.002,.022,6),M6(cols[i]));const a=i/5*Math.PI*2;k.position.set(Math.cos(a)*.02,.062,Math.sin(a)*.02);G.add(k)}return G});cakeG.visible=false;
-  giftG=await placeGLB6(S,'gifts.glb',{x:-.12,y:0,z:-.1,h:.09},()=>{const G=new THREE.Group();bx6(G,.07,.05,.07,M6('#3f74b8'),0,.025,0);bx6(G,.055,.04,.055,M6('#f2c230'),0,.07,0);bx6(G,.04,.03,.04,M6('#e86a8a'),0,.105,0);return G});giftG.visible=false;
-  bouqG=await placeGLB6(S,'bouquet.glb',{x:-.3,y:0,z:.2,h:.08},()=>{const G=new THREE.Group();for(let i=0;i<7;i++){const f=new THREE.Mesh(new THREE.SphereGeometry(.01,10,8),M6('#f2c230'));f.position.set(R01(-.015,.015),.06+R01(0,.02),R01(-.015,.015));G.add(f)}const st_=new THREE.Mesh(new THREE.CylinderGeometry(.006,.004,.06,8),M6('#4f9a4a'));st_.position.y=.03;G.add(st_);return G});bouqG.visible=false;
-  ballG=await placeGLB6(S,'football.glb',{x:-.6,y:0,z:.1,h:.05},()=>{const b=new THREE.Mesh(new THREE.SphereGeometry(.025,20,14),M6('#f4f4f4',{roughness:.5}));b.position.y=.025;const G=new THREE.Group();G.add(b);return G});ballG.visible=false;
-  (function tick(){requestAnimationFrame(tick);for(const g of[owlG,sqG])if(g&&g.userData.mixer)g.userData.mixer.update(1/60);if(scene===homeS)for(const g of[owlG,sqG])if(g&&g.userData.sprite&&g.visible){g.lookAt(cam.position.x,g.position.y,cam.position.z);g.userData.sprite.position.y=g.userData.h0??(g.userData.h0=g.userData.sprite.position.y);g.userData.sprite.position.y+=Math.sin(performance.now()/300+g.position.x*9)*.002}})()}
+  sqG=await guest6('squirrel.glb','squirrel',.21);sqG.position.set(-.2,0,.3);sqG.visible=false;sqG.rotation.y=0;S.add(sqG);
+  cakeG=await optGLB6('cake.glb')?await placeGLB6(S,'cake.glb',{x:.16,y:0,z:.02,h:.07}):null;if(!cakeG){cakeG=await spriteProp('cake',.085);cakeG.position.set(.17,0,.04);S.add(cakeG)}if(false)(()=>{const G=new THREE.Group();const c=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.05,32),M6('#fff4ec'));c.position.y=.025;G.add(c);for(let i=0;i<10;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(.007,10,8),M6('#d0302a'));const a=i/10*Math.PI*2;s.position.set(Math.cos(a)*.04,.053,Math.sin(a)*.04);G.add(s)}for(let i=0;i<5;i++){const k=new THREE.Mesh(new THREE.CylinderGeometry(.002,.002,.022,6),M6(cols[i]));const a=i/5*Math.PI*2;k.position.set(Math.cos(a)*.02,.062,Math.sin(a)*.02);G.add(k)}return G});cakeG.visible=false;
+  giftG=await spriteProp('gifts',.11);giftG.position.set(-.13,0,-.08);S.add(giftG);if(false)(()=>{const G=new THREE.Group();bx6(G,.07,.05,.07,M6('#3f74b8'),0,.025,0);bx6(G,.055,.04,.055,M6('#f2c230'),0,.07,0);bx6(G,.04,.03,.04,M6('#e86a8a'),0,.105,0);return G});giftG.visible=false;
+  bouqG=await spriteProp('bouquet',.08);bouqG.position.set(-.08,0,.3);S.add(bouqG);if(false)(()=>{const G=new THREE.Group();for(let i=0;i<7;i++){const f=new THREE.Mesh(new THREE.SphereGeometry(.01,10,8),M6('#f2c230'));f.position.set(R01(-.015,.015),.06+R01(0,.02),R01(-.015,.015));G.add(f)}const st_=new THREE.Mesh(new THREE.CylinderGeometry(.006,.004,.06,8),M6('#4f9a4a'));st_.position.y=.03;G.add(st_);return G});bouqG.visible=false;
+  ballG=await spriteProp('football',.045);ballG.position.set(-.6,0,.1);S.add(ballG);if(false)(()=>{const b=new THREE.Mesh(new THREE.SphereGeometry(.025,20,14),M6('#f4f4f4',{roughness:.5}));b.position.y=.025;const G=new THREE.Group();G.add(b);return G});ballG.visible=false;
+  (function tick(){requestAnimationFrame(tick);for(const g of[owlG,sqG])if(g&&g.userData.mixer)g.userData.mixer.update(1/60);if(scene===homeS)for(const g of[cakeG,giftG,bouqG,ballG])if(g&&g.userData.billboard&&g.visible)g.rotation.y=Math.atan2(cam.position.x-g.position.x,cam.position.z-g.position.z);if(scene===homeS)for(const g of[owlG,sqG])if(g&&g.userData.sprite&&g.visible){g.lookAt(cam.position.x,g.position.y,cam.position.z);g.userData.sprite.position.y=g.userData.h0??(g.userData.h0=g.userData.sprite.position.y);g.userData.sprite.position.y+=Math.sin(performance.now()/300+g.position.x*9)*.002}})()}
 async function toParty(){await toHome();await buildParty();homeS.userData.party.visible=true;homeCam='follow'}
 function hop6(g,ms=500){const y0=g.position.y,t0=performance.now();return new Promise(r=>{(function s(){const k=Math.min(1,(performance.now()-t0)/ms);g.position.y=y0+Math.sin(k*Math.PI)*.05;if(k<1)requestAnimationFrame(s);else{g.position.y=y0;r()}})()})}
-async function enter6(g,x,z){g.visible=true;g.position.set(x+.5*Math.sign(x||1),0,z);sfx('door',.35);const x0=g.position.x,t0=performance.now();guestAnim(g,/walk|run/);
-  await new Promise(r=>{(function s(){const k=Math.min(1,(performance.now()-t0)/1400);g.position.x=x0+(x-x0)*(1-Math.pow(1-k,3));if(k<1)requestAnimationFrame(s);else r()})()});guestAnim(g,/idle/)}
+async function enter6(g,x,z){const sx=.95,sz=z+.05;g.position.set(sx,0,sz);g.visible=true;sfx('door',.35);const sprite=!!g.userData.sprite;
+  const dist=Math.hypot(x-sx,z-sz),ms=dist/.16*1000;const yaw=Math.atan2(x-sx,z-sz);if(!sprite)g.rotation.y=yaw;
+  if(!guestAnim(g,/walk/))guestAnim(g,/run/);const t0=performance.now();
+  await new Promise(r=>{(function s(){const k=Math.min(1,(performance.now()-t0)/ms);const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;g.position.x=sx+(x-sx)*Math.min(1,e);g.position.z=sz+(z-sz)*Math.min(1,e);
+    if(sprite)g.userData.sprite.position.y=g.userData.sprite.geometry.parameters.height/2+Math.abs(Math.sin(k*ms/160))*.012;if(k<1)requestAnimationFrame(s);else r()})()});
+  guestAnim(g,/idle/);if(!sprite){const y0=g.rotation.y,y1=Math.atan2(cam.position.x-x,cam.position.z-z),t1=performance.now();await new Promise(r=>{(function s(){const k=Math.min(1,(performance.now()-t1)/600);g.rotation.y=y0+(y1-y0)*k;if(k<1)requestAnimationFrame(s);else r()})()})}}
 async function pick10(q,opts){ask(q);let tries=0;for(;;){const {o,b}=await choose6(shuffle(opts));if(o.ok){clearCards();ask('');learn(o.t);addPaws(tries?1:3);return o}b.classList.add('wrong');sfx('wrong',.4);tries++;await say(rnd(OOPS))}}
 async function c10Arrive(){await toParty();setMusic('home');play('jump');await tr6('k10-00');play('happy');await tr6('k10-01');
   sfx('door',.4);play('scared');await tr6('k10-02');await tr6('k10-03');
@@ -545,8 +599,8 @@ async function c10Oops(){if(!homeS.userData.party?.visible){await toParty();for(
 async function c10Phrases(){if(!homeS.userData.party?.visible){await toParty();for(const g of[sqG,owlG])g.visible=true}
   const P=[['God dag!','Päivää!','k10-05'],['Hur mår du?','Mitä kuuluu?','k10-07'],['Bra, tack!','Hyvää, kiitos!','k10-08'],['Vi ses i morgon!','Nähdään huomenna!','k10-31'],['Välkommen!','Tervetuloa!','k10-04'],['Kom in!','Tule sisään!','k10-04'],['Varsågod!','Ole hyvä!','k10-11'],
     ['Förlåt!','Anteeksi!','k10-24'],['Det gör inget.','Ei se mitään.',null],['Grattis!','Onnea!','q-02'],['Tack så mycket!','Kiitos paljon!','k10-10'],['God morgon!','Huomenta!','k10-06'],['Hejdå!','Heippa!','k10-30'],['Roligt att träffas!','Kiva tavata!','k10-13']];
-  let n=0;for(const [sv,fi,id] of shuffle(P).slice(0,9)){n++;
-    if(n%3===0){const acc=[fi,fi.replace(/[!.,]/g,'')];const t=await typeIt(acc,'Skriv på finska: '+sv);showWord(fi,sv);addPaws(t?1:3);if(id)await say(id);else await praise();continue}
+  let n=0;for(const [sv,fi,id] of shuffle(P).slice(0,10)){n++;
+    if(n%2===0){const acc=[fi,fi.replace(/[!.,]/g,'')];const t=await typeIt(acc,'Skriv på finska: '+sv);showWord(fi,sv);addPaws(t?1:3);if(id)await say(id);else await praise();continue}
     ask(`Vad är "${sv}" på finska?`);let tries=0;for(;;){const opts=shuffle([[sv,fi],...shuffle(P.filter(x=>x[1]!==fi)).slice(0,2)]).map(x=>({t:x[1],ok:x[1]===fi}));const {o,b}=await choose6(opts);
       if(o.ok){clearCards();ask('');showWord(fi,sv);learn(fi);addPaws(tries?1:3);if(id)await say(id);else await praise();break}b.classList.add('wrong');sfx('wrong',.4);tries++}}}
 async function c10Bye(){if(!homeS.userData.party?.visible){await toParty();for(const g of[sqG,owlG,giftG,bouqG])g.visible=true}
@@ -577,8 +631,8 @@ async function cRepeat(){await toClass();setMusic('search');play('happy');await 
   while(cluster6(own,'S')<6&&cluster6(own,'H')<6&&guard++<120){
     if(turn==='S'){draw();await roll();let d1,d2,i;for(let k=0;k<10;k++){d1=1+Math.floor(Math.random()*6);d2=1+Math.floor(Math.random()*6);i=(d2-1)*6+d1-1;if(!own[i])break}
       if(own[i]){const free=[...Array(36).keys()].filter(j=>!own[j]);i=rnd(free);d1=i%6+1;d2=Math.floor(i/6)+1}
-      draw(i,d1,d2);await sleep(500);const [sv,fi]=RQ[i];const single=!fi.includes(' ')||fi.split(' ').length<=2&&fi.length<14;box_.style.display='none';
-      let ok;if(single&&Math.random()<.6){await say(rnd(['kR-05','kR-04']));const t=await typeIt([fi,fi.replace(/[!.?,]/g,'')],'Skriv på finska: '+sv);ok=true;showWord(fi,sv);addPaws(t?1:3);if(t)await tr6('kR-07');else await praise()}
+      draw(i,d1,d2);await sleep(500);const [sv,fi]=RQ[i];const single=fi.split(' ').length<=3;box_.style.display='none';
+      let ok;if(single&&Math.random()<.75){await say(rnd(['kR-05','kR-04']));const t=await typeIt([fi,fi.replace(/[!.?,]/g,'')],'Skriv på finska: '+sv);ok=true;showWord(fi,sv);addPaws(t?1:3);if(t)await tr6('kR-07');else await praise()}
       else{await say('kR-03');ask(`"${sv}" på finska?`);let tries=0;for(;;){const opts=shuffle([RQ[i],...shuffle(RQ.filter(x=>x!==RQ[i])).slice(0,3)]).map(x=>({t:x[1],ok:x===RQ[i]}));const {o,b}=await choose6(opts);if(o.ok){clearCards();ask('');break}b.classList.add('wrong');sfx('wrong',.4);tries++}showWord(fi,sv);addPaws(tries?1:3);ok=true;if(!tries)await praise()}
       if(ok)own[i]='S';box_.style.display='flex';turn='H'}
     else{draw(null,null,null,'Siili kastar …');await sleep(900);const free=[...Array(36).keys()].filter(j=>!own[j]);if(!free.length)break;const i=rnd(free);draw(i,i%6+1,Math.floor(i/6)+1,'Siili kastar …');await sleep(1100);
@@ -587,9 +641,9 @@ async function cRepeat(){await toClass();setMusic('search');play('happy');await 
   await sleep(600);box_.style.display='none';play('wave');await tr6('kR-10');addPaws(10)}
 async function cRepeatWrite(){await toClass();play('present');await tr6('kR-00');
   const pool=[...ORDER6.map(k=>[W6[k],fi6(k)]),...W7.map(w=>[w.sv,w.fi]),...VK.map(k=>['jag '+V8[k].sv,'minä '+k]),...CK.map(k=>[COL9[k][1],k]),['Hjälp!','Apua!'],['Vänta!','Odota!'],['rätt','oikein'],['nästan','melkein'],['Fint!','Hienoa!'],['Förlåt!','Anteeksi!'],['Varsågod!','Ole hyvä!'],['Vi ses i morgon!','Nähdään huomenna!'],['Välkommen!','Tervetuloa!'],['Det gör inget.','Ei se mitään.']];
-  let right=0;const L=shuffle(pool).slice(0,12);for(const [sv,fi] of L){await say(rnd(['kR-05','kR-04','kR-03']),{sub:false});const t=await typeIt([fi,fi.replace(/[!.?,]/g,'')],'Skriv på finska: '+sv);showWord(fi,sv);if(!t)right++;addPaws(t?1:3);if(!t)await praise();else await tr6('kR-06')}
-  showWord(right+' / 12','rätt på första försöket',3500);await sleep(1200);play(right>=9?'jump':'happy');await tr6(right>=9?'kR-09':'kR-06');await tr6('kR-10')}
-const PARTSR=[{n:'Tärningsspelet',d:'Som på sidan 49',f:cRepeat},{n:'Skrivprovet',d:'Skriv tolv ord på finska',f:cRepeatWrite}];
+  let right=0;const L=shuffle(pool).slice(0,15);for(const [sv,fi] of L){await say(rnd(['kR-05','kR-04','kR-03']),{sub:false});const t=await typeIt([fi,fi.replace(/[!.?,]/g,'')],'Skriv på finska: '+sv);showWord(fi,sv);if(!t)right++;addPaws(t?1:3);if(!t)await praise();else await tr6('kR-06')}
+  showWord(right+' / 15','rätt på första försöket',3500);await sleep(1200);play(right>=9?'jump':'happy');await tr6(right>=9?'kR-09':'kR-06');await tr6('kR-10')}
+const PARTSR=[{n:'Tärningsspelet',d:'Som på sidan 49',f:cRepeat},{n:'Skrivprovet',d:'Skriv femton ord på finska',f:cRepeatWrite}];
 CHS.push({n:'6 · Koulussa',h:'Koulussa',sub:'Kapitel 6 · Klassrummet på kvällen',P:PARTS6,key:'done6'},{n:'7 · Läksy',h:'Läksy',sub:'Kapitel 7 · Stadsbiblioteket',P:PARTS7,key:'done7'},
   {n:'8 · Minä teen',h:'Minä teen',sub:'Kapitel 8 · Gymnastiksalen',P:PARTS8,key:'done8'},{n:'9 · Färger',h:'Onko banaani sininen?',sub:'Kapitel 9 · Parken i höstfärger',P:PARTS9,key:'done9'},
   {n:'10 · Nähdään!',h:'Nähdään huomenna!',sub:'Kapitel 10 · Siilis kalas',P:PARTS10,key:'done10'},{n:'⭐ Provet',h:'Inför provet',sub:'Repetition av kapitel 6–10',P:PARTSR,key:'doneR'});
@@ -597,4 +651,5 @@ for(const k of['done6','done7','done8','done9','done10','doneR'])st[k]??=[];
 CHS[0].n='1 · Jee!';CHS[1].n='2 · O ja U';
 if(AUTO){st.snd=false;say0=(id)=>{if(!LINES[id])console.warn('MISSING LINE',id);return Promise.resolve()};window.__run=async(ch,i)=>{await ready;try{setQuality(QSTEPS.length-1)}catch(e){}curCh=ch;$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');try{await PARTS_OF(ch)[i].f();return 'ok'}catch(e){console.error('PART FAIL',ch,i,e.stack);return 'fail '+e.message}};}
 function PARTS_OF(ch){return CHS[ch].P}
+if(AUTO)window.__box=()=>{const r=[];clsS.traverse(o=>{if(o.userData?.deskM){const b=new THREE.Box3().setFromObject(o);r.push([...b.min.toArray(),...b.max.toArray()].map(v=>+v.toFixed(2)))}});return r};
 if(AUTO)window.__view=async(n,q=0)=>{await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');const T={cls:toClass,lib:toLib,gym:toGym,park:toPark,party:toParty};await T[n]();if(n==='party'){for(const g of[sqG,owlG,cakeG,giftG,bouqG])if(g)g.visible=true}if(n==='park')scarves.forEach((m,i)=>m.material.color.set(['#c8352b','#f2c230','#2f62b8','#3f9a4a','#8a5ab8'][i]));if(n==='lib'&&!boardG)boardG=await placeGLB6(libS,'boardgame.glb',{x:.3,y:0,z:-.05,w:.42},()=>null);play('idle');return 'ok'};
