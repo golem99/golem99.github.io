@@ -102,6 +102,21 @@ async function c2MovesPic(){if(scene!==harbS){await toHarbor()}
 function showPicSrc(src,cap){const p=$('#pic6');p.querySelector('img').src=src;p.querySelector('.cap').textContent=cap;p.classList.add('on')}
 PARTS2[3].f=c2MovesPic;
 
+
+/* ---------- sticker album in the menu ---------- */
+{const css=document.createElement('style');css.textContent=`#albumB{all:unset;cursor:pointer;display:inline-block;margin-top:10px;padding:8px 16px;border-radius:999px;background:#ffd36b;font:800 16px Nunito,sans-serif}
+#album6{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:auto;background:rgba(40,28,20,.55);z-index:5}
+#album6 .p{background:#fff6e8;border-radius:30px;padding:22px 26px;box-shadow:var(--shadow);text-align:center;max-width:min(860px,94vw)}
+#album6 .g{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:12px 0}
+#album6 .s{width:min(15vw,130px);height:min(15vw,130px);border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font:800 38px 'Baloo 2';color:#cdb89a;background:repeating-linear-gradient(45deg,#f3e6d2,#f3e6d2 8px,#efdcc2 8px,#efdcc2 16px);border:4px dashed #e0c9a6}
+#album6 .s img{width:100%;height:100%;border-radius:50%}#album6 .n{font:800 13px Nunito;margin-top:4px;color:#7a6556}`;document.head.append(css);
+ const d=document.createElement('div');d.id='album6';d.innerHTML='<div class="p"><h1 style="font-family:Baloo 2;margin:0;color:var(--rust)">Siilis album</h1><div class="g"></div><button class="big">Stäng</button></div>';(document.getElementById('ui')||document.body).append(d);
+ d.querySelector('button').onclick=()=>d.style.display='none'}
+function showAlbum(){const g=$('#album6 .g');g.innerHTML='';const names=['Jee!','O ja U','Kiva tavata!','Yksi plus yksi','Hyvä idea!','Koulussa','Läksy','Minä teen','Färger','Nähdään!'];
+  names.forEach((n,i)=>{const c=i+1;const got=c>=6?st['stk'+c]:c===2?st.stickers2:c===1?(st.done||[]).length>=6:false;const img=c>=6?`img6/sticker${c}.webp`:null;
+    g.insertAdjacentHTML('beforeend',`<div><div class="s">${got&&img?`<img src="${img}" alt="">`:got?'⭐':c}</div><div class="n">${c} · ${n}</div></div>`)});$('#album6').style.display='flex'}
+{const _rm=renderMenu;renderMenu=function(){_rm();if(!$('#albumB')){const b=document.createElement('button');b.id='albumB';b.textContent='📒 Siilis album';b.onclick=showAlbum;$('#doors').after(b)}}}
+
 /* ---------- shared scene helpers ---------- */
 function lightRoom6(S,{sky='#ffd8b0',ground='#6a5040',hemi=1,key='#ffd2a0',keyI=2.4,keyPos=[-4,6,3],shadow=4}={}){
   S.add(new THREE.HemisphereLight(sky,ground,hemi));const k=new THREE.DirectionalLight(key,keyI);k.position.set(...keyPos);k.castShadow=true;k.shadow.mapSize.set(2048,2048);
@@ -167,9 +182,9 @@ function buildClass(){if(clsBuilt)return;clsBuilt=true;const S=clsS;S.background
   for(const [x,z] of[[-1.5,-2.5],[1.5,-2.5],[-1.5,.2],[1.5,.2]]){const l=new THREE.Mesh(new THREE.CylinderGeometry(.25,.32,.12,24),new THREE.MeshStandardMaterial({color:'#fff4dc',emissive:new THREE.Color('#ffe2a8'),emissiveIntensity:1.4}));l.position.set(x,Y+2.85,z);S.add(l);
     const pl=new THREE.PointLight('#ffe2b8',.9,5,1.6);pl.position.set(x,Y+2.6,z);S.add(pl);clsLamps.push([l,pl])}
   // Siili's own desk (he stands on it), and the rest of the class
-  {const d=deskFallback();d.position.set(0,Y-.01,0);S.add(d)}
+  {const d=deskFallback();d.position.set(0,Y-.01,0);S.add(d);optGLB6('desk.glb').then(g=>{if(!g)return;const inner=g.scene.clone(true);fitModel(inner,{h:.846});const m=new THREE.Group();m.add(inner);m.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;if(o.material){o.material.roughness=Math.max(o.material.roughness??.6,.55);o.material.metalness=0}}});m.position.set(0,Y+.02,0);m.rotation.y=Math.PI;S.remove(d);S.add(m)})}
   {const pos=[[-1.3,-.2],[1.3,-.2],[-1.3,-1.6],[0,-1.6],[1.3,-1.6],[-1.3,-3],[0,-3],[1.3,-3]];
-   optGLB6('desk.glb').then(g=>{for(const [x,z] of pos){let m;if(g){const inner=g.scene.clone(true);fitModel(inner,{h:.846});m=new THREE.Group();m.add(inner);m.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;if(o.material){o.material.roughness=Math.max(o.material.roughness??.6,.55);o.material.metalness=0}}})}else m=deskFallback();m.userData.deskM=true;m.position.set(x,Y,z);S.add(m)}})}
+   optGLB6('desk.glb').then(g=>{for(const [x,z] of pos){let m;if(g){const inner=g.scene.clone(true);fitModel(inner,{h:.846});m=new THREE.Group();m.add(inner);m.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;if(o.material){o.material.roughness=Math.max(o.material.roughness??.6,.55);o.material.metalness=0}}})}else m=deskFallback();m.userData.deskM=true;m.position.set(x,Y+.02,z);S.add(m)}})}
   // a teacher's desk with an apple
   bx6(S,1.2,.05,.6,M6('#8a6440'),2.4,Y+.75,-4.1);bx6(S,1.1,.7,.5,M6('#7a5434'),2.4,Y+.37,-4.1);
   {const ap=new THREE.Mesh(new THREE.SphereGeometry(.05,16,12),M6('#c23a2b',{roughness:.4}));ap.position.set(2.2,Y+.83,-4.0);S.add(ap)}
@@ -652,4 +667,4 @@ CHS[0].n='1 · Jee!';CHS[1].n='2 · O ja U';
 if(AUTO){st.snd=false;say0=(id)=>{if(!LINES[id])console.warn('MISSING LINE',id);return Promise.resolve()};window.__run=async(ch,i)=>{await ready;try{setQuality(QSTEPS.length-1)}catch(e){}curCh=ch;$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');try{await PARTS_OF(ch)[i].f();return 'ok'}catch(e){console.error('PART FAIL',ch,i,e.stack);return 'fail '+e.message}};}
 function PARTS_OF(ch){return CHS[ch].P}
 if(AUTO)window.__box=()=>{const r=[];clsS.traverse(o=>{if(o.userData?.deskM){const b=new THREE.Box3().setFromObject(o);r.push([...b.min.toArray(),...b.max.toArray()].map(v=>+v.toFixed(2)))}});return r};
-if(AUTO)window.__view=async(n,q=0)=>{await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');const T={cls:toClass,lib:toLib,gym:toGym,park:toPark,party:toParty};await T[n]();if(n==='party'){for(const g of[sqG,owlG,cakeG,giftG,bouqG])if(g)g.visible=true}if(n==='park')scarves.forEach((m,i)=>m.material.color.set(['#c8352b','#f2c230','#2f62b8','#3f9a4a','#8a5ab8'][i]));if(n==='lib'&&!boardG)boardG=await placeGLB6(libS,'boardgame.glb',{x:.3,y:0,z:-.05,w:.42},()=>null);play('idle');return 'ok'};
+if(AUTO)window.__view=async(n,q=0)=>{await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');const T={cls:toClass,lib:toLib,gym:toGym,park:toPark,party:toParty,play:toPlay,apple:toApple};await T[n]();if(n==='party'){for(const g of[sqG,owlG,cakeG,giftG,bouqG])if(g)g.visible=true}if(n==='park')scarves.forEach((m,i)=>m.material.color.set(['#c8352b','#f2c230','#2f62b8','#3f9a4a','#8a5ab8'][i]));if(n==='lib'&&!boardG)boardG=await placeGLB6(libS,'boardgame.glb',{x:.3,y:0,z:-.05,w:.42},()=>null);play('idle');return 'ok'};
