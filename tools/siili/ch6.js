@@ -54,7 +54,7 @@ function typeIt(answers,q){const box_=$('#type6'),inp=box_.querySelector('input'
   const A=[].concat(answers),best=A[0];if(AUTO){box_.style.display='none';return Promise.resolve(0)}
   setTimeout(()=>inp.focus(),50);let tries=0;
   return new Promise(res=>{const check=()=>{const v=fold6(inp.value);if(!v)return;const ok=A.some(a=>fold6(a)===v);const near=!ok&&A.some(a=>fold6(a).length>=5&&lev6(fold6(a),v)===1);
-      if(ok){box_.style.display='none';res(tries);return}
+      if(ok){box_.style.display='none';if(tries){st.miss??={};st.miss[best]=(st.miss[best]||0)+1;save()}else if(st.miss&&st.miss[best]){st.miss[best]--;if(st.miss[best]<=0)delete st.miss[best];save()}res(tries);return}
       if(near){tries++;sfx('wrong',.3);help.innerHTML='Nästan! Det stavas <b style="color:#c8643c;font-size:24px">'+best+'</b> – skriv det rätt.';inp.select();return}
       tries++;sfx('wrong',.4);inp.classList.remove('bad');void inp.offsetWidth;inp.classList.add('bad');
       if(tries===1)help.textContent='Försök igen! Det börjar med '+best.slice(0,2)+' …';else if(tries===2)help.textContent=best.split('').map((c,i)=>i%2?'_':c).join(' ');else{help.textContent='Skriv: '+best}};
@@ -659,6 +659,47 @@ async function cRepeatWrite(){await toClass();play('present');await tr6('kR-00')
   let right=0;const L=shuffle(pool).slice(0,15);for(const [sv,fi] of L){await say(rnd(['kR-05','kR-04','kR-03']),{sub:false});const t=await typeIt([fi,fi.replace(/[!.?,]/g,'')],'Skriv på finska: '+sv);showWord(fi,sv);if(!t)right++;addPaws(t?1:3);if(!t)await praise();else await tr6('kR-06')}
   showWord(right+' / 15','rätt på första försöket',3500);await sleep(1200);play(right>=9?'jump':'happy');await tr6(right>=9?'kR-09':'kR-06');await tr6('kR-10')}
 const PARTSR=[{n:'Tärningsspelet',d:'Som på sidan 49',f:cRepeat},{n:'Skrivprovet',d:'Skriv femton ord på finska',f:cRepeatWrite}];
+/* ---------- more test practice (2026-10-26): dictation, sentence building, fill the gap, your hard words ---------- */
+const DICT=()=>[...ORDER6.map(k=>['kw-'+fi6(k),fi6(k),W6[k]]),...W7.map((w,i)=>['k7-'+String(27+i).padStart(2,'0'),w.fi,w.sv]),
+  ...VK.map(k=>[vShort(k),'minä '+k,'jag '+V8[k].sv]),...CK.map(k=>[cLine(k),k,COL9[k][1]]),
+  ['k10-05','Päivää!','God dag!'],['k10-07','Mitä kuuluu?','Hur mår du?'],['k10-08','Hyvää, kiitos!','Bra, tack!'],['k10-31','Nähdään huomenna!','Vi ses i morgon!'],['k10-13','Kiva tavata!','Roligt att träffas!'],
+  ['k10-33','Näkemiin!','Adjö!'],['k10-16','Sopii!','Det passar!'],['k6-06','Mikä tämä on?','Vad är det här?'],['k6-09','Niin on!','Så är det!'],['k7-06','Minä tiedän!','Jag vet!'],['k7-07','Minä osaan monta sanaa!','Jag kan många ord!'],
+  ['k7-01','Apua! Apua!','Hjälp! Hjälp!'],['k7-46','Sinä arvasit!','Du gissade rätt!'],['k9-23','Onko banaani sininen?','Är bananen blå?'],['k9-22','Onko kurkku vihreä?','Är gurkan grön?'],['k9-34','Ei ole!','Nej!']].filter(x=>has6(x[0]));
+async function rDictation(){await toClass();play('present');await tr6('kR-00');ask('Lyssna och skriv det Siili säger – på finska!');await sleep(1800);ask('');
+  let right=0;const L=shuffle(DICT()).slice(0,14);
+  for(const [id,fi,sv] of L){const rep=()=>say(id,{sub:false});await rep();const hb=$('#hint');hb.style.display='block';hb.textContent='🔊';hb.onclick=rep;
+    const t=await typeIt([fi,fi.replace(/[!?.,]/g,'')],'Vad säger Siili? Skriv det på finska. (🔊 = lyssna igen)');hb.style.display='none';hb.textContent='?';
+    showWord(fi,sv,2000);if(!t){right++;addPaws(3);await praise()}else{addPaws(1);await say(rnd(['kR-07','kR-06']))}}
+  showWord(right+' / '+L.length,'rätt direkt',3500);await sleep(1500);await tr6(right>=L.length-3?'kR-09':'kR-06')}
+const SENT=[['Minä osaan monta sanaa.','Jag kan många ord.','k7-07'],['Mikä tämä on?','Vad är det här?','k6-06'],['Se ei ole ihan oikein.','Det är inte helt rätt.','k7-34'],['Onko banaani sininen?','Är bananen blå?','k9-23'],
+  ['Sitruuna on keltainen.','Citronen är gul.',null],['Nähdään huomenna!','Vi ses i morgon!','k10-31'],['Tässä, ole hyvä!','Här, varsågod!','k10-11'],['Nyt on sinun vuorosi.','Nu är det din tur.','k7-63'],
+  ['Minä luen kirjaa.','Jag läser en bok.','k8-15'],['Kurkku on vihreä ja pitkä.','Gurkan är grön och lång.','k6-35'],['Hyvää huomenta kaikille!','God morgon allihop!','k6-03'],['Tämä on hyvä peli.','Det här är ett bra spel.',null],
+  ['Minä istun tuolilla.','Jag sitter på en stol.','k8-17'],['Ei ole, se on oranssi.','Nej, den är orange.','k9-36'],['Mitä sinä teet?','Vad gör du?','k7-58'],['Hyvää, kiitos!','Bra, tack!','k10-08']];
+async function rSentences(){await toLib();play('present');ask('Bygg meningen på finska! Klicka på orden i rätt ordning.');await sleep(1500);
+  for(const [fi,sv,id] of shuffle(SENT).slice(0,10)){const words=fi.replace(/[.!?,]/g,'').split(' ');const extra=rnd(['ja','on','minä','se','ei','sinä','olen','hyvä'].filter(w=>!words.includes(w)));
+    const box_=$('#search6'),bd=box_.querySelector('.board');let built=[];let tries=0;
+    const draw=()=>{bd.innerHTML=`<div style="font:800 22px Nunito;margin-bottom:8px">${sv}</div><div style="min-height:54px;font:800 32px 'Baloo 2';color:var(--rust);border-bottom:3px dashed #e0c9a6;margin-bottom:12px">${built.map(i=>pool[i]).join(' ')||'&nbsp;'}</div>`+
+      `<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">${pool.map((w,i)=>`<button data-i="${i}" ${built.includes(i)?'disabled':''} style="all:unset;cursor:pointer;padding:8px 14px;border-radius:12px;background:${built.includes(i)?'#eee':'#ffd36b'};font:800 26px 'Baloo 2';opacity:${built.includes(i)?.35:1}">${w}</button>`).join('')}</div>`+
+      `<div style="margin-top:10px"><button id="undo6" style="all:unset;cursor:pointer;padding:6px 12px;border-radius:10px;background:#f6e6cf;font:800 16px Nunito">↩ Ångra</button></div>`};
+    const pool=shuffle([...words,extra]);box_.style.display='flex';draw();
+    await new Promise(done=>{const click=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='undo6'){built.pop();draw();return}const i=+b.dataset.i;if(built.includes(i))return;built.push(i);draw();
+        if(built.length===words.length){const got=built.map(i=>pool[i]).join(' ');if(got.toLowerCase()===words.join(' ').toLowerCase()){bd.removeEventListener('click',click);done()}else{tries++;sfx('wrong',.4);setTimeout(()=>{built=[];draw()},700)}}};
+      bd.addEventListener('click',click);if(AUTO){bd.removeEventListener('click',click);done()}});
+    box_.style.display='none';play('happy');showWord(fi,sv,2200);addPaws(tries?1:3);if(id&&has6(id))await say(id,{sub:false});else await praise()}}
+const GAPS=[['Minä ___ monta sanaa.','osaan','kan'],['Se ei ole ihan ___.','oikein','rätt'],['Onko kurkku ___?','vihreä','grön'],['Sitruuna on ___.','keltainen','gul'],['Nähdään ___!','huomenna','i morgon'],
+  ['Tässä, ole ___!','hyvä','god (varsågod)'],['Ei se ___.','mitään','inget'],['Mitä ___?','kuuluu','hur mår du'],['Hyvää ___ kaikille!','huomenta','morgon'],['Mikä ___ on?','tämä','det här'],['Nyt on sinun ___.','vuorosi','tur'],
+  ['Minä ___ kirjaa.','luen','läser'],['Minä ___ tuolilla.','istun','sitter'],['Minä ___. Hyppy, hyppy!','hypin','hoppar'],['Kiitos ___!','paljon','så mycket'],['___, minä autan!','Odota','Vänta'],
+  ['Appelsiini on ___.','oranssi','orange'],['Banaani on ___.','keltainen','gul'],['Tomaatti on ___.','punainen','röd'],['Hyvää, ___!','kiitos','tack'],['___ tavata!','Kiva','Roligt'],['Minä ___ (jag vet).','tiedän','vet']];
+async function rGaps(){await toPark();play('think');ask('Vilket ord fattas? Skriv det på finska.');await sleep(1500);ask('');
+  for(const [s_,w,hint] of shuffle(GAPS).slice(0,12)){const t=await typeIt([w,w.toLowerCase()],s_.replace('___','______')+'   ('+hint+')');showWord(s_.replace('___',w),'',2200);addPaws(t?1:3);if(!t)await praise();else await tr6('kR-07')}}
+async function rHard(){await toClass();const M=Object.entries(st.miss||{}).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  const all=[...DICT().map(x=>[x[1],x[2],x[0]]),...RQ.map(x=>[x[1],x[0],null])];const find=fi=>all.find(x=>fold(x[0])===fold(fi));
+  let L=M.map(find).filter(Boolean);const fill=shuffle(all.filter(x=>!L.includes(x)));while(L.length<10)L.push(fill.pop());L=L.slice(0,12);
+  play('present');ask(M.length?`Dina svåra ord – ${M.length} st som du fick försöka igen på.`:'Inga svåra ord än – här är en blandning!');await sleep(2200);ask('');
+  for(const [fi,sv,id] of L){const t=await typeIt([fi,fi.replace(/[!?.,]/g,'')],'Skriv på finska: '+sv);showWord(fi,sv,2000);if(id&&has6(id))await say(id,{sub:false});addPaws(t?1:3);if(!t)await praise()}
+  const left=Object.keys(st.miss||{}).length;showWord(left?left+' svåra ord kvar':'Inga svåra ord kvar!','',3000);await sleep(1200);await tr6(left?'kR-06':'kR-09')}
+PARTSR.push({n:'Hör och skriv',d:'Siili säger, du skriver',f:rDictation},{n:'Bygg meningen',d:'Ord i rätt ordning',f:rSentences},{n:'Vilket ord fattas?',d:'Fyll i luckan',f:rGaps},{n:'Dina svåra ord',d:'Ord du fick öva extra på',f:rHard});
+
 CHS.push({n:'6 · Koulussa',h:'Koulussa',sub:'Kapitel 6 · Klassrummet på kvällen',P:PARTS6,key:'done6'},{n:'7 · Läksy',h:'Läksy',sub:'Kapitel 7 · Stadsbiblioteket',P:PARTS7,key:'done7'},
   {n:'8 · Minä teen',h:'Minä teen',sub:'Kapitel 8 · Gymnastiksalen',P:PARTS8,key:'done8'},{n:'9 · Färger',h:'Onko banaani sininen?',sub:'Kapitel 9 · Parken i höstfärger',P:PARTS9,key:'done9'},
   {n:'10 · Nähdään!',h:'Nähdään huomenna!',sub:'Kapitel 10 · Siilis kalas',P:PARTS10,key:'done10'},{n:'⭐ Provet',h:'Inför provet',sub:'Repetition av kapitel 6–10',P:PARTSR,key:'doneR'});
