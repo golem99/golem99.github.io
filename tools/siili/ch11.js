@@ -5,6 +5,9 @@
    A line with f:null has no recording yet (11C): its text is shown for a moment instead.
    Images in img11/. */
 {const _s1=say0;say0=function(id,o={}){const L=LINES[id];if(L&&!L.f){if(qActive())o={...o,sub:false};showSub(L.fi,L.sv,o.sub!==false);return sleep(1300+L.fi.length*55).then(()=>hideSub())}return _s1(id,o)}}
+{const css=document.createElement('style');css.textContent=`
+#pic6{top:44%;left:3vw;transform:translate(0,-50%) scale(.7)}#pic6.on{transform:translate(0,-50%) scale(1)}
+#pic6 img{width:min(30vh,230px);height:min(30vh,230px)}#word .fi{font-size:clamp(30px,8vh,58px)}#word{max-width:min(760px,70vw)}#pic6 .cap{font-size:clamp(20px,3.4vh,28px)}`;document.head.append(css)}
 const pic11=(n,sz=110)=>`<img src="img11/${n}.webp" alt="" style="width:${sz}px;height:${sz}px;object-fit:cover;border-radius:16px;display:block;margin:0 auto">`;
 function showPic11(n,cap=''){showPicSrc(n.includes('/')?n:'img11/'+n+'.webp',cap)}
 async function tr11(id){await say(id);if(has6(id+'s')&&!qActive())await say(id+'s',{sub:false})}
@@ -142,9 +145,9 @@ async function spinClock11(h,m=0,ms=900){if(!clockH11)return;const h0=-clockH11.
   await new Promise(r=>{(function f(){const k=Math.min(1,(performance.now()-t0)/ms),e=k*k*(3-2*k);const hh=h0+d*e;clockH11.rotation.z=-hh/12*Math.PI*2;clockM11.rotation.z=-(hh%1)*Math.PI*2;if(k<1)requestAnimationFrame(f);else r()})()})}
 const PIZ_CAM=[new THREE.Vector3(.02,.27,.66),new THREE.Vector3(.08,.17,-.3)];
 async function toPizza(){await goScene(pizS,buildPizza11,PIZ_CAM[0],PIZ_CAM[1],'home');putSiiliIn(pizS,-.06,.06,.2);if(lamps11.length)lamps11.forEach(([f,l])=>{f.visible=true;l.intensity=.35});if(ovenLight)ovenLight.visible=true}
-const camCounter=()=>camTo(new THREE.Vector3(.3,.3,.32),new THREE.Vector3(.36,.15,-.2),1100);
+const camCounter=()=>camTo(new THREE.Vector3(.26,.33,.64),new THREE.Vector3(.36,.14,-.15),1100);
 const camArcade=()=>camTo(new THREE.Vector3(-.45,.3,.05),new THREE.Vector3(-.75,.22,-.45),1100);
-const camClock=()=>camTo(new THREE.Vector3(-.14,.5,-.32),new THREE.Vector3(-.18,.56,-.8),1100);
+const camClock=()=>camTo(new THREE.Vector3(-.18,.58,-.22),new THREE.Vector3(-.18,.552,-.8),1000);
 const camOven=()=>camTo(new THREE.Vector3(.5,.28,-.05),new THREE.Vector3(.66,.17,-.6),1100);
 const camHome=()=>camTo(PIZ_CAM[0],PIZ_CAM[1],1000);
 /* the phone rings (made with WebAudio, quiet) */
@@ -187,7 +190,7 @@ async function review11(n=3){const keys=st.r11.filter(k=>POOL11[k]);if(keys.leng
   for(const k of shuffle(keys).slice(0,n))await POOL11[k]();}
 /* register all review questions once */
 for(const v of VB11){addPool11('v-'+v.k,async()=>{ask(`minä ${v.mi} → sinä …?`);const t=await mc11([{t:'sinä '+v.si,ok:true},{t:'sinä '+v.mi},{t:'sinä '+v.si.slice(0,-1)}]);showWord('sinä '+v.si,'du '+v.sv,1600);hit11('v-'+v.k,t);addPaws(t?1:2)})}
-for(let h=1;h<=12;h++)addPool11('h-'+h,async()=>{await spinClock11(h);ask('Paljonko kello on?');const t=await mc11([{t:'kello '+NUM11[h],ok:true},{t:'kello '+NUM11[h%12+1]},{t:'kello '+NUM11[(h+5)%12+1]}]);hit11('h-'+h,t);addPaws(t?1:2)});
+for(let h=1;h<=12;h++)addPool11('h-'+h,async()=>{const cp=cam.position.clone(),cl=camLook.clone();await camClock();await spinClock11(h);ask('Paljonko kello on?');const t=await mc11([{t:'kello '+NUM11[h],ok:true},{t:'kello '+NUM11[h%12+1]},{t:'kello '+NUM11[(h+5)%12+1]}]);hit11('h-'+h,t);addPaws(t?1:2);await camTo(cp,cl,900)});
 for(const p of TOP11)addPool11('t-'+p.k,async()=>{showPic11(p.img);const t=await mc11(shuffle(TOP11).filter(x=>x!==p).slice(0,2).map(x=>({t:x.k})).concat([{t:p.k,ok:true}]),{q:'Vad är det på finska?'});hidePic();hit11('t-'+p.k,t);addPaws(t?1:2)});
 
 /* ================= Part 1 · Pizzerian öppnar ================= */
@@ -240,14 +243,14 @@ const CALL11=[
   {who:'Pöllö-ope',img:'img6/owl.webp',ids:['o11-00','o11-01','o11-02','o11-03'],what:[{t:'pizzaa ja teetä',ok:true},{t:'pähkinäpizzaa'},{t:'jäätelöä'}],h:6,qa:21,qh:22},
   {who:'Peikko',img:'img11/peikko.webp',ids:['pk11-00','pk11-01','pk11-02','pk11-03','pk11-04'],what:[{t:'kivipizzaa',ok:true},{t:'pizzaa ja teetä'},{t:'juustopizzaa'}],h:11,qa:23,qh:24}];
 async function c11Phone(){if(scene!==pizS)await toPizza();await review11();setMusic('home');await camCounter();
-  for(const c of CALL11){siili.position.set(.42,0,-.06);face(phone11.position);await ring11(2);play('scared');await say(B11(13),{sub:false});lift11(true);play('happy');await say(B11(14),{sub:false});
+  for(const c of CALL11){siili.position.set(.47,0,.06);face(phone11.position);await ring11(2);play('scared');await say(B11(13),{sub:false});lift11(true);play('happy');await say(B11(14),{sub:false});
     const call=async()=>{showPicSrc(c.img,c.who);for(const id of c.ids)await say(id,{sub:false});hidePic()};await call();
     lift11(false);play('nod');await say(B11(17),{sub:false});if(c.who==='Peikko'){play('scared');await tr11(B11(26));play('happy');await tr11(B11(27))}
     face(cam.position);await tr11(B11(25));
     // what and when – Saga writes the order down
     await rep11(call);await say(B11(c.qa),{sub:false});let t=await mc11(c.what,{q:`Mitä ${c.who} haluaa?`});addPaws(t?1:3);hit11('call-'+c.who,t);
     await say(B11(c.qh),{sub:false});t=await mc11([{t:'kello '+NUM11[c.h],ok:true},...shuffle([3,6,11,2,9].filter(h=>h!==c.h)).slice(0,2).map(h=>({t:'kello '+NUM11[h]}))],{q:`Milloin ${c.who} tulee?`});addPaws(t?1:3);
-    unrep11();await spinClock11(c.h);t=await typeIt([NUM11[c.h],'kello '+NUM11[c.h]],`Skriv i Siilis bok: ${c.who} kommer klockan … (på finska)`);showWord('kello '+NUM11[c.h],'klockan '+NUMSV[c.h],1600);hit11('h-'+c.h,t);addPaws(t?1:3);await praise()}
+    unrep11();const cp=cam.position.clone(),cl=camLook.clone();await camClock();await spinClock11(c.h);t=await typeIt([NUM11[c.h],'kello '+NUM11[c.h]],`Skriv i Siilis bok: ${c.who} kommer klockan … (på finska)`);showWord('kello '+NUM11[c.h],'klockan '+NUMSV[c.h],1600);hit11('h-'+c.h,t);addPaws(t?1:3);await camTo(cp,cl,900);await praise()}
   // who ordered what?
   await camHome();await say(B11(18),{sub:false});ask('Vem vill ha te?');let t=await mc11(CALL11.map(c=>({t:c.who,e:`<img src="${c.img}" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:14px">`,ok:c.who==='Pöllö-ope'})));addPaws(t?1:3);
   ask('Vem kommer på natten?');t=await mc11(CALL11.map(c=>({t:c.who,e:`<img src="${c.img}" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:14px">`,ok:c.who==='Peikko'})));addPaws(t?1:3);await praise()}
@@ -256,14 +259,14 @@ async function c11Phone(){if(scene!==pizS)await toPizza();await review11();setMu
 async function c11Clock(){if(scene!==pizS)await toPizza();await review11();setMusic('search');await camClock();
   play('think');await say(C11(0),{sub:false});
   // all twelve hours, the hand moves and Siili says it
-  for(let h=1;h<=12;h++){await spinClock11(h,0,600);showWord('kello '+NUM11[h],'klockan '+NUMSV[h],1500);await say(C11(h),{sub:false});await sleep(200)}
+  for(let h=1;h<=12;h++){await spinClock11(h,0,600);ask('kello '+NUM11[h]+'  ·  klockan '+NUMSV[h]);await say(C11(h),{sub:false});await sleep(300)}ask('');
   // clock → choose
-  for(const h of shuffle([1,2,3,4,5,6,7,8,9,10,11,12]).slice(0,5)){await spinClock11(h);const t=await mc11([{t:'kello '+NUM11[h],ok:true},...shuffle([1,2,3,4,5,6,7,8,9,10,11,12].filter(x=>x!==h)).slice(0,2).map(x=>({t:'kello '+NUM11[x]}))],{q:'Paljonko kello on?'});await say(C11(h),{sub:false});hit11('h-'+h,t);addPaws(t?1:3)}
+  for(const h of shuffle([1,2,3,4,5,6,7,8,9,10,11,12]).slice(0,5)){await spinClock11(h);const t=await mc11([{t:'kello '+NUM11[h],ok:true},...shuffle([1,2,3,4,5,6,7,8,9,10,11,12].filter(x=>x!==h)).slice(0,2).map(x=>({t:'kello '+NUM11[x]}))],{q:'Paljonko kello on?'});hit11('h-'+h,t);addPaws(t?1:3);await say(C11(h),{sub:false})}
   // listen → Saga sets the clock herself
   await camHome();play('point');await tr11(C11(13));
-  for(const h of shuffle([1,2,3,4,5,6,7,8,9,10,11,12]).slice(0,5)){ask('Lyssna och klicka på rätt timme!');await rep11(()=>say(C11(h),{sub:false}));const t=await pickHour11(h,{onWrong:()=>say(C11(h),{sub:false})});unrep11();ask('');await spinClock11(h,0,500);showWord('kello '+NUM11[h],'klockan '+NUMSV[h],1300);hit11('h-'+h,t);addPaws(t?1:3)}
+  for(const h of shuffle([1,2,3,4,5,6,7,8,9,10,11,12]).slice(0,5)){ask('Lyssna och klicka på rätt timme!');await rep11(()=>say(C11(h),{sub:false}));const t=await pickHour11(h,{onWrong:()=>say(C11(h),{sub:false})});unrep11();ask('');await camClock();await spinClock11(h,0,500);ask('kello '+NUM11[h]);await sleep(1300);ask('');hit11('h-'+h,t);addPaws(t?1:3)}
   // writing the numbers
-  for(const h of shuffle([2,3,4,5,6,7,9,10]).slice(0,4)){await spinClock11(h,0,500);const t=await typeIt([NUM11[h],'kello '+NUM11[h]],'Skriv på finska: kello …');showWord('kello '+NUM11[h],'klockan '+NUMSV[h],1300);hit11('h-'+h,t);addPaws(t?1:3)}
+  for(const h of shuffle([2,3,4,5,6,7,9,10]).slice(0,4)){await spinClock11(h,0,500);const t=await typeIt([NUM11[h],'kello '+NUM11[h]],'Titta på klockan. Skriv på finska: kello …');ask('kello '+NUM11[h]);await sleep(1300);ask('');hit11('h-'+h,t);addPaws(t?1:3)}
   await praise()}
 
 /* ================= Part 6 · Siilis dag ================= */
@@ -291,7 +294,7 @@ function topping11(k){const G=new THREE.Group();const add=(geo,mat,n,r=.045,y=.0
   G.children.forEach(m=>{if(m.geometry.type==='TorusGeometry')m.rotation.x=Math.PI/2});G.name='top-'+k;pizza11.add(G);
   const t0=performance.now();G.scale.setScalar(.01);(function f(){const k_=Math.min(1,(performance.now()-t0)/400);G.scale.setScalar(.01+k_*.99);if(k_<1)requestAnimationFrame(f)})()}
 function clearPizza11(){for(const c of[...pizza11.children])if(c.name?.startsWith('top-'))pizza11.remove(c);pizza11.position.set(.22,.163,-.19);pizza11.visible=true}
-async function c11Pizza(){if(scene!==pizS)await toPizza();await review11();setMusic('home');clearPizza11();await camCounter();siili.position.set(.1,0,-.05);face(pizza11.position);
+async function c11Pizza(){if(scene!==pizS)await toPizza();await review11();setMusic('home');clearPizza11();await camCounter();siili.position.set(.12,0,.06);face(pizza11.position);
   play('happy');await tr11(D11(3));showPic11('p-pohja','');await sleep(1200);hidePic();await say(D11(4),{sub:false});
   for(const p of TOP11){showPic11(p.img,p.k);await say(D11(p.l),{sub:false});showWord(p.k,p.sv,1300);topping11(p.k);await sleep(300);hidePic()}
   // listen → picture
@@ -330,7 +333,7 @@ async function c11Test(){if(scene!==pizS)await toPizza();setMusic('search');awai
   // every item has to be right twice; a wrong one comes back three questions later
   const Q=[];const v=shuffle(VB11).slice(0,5),h=shuffle([1,2,3,4,5,6,7,8,9,10,11,12]).slice(0,4),p=shuffle(TOP11).slice(0,3);
   for(const x of v)Q.push({k:'v-'+x.k,f:()=>typeIt(['sinä '+x.si,x.si],`minä ${x.mi} → sinä …`),ok:()=>showWord('sinä '+x.si,'du '+x.sv,1200)});
-  for(const x of h)Q.push({k:'h-'+x,f:async()=>{await spinClock11(x,0,500);return typeIt([NUM11[x],'kello '+NUM11[x]],'Paljonko kello on? Skriv: kello …')},ok:()=>showWord('kello '+NUM11[x],'klockan '+NUMSV[x],1200)});
+  for(const x of h)Q.push({k:'h-'+x,f:async()=>{await camClock();await spinClock11(x,0,500);const t=await typeIt([NUM11[x],'kello '+NUM11[x]],'Paljonko kello on? Skriv: kello …');await camHome();return t},ok:()=>showWord('kello '+NUM11[x],'klockan '+NUMSV[x],1200)});
   for(const x of p)Q.push({k:'t-'+x.k,f:async()=>{showPic11(x.img,'');const t=await typeIt([x.k],'Skriv på finska vad det är');hidePic();return t},ok:()=>showWord(x.k,x.sv,1200)});
   Q.push({k:'call-Orava',f:()=>mc11([{t:'kello kolme',ok:true},{t:'kello kuusi'},{t:'kello yksitoista'}],{q:'Milloin Orava tulee?'}),ok:()=>{}});
   const need={};Q.forEach(q=>need[q.k]=2);const queue=shuffle(Q.concat(shuffle(Q)));let total=0,right=0;
@@ -351,4 +354,4 @@ CHS.push({n:'11 · Mitä teet?',h:'Mitä sinä teet?',sub:'Kapitel 11 · Pizzeri
 showAlbum=function(){const g=$('#album6 .g');g.innerHTML='';const names=['Jee!','O ja U','Kiva tavata!','Yksi plus yksi','Hyvä idea!','Koulussa','Läksy','Minä teen','Färger','Nähdään!','Mitä teet?','Eikä ole!','Eetin skuutti','Koiran kuono','Kop kop kop!'];
   names.forEach((n,i)=>{const c=i+1;const got=c>=6?st['stk'+c]:c===2?st.stickers2:c===1?(st.done||[]).length>=6:false;const img=c>=11?`img11/sticker${c}.webp`:c>=6?`img6/sticker${c}.webp`:null;
     g.insertAdjacentHTML('beforeend',`<div><div class="s">${got&&img?`<img src="${img}" alt="">`:got?'⭐':c}</div><div class="n">${c} · ${n}</div></div>`)});$('#album6').style.display='flex'};
-if(AUTO){const _v=window.__view;window.__view=async(n,q=0)=>{if(n==='pizza'){await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');await toPizza();play('idle');return 'ok'}return _v(n,q)}}
+if(AUTO){const _v=window.__view;window.__view=async(n,q=0)=>{if(n==='pizza'||n==='pizzaclock'||n==='pizzaphone'){await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');await toPizza();play('idle');if(n==='pizzaclock'){await camClock();await spinClock11(4)}if(n==='pizzaphone'){await camCounter();siili.position.set(.47,0,.06);face(phone11.position)}return 'ok'}return _v(n,q)}}
