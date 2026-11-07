@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Resfeber</title>
+<meta name="description" content="Tre resor om dagen för familjen, med exakta priser för fyra.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Resfeber">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10182B" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+:root{
+  --bg:#EEF1F4; --paper:#FFFFFF; --ink:#14213D; --soft:#5B6780; --line:#D5DBE3;
+  --sign:#FFC72C; --signInk:#14213D; --route:#0F7B8A; --warn:#B4472E; --chip:#E3E8EE;
+  --shadow:0 1px 0 rgba(20,33,61,.06), 0 8px 24px -16px rgba(20,33,61,.35);
+  --r:14px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10182B; --paper:#18233A; --ink:#EEF1F4; --soft:#9AA6BD; --line:#2A3752;
+    --sign:#FFC72C; --signInk:#10182B; --route:#4FC1CF; --warn:#F08A6B; --chip:#22304C;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 26px -18px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Bricolage Grotesque", system-ui, sans-serif;
+  font-optical-sizing:auto; font-size:16px; line-height:1.4;
+  -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--route);outline-offset:2px;border-radius:8px}
+a{color:inherit}
+
+/* Huvud */
+header{
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 8px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:30px;height:30px}
+.brand h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;font-variation-settings:"opsz" 96}
+.who{
+  border:0; background:var(--chip); border-radius:999px; padding:6px 12px 6px 6px;
+  display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px;
+}
+.who .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff}
+.dot.steve{background:var(--route)} .dot.ulrika{background:#B04A8F}
+
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px calc(96px + env(safe-area-inset-bottom))}
+section.view{display:none} section.view.on{display:block}
+
+/* Flikar */
+nav.tabs{
+  position:fixed; left:0; right:0; bottom:0; z-index:5;
+  background:var(--paper); border-top:1px solid var(--line);
+  display:grid; grid-template-columns:repeat(4,1fr);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+nav.tabs button{
+  border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 0;font-size:12px;font-weight:600;color:var(--soft);border-radius:10px;
+}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button.on{color:var(--ink)}
+nav.tabs button.on svg .fill{fill:var(--sign)}
+
+h2{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:10px 0 2px;font-variation-settings:"opsz" 60}
+.sub{color:var(--soft);font-size:14px;margin:0 0 14px}
+
+/* Resekort: skylten är det enda som får synas */
+.trip{background:var(--paper);border-radius:var(--r);box-shadow:var(--shadow);margin:0 0 16px;overflow:hidden}
+.trip .pic{height:118px;background:var(--chip) center/cover no-repeat;position:relative}
+.trip .badge{
+  position:absolute;left:10px;top:10px;background:rgba(16,24,43,.78);color:#fff;
+  border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;backdrop-filter:blur(6px)
+}
+.trip .star{
+  position:absolute;right:8px;top:8px;width:40px;height:40px;border-radius:50%;border:0;
+  background:rgba(16,24,43,.6);color:#fff;font-size:20px;display:grid;place-items:center
+}
+.trip .star.on{background:var(--sign);color:var(--signInk)}
+.sign{
+  background:var(--sign);color:var(--signInk);display:grid;
+  grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 14px;
+}
+.sign .plane{width:26px;height:26px}
+.sign .city{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.05;font-variation-settings:"opsz" 96}
+.sign .city small{display:block;font-size:13px;font-weight:600;letter-spacing:0;opacity:.75}
+.sign .price{text-align:right;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1}
+.sign .price small{display:block;font-size:12px;font-weight:600;opacity:.75;letter-spacing:0;margin-top:2px}
+.trip.over .sign{background:var(--chip);color:var(--ink)}
+.legs{padding:4px 14px 12px}
+.leg{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.leg:last-child{border-bottom:0}
+.leg .what{font-weight:700}
+.leg .amt{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.leg .det{grid-column:1/-1;color:var(--soft);font-size:14px}
+.leg .row{grid-column:1/-1;display:flex;gap:10px;align-items:center;margin-top:6px}
+.leg .row img{width:64px;height:48px;border-radius:8px;object-fit:cover;background:var(--chip)}
+.go{
+  display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:none;
+  border-radius:999px;padding:7px 12px;font-size:14px;font-weight:600;text-decoration:none;margin-top:6px
+}
+.links{display:flex;gap:8px;flex-wrap:wrap;grid-column:1/-1}
+.note{background:var(--chip);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--soft);margin:0 0 14px}
+.note b{color:var(--ink)}
+.empty{text-align:center;padding:40px 16px;color:var(--soft)}
+.empty h3{color:var(--ink);font-size:20px;margin:0 0 6px}
+.btn{
+  border:0;background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 16px;font-weight:700;font-size:16px
+}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.wide{width:100%}
+
+/* Resfeber: välj en */
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--chip);border-radius:12px;padding:4px;margin:6px 0 12px}
+.seg button{border:0;background:none;border-radius:9px;padding:8px;font-weight:700;color:var(--soft)}
+.seg button.on{background:var(--paper);color:var(--ink);box-shadow:var(--shadow)}
+.pick{
+  display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;width:100%;text-align:left;
+  background:var(--paper);border:2px solid transparent;border-radius:var(--r);padding:8px;margin:0 0 10px;box-shadow:var(--shadow);
+  transition:transform .18s ease, border-color .18s ease, opacity .25s ease;
+}
+.pick:active{transform:scale(.98)}
+.pick .img{width:96px;height:84px;border-radius:10px;background:var(--chip) center/cover no-repeat}
+.pick .nm{font-size:20px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+.pick .cn{color:var(--soft);font-size:14px;margin:2px 0 6px}
+.pick.won{border-color:var(--sign);transform:scale(1.02)}
+.pick.lost{opacity:.35}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{background:var(--chip);border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600}
+.meter{margin:16px 0 4px}
+.bar{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:10px;font-size:14px;margin:6px 0}
+.bar i{display:block;height:10px;border-radius:5px;background:var(--route)}
+.bar i.neg{background:var(--line)}
+.skip{display:block;margin:2px auto 0;border:0;background:none;color:var(--soft);font-weight:600;padding:8px}
+
+/* Loggboken */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.chip{border:1.5px solid var(--line);background:none;border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.day{margin:0 0 14px}
+.day h4{margin:0 0 6px;font-size:14px;color:var(--soft);font-weight:600}
+.line{
+  display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;width:100%;text-align:left;
+  background:var(--paper);border:0;border-radius:12px;padding:10px 12px;margin:0 0 6px;box-shadow:var(--shadow)
+}
+.line .t{font-weight:700}
+.line .s{font-size:13px;color:var(--soft)}
+.line .p{font-weight:800;font-variant-numeric:tabular-nums}
+.line .st{font-size:18px;color:var(--soft)} .line .st.on{color:#E0A400}
+.duel{background:var(--paper);border-radius:var(--r);padding:12px 14px;margin:0 0 14px;box-shadow:var(--shadow)}
+.duel .vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:8px;margin-top:6px}
+.duel .side{font-size:13px;color:var(--soft)}
+.duel .side b{display:block;font-size:24px;color:var(--ink);font-variant-numeric:tabular-nums}
+.duel .side.win b{color:var(--route)}
+
+/* Formulär */
+.card{background:var(--paper);border-radius:var(--r);padding:14px;margin:0 0 12px;box-shadow:var(--shadow)}
+.card h3{margin:0;font-size:18px}
+.card .meta{color:var(--soft);font-size:14px;margin:2px 0 8px}
+.card .acts{display:flex;gap:8px;flex-wrap:wrap}
+label.f{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+input.i,select.i,textarea.i{
+  width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font-size:16px
+}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;flex-wrap:wrap;gap:6px}
+.opt button{border:1.5px solid var(--line);background:none;border-radius:999px;padding:7px 12px;font-size:14px;font-weight:600}
+.opt button.on{background:var(--sign);border-color:var(--sign);color:var(--signInk)}
+.muted{color:var(--soft);font-size:13px;margin:4px 0 0}
+
+/* Ark */
+.sheet{position:fixed;inset:0;z-index:20;display:none;background:rgba(10,15,30,.5)}
+.sheet.on{display:block}
+.sheet .in{
+  position:absolute;left:0;right:0;bottom:0;max-height:92%;overflow-y:auto;background:var(--paper);
+  border-radius:20px 20px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));
+  animation:up .22s ease-out
+}
+@keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.sheet .bar2{display:flex;justify-content:space-between;align-items:center}
+.sheet .x{border:0;background:var(--chip);width:36px;height:36px;border-radius:50%;font-size:18px}
+.toast{
+  position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;
+  opacity:0;transition:.25s;z-index:30;pointer-events:none;white-space:nowrap
+}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
+/* Vem är du */
+.hello{position:fixed;inset:0;z-index:40;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:24px}
+.hello.on{display:flex}
+.hello h2{font-size:34px;font-weight:800;line-height:1.05;margin:0 0 8px}
+.hello p{color:var(--soft);margin:0 0 24px}
+.hello .people{display:grid;gap:12px}
+.hello .people button{
+  display:flex;align-items:center;gap:14px;border:0;background:var(--paper);border-radius:var(--r);
+  padding:16px;font-size:22px;font-weight:700;box-shadow:var(--shadow)
+}
+.hello .people .dot{width:44px;height:44px;font-size:18px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media (min-width:640px){main{max-width:560px;margin:0 auto;width:100%}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#FFC72C"/><path d="M24.6,7.4 L24.4,9.1 L19.3,14.3 L22.5,24.4 L21.4,25.6 L16.5,17.1 L12.1,21.2 L12.6,24.9 L11.7,25.8 L9.5,22.5 L6.2,20.3 L7.1,19.4 L10.8,19.9 L14.9,15.5 L6.4,10.6 L7.6,9.5 L17.7,12.7 L22.9,7.6Z" fill="#14213D"/></svg>
+    <h1>Resfeber</h1>
+  </div>
+  <button class="who" id="whoBtn" aria-label="Byt person"></button>
+</header>
+
+<main>
+  <!-- I dag -->
+  <section class="view on" id="v-today"></section>
+
+  <!-- Resfeber -->
+  <section class="view" id="v-taste">
+    <h2>Vilken lockar mest?</h2>
+    <p class="sub" id="tasteSub">Välj den du helst skulle åka till. Appen lär sig din smak.</p>
+    <div class="seg" role="tablist">
+      <button class="on" data-mode="dest">Resmål</button>
+      <button data-mode="hotel">Boende</button>
+    </div>
+    <div id="picks"></div>
+    <button class="skip" id="skipBtn">Ingen av dem, visa tre nya</button>
+    <div class="meter" id="meter"></div>
+  </section>
+
+  <!-- Loggboken -->
+  <section class="view" id="v-log">
+    <h2>Loggboken</h2>
+    <p class="sub">Alla förslag Resfeber har hittat, och era egna fynd.</p>
+    <div class="chips" id="logChips">
+      <button class="chip on" data-f="all">Alla förslag</button>
+      <button class="chip" data-f="saved">Sparade</button>
+      <button class="chip" data-f="finds">Egna fynd</button>
+    </div>
+    <div id="logList"></div>
+  </section>
+
+  <!-- Våra resor -->
+  <section class="view" id="v-plans">
+    <h2>Våra resor</h2>
+    <p class="sub">Datum, budget och önskemål. Morgonens sökning utgår från de här.</p>
+    <div id="planList"></div>
+    <button class="btn wide" id="addPlan">Lägg till resa</button>
+    <p class="muted" style="margin-top:16px">Priserna gäller fyra personer: Steve, Ulrika, Noa och Saga. Noa räknas som vuxen på flyget. Sökningen görs varje morgon och priserna är exakta just då, men kan ändras innan ni bokar.</p>
+  </section>
+</main>
+
+<nav class="tabs" aria-label="Flikar">
+  <button class="on" data-v="today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle class="fill" cx="12" cy="12" r="5" fill="none"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+    I dag
+  </button>
+  <button data-v="taste">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path class="fill" d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none"/></svg>
+    Resfeber
+  </button>
+  <button data-v="log">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path class="fill" d="M6 3.5h10l3 3v14H6z" fill="none"/><path d="M9 10h7M9 13.5h7M9 17h4"/></svg>
+    Loggboken
+  </button>
+  <button data-v="plans">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect class="fill" x="3.5" y="5" width="17" height="15" rx="2" fill="none"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+    Våra resor
+  </button>
+</nav>
+
+<div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+<div class="toast" id="toast"></div>
+
+<div class="hello" id="hello">
+  <h2>Vem är du?</h2>
+  <p>Ni har var sin smakprofil. Välj en gång på den här telefonen, du kan byta när som helst uppe till höger.</p>
+  <div class="people">
+    <button data-who="steve"><span class="dot steve">S</span>Steve</button>
+    <button data-who="ulrika"><span class="dot ulrika">U</span>Ulrika</button>
+  </div>
+</div>
+
+<script id="catalog">
+/*DEST*/[
+{"id":"tallinn","name":"Tallinn","name_en":"Tallinn","country":"Estland","wiki":"Tallinn","air":null,"ferry":true,"ferryUrl":"https://www.vikingline.fi/sv/","c":[59.437,24.745],"tags":["gamlastan","stad","mat","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Raekoja_plats_at_night.jpg/500px-Raekoja_plats_at_night.jpg"},
+{"id":"stockholm","name":"Stockholm","name_en":"Stockholm","country":"Sverige","wiki":"Stockholm","air":"ARN","ferry":true,"ferryUrl":"https://www.vikingline.fi/sv/","c":[59.329,18.068],"tags":["stad","gamlastan","kultur","barn","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Munkbroleden_with_Kornhamstorg_at_Gamla_Stan%2C_Stockholm%2C_Sweden_01.jpg/500px-Munkbroleden_with_Kornhamstorg_at_Gamla_Stan%2C_Stockholm%2C_Sweden_01.jpg"},
+{"id":"umea","name":"Umeå","name_en":"Umeå","country":"Sverige","wiki":"Umeå","air":null,"ferry":true,"ferryUrl":"https://www.wasaline.com/sv/","c":[63.826,20.263],"tags":["natur","stad","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Ume%C3%A5_collage.png/500px-Ume%C3%A5_collage.png"},
+{"id":"riga","name":"Riga","name_en":"Riga","country":"Lettland","wiki":"Riga","air":"RIX","c":[56.949,24.106],"tags":["gamlastan","stad","mat","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Riga_%2833844464828%29.jpg/500px-Riga_%2833844464828%29.jpg"},
+{"id":"vilnius","name":"Vilnius","name_en":"Vilnius","country":"Litauen","wiki":"Vilnius","air":"VNO","c":[54.687,25.28],"tags":["gamlastan","kultur","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Vilnius_old_town_by_Augustas_Didzgalvis.jpg/500px-Vilnius_old_town_by_Augustas_Didzgalvis.jpg"},
+{"id":"kopenhamn","name":"Köpenhamn","name_en":"Copenhagen","country":"Danmark","wiki":"Copenhagen","air":"CPH","c":[55.676,12.568],"tags":["stad","mat","nojen","barn","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/2018_-_Christiansborg_from_the_Marble_Bridge.jpg/500px-2018_-_Christiansborg_from_the_Marble_Bridge.jpg"},
+{"id":"billund","name":"Billund","name_en":"Billund Denmark","hotelq":"Billund, Denmark","country":"Danmark","wiki":"Legoland Billund","air":"BLL","c":[55.736,9.127],"tags":["nojen","barn"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Billund_Legoland_24.jpg/500px-Billund_Legoland_24.jpg"},
+{"id":"goteborg","name":"Göteborg","name_en":"Gothenburg","country":"Sverige","wiki":"Gothenburg","air":"GOT","c":[57.709,11.975],"tags":["stad","nojen","barn","hav","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg/500px-G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg"},
+{"id":"oslo","name":"Oslo","name_en":"Oslo","country":"Norge","wiki":"Oslo","air":"OSL","c":[59.913,10.752],"tags":["stad","kultur","natur","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Nationaltheatret_evening.jpg/500px-Nationaltheatret_evening.jpg"},
+{"id":"bergen","name":"Bergen","name_en":"Bergen","country":"Norge","wiki":"Bergen","air":"BGO","c":[60.392,5.324],"tags":["natur","berg","hav","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bergen_panorama_at_night_-_panoramio_%281%29.jpg/500px-Bergen_panorama_at_night_-_panoramio_%281%29.jpg"},
+{"id":"reykjavik","name":"Reykjavik","name_en":"Reykjavik","country":"Island","wiki":"Reykjavík","air":"KEF","c":[64.147,-21.942],"tags":["natur","aventyr"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg/500px-Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg"},
+{"id":"gdansk","name":"Gdańsk","name_en":"Gdansk","country":"Polen","wiki":"Gdańsk","air":"GDN","c":[54.352,18.646],"tags":["gamlastan","strand","mat","billigt","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Calle_Dlugie_Pobrzeze%2C_Gdansk%2C_Polonia%2C_2013-05-20%2C_DD_06.jpg/500px-Calle_Dlugie_Pobrzeze%2C_Gdansk%2C_Polonia%2C_2013-05-20%2C_DD_06.jpg"},
+{"id":"krakow","name":"Kraków","name_en":"Krakow","country":"Polen","wiki":"Kraków","air":"KRK","c":[50.061,19.937],"tags":["gamlastan","kultur","mat","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Krakow_Rynek_Glowny_panorama_2.jpg/500px-Krakow_Rynek_Glowny_panorama_2.jpg"},
+{"id":"warszawa","name":"Warszawa","name_en":"Warsaw","country":"Polen","wiki":"Warsaw","air":"WAW","c":[52.229,21.012],"tags":["stad","kultur","billigt","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Aleja_Niepdleglosci_Warsaw_2022_aerial_%28cropped%29.jpg/500px-Aleja_Niepdleglosci_Warsaw_2022_aerial_%28cropped%29.jpg"},
+{"id":"prag","name":"Prag","name_en":"Prague","country":"Tjeckien","wiki":"Prague","air":"PRG","c":[50.087,14.421],"tags":["gamlastan","kultur","stad","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Prague_%286365119737%29.jpg/500px-Prague_%286365119737%29.jpg"},
+{"id":"budapest","name":"Budapest","name_en":"Budapest","country":"Ungern","wiki":"Budapest","air":"BUD","c":[47.497,19.04],"tags":["stad","kultur","mat","billigt","bad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/500px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg"},
+{"id":"wien","name":"Wien","name_en":"Vienna","country":"Österrike","wiki":"Vienna","air":"VIE","c":[48.208,16.373],"tags":["kultur","stad","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/500px-Schoenbrunn_philharmoniker_2012.jpg"},
+{"id":"berlin","name":"Berlin","name_en":"Berlin","country":"Tyskland","wiki":"Berlin","air":"BER","c":[52.52,13.405],"tags":["stad","kultur","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Museumsinsel_Berlin_Juli_2021_1_%28cropped%29_b.jpg/500px-Museumsinsel_Berlin_Juli_2021_1_%28cropped%29_b.jpg"},
+{"id":"munchen","name":"München","name_en":"Munich","country":"Tyskland","wiki":"Munich","air":"MUC","c":[48.137,11.575],"tags":["stad","mat","berg","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Frauenkirche_and_Neues_Rathaus_Munich_March_2013.JPG/500px-Frauenkirche_and_Neues_Rathaus_Munich_March_2013.JPG"},
+{"id":"hamburg","name":"Hamburg","name_en":"Hamburg","country":"Tyskland","wiki":"Hamburg","air":"HAM","c":[53.551,9.993],"tags":["stad","hav","nojen","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Hamburg%2C_Landungsbr%C3%BCcken_--_2016_--_3131-7.jpg/500px-Hamburg%2C_Landungsbr%C3%BCcken_--_2016_--_3131-7.jpg"},
+{"id":"amsterdam","name":"Amsterdam","name_en":"Amsterdam","country":"Nederländerna","wiki":"Amsterdam","air":"AMS","c":[52.373,4.893],"tags":["stad","kultur","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png/500px-Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png"},
+{"id":"bryssel","name":"Bryssel","name_en":"Brussels","country":"Belgien","wiki":"Brussels","air":"BRU","c":[50.847,4.357],"tags":["stad","mat","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Grand_Place_Bruselas_2.jpg/500px-Grand_Place_Bruselas_2.jpg"},
+{"id":"paris","name":"Paris","name_en":"Paris","country":"Frankrike","wiki":"Paris","air":"CDG","c":[48.857,2.352],"tags":["stad","kultur","mat","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/500px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg"},
+{"id":"nice","name":"Nice","name_en":"Nice","country":"Frankrike","wiki":"Nice","air":"NCE","c":[43.71,7.262],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Promenade_des_Anglais_Nice_IMG_1255.jpg/500px-Promenade_des_Anglais_Nice_IMG_1255.jpg"},
+{"id":"london","name":"London","name_en":"London","country":"Storbritannien","wiki":"London","air":"LHR","c":[51.507,-0.128],"tags":["stad","kultur","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/London_Skyline_%28125508655%29.jpeg/500px-London_Skyline_%28125508655%29.jpeg"},
+{"id":"edinburgh","name":"Edinburgh","name_en":"Edinburgh","country":"Skottland","wiki":"Edinburgh","air":"EDI","c":[55.953,-3.189],"tags":["gamlastan","kultur","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Skyline_of_Edinburgh.jpg/500px-Skyline_of_Edinburgh.jpg"},
+{"id":"dublin","name":"Dublin","name_en":"Dublin","country":"Irland","wiki":"Dublin","air":"DUB","c":[53.349,-6.26],"tags":["stad","kultur","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Dublin_-_aerial_-_2025-07-07_01.jpg/500px-Dublin_-_aerial_-_2025-07-07_01.jpg"},
+{"id":"zurich","name":"Zürich","name_en":"Zurich","country":"Schweiz","wiki":"Zürich","air":"ZRH","c":[47.377,8.541],"tags":["stad","berg","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Altstadt_Z%C3%BCrich_2015.jpg/500px-Altstadt_Z%C3%BCrich_2015.jpg"},
+{"id":"geneve","name":"Genève","name_en":"Geneva","country":"Schweiz","wiki":"Geneva","air":"GVA","c":[46.204,6.143],"tags":["berg","natur","stad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Geneve_2005_001_Ork.ch.jpg/500px-Geneve_2005_001_Ork.ch.jpg"},
+{"id":"barcelona","name":"Barcelona","name_en":"Barcelona","country":"Spanien","wiki":"Barcelona","air":"BCN","c":[41.387,2.17],"tags":["strand","stad","kultur","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Evening_light_over_Barcelona.jpg/500px-Evening_light_over_Barcelona.jpg"},
+{"id":"madrid","name":"Madrid","name_en":"Madrid","country":"Spanien","wiki":"Madrid","air":"MAD","c":[40.417,-3.704],"tags":["stad","kultur","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Madrid_-_Sky_Bar_360%C2%BA_%28Hotel_Riu_Plaza_Espa%C3%B1a%29%2C_vistas_19.jpg/500px-Madrid_-_Sky_Bar_360%C2%BA_%28Hotel_Riu_Plaza_Espa%C3%B1a%29%2C_vistas_19.jpg"},
+{"id":"sevilla","name":"Sevilla","name_en":"Seville","country":"Spanien","wiki":"Seville","air":"SVQ","c":[37.389,-5.984],"tags":["gamlastan","kultur","varmt","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Sevilla_Cathedral_-_Southeast.jpg/500px-Sevilla_Cathedral_-_Southeast.jpg"},
+{"id":"malaga","name":"Málaga","name_en":"Malaga","country":"Spanien","wiki":"Málaga","air":"AGP","c":[36.721,-4.421],"tags":["strand","varmt","gamlastan","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Da_Gibralfaro_%28cropped%292.jpg/500px-Da_Gibralfaro_%28cropped%292.jpg"},
+{"id":"alicante","name":"Alicante","name_en":"Alicante","country":"Spanien","wiki":"Alicante","air":"ALC","c":[38.345,-0.481],"tags":["strand","varmt","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Alicante%2C_Spain.jpg/500px-Alicante%2C_Spain.jpg"},
+{"id":"palma","name":"Palma","name_en":"Palma de Mallorca","country":"Spanien","wiki":"Palma de Mallorca","air":"PMI","c":[39.57,2.65],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Kathedrale_von_Palma.jpg/500px-Kathedrale_von_Palma.jpg"},
+{"id":"lissabon","name":"Lissabon","name_en":"Lisbon","country":"Portugal","wiki":"Lisbon","air":"LIS","c":[38.722,-9.139],"tags":["gamlastan","varmt","mat","hav","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Lisboa_-_Portugal_%2852597836992%29.jpg/500px-Lisboa_-_Portugal_%2852597836992%29.jpg"},
+{"id":"porto","name":"Porto","name_en":"Porto","country":"Portugal","wiki":"Porto","air":"OPO","c":[41.15,-8.611],"tags":["gamlastan","mat","hav","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG/500px-Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG"},
+{"id":"rom","name":"Rom","name_en":"Rome","country":"Italien","wiki":"Rome","air":"FCO","c":[41.903,12.496],"tags":["kultur","gamlastan","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg/500px-Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg"},
+{"id":"milano","name":"Milano","name_en":"Milan","country":"Italien","wiki":"Milan","air":"MXP","c":[45.464,9.19],"tags":["stad","shopping","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Milan_Cathedral_from_Piazza_del_Duomo.jpg/500px-Milan_Cathedral_from_Piazza_del_Duomo.jpg"},
+{"id":"venedig","name":"Venedig","name_en":"Venice","country":"Italien","wiki":"Venice","air":"VCE","c":[45.44,12.316],"tags":["gamlastan","kultur","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Venezia_aerial_view.jpg/500px-Venezia_aerial_view.jpg"},
+{"id":"bologna","name":"Bologna","name_en":"Bologna","country":"Italien","wiki":"Bologna","air":"BLQ","c":[44.494,11.343],"tags":["mat","gamlastan","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Torri_di_Bologna%2C_Bologna.jpg/500px-Torri_di_Bologna%2C_Bologna.jpg"},
+{"id":"neapel","name":"Neapel","name_en":"Naples","country":"Italien","wiki":"Naples","air":"NAP","c":[40.852,14.268],"tags":["mat","varmt","hav","kultur","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Napoli_-_Maschio_Angioino_-_202209302342_3.jpg/500px-Napoli_-_Maschio_Angioino_-_202209302342_3.jpg"},
+{"id":"split","months":[4,5,6,7,8,9,10],"name":"Split","name_en":"Split Croatia","hotelq":"Split, Croatia","country":"Kroatien","wiki":"Split, Croatia","air":"SPU","c":[43.508,16.44],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/500px-Split_080620-133710-IMG_0968x.jpg"},
+{"id":"dubrovnik","months":[4,5,6,7,8,9,10],"name":"Dubrovnik","name_en":"Dubrovnik","country":"Kroatien","wiki":"Dubrovnik","air":"DBV","c":[42.65,18.094],"tags":["gamlastan","strand","varmt","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/500px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg"},
+{"id":"aten","name":"Aten","name_en":"Athens","country":"Grekland","wiki":"Athens","air":"ATH","c":[37.984,23.728],"tags":["kultur","varmt","mat","stad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Athens_Acropolis_at_Daybreak.jpg/500px-Athens_Acropolis_at_Daybreak.jpg"},
+{"id":"chania","months":[4,5,6,7,8,9,10],"name":"Chania","name_en":"Chania Crete","hotelq":"Chania, Crete","country":"Grekland","wiki":"Chania","air":"CHQ","c":[35.514,24.018],"tags":["strand","varmt","gamlastan","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg/500px-Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg"},
+{"id":"rhodos","months":[4,5,6,7,8,9,10],"name":"Rhodos","name_en":"Rhodes town","hotelq":"Rhodes Town, Greece","country":"Grekland","wiki":"Rhodes (city)","air":"RHO","c":[36.434,28.217],"tags":["strand","varmt","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Medieval_City_of_Rhodes_03.jpg/500px-Medieval_City_of_Rhodes_03.jpg"},
+{"id":"larnaca","name":"Larnaca","name_en":"Larnaca","country":"Cypern","wiki":"Larnaca","air":"LCA","c":[34.917,33.629],"tags":["strand","varmt","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/500px-Larnaca_01-2017_img27_Finikoudes.jpg"},
+{"id":"valletta","name":"Malta","name_en":"Valletta Malta","hotelq":"Valletta, Malta","country":"Malta","wiki":"Valletta","air":"MLA","c":[35.899,14.514],"tags":["gamlastan","varmt","hav","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/St_Sebastian_Curtain_%28cropped%29.jpg/500px-St_Sebastian_Curtain_%28cropped%29.jpg"}
+]/*END*/;
+</script>
+<script>
+(function(){
+"use strict";
+// Katalogen ligger i skriptet ovan mellan DEST-markörerna (den dagliga sökningen läser samma lista).
+const CAT = (function(){
+  const src = document.getElementById("catalog").textContent;
+  const m = src.match(/\/\*DEST\*\/([\s\S]*?)\/\*END\*\//);
+  return JSON.parse(m[1]);
+})();
+const BY = Object.fromEntries(CAT.map(d=>[d.id,d]));
+
+const TAGS = {stad:"Storstad",gamlastan:"Gamla stan",strand:"Strand",natur:"Natur",mat:"Mat",kultur:"Kultur",
+  barn:"Barnvänligt",varmt:"Värme",nojen:"Nöjen",shopping:"Shopping",berg:"Berg",hav:"Vid havet",billigt:"Billigt",
+  bad:"Bad och spa",aventyr:"Äventyr"};
+const FEATS = {hotel:"Hotell",apartment:"Lägenhet",hostel:"Vandrarhem",breakfast:"Frukost",kitchen:"Kök",
+  pool:"Pool",central:"Centralt",rating:"Toppbetyg",cheap:"Billigt"};
+const AIRPORTS = {HEL:"Helsingfors",TKU:"Åbo",TMP:"Tammerfors",VAA:"Vasa"};
+const HUBS = Object.assign({FRA:"Frankfurt",DUS:"Düsseldorf",IST:"Istanbul",LGW:"London",STN:"London",ORY:"Paris",FCO:"Rom",BGY:"Milano",TLL:"Tallinn"},
+  Object.fromEntries(CAT.filter(d=>d.air).map(d=>[d.air,d.name])));
+const via = list => (list||[]).map(c=>HUBS[c]||c).join(" och ");
+
+// ---------- Firebase ----------
+const CODE = "PJJgBwtFgxB9IP5v96ZucKcU";
+firebase.initializeApp({"apiKey":"AIzaSyCdULUvllec2EV22gMkVMGuedoGAIotr9M","authDomain":"resfeber-74ae0.firebaseapp.com","projectId":"resfeber-74ae0","storageBucket":"resfeber-74ae0.firebasestorage.app","messagingSenderId":"694999780891","appId":"1:694999780891:web:fec09d26decb30405972be"});
+const db = firebase.firestore();
+const team = db.collection("teams").doc(CODE);
+const C = n => team.collection(n);
+
+const S = {days:[], periods:[], duels:[], finds:[], saved:[], who:null, mode:"dest", logF:"all", trio:null};
+
+// ---------- Hjälpare ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur = n => (n==null||isNaN(n)) ? "–" : Math.round(n).toLocaleString("sv-SE")+" €";
+const dfmt = (iso,o) => { try{ return new Date(iso+"T12:00").toLocaleDateString("sv-SE", o||{day:"numeric",month:"short"}); }catch(e){ return iso; } };
+const range = (a,b) => {
+  if(!a||!b) return "";
+  const A=new Date(a+"T12:00"), B=new Date(b+"T12:00");
+  return A.getMonth()===B.getMonth() ? `${A.getDate()}–${B.getDate()} ${dfmt(b,{month:"long"})}` : `${dfmt(a)} – ${dfmt(b)}`;
+};
+const time = s => s ? s.slice(11,16) : "";
+const hm = m => m ? `${Math.floor(m/60)} h ${m%60 ? (m%60)+" min" : ""}`.trim() : "";
+const today = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove("on"),1800); }
+function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+
+// Bilder på resmålen från Wikipedia (sparas bara som snabbminne i telefonen).
+const IMG = {};
+try{ Object.assign(IMG, JSON.parse(ls("resfeber.img")||"{}")); }catch(e){}
+function destImg(id, el){
+  const d = BY[id]; if(!d) return;
+  // Behåll en eventuell reservbild (hotellets foto) under stadsbilden.
+  const set = u => { if(u && el) el.style.backgroundImage = `url("${u}")` + (el.dataset.fallback ? `, url("${el.dataset.fallback}")` : ""); };
+  if(d.img) return set(d.img);
+  if(IMG[id]) return set(IMG[id]);
+  fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(d.wiki))
+    .then(r=>r.json()).then(j=>{
+      const u = (j.thumbnail && j.thumbnail.source) ? j.thumbnail.source.replace(/\/\d+px-/,"/500px-") : null;
+      if(u){ IMG[id]=u; ls("resfeber.img", JSON.stringify(IMG)); set(u); }
+    }).catch(()=>{});
+}
+
+// ---------- Smak (samma räkning som morgonsökningen) ----------
+function taste(who, kind){
+  const t = {};
+  S.duels.filter(d=>d.who===who && d.kind===kind).forEach(d=>{
+    (d.options||[]).forEach(o=>{
+      const w = o.id===d.chosen ? 1 : -0.35;
+      (o.tags||o.feats||[]).forEach(x=>{ t[x]=(t[x]||0)+w; });
+    });
+  });
+  return t;
+}
+const nDuels = (who,kind) => S.duels.filter(d=>d.who===who && (!kind||d.kind===kind)).length;
+
+// ---------- Vem ----------
+const NAMES = {steve:"Steve", ulrika:"Ulrika"};
+function setWho(w){
+  S.who = w; ls("resfeber.who", w);
+  $("#whoBtn").innerHTML = `<span class="dot ${w}">${NAMES[w][0]}</span>${NAMES[w]}`;
+  $("#hello").classList.remove("on");
+  S.trio = null; renderTaste();
+}
+document.querySelectorAll("#hello [data-who]").forEach(b=>b.onclick=()=>setWho(b.dataset.who));
+$("#whoBtn").onclick = () => setWho(S.who==="steve" ? "ulrika" : "steve");
+
+// ---------- Flikar ----------
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on", s.id==="v-"+b.dataset.v));
+  $("main").scrollTop = 0;
+  if(b.dataset.v==="taste") renderTaste();
+});
+
+// ---------- I dag ----------
+const latestDay = () => S.days.slice().sort((a,b)=>a.id<b.id?1:-1)[0];
+const isSaved = (date,dest) => S.saved.some(s=>s.id===`${date}_${dest}` && s.active!==false);
+
+function tripCard(t, day, opts){
+  const f = t.flight, l = t.lodging, sv = isSaved(day.id, t.dest);
+  const whyTxt = {steve:"Steves smak", ulrika:"Ulrikas smak", upptack:"Något nytt"}[t.why] || "";
+  const learned = t.why==="upptack" || nDuels(t.why,"dest")>=3;
+  const badge = learned ? whyTxt : "Slumpvalt";
+  const parts = [];
+  if(f) parts.push(`<div class="leg">
+      <span class="what">Flyg tur och retur</span><span class="amt">${eur(f.price)}</span>
+      <span class="det">${esc(AIRPORTS[f.from]||f.fromName||f.from)} ${time(f.dep)} → ${esc(t.name)} ${time(f.arr)}, ${esc(f.airline||"")}, ${f.stops? "via "+esc(via(f.via)) : "direkt"}${f.minutes? ", "+hm(f.minutes):""}</span>
+      <div class="links">${f.url?`<a class="go" href="${esc(f.url)}" target="_blank" rel="noopener">Se flygen</a>`:""}</div>
+    </div>`);
+  else if(t.ferry) parts.push(`<div class="leg">
+      <span class="what">Färja</span><span class="amt">se pris</span>
+      <span class="det">Färjepriset ingår inte i summan.</span>
+      <div class="links">${t.ferryUrl?`<a class="go" href="${esc(t.ferryUrl)}" target="_blank" rel="noopener">Färjebolaget</a>`:""}</div>
+    </div>`);
+  else parts.push(`<div class="leg"><span class="what">Flyg</span><span class="amt">–</span><span class="det">Inget flyg hittades för de här datumen.</span></div>`);
+  if(l) parts.push(`<div class="leg">
+      <span class="what">${esc(l.name)}</span><span class="amt">${eur(l.total)}</span>
+      <div class="row">${l.img?`<img src="${esc(l.img)}" alt="" loading="lazy">`:""}
+        <span class="det" style="margin:0">${esc(FEATS[l.kind]||"Boende")}${l.rating?`, betyg ${String(l.rating).replace(".",",")}`:""}${l.km!=null?`, ${String(l.km).replace(".",",")} km från centrum`:""}<br>${eur(l.night)} per natt, ${day.nights} nätter</span></div>
+      <div class="links">${l.link?`<a class="go" href="${esc(l.link)}" target="_blank" rel="noopener">Se boendet</a>`:""}
+        ${(t.alts||[]).length?`<button class="go" data-alts="${esc(day.id)}|${esc(t.dest)}">${t.alts.length} till</button>`:""}</div>
+    </div>`);
+  else parts.push(`<div class="leg"><span class="what">Boende</span><span class="amt">–</span><span class="det">Inget boende hittades.</span></div>`);
+
+  return `<article class="trip ${t.overBudget?"over":""}">
+    <div class="pic" data-img="${esc(t.dest)}" ${l&&l.img?`data-fallback="${esc(l.img)}" style="background-image:url('${esc(l.img)}')"`:""}>
+      ${opts&&opts.noBadge?"":`<span class="badge">${esc(badge)}</span>`}
+      <button class="star ${sv?"on":""}" data-star="${esc(day.id)}|${esc(t.dest)}" aria-label="${sv?"Ta bort från sparade":"Spara"}">${sv?"★":"☆"}</button>
+    </div>
+    <div class="sign">
+      <svg class="plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4,4.6 L19.2,6.1 L14.6,10.9 L17.5,20.2 L16.5,21.2 L12.0,13.5 L8.0,17.2 L8.4,20.6 L7.6,21.4 L5.6,18.4 L2.6,16.4 L3.4,15.6 L6.8,16.0 L10.5,12.0 L2.8,7.5 L3.8,6.5 L13.1,9.4 L17.9,4.8Z" fill="currentColor"/></svg>
+      <div class="city">${esc(t.name)}<small>${esc(t.country)}${f?`, från ${esc(AIRPORTS[f.from]||f.from)}`:t.ferry?", med färja":""}</small></div>
+      <div class="price">${eur(t.total)}<small>${t.overBudget?"över budget":t.ferry&&!f?"utan färja":"för fyra"}</small></div>
+    </div>
+    <div class="legs">${parts.join("")}</div>
+  </article>`;
+}
+
+function renderToday(){
+  const el = $("#v-today"), day = latestDay();
+  if(!day){
+    el.innerHTML = `<div class="empty"><h3>Första sökningen görs i morgon bitti</h3>
+      <p>Lägg in era datum och er budget under Våra resor, så söker Resfeber på just dem. Under tiden kan ni lära appen er smak.</p>
+      <button class="btn" data-goto="plans">Lägg in datum</button></div>`;
+    return;
+  }
+  const p = day.period||{}, isToday = day.id===today();
+  el.innerHTML = `<h2>${isToday?"Dagens tre":"Senaste förslagen"}</h2>
+    <p class="sub">${esc(p.label && !day.example ? p.label+", " : "")}${range(p.from,p.to)}, ${day.nights} nätter, fyra personer${p.budget?`, budget ${eur(p.budget)}`:""}.${isToday?"":` Sökt ${dfmt(day.id,{weekday:"long",day:"numeric",month:"long"})}.`}</p>
+    ${day.example?`<div class="note"><b>Exempeldatum.</b> Ni har inte lagt in några resor ännu, så Resfeber sökte på en långhelg om sex veckor. Priserna är exakta för de datumen.</div>`:""}
+    ${(day.trips||[]).map(t=>tripCard(t,day)).join("")}`;
+  hydrate(el);
+}
+
+function hydrate(root){
+  root.querySelectorAll("[data-img]").forEach(e=>destImg(e.dataset.img,e));
+}
+
+// Klick i hela appen
+document.addEventListener("click", e=>{
+  const st = e.target.closest("[data-star]");
+  if(st){ const [d,dest]=st.dataset.star.split("|"); toggleSave(d,dest); return; }
+  const al = e.target.closest("[data-alts]");
+  if(al){ const [d,dest]=al.dataset.alts.split("|"); showAlts(d,dest); return; }
+  const g = e.target.closest("[data-goto]");
+  if(g){ document.querySelector(`nav.tabs [data-v="${g.dataset.goto}"]`).click(); return; }
+  const ln = e.target.closest("[data-open]");
+  if(ln){ const [d,dest]=ln.dataset.open.split("|"); showTrip(d,dest); return; }
+});
+
+function toggleSave(date,dest){
+  const id = `${date}_${dest}`, on = isSaved(date,dest);
+  const day = S.days.find(d=>d.id===date), t = day && (day.trips||[]).find(x=>x.dest===dest);
+  C("saved").doc(id).set({date, dest, name:t?t.name:dest, total:t?t.total:null, who:S.who, active:!on,
+    at:firebase.firestore.FieldValue.serverTimestamp()}, {merge:true});
+  toast(on ? "Borttagen från sparade" : "Sparad i loggboken");
+}
+
+function sheet(html){ $("#sheetIn").innerHTML = html; $("#sheet").classList.add("on"); hydrate($("#sheetIn")); }
+$("#sheet").addEventListener("click", e=>{ if(e.target.id==="sheet"||e.target.closest(".x")) $("#sheet").classList.remove("on"); });
+
+function showAlts(date,dest){
+  const day = S.days.find(d=>d.id===date), t = day && day.trips.find(x=>x.dest===dest);
+  if(!t) return;
+  sheet(`<div class="bar2"><h2 style="margin:0">Fler boenden i ${esc(t.name)}</h2><button class="x" aria-label="Stäng">✕</button></div>
+    <p class="sub">${range(day.period.from, day.period.to)}, ${day.nights} nätter, fyra personer.</p>
+    ${t.alts.map(l=>`<div class="leg">
+      <span class="what">${esc(l.name)}</span><span class="amt">${eur(l.total)}</span>
+      <div class="row">${l.img?`<img src="${esc(l.img)}" alt="" loading="lazy">`:""}<span class="det" style="margin:0">${esc(FEATS[l.kind]||"")}${l.rating?`, betyg ${String(l.rating).replace(".",",")}`:""}${l.km!=null?`, ${String(l.km).replace(".",",")} km från centrum`:""}</span></div>
+      <div class="links">${l.link?`<a class="go" href="${esc(l.link)}" target="_blank" rel="noopener">Se boendet</a>`:""}</div>
+    </div>`).join("")}`);
+}
+
+function showTrip(date,dest){
+  const day = S.days.find(d=>d.id===date), t = day && day.trips.find(x=>x.dest===dest);
+  if(!t) return;
+  sheet(`<div class="bar2"><span class="sub" style="margin:0">Föreslogs ${dfmt(date,{weekday:"long",day:"numeric",month:"long"})}</span><button class="x" aria-label="Stäng">✕</button></div>
+    <p class="sub">${range(day.period.from, day.period.to)}, ${day.nights} nätter. Priset gällde då; tryck på länkarna för dagens pris.</p>
+    ${tripCard(t,day,{noBadge:true})}`);
+}
+
+// ---------- Resfeber ----------
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b));
+  S.mode = b.dataset.mode; S.trio = null; renderTaste();
+});
+$("#skipBtn").onclick = ()=>{ S.trio=null; renderTaste(); };
+
+function hotelPool(){
+  const seen = new Map();
+  S.days.forEach(d=>(d.trips||[]).forEach(t=>{
+    [t.lodging,...(t.alts||[])].filter(Boolean).forEach(l=>{
+      if(l.img && !seen.has(l.id)) seen.set(l.id, Object.assign({city:t.name, nights:d.nights}, l));
+    });
+  }));
+  return [...seen.values()];
+}
+
+function newTrio(){
+  const shown = S.duels.filter(d=>d.who===S.who && d.kind===S.mode);
+  const count = {};
+  shown.forEach(d=>(d.options||[]).forEach(o=>count[o.id]=(count[o.id]||0)+1));
+  const pool = S.mode==="dest" ? CAT.slice() : hotelPool();
+  if(pool.length<3) return null;
+  // Visa helst sådant ni sett minst, med lite slump.
+  pool.sort((a,b)=>((count[a.id]||0)+Math.random()*1.5)-((count[b.id]||0)+Math.random()*1.5));
+  const out = [];
+  for(const x of pool){
+    if(out.length===3) break;
+    if(S.mode==="hotel" && out.some(o=>o.city===x.city) && pool.length>6) continue;
+    out.push(x);
+  }
+  return out.length===3 ? out : pool.slice(0,3);
+}
+
+function renderTaste(){
+  if(!S.who) return;
+  const box = $("#picks");
+  $("#tasteSub").textContent = S.mode==="dest"
+    ? `${NAMES[S.who]}, välj den du helst skulle åka till. De andra kan också vara fina.`
+    : `${NAMES[S.who]}, var skulle du helst bo? Boendena kommer från tidigare förslag.`;
+  if(!S.trio) S.trio = newTrio();
+  if(!S.trio){
+    box.innerHTML = `<div class="note">Boenden att välja mellan dyker upp efter första morgonsökningen.</div>`;
+    $("#skipBtn").style.display="none";
+  } else {
+    $("#skipBtn").style.display="";
+    box.innerHTML = S.trio.map((o,i)=> S.mode==="dest"
+      ? `<button class="pick" data-i="${i}"><span class="img" data-img="${esc(o.id)}"></span>
+          <span><span class="nm">${esc(o.name)}</span><span class="cn" style="display:block">${esc(o.country)}</span>
+          <span class="tags">${o.tags.slice(0,3).map(t=>`<span class="tag">${esc(TAGS[t]||t)}</span>`).join("")}</span></span></button>`
+      : `<button class="pick" data-i="${i}"><span class="img" style="background-image:url('${esc(o.img)}')"></span>
+          <span><span class="nm" style="font-size:17px">${esc(o.name)}</span><span class="cn" style="display:block">${esc(o.city)}, ${eur(o.total)} för ${o.nights} nätter</span>
+          <span class="tags">${(o.feats||[]).slice(0,3).map(t=>`<span class="tag">${esc(FEATS[t]||t)}</span>`).join("")}</span></span></button>`
+    ).join("");
+    hydrate(box);
+    box.querySelectorAll(".pick").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+  }
+  renderMeter();
+}
+
+function choose(i){
+  const trio = S.trio; if(!trio) return;
+  const chosen = trio[i];
+  document.querySelectorAll("#picks .pick").forEach((b,j)=>b.classList.add(j===i?"won":"lost"));
+  C("duels").add({
+    who:S.who, kind:S.mode, chosen:chosen.id,
+    options: trio.map(o=>S.mode==="dest" ? {id:o.id, name:o.name, tags:o.tags} : {id:o.id, name:o.name, feats:o.feats||[]}),
+    at: firebase.firestore.FieldValue.serverTimestamp(), day: today()
+  });
+  setTimeout(()=>{ S.trio=null; renderTaste(); }, 650);
+}
+
+function renderMeter(){
+  const t = taste(S.who, S.mode), labels = S.mode==="dest" ? TAGS : FEATS;
+  const rows = Object.entries(t).sort((a,b)=>b[1]-a[1]);
+  const n = nDuels(S.who, S.mode);
+  if(n<3){ $("#meter").innerHTML = `<p class="muted">${n===0?"Inga val än.":`${n} val hittills.`} Efter tre val börjar morgonsökningen väga in din smak.</p>`; return; }
+  const top = rows.slice(0,6), max = Math.max(1, ...top.map(r=>Math.abs(r[1])));
+  $("#meter").innerHTML = `<h3 style="margin:0 0 4px;font-size:16px">${NAMES[S.who]}s smak efter ${n} val</h3>
+    ${top.map(([k,v])=>`<div class="bar"><span>${esc(labels[k]||k)}</span><i class="${v<0?"neg":""}" style="width:${Math.max(4,Math.abs(v)/max*100)}%"></i></div>`).join("")}`;
+}
+
+// ---------- Loggboken ----------
+document.querySelectorAll("#logChips .chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#logChips .chip").forEach(x=>x.classList.toggle("on",x===b));
+  S.logF = b.dataset.f; renderLog();
+});
+
+function bestResfeber(periodId){
+  let best=null;
+  S.days.forEach(d=>{ if((d.period||{}).id!==periodId) return;
+    (d.trips||[]).forEach(t=>{ if(t.complete && (!best||t.total<best.total)) best={...t, date:d.id}; }); });
+  return best;
+}
+
+function renderLog(){
+  const el = $("#logList");
+  if(S.logF==="finds"){
+    const finds = S.finds.slice().sort((a,b)=>(b.created||"")<(a.created||"")?-1:1);
+    const duels = S.periods.filter(p=>p.active!==false).map(p=>{
+      const mine = finds.filter(f=>f.period===p.id && f.total).sort((a,b)=>a.total-b.total)[0];
+      const rf = bestResfeber(p.id);
+      if(!mine && !rf) return "";
+      const win = mine && rf ? (mine.total<=rf.total ? "f" : "r") : (mine?"f":"r");
+      return `<div class="duel"><strong>${esc(p.label||range(p.from,p.to))}</strong>
+        <div class="vs"><div class="side ${win==="f"?"win":""}">${mine?esc(NAMES[mine.who]||"Eget fynd"):"Inget eget fynd än"}<b>${mine?eur(mine.total):"–"}</b>${mine?esc(mine.name):""}</div>
+        <span class="sub" style="margin:0">mot</span>
+        <div class="side ${win==="r"?"win":""}" style="text-align:right">Resfeber<b>${rf?eur(rf.total):"–"}</b>${rf?esc(rf.name):""}</div></div></div>`;
+    }).join("");
+    el.innerHTML = `${duels}
+      <button class="btn wide" id="addFind" style="margin:0 0 14px">Lägg in ett eget fynd</button>
+      ${finds.length? finds.map(f=>`<div class="card"><h3>${esc(f.name)}</h3>
+        <p class="meta">${esc(NAMES[f.who]||"")}${f.from?`, ${range(f.from,f.to)}`:""}</p>
+        <div class="leg" style="border:0;padding:0"><span class="what">Totalt för fyra</span><span class="amt">${eur(f.total)}</span>
+        <span class="det">Resa ${eur(f.travel)}, boende ${eur(f.lodging)}${f.note?`. ${esc(f.note)}`:""}</span></div>
+        ${f.link?`<a class="go" href="${esc(f.link)}" target="_blank" rel="noopener">Öppna länken</a>`:""}</div>`).join("")
+      : `<p class="muted">Hittar ni något själva? Lägg in det här, så ser ni vem som hittar billigast: ni eller Resfeber.</p>`}`;
+    $("#addFind").onclick = findForm;
+    return;
+  }
+  const days = S.days.slice().sort((a,b)=>a.id<b.id?1:-1);
+  let html = "";
+  days.forEach(d=>{
+    const trips = (d.trips||[]).filter(t=>S.logF!=="saved" || isSaved(d.id,t.dest));
+    if(!trips.length) return;
+    html += `<div class="day"><h4>${dfmt(d.id,{weekday:"long",day:"numeric",month:"long"})}, för ${range(d.period.from,d.period.to)}</h4>
+      ${trips.map(t=>`<button class="line" data-open="${esc(d.id)}|${esc(t.dest)}">
+        <span><span class="t">${esc(t.name)}</span><br><span class="s">${t.flight?`${esc(t.flight.airline||"")}, ${t.flight.stops?"mellanlandning":"direkt"}`:t.ferry?"färja":"inget flyg"}${t.lodging?`, ${esc(t.lodging.name)}`:""}</span></span>
+        <span class="p">${eur(t.total)}</span>
+        <span class="st ${isSaved(d.id,t.dest)?"on":""}">${isSaved(d.id,t.dest)?"★":"☆"}</span></button>`).join("")}</div>`;
+  });
+  el.innerHTML = html || `<div class="empty"><h3>${S.logF==="saved"?"Inget sparat än":"Loggboken är tom"}</h3><p>${S.logF==="saved"?"Tryck på stjärnan på ett förslag för att spara det här.":"Här samlas varje morgons förslag."}</p></div>`;
+}
+
+function periodOptions(sel){
+  return `<option value="">Ingen särskild resa</option>` + S.periods.filter(p=>p.active!==false)
+    .map(p=>`<option value="${esc(p.id)}" ${p.id===sel?"selected":""}>${esc(p.label||range(p.from,p.to))}</option>`).join("");
+}
+
+function findForm(){
+  sheet(`<div class="bar2"><h2 style="margin:0">Eget fynd</h2><button class="x" aria-label="Stäng">✕</button></div>
+    <label class="f" for="fn">Vart?</label><input class="i" id="fn" placeholder="Till exempel Gdańsk">
+    <label class="f" for="fp">Vilken resa gäller det?</label><select class="i" id="fp">${periodOptions(S.periods.filter(p=>p.active!==false)[0]?.id)}</select>
+    <div class="two"><div><label class="f" for="ft">Resa för fyra, €</label><input class="i" id="ft" inputmode="decimal"></div>
+    <div><label class="f" for="fl">Boende, €</label><input class="i" id="fl" inputmode="decimal"></div></div>
+    <label class="f" for="fk">Länk</label><input class="i" id="fk" inputmode="url" placeholder="https://">
+    <label class="f" for="fo">Anteckning</label><input class="i" id="fo" placeholder="Till exempel frukost ingår">
+    <button class="btn wide" id="fs" style="margin-top:16px">Spara fyndet</button>`);
+  $("#fs").onclick = ()=>{
+    const num = id => parseFloat(($(id).value||"").replace(",",".").replace(/\s/g,"")) || 0;
+    const name = $("#fn").value.trim(); if(!name){ $("#fn").focus(); return; }
+    const pid = $("#fp").value, p = S.periods.find(x=>x.id===pid);
+    const travel = num("#ft"), lodging = num("#fl");
+    C("finds").add({name, who:S.who, period:pid||null, from:p?p.from:null, to:p?p.to:null, travel, lodging, total:travel+lodging,
+      link:$("#fk").value.trim(), note:$("#fo").value.trim(), created:new Date().toISOString()});
+    $("#sheet").classList.remove("on"); toast("Fyndet är sparat");
+  };
+}
+
+// ---------- Våra resor ----------
+const ORIG = [["VAA","Vasa"],["TKU","Åbo"],["TMP","Tammerfors"],["HEL","Helsingfors"]];
+const TRANS = [["direct","Direktflyg"],["onestop","En mellanlandning om det är billigare"],["ferry","Färja"]];
+const LODG = [["hotel","Hotell"],["apartment","Lägenhet"],["bnb","B&B"],["hostel","Vandrarhem"]];
+const WISH = [["breakfast","Frukost"],["central","Centralt"],["kitchen","Kök"],["pool","Pool"]];
+const lbl = (list,ids) => list.filter(([k])=>(ids||[]).includes(k)).map(([,v])=>v).join(", ");
+
+function renderPlans(){
+  const list = S.periods.slice().sort((a,b)=>(a.active===false)-(b.active===false) || (a.from<b.from?-1:1));
+  $("#planList").innerHTML = list.length ? list.map(p=>`<div class="card" style="${p.active===false?"opacity:.55":""}">
+      <h3>${esc(p.label||"Resa")}</h3>
+      <p class="meta">${range(p.from,p.to)}${p.budget?`, högst ${eur(p.budget)}`:", ingen budget"}${p.active===false?", vilande":""}</p>
+      <p class="muted" style="margin:0 0 10px">Från ${esc(lbl(ORIG,p.origins))}. ${esc(lbl(TRANS,p.transport))}. ${esc(lbl(LODG,p.lodging))}${(p.wishes||[]).length?`. Önskar: ${esc(lbl(WISH,p.wishes).toLowerCase())}`:""}.</p>
+      <div class="acts"><button class="btn ghost" data-edit="${esc(p.id)}">Ändra</button>
+      <button class="btn ghost" data-pause="${esc(p.id)}">${p.active===false?"Sök igen":"Vila"}</button></div></div>`).join("")
+    : `<div class="note">Inga resor inlagda ännu. Utan resor söker Resfeber på en långhelg om sex veckor.</div>`;
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>planForm(S.periods.find(p=>p.id===b.dataset.edit)));
+  document.querySelectorAll("[data-pause]").forEach(b=>b.onclick=()=>{
+    const p = S.periods.find(x=>x.id===b.dataset.pause);
+    C("periods").doc(p.id).set({active: p.active===false}, {merge:true});
+  });
+}
+$("#addPlan").onclick = ()=>planForm(null);
+
+function optRow(id, list, sel){
+  return `<div class="opt" id="${id}">${list.map(([k,v])=>`<button type="button" data-k="${k}" class="${(sel||[]).includes(k)?"on":""}">${esc(v)}</button>`).join("")}</div>`;
+}
+function planForm(p){
+  const d = p || {label:"", from:"", to:"", budget:"", origins:["VAA","TKU","TMP","HEL"], transport:["direct","onestop"], lodging:["hotel","apartment"], wishes:[]};
+  sheet(`<div class="bar2"><h2 style="margin:0">${p?"Ändra resa":"Ny resa"}</h2><button class="x" aria-label="Stäng">✕</button></div>
+    <label class="f" for="pl">Namn</label><input class="i" id="pl" value="${esc(d.label)}" placeholder="Till exempel påsklovet">
+    <div class="two"><div><label class="f" for="pf">Avresa</label><input class="i" type="date" id="pf" value="${esc(d.from)}"></div>
+    <div><label class="f" for="pt">Hemresa</label><input class="i" type="date" id="pt" value="${esc(d.to)}"></div></div>
+    <label class="f" for="pb">Budget för fyra, resa och boende (€)</label><input class="i" id="pb" inputmode="numeric" value="${esc(d.budget||"")}" placeholder="Till exempel 1500">
+    <label class="f">Åka från</label>${optRow("po",ORIG,d.origins)}
+    <label class="f">Resesätt</label>${optRow("pr",TRANS,d.transport)}
+    <p class="muted">Färja gäller Tallinn, Stockholm och Umeå. Färjepriset hämtas inte automatiskt.</p>
+    <label class="f">Boende</label>${optRow("pd",LODG,d.lodging)}
+    <label class="f">Önskemål</label>${optRow("pw",WISH,d.wishes)}
+    <button class="btn wide" id="ps" style="margin-top:18px">${p?"Spara ändringarna":"Spara resan"}</button>
+    <p class="muted" id="perr"></p>`);
+  $("#sheetIn").querySelectorAll(".opt button").forEach(b=>b.onclick=()=>b.classList.toggle("on"));
+  const pickd = id => [...document.querySelectorAll(`#${id} button.on`)].map(b=>b.dataset.k);
+  $("#ps").onclick = ()=>{
+    const from=$("#pf").value, to=$("#pt").value;
+    const err = !from||!to ? "Välj både avresa och hemresa." : to<=from ? "Hemresan måste vara efter avresan."
+      : !pickd("po").length ? "Välj minst en flygplats." : !pickd("pd").length ? "Välj minst en typ av boende." : "";
+    if(err){ $("#perr").textContent = err; return; }
+    const data = {label:$("#pl").value.trim(), from, to, budget:parseInt(($("#pb").value||"").replace(/\D/g,""))||0,
+      origins:pickd("po"), transport:pickd("pr").length?pickd("pr"):["direct"], lodging:pickd("pd"), wishes:pickd("pw"),
+      active:p?p.active!==false:true, by:S.who};
+    (p ? C("periods").doc(p.id).set(data,{merge:true}) : C("periods").add(Object.assign(data,{created:new Date().toISOString()})));
+    $("#sheet").classList.remove("on"); toast(p?"Ändringarna är sparade":"Resan är sparad. Morgonens sökning tar med den.");
+  };
+}
+
+// ---------- Data ----------
+function listen(name, key, after){
+  C(name).onSnapshot(snap=>{
+    S[key] = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+    after();
+  }, err=>{ console.error(name, err); toast("Kunde inte hämta data. Kolla täckningen."); });
+}
+listen("days","days",()=>{ renderToday(); renderLog(); if(S.mode==="hotel"&&!S.trio) renderTaste(); });
+listen("periods","periods",()=>{ renderPlans(); renderLog(); });
+listen("duels","duels",renderMeter);
+listen("finds","finds",renderLog);
+listen("saved","saved",()=>{ renderToday(); renderLog(); });
+
+// ---------- Start ----------
+const w = ls("resfeber.who");
+if(w==="steve"||w==="ulrika") setWho(w); else $("#hello").classList.add("on");
+renderToday(); renderPlans(); renderLog();
+})();
+</script>
+</body>
+</html>
