@@ -216,8 +216,9 @@ async function c11MinaSina(){if(scene!==pizS)await toPizza();setMusic('home');
   play('think');await tr11(A11(19));await tr11(A11(20));
   showWord('N → T','minä tulen → sinä tulet',3200);play('point');await tr11(A11(21));await tr11(A11(22));
   // Siili gets it wrong twice; Saga corrects him
-  play('happy');await say(A11(23),{sub:false});let t=await mc11([{t:'Sinä tulet!',ok:true},{t:'Sinä tulen!'},{t:'Sinä tule!'}],{q:'Siili säger fel! Vad är rätt?'});play('shake');await tr11(A11(24));addPaws(t?1:3);
-  await say(A11(25),{sub:false});t=await mc11([{t:'Minä haluan pizzaa!',ok:true},{t:'Minä haluat pizzaa!'},{t:'Sinä haluan pizzaa!'}],{q:'Fel igen! Vad är rätt?'});play('happy');await tr11(A11(26));await tr11(A11(27));addPaws(t?1:3);
+  // Siili writes it wrong (he never says it wrong): Saga corrects the text, then he says the right form
+  play('think');showWord('Sinä tulen!','Siili skrev …',2200);await sleep(1600);let t=await mc11([{t:'Sinä tulet!',ok:true},{t:'Sinä tulen!'},{t:'Sinä tule!'}],{q:'Siili skrev fel! Vad är rätt?'});play('nod');await say(B11(3),{sub:false});addPaws(t?1:3);
+  play('think');showWord('Minä haluat pizzaa!','Siili skrev …',2200);await sleep(1600);t=await mc11([{t:'Minä haluan pizzaa!',ok:true},{t:'Minä haluat pizzaa!'},{t:'Sinä haluan pizzaa!'}],{q:'Fel igen! Vad är rätt?'});play('happy');await tr11(A11(26));await tr11(A11(27));addPaws(t?1:3);
   // eight verbs: minä → sinä, every second one written
   let n=0;for(const v of shuffle(VB11).slice(0,8)){n++;if(v.img)showPicSrc(v.img,'');
     if(n%2===0){const tt=await typeIt(['sinä '+v.si,v.si],`minä ${v.mi} → sinä …  (skriv hela)`);hidePic();showWord('sinä '+v.si,'du '+v.sv,1600);await say(B11(v.b),{sub:false});hit11('v-'+v.k,tt);addPaws(tt?1:3);continue}
