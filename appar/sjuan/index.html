@@ -293,6 +293,10 @@ body.gridq #talk,body.gridq #know{display:none}
   #toSchool{display:flex;position:fixed;left:18px;top:16px;z-index:50;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
     background:var(--card);color:var(--ink);text-decoration:none;font-weight:700;box-shadow:0 3px 0 var(--line)}
   #toSchool:hover{background:var(--pink2)}
+  #scene{height:22vh;min-height:110px}
+  #answers{grid-template-columns:repeat(4,1fr)}
+  .ans{height:clamp(56px,11vh,84px);font-size:clamp(28px,5vh,40px)}
+  #qtext{font-size:clamp(40px,min(9vw,62cqh),96px)}
 }
 </style>
 </head>
@@ -622,7 +626,7 @@ function renderHome(){
  h+=`</div>`;
  h+=`<button class="cont" id="trollBtn" style="background:#5fae63;box-shadow:0 5px 0 #3f8a45"><small>${S.trollWins?`Du har vunnit ${S.trollWins} ${S.trollWins===1?"gång":"gånger"} · trollet har blivit ${trollHp()} hjärtan starkt`:"Trollet har samlat på dina svåraste tal"}</small>Utmana Tabelltrollet 🧌</button>
  <button class="cont" id="vanBtn" style="background:#2fa3a0;box-shadow:0 5px 0 #1f7a78"><small>Läs hela tabellen – sedan försvinner svaren ett i taget</small>Försvinnande tabellen 🫥</button>
- <div class="row2"><button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button><button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>
+ <div class="row2">${DESK?`<button class="mbtn" id="examBtn"><span>✏️</span>Slutförhör</button>`:`<button class="mbtn" id="duelBtn"><span>⚔️</span>Duell mot Noa</button>`}<button class="mbtn" id="albBtn"><span>🏅</span>Klistermärken</button></div>${DESK?"":`<button class="cont" id="examBtn" style="background:#e0884a;box-shadow:0 5px 0 #b8662e"><small>Tio frågor ur tabellerna du väljer · skriv svaret</small>Slutförhör ✏️</button>`}
  <button class="cont" id="plBtn" style="background:#7a5cff;box-shadow:0 5px 0 #5a3fd6"><small>Lyssna och sjung med · funkar med högtalaren</small>Låtarna 🎵</button>`;
  if(PL&&PL.a&&PL.a.src)h+=`<button class="pl-mini" id="plMini"><span>🎵 ${SONGS[PL.i].title}</span><i style="font-style:normal">${PL.a.paused?"▶️":"⏸"}</i></button>`;
  h+=`<div class="card"><h3>Du kan ${k} av 55 gångertal</h3><p class="muted">6 × 7 och 7 × 6 är samma tal. Därför finns det bara 55 att lära, inte 100. Varje tabell du kan gör nästa lättare!</p>
@@ -634,7 +638,7 @@ function renderHome(){
  if($("#contBtn"))$("#contBtn").onclick=()=>{show("game");resume()};
  if($("#repBtn"))$("#repBtn").onclick=repeatRound;
  $("#home").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{SND.pop();b.dataset.t==="mix"?mixSheet():tripSheet(b.dataset.t)});
- $("#duelBtn").onclick=duelSheet;$("#vanBtn").onclick=vanishSheet;
+ if($("#duelBtn"))$("#duelBtn").onclick=duelSheet;$("#examBtn").onclick=examSheet;$("#vanBtn").onclick=vanishSheet;
  $("#timerBtn").onclick=()=>{S.timer=!S.timer;save();SND.pop();renderHome()};$("#trollBtn").onclick=trollFight;$("#albBtn").onclick=album;
  $("#plBtn").onclick=plSheet;if($("#plMini"))$("#plMini").onclick=plSheet;
 }
@@ -665,6 +669,20 @@ function tripSheet(t){
   <button class="big" id="go">Åk! 🚌</button><button class="big alt" id="no">Inte nu</button>`);
  $("#sheet").querySelector(".badge").style.cssText+=";width:110px;margin:0 auto 6px";
  $("#go").onclick=()=>{close();newTrip(String(t),[t])};$("#no").onclick=close;
+}
+const DESK=matchMedia("(min-width:900px) and (pointer:fine)").matches;
+/* Slutförhör från startsidan (2026-11-07): välj tabeller, tio skriv-själv-frågor */
+function examSheet(){
+ let sel=new Set(S.examSel||[7]);
+ const draw=()=>{$("#chips").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="chip ${sel.has(n)?"on":""}" data-n="${n}">${n}</button>`).join("");
+  $("#chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const n=+b.dataset.n;sel.has(n)?sel.delete(n):sel.add(n);SND.pop();draw()});
+  $("#go").disabled=!sel.size;$("#go").textContent=sel.size?"Börja förhöret ✏️":"Välj minst en tabell"};
+ sheet(`<h2>Slutförhör ✏️</h2><p class="sub">Välj tabellerna som ska vara med. Du får tio tal och skriver svaret själv.</p><div class="chips" id="chips"></div>
+  <button class="big alt" id="all">Alla tabeller</button><button class="big" id="go"></button><button class="big alt" id="no">Inte nu</button>`);
+ draw();$("#all").onclick=()=>{sel=new Set([1,2,3,4,5,6,7,8,9,10]);draw()};$("#no").onclick=close;
+ $("#go").onclick=()=>{S.examSel=[...sel];save();const T=[...sel],list=[],seen=new Set();
+  for(let k=0;list.length<10&&k<200;k++){const t=pick(T),n=1+Math.floor(Math.random()*10),key=t+"x"+n;if(seen.has(key)&&seen.size<T.length*10)continue;seen.add(key);list.push([t,n])}
+  exam(list,()=>{close();renderHome()},"Slutförhör")};
 }
 function mixSheet(){
  let sel=new Set(S.mixSel);
