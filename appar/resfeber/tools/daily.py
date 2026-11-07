@@ -33,8 +33,10 @@ TZ = dt.timezone(dt.timedelta(hours=2))  # Finland vintertid; räcker för datum
 ADULTS, CHILDREN, CHILD_AGES = 3, 1, "9"
 
 SERP = os.environ.get("SERPAPI_KEY", "")
-MAX_SEARCHES = 8  # högst 8 om dagen: 30 dagar ryms i de 250 gratis
+MAX_SEARCHES_TOTAL = 9  # hårt tak per körning, även när boendet behöver en extra sökning
+MAX_SEARCHES = 7  # högst 7 om dagen + Tokyosökningen en gång i veckan ryms i de 250 gratis
 DRY = "--dry" in sys.argv
+FORCE = "--force" in sys.argv
 searches = 0
 log = []
 
@@ -120,6 +122,16 @@ def fs_list(coll):
         token = r.get("nextPageToken")
         if not token:
             return out
+
+
+def fs_exists(path):
+    try:
+        http(f"{BASE}/{path}?key={FB_KEY}")
+        return True
+    except RuntimeError as e:
+        if "HTTP 404" in str(e):
+            return False
+        raise
 
 
 def fs_set(path, data):
@@ -237,6 +249,7 @@ def choose_destinations(cat, period, duels, recent):
     ferry_ok = "ferry" in (period.get("transport") or [])
     month = dt.date.fromisoformat(period["from"]).month
     pool = [d for d in cat if (d.get("air") or (ferry_ok and d.get("ferry")))
+            and not d.get("longhaul")
             and (not d.get("months") or month in d["months"])]
     s_dest, _ = taste(duels, "steve")
     u_dest, _ = taste(duels, "ulrika")
@@ -314,12 +327,46 @@ def search_flight(dest, period):
     }
 
 
-def search_lodging(dest, period, hprof):
+def zone_of(lat, lon, zones):
+    """Första zonen (namn) som punkten ligger i, annars None."""
+    for z in zones or []:
+        km = dist_km((z[1], z[2]), (lat, lon))
+        if km is not None and km <= z[3] + 0.25:
+            return z[0]
+    return None
+
+
+def search_lodging(dest, period, hprof, area_index=0):
+    """Boende bara i trygga familjeområden (dest["areas"]), aldrig i dest["avoid"].
+
+    Sökningen utgår från ett av de trygga områdena; varje träff kontrolleras
+    sedan mot områdenas koordinater. Saknas träffar provas ett område till.
+    """
+    areas = dest.get("areas") or []
+    tries = 2 if len(areas) > 1 else 1
+    for t in range(tries):
+        if searches >= MAX_SEARCHES_TOTAL:
+            break
+        area = areas[(area_index + t) % len(areas)] if areas else None
+        best, alts = _search_lodging_once(dest, period, hprof, area)
+        if best:
+            return best, alts
+        say(f"  inget tryggt boende kring {area[0] if area else dest['name']}, provar nästa område")
+    return None, []
+
+
+def _search_lodging_once(dest, period, hprof, area):
     lod = period.get("lodging") or ["hotel", "apartment"]
     wishes = period.get("wishes") or []
     apt_only = "apartment" in lod and not any(x in lod for x in ("hotel", "bnb", "hostel"))
+    if dest.get("hotelq") and (not area or len(dest.get("areas") or []) == 1):
+        q = dest["hotelq"]
+    elif area:
+        q = f"{area[0]}, {dest['name_en']}"
+    else:
+        q = dest["name_en"]
     params = {
-        "engine": "google_hotels", "q": dest.get("hotelq") or dest["name_en"],
+        "engine": "google_hotels", "q": q,
         "check_in_date": period["from"], "check_out_date": period["to"],
         "adults": ADULTS, "children": CHILDREN, "children_ages": CHILD_AGES,
         "currency": "EUR", "hl": "en", "gl": "fi", "sort_by": 3, "rating": 8,
@@ -333,14 +380,22 @@ def search_lodging(dest, period, hprof):
     center = dest.get("c")
     rows = []
     for p in props[:20]:
+        gps = p.get("gps_coordinates") or {}
+        lat, lon = gps.get("latitude"), gps.get("longitude")
+        if lat is None or lon is None:
+            continue  # utan position kan vi inte veta om området är tryggt
+        if zone_of(lat, lon, dest.get("avoid")):
+            continue
+        area_name = zone_of(lat, lon, dest.get("areas"))
+        if dest.get("areas") and not area_name:
+            continue
         feats = hotel_feats(p, center)
         if "hostel" in feats and "hostel" not in lod:
             continue
         if "apartment" in feats and "apartment" not in lod and "hotel" in feats:
             continue
         total = p["total_rate"]["extracted_lowest"]
-        gps = p.get("gps_coordinates") or {}
-        km = dist_km(center, (gps.get("latitude"), gps.get("longitude"))) if gps and center else None
+        km = dist_km(center, (lat, lon)) if center else None
         fit = 0.0
         for w in wishes:
             fit += 1.5 if w in feats else -1.0
@@ -352,6 +407,7 @@ def search_lodging(dest, period, hprof):
             "name": p.get("name"),
             "kind": feats[0],
             "feats": feats,
+            "area": area_name,
             "rating": p.get("overall_rating"),
             "reviews": p.get("reviews"),
             "stars": p.get("extracted_hotel_class"),
@@ -381,6 +437,9 @@ def main():
     if not SERP:
         sys.exit("SERPAPI_KEY saknas")
     today = dt.datetime.now(TZ).date()
+    if not FORCE and fs_exists(f"days/{today.isoformat()}"):
+        say("Dagens förslag finns redan, ingen ny sökning.")
+        return
     cat = load_catalog()
     periods = fs_list("periods")
     duels = fs_list("duels")
@@ -416,10 +475,13 @@ def main():
                 say("  inget flyg, provar nästa resmål")
                 continue
         try:
-            lodging, alts = search_lodging(dest, period, hprof)
+            lodging, alts = search_lodging(dest, period, hprof, today.toordinal())
         except Exception as e:
             say("  boende misslyckades:", e)
             lodging, alts = None, []
+        if not lodging:
+            say("  inget boende i trygga områden, provar nästa resmål")
+            continue
         total = (flight or {}).get("price", 0) + (lodging or {}).get("total", 0)
         budget = period.get("budget") or 0
         used_why.append(why)
@@ -458,5 +520,108 @@ def main():
     say(f"Klart: {len(trips)} förslag, {searches} sökningar använda.")
 
 
+# ---------- Långresan: Tokyo en gång i veckan ----------
+LONG = {
+    "dest": "tokyo",
+    "window": ("2027-09-01", "2027-11-30"),  # hösten 2027
+    "lengths": (10, 12, 14),                  # nätter borta
+    "origins": ["HEL", "TKU", "TMP", "VAA"],
+    "flights_per_week": 3,
+}
+
+
+def long_candidates(today):
+    """Alla (avresa, nätter) i fönstret som går att boka nu (flyg släpps ca 330 dagar före)."""
+    start, end = (dt.date.fromisoformat(x) for x in LONG["window"])
+    last_bookable = today + dt.timedelta(days=330)
+    out = []
+    d = start
+    while d <= end:
+        if d.weekday() in (4, 5):  # fredag eller lördag, så att en helg ingår i början
+            for n in LONG["lengths"]:
+                back = d + dt.timedelta(days=n)
+                if back <= end + dt.timedelta(days=14) and back <= last_bookable:
+                    out.append((d, n))
+        d += dt.timedelta(days=1)
+    return out
+
+
+def main_longhaul():
+    if not SERP:
+        sys.exit("SERPAPI_KEY saknas")
+    today = dt.datetime.now(TZ).date()
+    cat = load_catalog()
+    dest = next(d for d in cat if d["id"] == LONG["dest"])
+    prev = sorted(fs_list("longhaul"), key=lambda x: x["_id"])
+    if prev and not FORCE and (today - dt.date.fromisoformat(prev[-1]["_id"])).days < 6:
+        say(f"Tokyo söktes senast {prev[-1]['_id']}, nästa sökning om en vecka.")
+        return
+    cands = long_candidates(today)
+    if not cands:
+        say("Inga Tokyodatum går att boka än.")
+        return
+    # Ny uppsättning datum varje vecka, utspridda över hösten.
+    week = today.toordinal() // 7
+    n = len(cands)
+    picks = []
+    for k in range(LONG["flights_per_week"]):
+        c = cands[(week * 7 + k * max(1, n // LONG["flights_per_week"])) % n]
+        if c not in picks:
+            picks.append(c)
+    options = []
+    for start, nights in picks:
+        period = {"from": start.isoformat(), "to": (start + dt.timedelta(days=nights)).isoformat(),
+                  "origins": LONG["origins"], "transport": ["direct", "onestop"]}
+        say(f"Söker Tokyo {period['from']}–{period['to']}")
+        try:
+            f = search_flight(dest, period)
+        except Exception as e:
+            say("  flyg misslyckades:", e)
+            f = None
+        if f:
+            options.append({"from": period["from"], "to": period["to"], "nights": nights, "flight": f})
+            say(f"  {f['price']} € ({f['airline']}, {'direkt' if not f['stops'] else 'via ' + ','.join(f['via'])})")
+    if not options:
+        say("Inga Tokyoflyg hittades för veckans datum.")
+        return
+    # Billigast per natt vinner, så att längre resor inte straffas. En mellanlandning
+    # räknas som 25 % dyrare: med barn på en så lång resa ska direktflyg vara förstahandsvalet.
+    options.sort(key=lambda o: o["flight"]["price"] * (1 + 0.25 * o["flight"]["stops"]) / max(o["nights"], 1))
+    best = options[0]
+    period = {"from": best["from"], "to": best["to"], "lodging": ["hotel", "apartment"], "wishes": []}
+    lodging, alts = search_lodging(dest, period, {}, today.toordinal())
+    total = best["flight"]["price"] + (lodging or {}).get("total", 0)
+    complete = [p for p in prev if p.get("complete") and p["_id"] != today.isoformat()]
+    cheapest_before = min((p["total"] for p in complete), default=None)
+    doc = {
+        "date": today.isoformat(),
+        "runAt": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+        "dest": "tokyo", "name": "Tokyo", "country": "Japan",
+        "from": best["from"], "to": best["to"], "nights": best["nights"],
+        "flight": best["flight"], "lodging": lodging, "alts": alts,
+        "total": total, "complete": bool(lodging),
+        "options": [{"from": o["from"], "to": o["to"], "nights": o["nights"], "price": o["flight"]["price"],
+                     "airline": o["flight"]["airline"], "stops": o["flight"]["stops"], "url": o["flight"]["url"]}
+                    for o in options],
+        "isNew": True,
+        "cheapest": bool(lodging) and (cheapest_before is None or total < cheapest_before),
+        "cheapestBefore": cheapest_before,
+        "searches": searches,
+    }
+    fs_set(f"longhaul/{today.isoformat()}", doc)
+    nice = lambda iso: f"{int(iso[8:10])}/{int(iso[5:7])}"
+    eur = lambda n: f"{round(n):,}".replace(",", " ") + " €"
+    msg = (f"Ny Tokyoresa: {nice(best['from'])}–{nice(best['to'])} {best['from'][:4]}, {best['nights']} nätter, "
+           f"{eur(total)} för fyra ({best['flight']['airline']}, {'direkt' if not best['flight']['stops'] else 'med mellanlandning'})")
+    if doc["cheapest"] and cheapest_before:
+        msg += f", billigast hittills (förra bästa {eur(cheapest_before)})"
+    if not lodging:
+        msg += " (bara flyget, inget tryggt boende hittades)"
+    say(msg)
+
+
 if __name__ == "__main__":
-    main()
+    if "--tokyo" in sys.argv:
+        main_longhaul()
+    else:
+        main()

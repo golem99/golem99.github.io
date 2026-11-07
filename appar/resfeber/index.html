@@ -255,6 +255,7 @@ input.i,select.i,textarea.i{
     <div class="chips" id="logChips">
       <button class="chip on" data-f="all">Alla förslag</button>
       <button class="chip" data-f="saved">Sparade</button>
+      <button class="chip" data-f="tokyo">Tokyo</button>
       <button class="chip" data-f="finds">Egna fynd</button>
     </div>
     <div id="logList"></div>
@@ -303,55 +304,56 @@ input.i,select.i,textarea.i{
 
 <script id="catalog">
 /*DEST*/[
-{"id":"tallinn","name":"Tallinn","name_en":"Tallinn","country":"Estland","wiki":"Tallinn","air":null,"ferry":true,"ferryUrl":"https://www.vikingline.fi/sv/","c":[59.437,24.745],"tags":["gamlastan","stad","mat","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Raekoja_plats_at_night.jpg/500px-Raekoja_plats_at_night.jpg"},
-{"id":"stockholm","name":"Stockholm","name_en":"Stockholm","country":"Sverige","wiki":"Stockholm","air":"ARN","ferry":true,"ferryUrl":"https://www.vikingline.fi/sv/","c":[59.329,18.068],"tags":["stad","gamlastan","kultur","barn","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Munkbroleden_with_Kornhamstorg_at_Gamla_Stan%2C_Stockholm%2C_Sweden_01.jpg/500px-Munkbroleden_with_Kornhamstorg_at_Gamla_Stan%2C_Stockholm%2C_Sweden_01.jpg"},
-{"id":"umea","name":"Umeå","name_en":"Umeå","country":"Sverige","wiki":"Umeå","air":null,"ferry":true,"ferryUrl":"https://www.wasaline.com/sv/","c":[63.826,20.263],"tags":["natur","stad","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Ume%C3%A5_collage.png/500px-Ume%C3%A5_collage.png"},
-{"id":"riga","name":"Riga","name_en":"Riga","country":"Lettland","wiki":"Riga","air":"RIX","c":[56.949,24.106],"tags":["gamlastan","stad","mat","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Riga_%2833844464828%29.jpg/500px-Riga_%2833844464828%29.jpg"},
-{"id":"vilnius","name":"Vilnius","name_en":"Vilnius","country":"Litauen","wiki":"Vilnius","air":"VNO","c":[54.687,25.28],"tags":["gamlastan","kultur","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Vilnius_old_town_by_Augustas_Didzgalvis.jpg/500px-Vilnius_old_town_by_Augustas_Didzgalvis.jpg"},
-{"id":"kopenhamn","name":"Köpenhamn","name_en":"Copenhagen","country":"Danmark","wiki":"Copenhagen","air":"CPH","c":[55.676,12.568],"tags":["stad","mat","nojen","barn","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/2018_-_Christiansborg_from_the_Marble_Bridge.jpg/500px-2018_-_Christiansborg_from_the_Marble_Bridge.jpg"},
-{"id":"billund","name":"Billund","name_en":"Billund Denmark","hotelq":"Billund, Denmark","country":"Danmark","wiki":"Legoland Billund","air":"BLL","c":[55.736,9.127],"tags":["nojen","barn"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Billund_Legoland_24.jpg/500px-Billund_Legoland_24.jpg"},
-{"id":"goteborg","name":"Göteborg","name_en":"Gothenburg","country":"Sverige","wiki":"Gothenburg","air":"GOT","c":[57.709,11.975],"tags":["stad","nojen","barn","hav","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg/500px-G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg"},
-{"id":"oslo","name":"Oslo","name_en":"Oslo","country":"Norge","wiki":"Oslo","air":"OSL","c":[59.913,10.752],"tags":["stad","kultur","natur","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Nationaltheatret_evening.jpg/500px-Nationaltheatret_evening.jpg"},
-{"id":"bergen","name":"Bergen","name_en":"Bergen","country":"Norge","wiki":"Bergen","air":"BGO","c":[60.392,5.324],"tags":["natur","berg","hav","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bergen_panorama_at_night_-_panoramio_%281%29.jpg/500px-Bergen_panorama_at_night_-_panoramio_%281%29.jpg"},
-{"id":"reykjavik","name":"Reykjavik","name_en":"Reykjavik","country":"Island","wiki":"Reykjavík","air":"KEF","c":[64.147,-21.942],"tags":["natur","aventyr"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg/500px-Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg"},
-{"id":"gdansk","name":"Gdańsk","name_en":"Gdansk","country":"Polen","wiki":"Gdańsk","air":"GDN","c":[54.352,18.646],"tags":["gamlastan","strand","mat","billigt","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Calle_Dlugie_Pobrzeze%2C_Gdansk%2C_Polonia%2C_2013-05-20%2C_DD_06.jpg/500px-Calle_Dlugie_Pobrzeze%2C_Gdansk%2C_Polonia%2C_2013-05-20%2C_DD_06.jpg"},
-{"id":"krakow","name":"Kraków","name_en":"Krakow","country":"Polen","wiki":"Kraków","air":"KRK","c":[50.061,19.937],"tags":["gamlastan","kultur","mat","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Krakow_Rynek_Glowny_panorama_2.jpg/500px-Krakow_Rynek_Glowny_panorama_2.jpg"},
-{"id":"warszawa","name":"Warszawa","name_en":"Warsaw","country":"Polen","wiki":"Warsaw","air":"WAW","c":[52.229,21.012],"tags":["stad","kultur","billigt","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Aleja_Niepdleglosci_Warsaw_2022_aerial_%28cropped%29.jpg/500px-Aleja_Niepdleglosci_Warsaw_2022_aerial_%28cropped%29.jpg"},
-{"id":"prag","name":"Prag","name_en":"Prague","country":"Tjeckien","wiki":"Prague","air":"PRG","c":[50.087,14.421],"tags":["gamlastan","kultur","stad","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Prague_%286365119737%29.jpg/500px-Prague_%286365119737%29.jpg"},
-{"id":"budapest","name":"Budapest","name_en":"Budapest","country":"Ungern","wiki":"Budapest","air":"BUD","c":[47.497,19.04],"tags":["stad","kultur","mat","billigt","bad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/500px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg"},
-{"id":"wien","name":"Wien","name_en":"Vienna","country":"Österrike","wiki":"Vienna","air":"VIE","c":[48.208,16.373],"tags":["kultur","stad","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/500px-Schoenbrunn_philharmoniker_2012.jpg"},
-{"id":"berlin","name":"Berlin","name_en":"Berlin","country":"Tyskland","wiki":"Berlin","air":"BER","c":[52.52,13.405],"tags":["stad","kultur","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Museumsinsel_Berlin_Juli_2021_1_%28cropped%29_b.jpg/500px-Museumsinsel_Berlin_Juli_2021_1_%28cropped%29_b.jpg"},
-{"id":"munchen","name":"München","name_en":"Munich","country":"Tyskland","wiki":"Munich","air":"MUC","c":[48.137,11.575],"tags":["stad","mat","berg","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Frauenkirche_and_Neues_Rathaus_Munich_March_2013.JPG/500px-Frauenkirche_and_Neues_Rathaus_Munich_March_2013.JPG"},
-{"id":"hamburg","name":"Hamburg","name_en":"Hamburg","country":"Tyskland","wiki":"Hamburg","air":"HAM","c":[53.551,9.993],"tags":["stad","hav","nojen","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Hamburg%2C_Landungsbr%C3%BCcken_--_2016_--_3131-7.jpg/500px-Hamburg%2C_Landungsbr%C3%BCcken_--_2016_--_3131-7.jpg"},
-{"id":"amsterdam","name":"Amsterdam","name_en":"Amsterdam","country":"Nederländerna","wiki":"Amsterdam","air":"AMS","c":[52.373,4.893],"tags":["stad","kultur","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png/500px-Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png"},
-{"id":"bryssel","name":"Bryssel","name_en":"Brussels","country":"Belgien","wiki":"Brussels","air":"BRU","c":[50.847,4.357],"tags":["stad","mat","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Grand_Place_Bruselas_2.jpg/500px-Grand_Place_Bruselas_2.jpg"},
-{"id":"paris","name":"Paris","name_en":"Paris","country":"Frankrike","wiki":"Paris","air":"CDG","c":[48.857,2.352],"tags":["stad","kultur","mat","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/500px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg"},
-{"id":"nice","name":"Nice","name_en":"Nice","country":"Frankrike","wiki":"Nice","air":"NCE","c":[43.71,7.262],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Promenade_des_Anglais_Nice_IMG_1255.jpg/500px-Promenade_des_Anglais_Nice_IMG_1255.jpg"},
-{"id":"london","name":"London","name_en":"London","country":"Storbritannien","wiki":"London","air":"LHR","c":[51.507,-0.128],"tags":["stad","kultur","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/London_Skyline_%28125508655%29.jpeg/500px-London_Skyline_%28125508655%29.jpeg"},
-{"id":"edinburgh","name":"Edinburgh","name_en":"Edinburgh","country":"Skottland","wiki":"Edinburgh","air":"EDI","c":[55.953,-3.189],"tags":["gamlastan","kultur","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Skyline_of_Edinburgh.jpg/500px-Skyline_of_Edinburgh.jpg"},
-{"id":"dublin","name":"Dublin","name_en":"Dublin","country":"Irland","wiki":"Dublin","air":"DUB","c":[53.349,-6.26],"tags":["stad","kultur","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Dublin_-_aerial_-_2025-07-07_01.jpg/500px-Dublin_-_aerial_-_2025-07-07_01.jpg"},
-{"id":"zurich","name":"Zürich","name_en":"Zurich","country":"Schweiz","wiki":"Zürich","air":"ZRH","c":[47.377,8.541],"tags":["stad","berg","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Altstadt_Z%C3%BCrich_2015.jpg/500px-Altstadt_Z%C3%BCrich_2015.jpg"},
-{"id":"geneve","name":"Genève","name_en":"Geneva","country":"Schweiz","wiki":"Geneva","air":"GVA","c":[46.204,6.143],"tags":["berg","natur","stad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Geneve_2005_001_Ork.ch.jpg/500px-Geneve_2005_001_Ork.ch.jpg"},
-{"id":"barcelona","name":"Barcelona","name_en":"Barcelona","country":"Spanien","wiki":"Barcelona","air":"BCN","c":[41.387,2.17],"tags":["strand","stad","kultur","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Evening_light_over_Barcelona.jpg/500px-Evening_light_over_Barcelona.jpg"},
-{"id":"madrid","name":"Madrid","name_en":"Madrid","country":"Spanien","wiki":"Madrid","air":"MAD","c":[40.417,-3.704],"tags":["stad","kultur","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Madrid_-_Sky_Bar_360%C2%BA_%28Hotel_Riu_Plaza_Espa%C3%B1a%29%2C_vistas_19.jpg/500px-Madrid_-_Sky_Bar_360%C2%BA_%28Hotel_Riu_Plaza_Espa%C3%B1a%29%2C_vistas_19.jpg"},
-{"id":"sevilla","name":"Sevilla","name_en":"Seville","country":"Spanien","wiki":"Seville","air":"SVQ","c":[37.389,-5.984],"tags":["gamlastan","kultur","varmt","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Sevilla_Cathedral_-_Southeast.jpg/500px-Sevilla_Cathedral_-_Southeast.jpg"},
-{"id":"malaga","name":"Málaga","name_en":"Malaga","country":"Spanien","wiki":"Málaga","air":"AGP","c":[36.721,-4.421],"tags":["strand","varmt","gamlastan","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Da_Gibralfaro_%28cropped%292.jpg/500px-Da_Gibralfaro_%28cropped%292.jpg"},
-{"id":"alicante","name":"Alicante","name_en":"Alicante","country":"Spanien","wiki":"Alicante","air":"ALC","c":[38.345,-0.481],"tags":["strand","varmt","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Alicante%2C_Spain.jpg/500px-Alicante%2C_Spain.jpg"},
-{"id":"palma","name":"Palma","name_en":"Palma de Mallorca","country":"Spanien","wiki":"Palma de Mallorca","air":"PMI","c":[39.57,2.65],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Kathedrale_von_Palma.jpg/500px-Kathedrale_von_Palma.jpg"},
-{"id":"lissabon","name":"Lissabon","name_en":"Lisbon","country":"Portugal","wiki":"Lisbon","air":"LIS","c":[38.722,-9.139],"tags":["gamlastan","varmt","mat","hav","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Lisboa_-_Portugal_%2852597836992%29.jpg/500px-Lisboa_-_Portugal_%2852597836992%29.jpg"},
-{"id":"porto","name":"Porto","name_en":"Porto","country":"Portugal","wiki":"Porto","air":"OPO","c":[41.15,-8.611],"tags":["gamlastan","mat","hav","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG/500px-Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG"},
-{"id":"rom","name":"Rom","name_en":"Rome","country":"Italien","wiki":"Rome","air":"FCO","c":[41.903,12.496],"tags":["kultur","gamlastan","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg/500px-Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg"},
-{"id":"milano","name":"Milano","name_en":"Milan","country":"Italien","wiki":"Milan","air":"MXP","c":[45.464,9.19],"tags":["stad","shopping","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Milan_Cathedral_from_Piazza_del_Duomo.jpg/500px-Milan_Cathedral_from_Piazza_del_Duomo.jpg"},
-{"id":"venedig","name":"Venedig","name_en":"Venice","country":"Italien","wiki":"Venice","air":"VCE","c":[45.44,12.316],"tags":["gamlastan","kultur","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Venezia_aerial_view.jpg/500px-Venezia_aerial_view.jpg"},
-{"id":"bologna","name":"Bologna","name_en":"Bologna","country":"Italien","wiki":"Bologna","air":"BLQ","c":[44.494,11.343],"tags":["mat","gamlastan","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Torri_di_Bologna%2C_Bologna.jpg/500px-Torri_di_Bologna%2C_Bologna.jpg"},
-{"id":"neapel","name":"Neapel","name_en":"Naples","country":"Italien","wiki":"Naples","air":"NAP","c":[40.852,14.268],"tags":["mat","varmt","hav","kultur","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Napoli_-_Maschio_Angioino_-_202209302342_3.jpg/500px-Napoli_-_Maschio_Angioino_-_202209302342_3.jpg"},
-{"id":"split","months":[4,5,6,7,8,9,10],"name":"Split","name_en":"Split Croatia","hotelq":"Split, Croatia","country":"Kroatien","wiki":"Split, Croatia","air":"SPU","c":[43.508,16.44],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/500px-Split_080620-133710-IMG_0968x.jpg"},
-{"id":"dubrovnik","months":[4,5,6,7,8,9,10],"name":"Dubrovnik","name_en":"Dubrovnik","country":"Kroatien","wiki":"Dubrovnik","air":"DBV","c":[42.65,18.094],"tags":["gamlastan","strand","varmt","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/500px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg"},
-{"id":"aten","name":"Aten","name_en":"Athens","country":"Grekland","wiki":"Athens","air":"ATH","c":[37.984,23.728],"tags":["kultur","varmt","mat","stad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Athens_Acropolis_at_Daybreak.jpg/500px-Athens_Acropolis_at_Daybreak.jpg"},
-{"id":"chania","months":[4,5,6,7,8,9,10],"name":"Chania","name_en":"Chania Crete","hotelq":"Chania, Crete","country":"Grekland","wiki":"Chania","air":"CHQ","c":[35.514,24.018],"tags":["strand","varmt","gamlastan","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg/500px-Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg"},
-{"id":"rhodos","months":[4,5,6,7,8,9,10],"name":"Rhodos","name_en":"Rhodes town","hotelq":"Rhodes Town, Greece","country":"Grekland","wiki":"Rhodes (city)","air":"RHO","c":[36.434,28.217],"tags":["strand","varmt","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Medieval_City_of_Rhodes_03.jpg/500px-Medieval_City_of_Rhodes_03.jpg"},
-{"id":"larnaca","name":"Larnaca","name_en":"Larnaca","country":"Cypern","wiki":"Larnaca","air":"LCA","c":[34.917,33.629],"tags":["strand","varmt","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/500px-Larnaca_01-2017_img27_Finikoudes.jpg"},
-{"id":"valletta","name":"Malta","name_en":"Valletta Malta","hotelq":"Valletta, Malta","country":"Malta","wiki":"Valletta","air":"MLA","c":[35.899,14.514],"tags":["gamlastan","varmt","hav","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/St_Sebastian_Curtain_%28cropped%29.jpg/500px-St_Sebastian_Curtain_%28cropped%29.jpg"}
+{"id":"tallinn","name":"Tallinn","name_en":"Tallinn","country":"Estland","wiki":"Tallinn","air":null,"ferry":true,"ferryUrl":"https://www.vikingline.fi/sv/","c":[59.437,24.745],"tags":["gamlastan","stad","mat","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Raekoja_plats_at_night.jpg/500px-Raekoja_plats_at_night.jpg","areas":[["Vanalinn",59.437,24.745,1.0],["Kadriorg",59.438,24.79,1.0],["Kesklinn",59.432,24.755,0.9]],"avoid":[]},
+{"id":"stockholm","name":"Stockholm","name_en":"Stockholm","country":"Sverige","wiki":"Stockholm","air":"ARN","ferry":true,"ferryUrl":"https://www.vikingline.fi/sv/","c":[59.329,18.068],"tags":["stad","gamlastan","kultur","barn","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Munkbroleden_with_Kornhamstorg_at_Gamla_Stan%2C_Stockholm%2C_Sweden_01.jpg/500px-Munkbroleden_with_Kornhamstorg_at_Gamla_Stan%2C_Stockholm%2C_Sweden_01.jpg","areas":[["Östermalm",59.338,18.085,1.2],["Kungsholmen",59.33,18.035,1.3],["Södermalm",59.315,18.07,1.3],["Vasastan",59.345,18.05,1.0]],"avoid":[["Rinkeby",59.388,17.93,1.5],["Tensta",59.394,17.9,1.2],["Husby",59.41,17.93,1.2]]},
+{"id":"umea","name":"Umeå","name_en":"Umeå","country":"Sverige","wiki":"Umeå","air":null,"ferry":true,"ferryUrl":"https://www.wasaline.com/sv/","c":[63.826,20.263],"tags":["natur","stad","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Ume%C3%A5_collage.png/500px-Ume%C3%A5_collage.png","areas":[["Centrum",63.826,20.263,1.5]],"avoid":[]},
+{"id":"riga","name":"Riga","name_en":"Riga","country":"Lettland","wiki":"Riga","air":"RIX","c":[56.949,24.106],"tags":["gamlastan","stad","mat","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Riga_%2833844464828%29.jpg/500px-Riga_%2833844464828%29.jpg","areas":[["Vecrīga",56.949,24.106,0.8],["Klusais centrs",56.958,24.11,0.8]],"avoid":[["Maskavas forštate",56.937,24.14,1.0],["Centrālā stacija",56.946,24.12,0.3]]},
+{"id":"vilnius","name":"Vilnius","name_en":"Vilnius","country":"Litauen","wiki":"Vilnius","air":"VNO","c":[54.687,25.28],"tags":["gamlastan","kultur","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Vilnius_old_town_by_Augustas_Didzgalvis.jpg/500px-Vilnius_old_town_by_Augustas_Didzgalvis.jpg","areas":[["Senamiestis",54.682,25.287,1.0],["Žvėrynas",54.69,25.25,0.8]],"avoid":[["Naujininkai",54.668,25.285,0.6]]},
+{"id":"kopenhamn","name":"Köpenhamn","name_en":"Copenhagen","country":"Danmark","wiki":"Copenhagen","air":"CPH","c":[55.676,12.568],"tags":["stad","mat","nojen","barn","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/2018_-_Christiansborg_from_the_Marble_Bridge.jpg/500px-2018_-_Christiansborg_from_the_Marble_Bridge.jpg","areas":[["Frederiksberg",55.678,12.53,1.3],["Østerbro",55.705,12.575,1.2],["Indre By",55.68,12.575,0.8],["Christianshavn",55.672,12.59,0.6]],"avoid":[["Christiania",55.674,12.598,0.45],["Istedgade",55.67,12.557,0.4],["Mjølnerparken",55.699,12.545,0.5]]},
+{"id":"billund","name":"Billund","name_en":"Billund Denmark","hotelq":"Billund, Denmark","country":"Danmark","wiki":"Legoland Billund","air":"BLL","c":[55.736,9.127],"tags":["nojen","barn"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Billund_Legoland_24.jpg/500px-Billund_Legoland_24.jpg","areas":[["Billund",55.736,9.127,3.5]],"avoid":[]},
+{"id":"goteborg","name":"Göteborg","name_en":"Gothenburg","country":"Sverige","wiki":"Gothenburg","air":"GOT","c":[57.709,11.975],"tags":["stad","nojen","barn","hav","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg/500px-G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg","areas":[["Inom Vallgraven",57.704,11.968,0.7],["Vasastan",57.7,11.965,0.8],["Linnéstaden",57.695,11.95,0.9],["Heden",57.699,11.985,0.8]],"avoid":[["Hammarkullen",57.78,12.03,1.0],["Bergsjön",57.76,12.07,1.2],["Biskopsgården",57.73,11.87,1.2]]},
+{"id":"oslo","name":"Oslo","name_en":"Oslo","country":"Norge","wiki":"Oslo","air":"OSL","c":[59.913,10.752],"tags":["stad","kultur","natur","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Nationaltheatret_evening.jpg/500px-Nationaltheatret_evening.jpg","areas":[["Frogner",59.918,10.71,1.2],["Majorstuen",59.93,10.715,0.8],["Aker Brygge",59.911,10.728,0.5]],"avoid":[["Plata vid Oslo S",59.912,10.756,0.35],["Grønland",59.912,10.762,0.4]]},
+{"id":"bergen","name":"Bergen","name_en":"Bergen","country":"Norge","wiki":"Bergen","air":"BGO","c":[60.392,5.324],"tags":["natur","berg","hav","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bergen_panorama_at_night_-_panoramio_%281%29.jpg/500px-Bergen_panorama_at_night_-_panoramio_%281%29.jpg","areas":[["Bryggen och sentrum",60.395,5.324,1.2]],"avoid":[["Nygårdsparken",60.384,5.33,0.3]]},
+{"id":"reykjavik","name":"Reykjavik","name_en":"Reykjavik","country":"Island","wiki":"Reykjavík","air":"KEF","c":[64.147,-21.942],"tags":["natur","aventyr"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg/500px-Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg","areas":[["Miðborg",64.146,-21.94,1.2],["Vesturbær",64.145,-21.96,0.8]],"avoid":[]},
+{"id":"gdansk","name":"Gdańsk","name_en":"Gdansk","country":"Polen","wiki":"Gdańsk","air":"GDN","c":[54.352,18.646],"tags":["gamlastan","strand","mat","billigt","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Calle_Dlugie_Pobrzeze%2C_Gdansk%2C_Polonia%2C_2013-05-20%2C_DD_06.jpg/500px-Calle_Dlugie_Pobrzeze%2C_Gdansk%2C_Polonia%2C_2013-05-20%2C_DD_06.jpg","areas":[["Główne Miasto",54.349,18.652,0.9],["Sopot",54.442,18.56,1.5],["Oliwa",54.408,18.56,1.0]],"avoid":[["Nowy Port",54.4,18.67,0.8]]},
+{"id":"krakow","name":"Kraków","name_en":"Krakow","country":"Polen","wiki":"Kraków","air":"KRK","c":[50.061,19.937],"tags":["gamlastan","kultur","mat","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Krakow_Rynek_Glowny_panorama_2.jpg/500px-Krakow_Rynek_Glowny_panorama_2.jpg","areas":[["Stare Miasto",50.061,19.937,0.9],["Kazimierz",50.051,19.946,0.6],["Zwierzyniec",50.054,19.91,0.8]],"avoid":[]},
+{"id":"warszawa","name":"Warszawa","name_en":"Warsaw","country":"Polen","wiki":"Warsaw","air":"WAW","c":[52.229,21.012],"tags":["stad","kultur","billigt","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Aleja_Niepdleglosci_Warsaw_2022_aerial_%28cropped%29.jpg/500px-Aleja_Niepdleglosci_Warsaw_2022_aerial_%28cropped%29.jpg","areas":[["Śródmieście",52.235,21.01,1.0],["Powiśle",52.24,21.03,0.7],["Mokotów",52.2,21.02,1.5],["Saska Kępa",52.233,21.06,0.8]],"avoid":[["Praga Północ",52.253,21.04,0.7]]},
+{"id":"prag","name":"Prag","name_en":"Prague","country":"Tjeckien","wiki":"Prague","air":"PRG","c":[50.087,14.421],"tags":["gamlastan","kultur","stad","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Prague_%286365119737%29.jpg/500px-Prague_%286365119737%29.jpg","areas":[["Malá Strana",50.088,14.403,0.6],["Staré Město",50.087,14.421,0.6],["Vinohrady",50.075,14.445,1.0]],"avoid":[["Parken vid Hlavní nádraží",50.083,14.434,0.25]]},
+{"id":"budapest","name":"Budapest","name_en":"Budapest","country":"Ungern","wiki":"Budapest","air":"BUD","c":[47.497,19.04],"tags":["stad","kultur","mat","billigt","bad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/500px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg","areas":[["Lipótváros",47.505,19.05,0.8],["Várnegyed",47.5,19.035,0.7],["Újlipótváros",47.52,19.06,0.7],["XII. kerület",47.505,19.0,1.5]],"avoid":[["Józsefváros",47.49,19.085,0.8]]},
+{"id":"wien","name":"Wien","name_en":"Vienna","country":"Österrike","wiki":"Vienna","air":"VIE","c":[48.208,16.373],"tags":["kultur","stad","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/500px-Schoenbrunn_philharmoniker_2012.jpg","areas":[["Innere Stadt",48.208,16.373,0.8],["Neubau",48.203,16.35,0.7],["Josefstadt",48.211,16.347,0.6],["Wieden",48.195,16.37,0.6]],"avoid":[["Praterstern",48.218,16.392,0.3],["Reumannplatz",48.175,16.378,0.5]]},
+{"id":"berlin","name":"Berlin","name_en":"Berlin","country":"Tyskland","wiki":"Berlin","air":"BER","c":[52.52,13.405],"tags":["stad","kultur","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Museumsinsel_Berlin_Juli_2021_1_%28cropped%29_b.jpg/500px-Museumsinsel_Berlin_Juli_2021_1_%28cropped%29_b.jpg","areas":[["Prenzlauer Berg",52.538,13.425,1.2],["Charlottenburg",52.505,13.31,1.5],["Mitte",52.523,13.4,0.8]],"avoid":[["Görlitzer Park",52.497,13.437,0.5],["Kottbusser Tor",52.499,13.418,0.4],["Hermannplatz",52.487,13.425,0.6],["Alexanderplatz",52.522,13.413,0.3],["Leopoldplatz",52.546,13.359,0.4]]},
+{"id":"munchen","name":"München","name_en":"Munich","country":"Tyskland","wiki":"Munich","air":"MUC","c":[48.137,11.575],"tags":["stad","mat","berg","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Frauenkirche_and_Neues_Rathaus_Munich_March_2013.JPG/500px-Frauenkirche_and_Neues_Rathaus_Munich_March_2013.JPG","areas":[["Altstadt",48.137,11.575,0.8],["Maxvorstadt",48.15,11.57,0.8],["Schwabing",48.16,11.585,1.0],["Haidhausen",48.13,11.6,0.7]],"avoid":[["Södra Hauptbahnhof",48.137,11.558,0.35]]},
+{"id":"hamburg","name":"Hamburg","name_en":"Hamburg","country":"Tyskland","wiki":"Hamburg","air":"HAM","c":[53.551,9.993],"tags":["stad","hav","nojen","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Hamburg%2C_Landungsbr%C3%BCcken_--_2016_--_3131-7.jpg/500px-Hamburg%2C_Landungsbr%C3%BCcken_--_2016_--_3131-7.jpg","areas":[["Altstadt och Neustadt",53.55,9.99,0.8],["Eppendorf",53.585,9.985,1.2],["HafenCity",53.541,10.0,0.6],["Ottensen",53.553,9.928,0.7]],"avoid":[["St. Georg och Hansaplatz",53.555,10.012,0.4],["Reeperbahn",53.55,9.96,0.4]]},
+{"id":"amsterdam","name":"Amsterdam","name_en":"Amsterdam","country":"Nederländerna","wiki":"Amsterdam","air":"AMS","c":[52.373,4.893],"tags":["stad","kultur","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png/500px-Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png","areas":[["Oud-Zuid",52.357,4.88,0.9],["Jordaan",52.375,4.882,0.6],["Oost",52.36,4.92,0.9],["De Pijp",52.354,4.895,0.5]],"avoid":[["De Wallen",52.373,4.898,0.3],["Bijlmer",52.31,4.95,1.0]]},
+{"id":"bryssel","name":"Bryssel","name_en":"Brussels","country":"Belgien","wiki":"Brussels","air":"BRU","c":[50.847,4.357],"tags":["stad","mat","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Grand_Place_Bruselas_2.jpg/500px-Grand_Place_Bruselas_2.jpg","areas":[["Ixelles",50.828,4.36,0.8],["Etterbeek",50.84,4.38,0.8],["Uccle",50.8,4.34,1.5],["Grand-Place",50.847,4.352,0.4]],"avoid":[["Gare du Midi",50.836,4.336,0.4],["Molenbeek",50.855,4.33,0.8],["Gare du Nord",50.86,4.36,0.4],["Clemenceau",50.84,4.32,0.5]]},
+{"id":"paris","name":"Paris","name_en":"Paris","country":"Frankrike","wiki":"Paris","air":"CDG","c":[48.857,2.352],"tags":["stad","kultur","mat","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/500px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg","areas":[["7e arrondissement",48.856,2.31,1.0],["Saint-Germain-des-Prés",48.85,2.333,0.8],["15e arrondissement",48.84,2.29,1.3],["16e arrondissement",48.86,2.27,1.5],["Le Marais",48.858,2.36,0.6]],"avoid":[["Gare du Nord och La Chapelle",48.882,2.357,0.6],["Stalingrad",48.884,2.368,0.4],["Barbès",48.884,2.35,0.4],["Saint-Denis",48.936,2.357,1.5],["Porte de la Chapelle",48.898,2.36,0.5]]},
+{"id":"nice","name":"Nice","name_en":"Nice","country":"Frankrike","wiki":"Nice","air":"NCE","c":[43.71,7.262],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Promenade_des_Anglais_Nice_IMG_1255.jpg/500px-Promenade_des_Anglais_Nice_IMG_1255.jpg","areas":[["Carré d'Or",43.696,7.26,0.6],["Cimiez",43.72,7.275,0.8],["Vieux Nice",43.697,7.276,0.4],["Mont Boron",43.7,7.3,0.8]],"avoid":[["Kring Gare Thiers",43.705,7.262,0.3],["Les Moulins",43.69,7.2,0.8],["L'Ariane",43.735,7.3,0.8]]},
+{"id":"london","name":"London","name_en":"London","country":"Storbritannien","wiki":"London","air":"LHR","c":[51.507,-0.128],"tags":["stad","kultur","nojen","shopping"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/London_Skyline_%28125508655%29.jpeg/500px-London_Skyline_%28125508655%29.jpeg","areas":[["Kensington",51.499,-0.19,1.2],["Marylebone",51.52,-0.15,0.7],["Bloomsbury",51.522,-0.126,0.6],["South Bank",51.505,-0.115,0.5],["Greenwich",51.48,0.0,1.0]],"avoid":[]},
+{"id":"edinburgh","name":"Edinburgh","name_en":"Edinburgh","country":"Skottland","wiki":"Edinburgh","air":"EDI","c":[55.953,-3.189],"tags":["gamlastan","kultur","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Skyline_of_Edinburgh.jpg/500px-Skyline_of_Edinburgh.jpg","areas":[["New Town",55.955,-3.2,0.8],["Old Town",55.949,-3.19,0.6],["Stockbridge",55.958,-3.21,0.5],["Bruntsfield",55.937,-3.205,0.8]],"avoid":[["Niddrie",55.932,-3.12,1.0]]},
+{"id":"dublin","name":"Dublin","name_en":"Dublin","country":"Irland","wiki":"Dublin","air":"DUB","c":[53.349,-6.26],"tags":["stad","kultur","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Dublin_-_aerial_-_2025-07-07_01.jpg/500px-Dublin_-_aerial_-_2025-07-07_01.jpg","areas":[["Ballsbridge",53.328,-6.23,1.0],["St Stephen's Green",53.338,-6.255,0.6],["Ranelagh",53.326,-6.257,0.6]],"avoid":[["O'Connell Street",53.352,-6.26,0.5],["Gardiner Street",53.355,-6.253,0.4]]},
+{"id":"zurich","name":"Zürich","name_en":"Zurich","country":"Schweiz","wiki":"Zürich","air":"ZRH","c":[47.377,8.541],"tags":["stad","berg","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Altstadt_Z%C3%BCrich_2015.jpg/500px-Altstadt_Z%C3%BCrich_2015.jpg","areas":[["Altstadt",47.372,8.543,0.7],["Seefeld",47.358,8.555,0.7],["Enge",47.362,8.53,0.6]],"avoid":[["Langstrasse",47.378,8.527,0.35]]},
+{"id":"geneve","name":"Genève","name_en":"Geneva","country":"Schweiz","wiki":"Geneva","air":"GVA","c":[46.204,6.143],"tags":["berg","natur","stad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Geneve_2005_001_Ork.ch.jpg/500px-Geneve_2005_001_Ork.ch.jpg","areas":[["Vieille Ville",46.201,6.148,0.5],["Eaux-Vives",46.2,6.16,0.7],["Champel",46.193,6.155,0.6]],"avoid":[["Pâquis",46.212,6.147,0.35],["Cornavin",46.21,6.142,0.25]]},
+{"id":"barcelona","name":"Barcelona","name_en":"Barcelona","country":"Spanien","wiki":"Barcelona","air":"BCN","c":[41.387,2.17],"tags":["strand","stad","kultur","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Evening_light_over_Barcelona.jpg/500px-Evening_light_over_Barcelona.jpg","areas":[["Eixample",41.395,2.165,1.0],["Gràcia",41.403,2.157,0.8],["Sant Gervasi",41.403,2.14,0.9],["Poblenou",41.4,2.2,0.8]],"avoid":[["El Raval",41.379,2.169,0.5],["Nedre Ramblas",41.377,2.175,0.25],["La Mina",41.42,2.215,0.6]]},
+{"id":"madrid","name":"Madrid","name_en":"Madrid","country":"Spanien","wiki":"Madrid","air":"MAD","c":[40.417,-3.704],"tags":["stad","kultur","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Madrid_-_Sky_Bar_360%C2%BA_%28Hotel_Riu_Plaza_Espa%C3%B1a%29%2C_vistas_19.jpg/500px-Madrid_-_Sky_Bar_360%C2%BA_%28Hotel_Riu_Plaza_Espa%C3%B1a%29%2C_vistas_19.jpg","areas":[["Salamanca",40.43,-3.68,1.0],["Retiro",40.41,-3.68,0.8],["Chamberí",40.435,-3.705,0.8]],"avoid":[["Calle de la Montera",40.419,-3.703,0.2],["Cañada Real",40.36,-3.62,2.0]]},
+{"id":"sevilla","name":"Sevilla","name_en":"Seville","country":"Spanien","wiki":"Seville","air":"SVQ","c":[37.389,-5.984],"tags":["gamlastan","kultur","varmt","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Sevilla_Cathedral_-_Southeast.jpg/500px-Sevilla_Cathedral_-_Southeast.jpg","areas":[["Santa Cruz",37.386,-5.99,0.5],["El Arenal",37.388,-5.998,0.4],["Triana",37.383,-6.003,0.7],["Los Remedios",37.374,-6.0,0.6]],"avoid":[["Las Tres Mil Viviendas",37.36,-5.95,1.0]]},
+{"id":"malaga","name":"Málaga","name_en":"Malaga","country":"Spanien","wiki":"Málaga","air":"AGP","c":[36.721,-4.421],"tags":["strand","varmt","gamlastan","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Da_Gibralfaro_%28cropped%292.jpg/500px-Da_Gibralfaro_%28cropped%292.jpg","areas":[["Centro Histórico",36.721,-4.42,0.6],["La Malagueta",36.718,-4.41,0.5],["Pedregalejo",36.72,-4.38,1.0]],"avoid":[["Palma-Palmilla",36.74,-4.43,0.8],["Los Asperones",36.7,-4.47,0.6]]},
+{"id":"alicante","name":"Alicante","name_en":"Alicante","country":"Spanien","wiki":"Alicante","air":"ALC","c":[38.345,-0.481],"tags":["strand","varmt","barn","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Alicante%2C_Spain.jpg/500px-Alicante%2C_Spain.jpg","areas":[["Centro och Explanada",38.343,-0.483,0.6],["Playa de San Juan",38.37,-0.41,1.5],["Albufereta",38.36,-0.45,0.7]],"avoid":[["Zona Norte",38.37,-0.48,1.0]]},
+{"id":"palma","name":"Palma","name_en":"Palma de Mallorca","country":"Spanien","wiki":"Palma de Mallorca","air":"PMI","c":[39.57,2.65],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Kathedrale_von_Palma.jpg/500px-Kathedrale_von_Palma.jpg","areas":[["Casco Antiguo",39.57,2.65,0.6],["Santa Catalina",39.572,2.635,0.4],["Portixol",39.556,2.67,0.6]],"avoid":[["Son Gotleu",39.582,2.665,0.5],["Son Banya",39.565,2.69,0.4]]},
+{"id":"lissabon","name":"Lissabon","name_en":"Lisbon","country":"Portugal","wiki":"Lisbon","air":"LIS","c":[38.722,-9.139],"tags":["gamlastan","varmt","mat","hav","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Lisboa_-_Portugal_%2852597836992%29.jpg/500px-Lisboa_-_Portugal_%2852597836992%29.jpg","areas":[["Chiado och Baixa",38.71,-9.14,0.6],["Príncipe Real",38.717,-9.149,0.4],["Estrela",38.71,-9.16,0.6],["Avenidas Novas",38.74,-9.145,0.8],["Belém",38.697,-9.206,0.8]],"avoid":[["Intendente och Martim Moniz",38.72,-9.135,0.3]]},
+{"id":"porto","name":"Porto","name_en":"Porto","country":"Portugal","wiki":"Porto","air":"OPO","c":[41.15,-8.611],"tags":["gamlastan","mat","hav","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG/500px-Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG","areas":[["Ribeira och Baixa",41.145,-8.61,0.6],["Boavista",41.16,-8.64,0.9],["Foz do Douro",41.155,-8.675,1.0]],"avoid":[["Cerco",41.16,-8.575,0.6]]},
+{"id":"rom","name":"Rom","name_en":"Rome","country":"Italien","wiki":"Rome","air":"FCO","c":[41.903,12.496],"tags":["kultur","gamlastan","mat","varmt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg/500px-Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg","areas":[["Prati",41.906,12.46,0.8],["Centro Storico",41.899,12.474,0.6],["Monti",41.895,12.493,0.4],["Aventino och Testaccio",41.882,12.48,0.6],["Parioli",41.925,12.495,0.8]],"avoid":[["Termini och Esquilino",41.899,12.505,0.4],["Tor Bella Monaca",41.87,12.64,1.2]]},
+{"id":"milano","name":"Milano","name_en":"Milan","country":"Italien","wiki":"Milan","air":"MXP","c":[45.464,9.19],"tags":["stad","shopping","mat"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Milan_Cathedral_from_Piazza_del_Duomo.jpg/500px-Milan_Cathedral_from_Piazza_del_Duomo.jpg","areas":[["Brera",45.472,9.188,0.6],["Magenta",45.465,9.175,0.6],["Navigli",45.452,9.175,0.5]],"avoid":[["Stazione Centrale",45.486,9.205,0.4],["Corvetto och Rogoredo",45.435,9.235,0.8]]},
+{"id":"venedig","name":"Venedig","name_en":"Venice","country":"Italien","wiki":"Venice","air":"VCE","c":[45.44,12.316],"tags":["gamlastan","kultur","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Venezia_aerial_view.jpg/500px-Venezia_aerial_view.jpg","areas":[["San Marco",45.434,12.338,0.6],["Dorsoduro",45.43,12.325,0.6],["Lido",45.41,12.37,1.5]],"avoid":[["Via Piave i Mestre",45.484,12.234,0.4]]},
+{"id":"bologna","name":"Bologna","name_en":"Bologna","country":"Italien","wiki":"Bologna","air":"BLQ","c":[44.494,11.343],"tags":["mat","gamlastan","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Torri_di_Bologna%2C_Bologna.jpg/500px-Torri_di_Bologna%2C_Bologna.jpg","areas":[["Centro Storico",44.494,11.343,0.9],["Santo Stefano",44.485,11.355,0.7]],"avoid":[["Bolognina",44.51,11.345,0.4]]},
+{"id":"neapel","name":"Neapel","name_en":"Naples","country":"Italien","wiki":"Naples","air":"NAP","c":[40.852,14.268],"tags":["mat","varmt","hav","kultur","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Napoli_-_Maschio_Angioino_-_202209302342_3.jpg/500px-Napoli_-_Maschio_Angioino_-_202209302342_3.jpg","areas":[["Chiaia",40.835,14.237,0.8],["Vomero",40.845,14.23,0.8],["Posillipo",40.81,14.21,1.2]],"avoid":[["Piazza Garibaldi",40.853,14.272,0.5],["Forcella",40.852,14.262,0.3],["Quartieri Spagnoli",40.842,14.247,0.3],["Scampia",40.895,14.24,1.2]]},
+{"id":"split","months":[4,5,6,7,8,9,10],"name":"Split","name_en":"Split Croatia","hotelq":"Split, Croatia","country":"Kroatien","wiki":"Split, Croatia","air":"SPU","c":[43.508,16.44],"tags":["strand","varmt","gamlastan","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/500px-Split_080620-133710-IMG_0968x.jpg","areas":[["Gamla stan och Varoš",43.508,16.44,0.7],["Bačvice",43.502,16.45,0.6],["Meje",43.505,16.425,0.7]],"avoid":[]},
+{"id":"dubrovnik","months":[4,5,6,7,8,9,10],"name":"Dubrovnik","name_en":"Dubrovnik","country":"Kroatien","wiki":"Dubrovnik","air":"DBV","c":[42.65,18.094],"tags":["gamlastan","strand","varmt","hav"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/500px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg","areas":[["Ploče",42.641,18.115,0.6],["Gamla stan",42.641,18.108,0.4],["Lapad",42.655,18.07,1.2]],"avoid":[]},
+{"id":"aten","name":"Aten","name_en":"Athens","country":"Grekland","wiki":"Athens","air":"ATH","c":[37.975,23.735],"tags":["kultur","varmt","mat","stad"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Athens_Acropolis_at_Daybreak.jpg/500px-Athens_Acropolis_at_Daybreak.jpg","areas":[["Kolonaki",37.978,23.742,0.6],["Plaka",37.972,23.73,0.5],["Koukaki",37.966,23.725,0.6],["Glyfada",37.86,23.755,1.5]],"avoid":[["Omonia",37.984,23.728,0.45],["Exarchia",37.986,23.735,0.4],["Metaxourgeio",37.985,23.718,0.4],["Viktoria",37.993,23.73,0.3]]},
+{"id":"chania","months":[4,5,6,7,8,9,10],"name":"Chania","name_en":"Chania Crete","hotelq":"Chania, Crete","country":"Grekland","wiki":"Chania","air":"CHQ","c":[35.514,24.018],"tags":["strand","varmt","gamlastan","natur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg/500px-Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg","areas":[["Gamla stan",35.517,24.018,0.6],["Nea Chora",35.515,24.005,0.6],["Chalepa",35.517,24.04,0.7]],"avoid":[]},
+{"id":"rhodos","months":[4,5,6,7,8,9,10],"name":"Rhodos","name_en":"Rhodes town","hotelq":"Rhodes Town, Greece","country":"Grekland","wiki":"Rhodes (city)","air":"RHO","c":[36.434,28.217],"tags":["strand","varmt","gamlastan"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Medieval_City_of_Rhodes_03.jpg/500px-Medieval_City_of_Rhodes_03.jpg","areas":[["Gamla stan",36.444,28.226,0.5],["Nya stan och Mandraki",36.452,28.222,0.7]],"avoid":[]},
+{"id":"larnaca","name":"Larnaca","name_en":"Larnaca","country":"Cypern","wiki":"Larnaca","air":"LCA","c":[34.917,33.629],"tags":["strand","varmt","billigt"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/500px-Larnaca_01-2017_img27_Finikoudes.jpg","areas":[["Finikoudes",34.912,33.638,0.6],["Mackenzie",34.885,33.625,0.8]],"avoid":[]},
+{"id":"valletta","name":"Malta","name_en":"Valletta Malta","hotelq":"Valletta, Malta","country":"Malta","wiki":"Valletta","air":"MLA","c":[35.899,14.514],"tags":["gamlastan","varmt","hav","kultur"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/St_Sebastian_Curtain_%28cropped%29.jpg/500px-St_Sebastian_Curtain_%28cropped%29.jpg","areas":[["Valletta",35.899,14.514,0.6],["Sliema",35.912,14.503,0.9],["St Julian's",35.917,14.49,0.6]],"avoid":[["Paceville",35.926,14.488,0.3],["Marsa",35.88,14.495,0.6]]},
+{"id":"tokyo","name":"Tokyo","name_en":"Tokyo","country":"Japan","wiki":"Tokyo","air":"HND,NRT","longhaul":true,"c":[35.681,139.767],"tags":["stad","kultur","mat","barn","nojen"],"img":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/500px-Skyscrapers_of_Shinjuku_2009_January.jpg","areas":[["Asakusa",35.712,139.797,1.0],["Ginza och Nihonbashi",35.677,139.77,1.0],["Ueno",35.712,139.775,0.8],["Shinjuku",35.689,139.695,0.8],["Ikebukuro",35.729,139.71,0.8],["Odaiba",35.627,139.775,1.2]],"avoid":[["Kabukichō",35.695,139.703,0.35],["Roppongi",35.663,139.731,0.3]]}
 ]/*END*/;
 </script>
 <script>
@@ -372,7 +374,7 @@ const FEATS = {hotel:"Hotell",apartment:"Lägenhet",hostel:"Vandrarhem",breakfas
   pool:"Pool",central:"Centralt",rating:"Toppbetyg",cheap:"Billigt"};
 const AIRPORTS = {HEL:"Helsingfors",TKU:"Åbo",TMP:"Tammerfors",VAA:"Vasa"};
 const HUBS = Object.assign({FRA:"Frankfurt",DUS:"Düsseldorf",IST:"Istanbul",LGW:"London",STN:"London",ORY:"Paris",FCO:"Rom",BGY:"Milano",TLL:"Tallinn"},
-  Object.fromEntries(CAT.filter(d=>d.air).map(d=>[d.air,d.name])));
+  Object.fromEntries(CAT.filter(d=>d.air&&!d.longhaul).map(d=>[d.air,d.name])), {HND:"Tokyo",NRT:"Tokyo"});
 const via = list => (list||[]).map(c=>HUBS[c]||c).join(" och ");
 
 // ---------- Firebase ----------
@@ -382,7 +384,7 @@ const db = firebase.firestore();
 const team = db.collection("teams").doc(CODE);
 const C = n => team.collection(n);
 
-const S = {days:[], periods:[], duels:[], finds:[], saved:[], who:null, mode:"dest", logF:"all", trio:null};
+const S = {days:[], periods:[], duels:[], finds:[], saved:[], longhaul:[], who:null, mode:"dest", logF:"all", trio:null};
 
 // ---------- Hjälpare ----------
 const $ = s => document.querySelector(s);
@@ -456,7 +458,8 @@ function tripCard(t, day, opts){
   const f = t.flight, l = t.lodging, sv = isSaved(day.id, t.dest);
   const whyTxt = {steve:"Steves smak", ulrika:"Ulrikas smak", upptack:"Något nytt"}[t.why] || "";
   const learned = t.why==="upptack" || nDuels(t.why,"dest")>=3;
-  const badge = learned ? whyTxt : "Slumpvalt";
+  const badge = t.why==="long" ? (isNewLong(t) ? (t.cheapest && t.cheapestBefore ? "Ny Tokyoresa, billigast hittills" : "Ny Tokyoresa") : "Långresan")
+    : learned ? whyTxt : "Slumpvalt";
   const parts = [];
   if(f) parts.push(`<div class="leg">
       <span class="what">Flyg tur och retur</span><span class="amt">${eur(f.price)}</span>
@@ -472,7 +475,7 @@ function tripCard(t, day, opts){
   if(l) parts.push(`<div class="leg">
       <span class="what">${esc(l.name)}</span><span class="amt">${eur(l.total)}</span>
       <div class="row">${l.img?`<img src="${esc(l.img)}" alt="" loading="lazy">`:""}
-        <span class="det" style="margin:0">${esc(FEATS[l.kind]||"Boende")}${l.rating?`, betyg ${String(l.rating).replace(".",",")}`:""}${l.km!=null?`, ${String(l.km).replace(".",",")} km från centrum`:""}<br>${eur(l.night)} per natt, ${day.nights} nätter</span></div>
+        <span class="det" style="margin:0">${esc(FEATS[l.kind]||"Boende")}${l.area?` i ${esc(l.area)}`:""}${l.rating?`, betyg ${String(l.rating).replace(".",",")}`:""}${l.km!=null?`, ${String(l.km).replace(".",",")} km från centrum`:""}<br>${eur(l.night)} per natt, ${day.nights} nätter</span></div>
       <div class="links">${l.link?`<a class="go" href="${esc(l.link)}" target="_blank" rel="noopener">Se boendet</a>`:""}
         ${(t.alts||[]).length?`<button class="go" data-alts="${esc(day.id)}|${esc(t.dest)}">${t.alts.length} till</button>`:""}</div>
     </div>`);
@@ -492,19 +495,33 @@ function tripCard(t, day, opts){
   </article>`;
 }
 
+function longBlock(){
+  const d = latestLong(); if(!d) return "";
+  const day = lhDay(d), y = yr(d.from);
+  return `<h2 id="longhaul" style="margin-top:26px">Långresan</h2>
+    <p class="sub">Tokyo hösten ${esc(y)}, 10–14 nätter. Söks en gång i veckan, på söndagar. ${range(d.from,d.to)} ${esc(y)}, ${d.nights} nätter${d.date?`, sökt ${dfmt(d.date,{day:"numeric",month:"long"})}`:""}.</p>
+    ${tripCard(day.trips[0], day)}
+    ${(d.options||[]).length>1?`<div class="note"><b>Veckans andra datum:</b> ${d.options.slice(1).map(o=>`${range(o.from,o.to)}, flyg ${eur(o.price)} (${esc(o.airline||"")}, ${o.stops?"med mellanlandning":"direkt"})`).join("; ")}.</div>`:""}`;
+}
+
 function renderToday(){
-  const el = $("#v-today"), day = latestDay();
+  const el = $("#v-today"), day = latestDay(), lh = latestLong();
+  const banner = isNewLong(lh) ? `<button class="note" data-scroll="longhaul" style="display:block;width:100%;text-align:left;border:0;background:var(--sign);color:var(--signInk)">
+      <b>Ny Tokyoresa:</b> ${range(lh.from,lh.to)} ${esc(yr(lh.from))}, ${lh.nights} nätter, ${eur(lh.total)} för fyra${lh.complete?"":" (bara flyget)"}. Se längre ner.</button>` : "";
   if(!day){
-    el.innerHTML = `<div class="empty"><h3>Första sökningen görs i morgon bitti</h3>
+    el.innerHTML = banner + `<div class="empty"><h3>Första sökningen görs i morgon bitti</h3>
       <p>Lägg in era datum och er budget under Våra resor, så söker Resfeber på just dem. Under tiden kan ni lära appen er smak.</p>
-      <button class="btn" data-goto="plans">Lägg in datum</button></div>`;
+      <button class="btn" data-goto="plans">Lägg in datum</button></div>` + longBlock();
+    hydrate(el);
     return;
   }
   const p = day.period||{}, isToday = day.id===today();
-  el.innerHTML = `<h2>${isToday?"Dagens tre":"Senaste förslagen"}</h2>
+  el.innerHTML = banner + `<h2>${isToday?"Dagens tre":"Senaste förslagen"}</h2>
     <p class="sub">${esc(p.label && !day.example ? p.label+", " : "")}${range(p.from,p.to)}, ${day.nights} nätter, fyra personer${p.budget?`, budget ${eur(p.budget)}`:""}.${isToday?"":` Sökt ${dfmt(day.id,{weekday:"long",day:"numeric",month:"long"})}.`}</p>
     ${day.example?`<div class="note"><b>Exempeldatum.</b> Ni har inte lagt in några resor ännu, så Resfeber sökte på en långhelg om sex veckor. Priserna är exakta för de datumen.</div>`:""}
-    ${(day.trips||[]).map(t=>tripCard(t,day)).join("")}`;
+    ${(day.trips||[]).map(t=>tripCard(t,day)).join("")}
+    <p class="muted">Allt boende ligger i trygga familjeområden, aldrig i områden med känd droghandel eller stökigt nattliv. Det kan betyda en bit till centrum.</p>
+    ${longBlock()}`;
   hydrate(el);
 }
 
@@ -520,13 +537,29 @@ document.addEventListener("click", e=>{
   if(al){ const [d,dest]=al.dataset.alts.split("|"); showAlts(d,dest); return; }
   const g = e.target.closest("[data-goto]");
   if(g){ document.querySelector(`nav.tabs [data-v="${g.dataset.goto}"]`).click(); return; }
+  const sc = e.target.closest("[data-scroll]");
+  if(sc){ const t=document.getElementById(sc.dataset.scroll); if(t) t.scrollIntoView({behavior:"smooth"}); return; }
   const ln = e.target.closest("[data-open]");
   if(ln){ const [d,dest]=ln.dataset.open.split("|"); showTrip(d,dest); return; }
 });
 
+// Långresan visas med samma kort som dagens tre, som en egen "dag" med id lh-<datum>.
+function lhDay(doc){
+  return doc && {id:"lh-"+doc.id, nights:doc.nights, period:{from:doc.from, to:doc.to}, long:true,
+    trips:[Object.assign({}, doc, {why:"long", overBudget:false})]};
+}
+function findDay(id){
+  if(String(id).startsWith("lh-")) return lhDay(S.longhaul.find(x=>"lh-"+x.id===id));
+  return S.days.find(d=>d.id===id);
+}
+const daysAgo = iso => Math.round((new Date(today()+"T12:00") - new Date(iso+"T12:00"))/864e5);
+const latestLong = () => S.longhaul.slice().sort((a,b)=>a.id<b.id?1:-1)[0];
+const isNewLong = d => d && d.isNew && daysAgo(d.date||d.id) < 7;
+const yr = iso => iso ? iso.slice(0,4) : "";
+
 function toggleSave(date,dest){
   const id = `${date}_${dest}`, on = isSaved(date,dest);
-  const day = S.days.find(d=>d.id===date), t = day && (day.trips||[]).find(x=>x.dest===dest);
+  const day = findDay(date), t = day && (day.trips||[]).find(x=>x.dest===dest);
   C("saved").doc(id).set({date, dest, name:t?t.name:dest, total:t?t.total:null, who:S.who, active:!on,
     at:firebase.firestore.FieldValue.serverTimestamp()}, {merge:true});
   toast(on ? "Borttagen från sparade" : "Sparad i loggboken");
@@ -536,21 +569,21 @@ function sheet(html){ $("#sheetIn").innerHTML = html; $("#sheet").classList.add(
 $("#sheet").addEventListener("click", e=>{ if(e.target.id==="sheet"||e.target.closest(".x")) $("#sheet").classList.remove("on"); });
 
 function showAlts(date,dest){
-  const day = S.days.find(d=>d.id===date), t = day && day.trips.find(x=>x.dest===dest);
+  const day = findDay(date), t = day && day.trips.find(x=>x.dest===dest);
   if(!t) return;
   sheet(`<div class="bar2"><h2 style="margin:0">Fler boenden i ${esc(t.name)}</h2><button class="x" aria-label="Stäng">✕</button></div>
     <p class="sub">${range(day.period.from, day.period.to)}, ${day.nights} nätter, fyra personer.</p>
     ${t.alts.map(l=>`<div class="leg">
       <span class="what">${esc(l.name)}</span><span class="amt">${eur(l.total)}</span>
-      <div class="row">${l.img?`<img src="${esc(l.img)}" alt="" loading="lazy">`:""}<span class="det" style="margin:0">${esc(FEATS[l.kind]||"")}${l.rating?`, betyg ${String(l.rating).replace(".",",")}`:""}${l.km!=null?`, ${String(l.km).replace(".",",")} km från centrum`:""}</span></div>
+      <div class="row">${l.img?`<img src="${esc(l.img)}" alt="" loading="lazy">`:""}<span class="det" style="margin:0">${esc(FEATS[l.kind]||"")}${l.area?` i ${esc(l.area)}`:""}${l.rating?`, betyg ${String(l.rating).replace(".",",")}`:""}${l.km!=null?`, ${String(l.km).replace(".",",")} km från centrum`:""}</span></div>
       <div class="links">${l.link?`<a class="go" href="${esc(l.link)}" target="_blank" rel="noopener">Se boendet</a>`:""}</div>
     </div>`).join("")}`);
 }
 
 function showTrip(date,dest){
-  const day = S.days.find(d=>d.id===date), t = day && day.trips.find(x=>x.dest===dest);
+  const day = findDay(date), t = day && day.trips.find(x=>x.dest===dest);
   if(!t) return;
-  sheet(`<div class="bar2"><span class="sub" style="margin:0">Föreslogs ${dfmt(date,{weekday:"long",day:"numeric",month:"long"})}</span><button class="x" aria-label="Stäng">✕</button></div>
+  sheet(`<div class="bar2"><span class="sub" style="margin:0">Föreslogs ${dfmt(String(date).replace("lh-",""),{weekday:"long",day:"numeric",month:"long"})}</span><button class="x" aria-label="Stäng">✕</button></div>
     <p class="sub">${range(day.period.from, day.period.to)}, ${day.nights} nätter. Priset gällde då; tryck på länkarna för dagens pris.</p>
     ${tripCard(t,day,{noBadge:true})}`);
 }
@@ -576,7 +609,7 @@ function newTrio(){
   const shown = S.duels.filter(d=>d.who===S.who && d.kind===S.mode);
   const count = {};
   shown.forEach(d=>(d.options||[]).forEach(o=>count[o.id]=(count[o.id]||0)+1));
-  const pool = S.mode==="dest" ? CAT.slice() : hotelPool();
+  const pool = S.mode==="dest" ? CAT.filter(d=>!d.longhaul) : hotelPool();
   if(pool.length<3) return null;
   // Visa helst sådant ni sett minst, med lite slump.
   pool.sort((a,b)=>((count[a.id]||0)+Math.random()*1.5)-((count[b.id]||0)+Math.random()*1.5));
@@ -652,6 +685,16 @@ function bestResfeber(periodId){
 
 function renderLog(){
   const el = $("#logList");
+  if(S.logF==="tokyo"){
+    const list = S.longhaul.slice().sort((a,b)=>a.id<b.id?1:-1);
+    el.innerHTML = list.length ? `<div class="day"><h4>En sökning varje söndag, hösten ${esc(yr(list[0].from))}</h4>
+      ${list.map(d=>`<button class="line" data-open="lh-${esc(d.id)}|tokyo">
+        <span><span class="t">${range(d.from,d.to)} ${esc(yr(d.from))}</span><br><span class="s">${d.nights} nätter, sökt ${dfmt(d.id,{day:"numeric",month:"short"})}${d.cheapest&&d.cheapestBefore?", billigast hittills":""}${d.lodging?`, ${esc(d.lodging.name)}`:""}</span></span>
+        <span class="p">${eur(d.total)}</span>
+        <span class="st ${isSaved("lh-"+d.id,"tokyo")?"on":""}">${isSaved("lh-"+d.id,"tokyo")?"★":"☆"}</span></button>`).join("")}</div>`
+      : `<div class="empty"><h3>Ingen Tokyosökning än</h3><p>Den första görs på söndag morgon.</p></div>`;
+    return;
+  }
   if(S.logF==="finds"){
     const finds = S.finds.slice().sort((a,b)=>(b.created||"")<(a.created||"")?-1:1);
     const duels = S.periods.filter(p=>p.active!==false).map(p=>{
@@ -777,6 +820,7 @@ function listen(name, key, after){
     after();
   }, err=>{ console.error(name, err); toast("Kunde inte hämta data. Kolla täckningen."); });
 }
+listen("longhaul","longhaul",()=>{ renderToday(); renderLog(); });
 listen("days","days",()=>{ renderToday(); renderLog(); if(S.mode==="hotel"&&!S.trio) renderTaste(); });
 listen("periods","periods",()=>{ renderPlans(); renderLog(); });
 listen("duels","duels",renderMeter);
