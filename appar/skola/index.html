@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sagaskolan</title>
+<meta name="theme-color" content="#4a3360">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sagaskolan">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wall:#ead9ee; --wall2:#e1cbe7; --heart:#d9b6dc;
+  --floor:#c48a55; --floor2:#b27945; --skirt:#7b4f6c;
+  --ink:#3a2348; --soft:#6f5878; --sign:#fff9f2;
+  --pink:#ff5fa2; --brass:#d6a84a; --glow:#ffe3a3;
+  --fi:#3f74c9; --ma:#3f9c6d; --sv:#e9b53c; --re:#d8665e; --li:#9a7bd1;
+}
+@media (prefers-color-scheme:dark){:root{
+  --wall:#3b2b4f; --wall2:#33253f; --heart:#4a3762;
+  --floor:#5b3d2b; --floor2:#4c3224; --skirt:#241a30;
+  --ink:#fbeef8; --soft:#cbb7d6; --sign:#fff4e2;
+}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:"Grandstander",ui-rounded,system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(var(--wall),var(--wall2));
+  min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;
+}
+/* Små hjärtan i tapeten */
+.paper{position:fixed;inset:0;pointer-events:none;opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M54 46c-3-3-8-1-8 3 0 4 8 9 8 9s8-5 8-9c0-4-5-6-8-3z' fill='%23d9b6dc'/%3E%3C/svg%3E")}
+@media (prefers-color-scheme:dark){.paper{opacity:.35;filter:hue-rotate(10deg) brightness(.6)}}
+
+header{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;
+  padding:28px clamp(16px,4vw,56px) 0}
+.board{position:relative;background:var(--sign);border-radius:18px;padding:14px 28px 16px;
+  box-shadow:0 6px 0 #00000022, inset 0 0 0 4px #f1d9c3;transform:rotate(-1.2deg)}
+.board::before,.board::after{content:"";position:absolute;top:-26px;width:3px;height:28px;background:#8a6a55}
+.board::before{left:38px}.board::after{right:38px}
+h1{margin:0;font-weight:800;font-size:clamp(40px,6vw,76px);line-height:1;letter-spacing:-.5px;color:#4a3360}
+h1 span{display:inline-block}
+.greet{margin:10px 2px 0;font-size:clamp(16px,1.6vw,20px);color:var(--soft)}
+.wallside{display:flex;gap:22px;align-items:flex-start}
+
+/* Klockan på väggen visar riktig tid, och texten säger den på finska */
+.clock{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:15px;color:var(--soft)}
+.clock svg{width:92px;height:92px;filter:drop-shadow(0 4px 0 #00000022)}
+.clock b{color:var(--ink);font-weight:600}
+
+/* Dagens ord på griffeltavlan */
+.slate{background:#2f4a3e;color:#f2f5ea;border:7px solid #a87645;border-radius:10px;padding:10px 16px 12px;
+  min-width:200px;box-shadow:0 5px 0 #00000026;font-size:15px}
+.slate .fi{font-size:28px;font-weight:600;margin:2px 0 0;line-height:1.1}
+.slate .sv{opacity:.75;margin-top:2px}
+.slate button{all:unset;cursor:pointer;opacity:.75;font-size:14px;margin-top:6px;display:inline-block;border-bottom:1px dashed #f2f5ea88}
+.slate button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+main{flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.hall{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(14px,2.4vw,40px);
+  padding:40px clamp(16px,4vw,56px) 0;align-items:end;max-width:1500px;width:100%;margin:0 auto}
+
+.room{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;position:relative;outline:none}
+.plate{background:var(--sign);color:#3a2348;border-radius:10px;padding:6px 14px 7px;margin-bottom:12px;font-weight:800;
+  font-size:clamp(17px,1.6vw,23px);box-shadow:0 4px 0 #00000020;white-space:nowrap}
+.frame{position:relative;width:100%;aspect-ratio:5/9;max-height:58vh;perspective:1100px;
+  background:radial-gradient(ellipse at 50% 30%,var(--glow),#f6b55d 70%);border-radius:14px 14px 0 0;
+  box-shadow:inset 0 0 0 6px #00000018}
+.inside{position:absolute;inset:0;display:grid;place-items:center;font-size:15px;color:#6b4423;text-align:center;padding:12px;opacity:0;transition:opacity .4s}
+.door{position:absolute;inset:0;border-radius:12px 12px 0 0;transform-origin:left center;
+  transition:transform .55s cubic-bezier(.3,.9,.3,1.05);background:var(--c);
+  box-shadow:inset 0 0 0 5px #0000001c,inset 0 -40px 60px #00000014, 0 0 0 4px #ffffff55;
+  display:flex;flex-direction:column;align-items:center;padding-top:14%}
+.door::before{content:"";position:absolute;left:12%;right:12%;bottom:8%;height:30%;border-radius:8px;box-shadow:inset 0 0 0 4px #00000016}
+.win{width:58%;aspect-ratio:1;border-radius:50%;background:#fff6ea;overflow:hidden;
+  box-shadow:inset 0 0 0 6px #ffffffb0,0 0 0 6px #0000001a}
+.win img{width:100%;height:100%;object-fit:cover}
+.knob{position:absolute;right:11%;top:56%;width:16px;height:16px;border-radius:50%;background:var(--brass);box-shadow:0 2px 0 #00000033}
+.note{position:absolute;left:50%;bottom:44%;transform:translateX(-50%) rotate(2deg);background:#fffbe6;color:#3a2348;
+  font-size:clamp(12px,1vw,14px);padding:6px 10px;border-radius:4px;box-shadow:0 3px 0 #00000022;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.note::before{content:"";position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--pink)}
+.who{margin-top:18px;font-size:clamp(15px,1.3vw,18px);color:var(--soft);text-align:center;min-height:2.6em}
+
+.room.open .door, .room:not(.locked):hover .door, .room:not(.locked):focus-visible .door{transform:rotateY(-24deg)}
+.room.open .door{transform:rotateY(-78deg)}
+.room.open .inside{opacity:1}
+.room:not(.locked){cursor:pointer}
+.room:focus-visible .plate{outline:3px solid var(--pink);outline-offset:3px}
+.room.locked .door{filter:saturate(.45) brightness(.95)}
+.room.locked .win{background:#f3eef5}
+.room.locked .win span{display:grid;place-items:center;height:100%;font-size:clamp(30px,3vw,46px)}
+.room.locked{cursor:default}
+.room.nudge .door{animation:nudge .5s}
+@keyframes nudge{20%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}80%{transform:rotate(-.6deg)}}
+
+.floor{position:relative;z-index:1;height:clamp(46px,8vh,90px);margin-top:0;border-top:10px solid var(--skirt);
+  background:repeating-linear-gradient(90deg,var(--floor) 0 140px,var(--floor2) 140px 143px)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,220%);visibility:hidden;background:var(--sign);color:#3a2348;
+  padding:12px 20px;border-radius:14px;box-shadow:0 6px 0 #00000026;font-size:17px;transition:transform .3s;z-index:5}
+.toast.on{transform:translate(-50%,0);visibility:visible}
+
+@media (max-width:900px){
+  header{flex-direction:column;align-items:stretch}
+  .wallside{justify-content:space-between}
+  .hall{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:34px;padding-top:28px}
+  .frame{max-height:none}
+  .room.locked:last-child{display:none}
+}
+@media (max-width:420px){.slate{min-width:0;flex:1}.clock svg{width:70px;height:70px}}
+@media (prefers-reduced-motion:reduce){.door,.inside,.toast{transition:none}.room.nudge .door{animation:none}}
+</style>
+</head>
+<body>
+<div class="paper" aria-hidden="true"></div>
+
+<header>
+  <div>
+    <div class="board"><h1>Sagaskolan</h1></div>
+    <p class="greet" id="greet">Hej Saga!</p>
+  </div>
+  <div class="wallside">
+    <div class="slate" aria-live="polite">
+      <div>Päivän sana</div>
+      <div class="fi" id="wfi">kissa</div>
+      <div class="sv" id="wsv">katt</div>
+      <button id="wnext" type="button">Ett ord till</button>
+    </div>
+    <div class="clock">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" fill="#fffaf2" stroke="#a87645" stroke-width="6"/>
+        <g id="ticks"></g>
+        <line id="hh" x1="50" y1="50" x2="50" y2="28" stroke="#3a2348" stroke-width="5" stroke-linecap="round"/>
+        <line id="mh" x1="50" y1="50" x2="50" y2="16" stroke="#3a2348" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="4" fill="#ff5fa2"/>
+      </svg>
+      <div id="ktext">Kello on</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav class="hall" id="hall" aria-label="Klassrummen"></nav>
+  <div class="floor" aria-hidden="true"></div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+function load(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}}
+
+// Klassrummen. Nya ämnen läggs till här.
+const ROOMS=[
+  {id:"finska",name:"Finska",c:"var(--fi)",href:"../siili/",img:"../siili/img6/vilkutan.webp",alt:"Siili vinkar",who:"Siili lär dig finska",inside:"Tervetuloa!"},
+  {id:"matte",name:"Matematik",c:"var(--ma)",href:"../sjuan/",img:"../sjuan/img/troll-friendly.webp",alt:"Matematiktrollet",who:"Tabellresan",inside:"Välkommen ombord!"},
+  {id:"rum3",name:"Klassrum 3",c:"var(--sv)",locked:true,who:"Snart"},
+  {id:"rum4",name:"Klassrum 4",c:"var(--re)",locked:true,who:"Snart"},
+  {id:"rum5",name:"Klassrum 5",c:"var(--li)",locked:true,who:"Snart"},
+];
+
+// Lappar på dörrarna, från det som redan är sparat i spelen
+function siiliNote(){
+  const s=load("siili.v1"); if(!s) return "";
+  const keys=["done","done2","done6","done7","done8","done9","done10"];
+  const n=keys.filter(k=>Array.isArray(s[k])&&s[k].length>=6).length;
+  return n?`${n} kapitel klara`:"";
+}
+function matteNote(){
+  const s=load("sjuan.v1"); if(!s||!s.av) return null;
+  return s.av;
+}
+
+function build(){
+  const hall=$("#hall");
+  for(const r of ROOMS){
+    const el=document.createElement(r.locked?"div":"a");
+    el.className="room"+(r.locked?" locked":"");
+    el.style.setProperty("--c",r.c);
+    if(!r.locked){el.href=r.href}else{el.tabIndex=0;el.setAttribute("role","button");el.setAttribute("aria-disabled","true")}
+    let note="", win=r.locked?'<span aria-hidden="true">🔒</span>':`<img src="${r.img}" alt="${r.alt}">`;
+    let who=r.who;
+    if(r.id==="finska") note=siiliNote();
+    if(r.id==="matte"){const av=matteNote(); if(av&&av.img){who=`Tabellresan med ${av.name||"din kompis"}`;
+      win=`<img src="../sjuan/img/avatars/${av.img}.webp" alt="${av.name||"Din kompis"}" onerror="this.src='${r.img}'">`}}
+    el.innerHTML=`<div class="plate">${r.name}</div>
+      <div class="frame"><div class="inside">${r.inside||""}</div>
+        <div class="door"><div class="win">${win}</div><div class="knob"></div>${note?`<div class="note">${note}</div>`:""}</div></div>
+      <div class="who">${who}</div>`;
+    el.addEventListener("click",e=>{
+      if(r.locked){e.preventDefault();el.classList.remove("nudge");void el.offsetWidth;el.classList.add("nudge");
+        toast(`${r.name} är inte klart än. Det kommer!`);return}
+      if(e.metaKey||e.ctrlKey) return;
+      e.preventDefault();
+      if(matchMedia("(prefers-reduced-motion: reduce)").matches){location.href=r.href;return}
+      el.classList.add("open");setTimeout(()=>location.href=r.href,650);
+    });
+    if(r.locked) el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();el.click()}});
+    hall.appendChild(el);
+  }
+}
+let tt;function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("on"),2600)}
+// Tillbaka med bakåtknappen: stäng dörren igen
+addEventListener("pageshow",()=>document.querySelectorAll(".room.open").forEach(r=>r.classList.remove("open")));
+
+// Hälsningen
+const DAYS=["söndag","måndag","tisdag","onsdag","torsdag","fredag","lördag"];
+function greet(){const d=new Date(),h=d.getHours();
+  const part=h<5?"natt":h<10?"morgon":h<12?"förmiddag":h<17?"eftermiddag":h<22?"kväll":"natt";
+  const lead=h<10&&h>=5?"Godmorron":"Hej";
+  $("#greet").textContent=`${lead} Saga! Det är ${DAYS[d.getDay()]} ${part}.`;
+  if(part==="natt") $("#greet").textContent=`Hej Saga! Det är sent, dags att sova snart.`;
+}
+
+// Klockan
+const NUM=["kaksitoista","yksi","kaksi","kolme","neljä","viisi","kuusi","seitsemän","kahdeksan","yhdeksän","kymmenen","yksitoista"];
+function ticks(){let g="";for(let i=0;i<12;i++){const a=i*Math.PI/6,x1=50+38*Math.sin(a),y1=50-38*Math.cos(a),x2=50+(i%3?34:31)*Math.sin(a),y2=50-(i%3?34:31)*Math.cos(a);
+  g+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#a87645" stroke-width="${i%3?2:3.5}" stroke-linecap="round"/>`}$("#ticks").innerHTML=g}
+function clock(){const d=new Date(),m=d.getMinutes(),h=d.getHours()%12+m/60;
+  $("#hh").setAttribute("transform",`rotate(${h*30} 50 50)`);$("#mh").setAttribute("transform",`rotate(${m*6} 50 50)`);
+  const near=(Math.round(d.getHours()+m/60))%12;
+  $("#ktext").innerHTML=(m<3||m>57)?`Kello on <b>${NUM[near]}</b>.`:`Kello on noin <b>${NUM[near]}</b>.`;
+}
+
+// Dagens ord, från kapitlen hon redan gjort
+const WORDS=[["kissa","katt"],["koira","hund"],["pulla","bulle"],["kurkku","gurka"],["kello","klocka"],["pallo","boll"],
+ ["kakku","tårta"],["lamppu","lampa"],["matto","matta"],["mato","mask"],["kukka","blomma"],["kuppi","kopp"],["sukka","strumpa"],
+ ["banaani","banan"],["päärynä","päron"],["sitruuna","citron"],["tomaatti","tomat"],["paketti","paket"],["raketti","raket"],
+ ["punainen","röd"],["keltainen","gul"],["sininen","blå"],["vihreä","grön"],["valkoinen","vit"],["musta","svart"],["harmaa","grå"],
+ ["ruskea","brun"],["oranssi","orange"],["liila","lila"],["minä luen","jag läser"],["minä laulan","jag sjunger"],["minä hypin","jag hoppar"],
+ ["minä nauran","jag skrattar"],["kiitos","tack"],["Nähdään huomenna!","Vi ses i morgon!"],["Hyvää yötä!","God natt!"],
+ ["hamsteri","hamster"],["ankka","anka"],["sammakko","groda"],["lumiukko","snögubbe"],["mansikka","jordgubbe"],["taksi","taxi"]];
+let wi=0;
+function word(i){wi=(i+WORDS.length)%WORDS.length;$("#wfi").textContent=WORDS[wi][0];$("#wsv").textContent=WORDS[wi][1]}
+const day=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5);
+$("#wnext").addEventListener("click",()=>word(wi+1));
+
+build();greet();ticks();clock();word(day);
+setInterval(()=>{clock();greet()},30000);
+</script>
+</body>
+</html>

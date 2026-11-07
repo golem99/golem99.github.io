@@ -284,9 +284,20 @@ body.gridq #talk,body.gridq #know{display:none}
 
 .conf{position:fixed;top:-20px;width:10px;height:14px;border-radius:3px;z-index:30;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* ================= Datorn (Sagaskolan) ================= */
+#toSchool{display:none}
+@media (min-width:900px) and (pointer:fine){
+  html,body{background:linear-gradient(var(--sky2),var(--sky1))}
+  .view{max-width:780px;margin:0 auto;box-shadow:0 0 0 1px var(--line),0 20px 60px #3a234022;background:var(--sky2)}
+  #toSchool{display:flex;position:fixed;left:18px;top:16px;z-index:50;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+    background:var(--card);color:var(--ink);text-decoration:none;font-weight:700;box-shadow:0 3px 0 var(--line)}
+  #toSchool:hover{background:var(--pink2)}
+}
 </style>
 </head>
 <body>
+<a id="toSchool" href="../skola/">🏫 Sagaskolan</a>
 
 <!-- ============ STARTSIDAN ============ -->
 <div id="home" class="view on"></div>
