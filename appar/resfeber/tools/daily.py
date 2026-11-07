@@ -336,7 +336,7 @@ def zone_of(lat, lon, zones):
     return None
 
 
-def search_lodging(dest, period, hprof, area_index=0):
+def search_lodging(dest, period, hprof, area_index=0, cheap=False):
     """Boende bara i trygga familjeområden (dest["areas"]), aldrig i dest["avoid"].
 
     Sökningen utgår från ett av de trygga områdena; varje träff kontrolleras
@@ -348,14 +348,14 @@ def search_lodging(dest, period, hprof, area_index=0):
         if searches >= MAX_SEARCHES_TOTAL:
             break
         area = areas[(area_index + t) % len(areas)] if areas else None
-        best, alts = _search_lodging_once(dest, period, hprof, area)
+        best, alts = _search_lodging_once(dest, period, hprof, area, cheap)
         if best:
             return best, alts
         say(f"  inget tryggt boende kring {area[0] if area else dest['name']}, provar nästa område")
     return None, []
 
 
-def _search_lodging_once(dest, period, hprof, area):
+def _search_lodging_once(dest, period, hprof, area, cheap=False):
     lod = period.get("lodging") or ["hotel", "apartment"]
     wishes = period.get("wishes") or []
     apt_only = "apartment" in lod and not any(x in lod for x in ("hotel", "bnb", "hostel"))
@@ -369,7 +369,7 @@ def _search_lodging_once(dest, period, hprof, area):
         "engine": "google_hotels", "q": q,
         "check_in_date": period["from"], "check_out_date": period["to"],
         "adults": ADULTS, "children": CHILDREN, "children_ages": CHILD_AGES,
-        "currency": "EUR", "hl": "en", "gl": "fi", "sort_by": 3, "rating": 8,
+        "currency": "EUR", "hl": "en", "gl": "fi", "sort_by": 3, "rating": 7 if cheap else 8,
     }
     if apt_only:
         params["vacation_rentals"] = "true"
@@ -400,7 +400,7 @@ def _search_lodging_once(dest, period, hprof, area):
         for w in wishes:
             fit += 1.5 if w in feats else -1.0
         fit += sum(hprof.get(f, 0) for f in feats) * 0.6
-        fit += (p.get("overall_rating") or 4) * 0.8
+        fit += (p.get("overall_rating") or 4) * (0.3 if cheap else 0.8)
         imgs = [i.get("thumbnail") for i in (p.get("images") or [])[:4] if i.get("thumbnail")]
         rows.append({
             "id": (p.get("property_token") or p.get("name", ""))[:60],
@@ -424,7 +424,7 @@ def _search_lodging_once(dest, period, hprof, area):
         return None, []
     cheapest = min(x["total"] for x in rows)
     for x in rows:
-        x["_score"] = x["_fit"] - (x["total"] - cheapest) / max(cheapest, 1) * 6
+        x["_score"] = x["_fit"] - (x["total"] - cheapest) / max(cheapest, 1) * (12 if cheap else 6)
     rows.sort(key=lambda x: x["_score"], reverse=True)
     for x in rows:
         x.pop("_fit", None)
@@ -524,7 +524,7 @@ def main():
 LONG = {
     "dest": "tokyo",
     "window": ("2027-09-01", "2027-11-30"),  # hösten 2027
-    "lengths": (10, 12, 14),                  # nätter borta
+    "lengths": (12,),                         # nätter borta (sänkt från 10–14 för priset)
     "origins": ["HEL", "TKU", "TMP", "VAA"],
     "flights_per_week": 3,
 }
@@ -585,11 +585,11 @@ def main_longhaul():
         say("Inga Tokyoflyg hittades för veckans datum.")
         return
     # Billigast per natt vinner, så att längre resor inte straffas. En mellanlandning
-    # räknas som 25 % dyrare: med barn på en så lång resa ska direktflyg vara förstahandsvalet.
-    options.sort(key=lambda o: o["flight"]["price"] * (1 + 0.25 * o["flight"]["stops"]) / max(o["nights"], 1))
+    # räknas som 15 % dyrare: med barn på en så lång resa ska direktflyg vara förstahandsvalet.
+    options.sort(key=lambda o: o["flight"]["price"] * (1 + 0.15 * o["flight"]["stops"]) / max(o["nights"], 1))
     best = options[0]
     period = {"from": best["from"], "to": best["to"], "lodging": ["hotel", "apartment"], "wishes": []}
-    lodging, alts = search_lodging(dest, period, {}, today.toordinal())
+    lodging, alts = search_lodging(dest, period, {}, 0, cheap=True)
     total = best["flight"]["price"] + (lodging or {}).get("total", 0)
     complete = [p for p in prev if p.get("complete") and p["_id"] != today.isoformat()]
     cheapest_before = min((p["total"] for p in complete), default=None)
