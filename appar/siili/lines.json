@@ -4915,142 +4915,142 @@
 "sv": "Peikko är tokig."
 },
 "p11c-00": {
-"f": null,
+"f": "audio/p11c-00.mp3",
 "fi": "Paljonko kello on?",
 "sv": "Vad är klockan?"
 },
 "p11c-01": {
-"f": null,
+"f": "audio/p11c-01.mp3",
 "fi": "Kello on yksi.",
 "sv": "Klockan är ett."
 },
 "p11c-02": {
-"f": null,
+"f": "audio/p11c-02.mp3",
 "fi": "Kello on kaksi.",
 "sv": "Klockan är två."
 },
 "p11c-03": {
-"f": null,
+"f": "audio/p11c-03.mp3",
 "fi": "Kello on kolme.",
 "sv": "Klockan är tre."
 },
 "p11c-04": {
-"f": null,
+"f": "audio/p11c-04.mp3",
 "fi": "Kello on neljä.",
 "sv": "Klockan är fyra."
 },
 "p11c-05": {
-"f": null,
+"f": "audio/p11c-05.mp3",
 "fi": "Kello on viisi.",
 "sv": "Klockan är fem."
 },
 "p11c-06": {
-"f": null,
+"f": "audio/p11c-06.mp3",
 "fi": "Kello on kuusi.",
 "sv": "Klockan är sex."
 },
 "p11c-07": {
-"f": null,
+"f": "audio/p11c-07.mp3",
 "fi": "Kello on seitsemän.",
 "sv": "Klockan är sju."
 },
 "p11c-08": {
-"f": null,
+"f": "audio/p11c-08.mp3",
 "fi": "Kello on kahdeksan.",
 "sv": "Klockan är åtta."
 },
 "p11c-09": {
-"f": null,
+"f": "audio/p11c-09.mp3",
 "fi": "Kello on yhdeksän.",
 "sv": "Klockan är nio."
 },
 "p11c-10": {
-"f": null,
+"f": "audio/p11c-10.mp3",
 "fi": "Kello on kymmenen.",
 "sv": "Klockan är tio."
 },
 "p11c-11": {
-"f": null,
+"f": "audio/p11c-11.mp3",
 "fi": "Kello on yksitoista.",
 "sv": "Klockan är elva."
 },
 "p11c-12": {
-"f": null,
+"f": "audio/p11c-12.mp3",
 "fi": "Kello on kaksitoista.",
 "sv": "Klockan är tolv."
 },
 "p11c-13": {
-"f": null,
+"f": "audio/p11c-13.mp3",
 "fi": "Laita kello oikeaan aikaan!",
 "sv": "Ställ klockan på rätt tid!"
 },
 "p11c-14": {
-"f": null,
+"f": "audio/p11c-14.mp3",
 "fi": "Tämä on minun päiväni.",
 "sv": "Det här är min dag."
 },
 "p11c-15": {
-"f": null,
+"f": "audio/p11c-15.mp3",
 "fi": "Kello seitsemän minä syön aamupalaa.",
 "sv": "Klockan sju äter jag frukost."
 },
 "p11c-16": {
-"f": null,
+"f": "audio/p11c-16.mp3",
 "fi": "Kello kahdeksan minä menen kouluun.",
 "sv": "Klockan åtta går jag till skolan."
 },
 "p11c-17": {
-"f": null,
+"f": "audio/p11c-17.mp3",
 "fi": "Kello kaksi minä tulen kotiin.",
 "sv": "Klockan två kommer jag hem."
 },
 "p11c-18": {
-"f": null,
+"f": "audio/p11c-18.mp3",
 "fi": "Kello kolme minä teen läksyt.",
 "sv": "Klockan tre gör jag läxorna."
 },
 "p11c-19": {
-"f": null,
+"f": "audio/p11c-19.mp3",
 "fi": "Kello neljä minä pelaan sählyä.",
 "sv": "Klockan fyra spelar jag innebandy."
 },
 "p11c-20": {
-"f": null,
+"f": "audio/p11c-20.mp3",
 "fi": "Kello viisi minä pelaan peliä.",
 "sv": "Klockan fem spelar jag spel."
 },
 "p11c-21": {
-"f": null,
+"f": "audio/p11c-21.mp3",
 "fi": "Kello kuusi minä syön pizzaa!",
 "sv": "Klockan sex äter jag pizza!"
 },
 "p11c-22": {
-"f": null,
+"f": "audio/p11c-22.mp3",
 "fi": "Kello kahdeksan minä luen.",
 "sv": "Klockan åtta läser jag."
 },
 "p11c-23": {
-"f": null,
+"f": "audio/p11c-23.mp3",
 "fi": "Kello yhdeksän minä nukun.",
 "sv": "Klockan nio sover jag."
 },
 "p11c-24": {
-"f": null,
+"f": "audio/p11c-24.mp3",
 "fi": "Mitä sinä teet kello seitsemän?",
 "sv": "Vad gör du klockan sju?"
 },
 "p11c-25": {
-"f": null,
+"f": "audio/p11c-25.mp3",
 "fi": "Mitä sinä teet kello kolme?",
 "sv": "Vad gör du klockan tre?"
 },
 "p11c-26": {
-"f": null,
+"f": "audio/p11c-26.mp3",
 "fi": "Mitä sinä teet kello neljä?",
 "sv": "Vad gör du klockan fyra?"
 },
 "p11c-27": {
-"f": null,
+"f": "audio/p11c-27.mp3",
 "fi": "Mitä sinä teet kello yhdeksän?",
 "sv": "Vad gör du klockan nio?"
 },
@@ -5395,1392 +5395,1392 @@
 "sv": ""
 },
 "p12a-00": {
-"f": null,
+"f": "audio/p12a-00.mp3",
 "fi": "Huomenta! Tänään on kaunis ilma!",
 "sv": "God morgon! I dag är det vackert väder!"
 },
 "p12a-01": {
-"f": null,
+"f": "audio/p12a-01.mp3",
 "fi": "Me olemme metsässä.",
 "sv": "Vi är i skogen."
 },
 "p12a-02": {
-"f": null,
+"f": "audio/p12a-02.mp3",
 "fi": "Tänään me suunnistamme!",
 "sv": "I dag ska vi orientera!"
 },
 "p12a-03": {
-"f": null,
+"f": "audio/p12a-03.mp3",
 "fi": "Tämä on kartta.",
 "sv": "Det här är en karta."
 },
 "p12a-04": {
-"f": null,
+"f": "audio/p12a-04.mp3",
 "fi": "Tämä on rasti.",
 "sv": "Det här är en kontroll."
 },
 "p12a-05": {
-"f": null,
+"f": "audio/p12a-05.mp3",
 "fi": "Missä rasti on?",
 "sv": "Var är kontrollen?"
 },
 "p12a-06": {
-"f": null,
+"f": "audio/p12a-06.mp3",
 "fi": "Tuolla! Sinne on lyhyt matka.",
 "sv": "Där borta! Dit är det en kort bit."
 },
 "p12a-07": {
-"f": null,
+"f": "audio/p12a-07.mp3",
 "fi": "Tämä tehtävä on helppo.",
 "sv": "Den här uppgiften är lätt."
 },
 "p12a-08": {
-"f": null,
+"f": "audio/p12a-08.mp3",
 "fi": "Onpa iso kivi!",
 "sv": "Vilken stor sten!"
 },
 "p12a-09": {
-"f": null,
+"f": "audio/p12a-09.mp3",
 "fi": "Huh, tänään on kuuma...",
 "sv": "Puh, i dag är det varmt …"
 },
 "p12a-10": {
-"f": null,
+"f": "audio/p12a-10.mp3",
 "fi": "Katso, iso mato!",
 "sv": "Titta, en stor mask!"
 },
 "p12a-11": {
-"f": null,
+"f": "audio/p12a-11.mp3",
 "fi": "Ei, minä katson oikein!",
 "sv": "Nej, jag ser rätt!"
 },
 "p12a-12": {
-"f": null,
+"f": "audio/p12a-12.mp3",
 "fi": "Metsä.",
 "sv": "Skog."
 },
 "p12a-13": {
-"f": null,
+"f": "audio/p12a-13.mp3",
 "fi": "Ilma.",
 "sv": "Väder."
 },
 "p12a-14": {
-"f": null,
+"f": "audio/p12a-14.mp3",
 "fi": "Matka.",
 "sv": "Sträcka."
 },
 "p12a-15": {
-"f": null,
+"f": "audio/p12a-15.mp3",
 "fi": "Tehtävä.",
 "sv": "Uppgift."
 },
 "p12a-16": {
-"f": null,
+"f": "audio/p12a-16.mp3",
 "fi": "Kivi.",
 "sv": "Sten."
 },
 "p12a-17": {
-"f": null,
+"f": "audio/p12a-17.mp3",
 "fi": "Käärme.",
 "sv": "Orm."
 },
 "p12a-18": {
-"f": null,
+"f": "audio/p12a-18.mp3",
 "fi": "Mato.",
 "sv": "Mask."
 },
 "p12a-19": {
-"f": null,
+"f": "audio/p12a-19.mp3",
 "fi": "Tänään.",
 "sv": "I dag."
 },
 "p12a-20": {
-"f": null,
+"f": "audio/p12a-20.mp3",
 "fi": "Missä?",
 "sv": "Var?"
 },
 "p12a-21": {
-"f": null,
+"f": "audio/p12a-21.mp3",
 "fi": "Maali!",
 "sv": "Mål!"
 },
 "p12a-22": {
-"f": null,
+"f": "audio/p12a-22.mp3",
 "fi": "Kaunis, ruma.",
 "sv": "Vacker, ful."
 },
 "p12a-23": {
-"f": null,
+"f": "audio/p12a-23.mp3",
 "fi": "Lyhyt, pitkä.",
 "sv": "Kort, lång."
 },
 "p12a-24": {
-"f": null,
+"f": "audio/p12a-24.mp3",
 "fi": "Hyvä, huono.",
 "sv": "Bra, dålig."
 },
 "p12a-25": {
-"f": null,
+"f": "audio/p12a-25.mp3",
 "fi": "Oikein, väärin.",
 "sv": "Rätt, fel."
 },
 "p12a-26": {
-"f": null,
+"f": "audio/p12a-26.mp3",
 "fi": "Helppo, vaikea.",
 "sv": "Lätt, svår."
 },
 "p12a-27": {
-"f": null,
+"f": "audio/p12a-27.mp3",
 "fi": "Iso, pieni.",
 "sv": "Stor, liten."
 },
 "p12a-28": {
-"f": null,
+"f": "audio/p12a-28.mp3",
 "fi": "Kuuma, kylmä.",
 "sv": "Varm, kall."
 },
 "p12a-29": {
-"f": null,
+"f": "audio/p12a-29.mp3",
 "fi": "Sano vastakohta!",
 "sv": "Säg motsatsen!"
 },
 "p12a-30": {
-"f": null,
+"f": "audio/p12a-30.mp3",
 "fi": "Kuka on oikeassa? Minä vai Orava?",
 "sv": "Vem har rätt? Jag eller Orava?"
 },
 "p12b-00": {
-"f": null,
+"f": "audio/p12b-00.mp3",
 "fi": "Rasti yksi!",
 "sv": "Kontroll ett!"
 },
 "p12b-01": {
-"f": null,
+"f": "audio/p12b-01.mp3",
 "fi": "Rasti kaksi!",
 "sv": "Kontroll två!"
 },
 "p12b-02": {
-"f": null,
+"f": "audio/p12b-02.mp3",
 "fi": "Rasti kolme!",
 "sv": "Kontroll tre!"
 },
 "p12b-03": {
-"f": null,
+"f": "audio/p12b-03.mp3",
 "fi": "Rasti neljä!",
 "sv": "Kontroll fyra!"
 },
 "p12b-04": {
-"f": null,
+"f": "audio/p12b-04.mp3",
 "fi": "Rasti viisi!",
 "sv": "Kontroll fem!"
 },
 "p12b-05": {
-"f": null,
+"f": "audio/p12b-05.mp3",
 "fi": "Rasti kuusi!",
 "sv": "Kontroll sex!"
 },
 "p12b-06": {
-"f": null,
+"f": "audio/p12b-06.mp3",
 "fi": "Rasti seitsemän!",
 "sv": "Kontroll sju!"
 },
 "p12b-07": {
-"f": null,
+"f": "audio/p12b-07.mp3",
 "fi": "Viimeinen rasti!",
 "sv": "Sista kontrollen!"
 },
 "p12b-08": {
-"f": null,
+"f": "audio/p12b-08.mp3",
 "fi": "Löysit rastin!",
 "sv": "Du hittade kontrollen!"
 },
 "p12b-09": {
-"f": null,
+"f": "audio/p12b-09.mp3",
 "fi": "Helppo tehtävä!",
 "sv": "Lätt uppgift!"
 },
 "p12b-10": {
-"f": null,
+"f": "audio/p12b-10.mp3",
 "fi": "Vaikea tehtävä!",
 "sv": "Svår uppgift!"
 },
 "p12b-11": {
-"f": null,
+"f": "audio/p12b-11.mp3",
 "fi": "Tänään on kaunis ilma.",
 "sv": "I dag är det vackert väder."
 },
 "p12b-12": {
-"f": null,
+"f": "audio/p12b-12.mp3",
 "fi": "Huomenna on ruma ilma.",
 "sv": "I morgon är det fult väder."
 },
 "p12b-13": {
-"f": null,
+"f": "audio/p12b-13.mp3",
 "fi": "Metsä on vihreä.",
 "sv": "Skogen är grön."
 },
 "p12b-14": {
-"f": null,
+"f": "audio/p12b-14.mp3",
 "fi": "Tuolla on iso kivi.",
 "sv": "Där borta är en stor sten."
 },
 "p12b-15": {
-"f": null,
+"f": "audio/p12b-15.mp3",
 "fi": "Missä käärme on?",
 "sv": "Var är ormen?"
 },
 "p12b-16": {
-"f": null,
+"f": "audio/p12b-16.mp3",
 "fi": "Onko matka pitkä?",
 "sv": "Är det långt?"
 },
 "p12b-17": {
-"f": null,
+"f": "audio/p12b-17.mp3",
 "fi": "Tämä on lyhyt mato.",
 "sv": "Det här är en kort mask."
 },
 "p12b-18": {
-"f": null,
+"f": "audio/p12b-18.mp3",
 "fi": "Tämä on vaikea tehtävä.",
 "sv": "Det här är en svår uppgift."
 },
 "p12b-19": {
-"f": null,
+"f": "audio/p12b-19.mp3",
 "fi": "Mato on pitkä.",
 "sv": "Masken är lång."
 },
 "p12b-20": {
-"f": null,
+"f": "audio/p12b-20.mp3",
 "fi": "Kivi on pieni.",
 "sv": "Stenen är liten."
 },
 "p12b-21": {
-"f": null,
+"f": "audio/p12b-21.mp3",
 "fi": "Aurinko on iso ja kuuma.",
 "sv": "Solen är stor och varm."
 },
 "p12b-22": {
-"f": null,
+"f": "audio/p12b-22.mp3",
 "fi": "Jäätelö on kylmä.",
 "sv": "Glassen är kall."
 },
 "p12b-23": {
-"f": null,
+"f": "audio/p12b-23.mp3",
 "fi": "Tehtävä on helppo.",
 "sv": "Uppgiften är lätt."
 },
 "p12b-24": {
-"f": null,
+"f": "audio/p12b-24.mp3",
 "fi": "Mato! Anteeksi, Mato! Sinä et ole käärme.",
 "sv": "Mato! Förlåt, Mato! Du är ingen orm."
 },
 "p12b-25": {
-"f": null,
+"f": "audio/p12b-25.mp3",
 "fi": "Mato on pitkä ja kaunis!",
 "sv": "Mato är lång och vacker!"
 },
 "p12b-26": {
-"f": null,
+"f": "audio/p12b-26.mp3",
 "fi": "Maali! Me olemme maalissa!",
 "sv": "Mål! Vi är i mål!"
 },
 "p12c-00": {
-"f": null,
+"f": "audio/p12c-00.mp3",
 "fi": "Seuraa vastakohtia!",
 "sv": "Följ motsatserna!"
 },
 "p12c-01": {
-"f": null,
+"f": "audio/p12c-01.mp3",
 "fi": "Likainen, puhdas.",
 "sv": "Smutsig, ren."
 },
 "p12c-02": {
-"f": null,
+"f": "audio/p12c-02.mp3",
 "fi": "Matala, korkea.",
 "sv": "Låg, hög."
 },
 "p12c-03": {
-"f": null,
+"f": "audio/p12c-03.mp3",
 "fi": "Kevyt, painava.",
 "sv": "Lätt, tung."
 },
 "p12c-04": {
-"f": null,
+"f": "audio/p12c-04.mp3",
 "fi": "Valkoinen, musta.",
 "sv": "Vit, svart."
 },
 "p12c-05": {
-"f": null,
+"f": "audio/p12c-05.mp3",
 "fi": "Auki, kiinni.",
 "sv": "Öppen, stängd."
 },
 "p12c-06": {
-"f": null,
+"f": "audio/p12c-06.mp3",
 "fi": "Täynnä, tyhjä.",
 "sv": "Full, tom."
 },
 "p12c-07": {
-"f": null,
+"f": "audio/p12c-07.mp3",
 "fi": "Leveä, kapea.",
 "sv": "Bred, smal."
 },
 "p12c-08": {
-"f": null,
+"f": "audio/p12c-08.mp3",
 "fi": "Hidas, nopea.",
 "sv": "Långsam, snabb."
 },
 "p12c-09": {
-"f": null,
+"f": "audio/p12c-09.mp3",
 "fi": "Vanha, uusi.",
 "sv": "Gammal, ny."
 },
 "p12c-10": {
-"f": null,
+"f": "audio/p12c-10.mp3",
 "fi": "Ylös, alas.",
 "sv": "Upp, ner."
 },
 "p12c-11": {
-"f": null,
+"f": "audio/p12c-11.mp3",
 "fi": "Aurinko paistaa. On kaunis ilma.",
 "sv": "Solen skiner. Det är vackert väder."
 },
 "p12c-12": {
-"f": null,
+"f": "audio/p12c-12.mp3",
 "fi": "Sataa. On ruma ilma.",
 "sv": "Det regnar. Det är fult väder."
 },
 "p12c-13": {
-"f": null,
+"f": "audio/p12c-13.mp3",
 "fi": "Minä olen iloinen.",
 "sv": "Jag är glad."
 },
 "p12c-14": {
-"f": null,
+"f": "audio/p12c-14.mp3",
 "fi": "Minä olen vihainen!",
 "sv": "Jag är arg!"
 },
 "p12c-15": {
-"f": null,
+"f": "audio/p12c-15.mp3",
 "fi": "Minä olen surullinen.",
 "sv": "Jag är ledsen."
 },
 "p12c-16": {
-"f": null,
+"f": "audio/p12c-16.mp3",
 "fi": "Minä olen hämmästynyt!",
 "sv": "Jag är förvånad!"
 },
 "p12c-17": {
-"f": null,
+"f": "audio/p12c-17.mp3",
 "fi": "Minä olen uninen...",
 "sv": "Jag är sömnig …"
 },
 "p12c-18": {
-"f": null,
+"f": "audio/p12c-18.mp3",
 "fi": "Minä olen pelästynyt!",
 "sv": "Jag är rädd!"
 },
 "p12c-19": {
-"f": null,
+"f": "audio/p12c-19.mp3",
 "fi": "Millainen minä olen nyt?",
 "sv": "Hur är jag nu?"
 },
 "p12c-20": {
-"f": null,
+"f": "audio/p12c-20.mp3",
 "fi": "Millainen sinä olet tänään?",
 "sv": "Hur är du i dag?"
 },
 "p12c-21": {
-"f": null,
+"f": "audio/p12c-21.mp3",
 "fi": "Hyvä tehtävä! Huono tehtävä? Eikä ole!",
 "sv": "Bra uppgift! Dålig uppgift? Visst inte!"
 },
 "p12c-22": {
-"f": null,
+"f": "audio/p12c-22.mp3",
 "fi": "Kiitos, metsä. Hyvää yötä...",
 "sv": "Tack, skogen. God natt …"
 },
 "q12-00": {
-"f": null,
+"f": "audio/q12-00.mp3",
 "fi": "Eikä ole, matka on pitkä!",
 "sv": "Visst inte, det är långt!"
 },
 "q12-01": {
-"f": null,
+"f": "audio/q12-01.mp3",
 "fi": "Nyt sinä katsot väärin.",
 "sv": "Nu ser du fel."
 },
 "q12-02": {
-"f": null,
+"f": "audio/q12-02.mp3",
 "fi": "Eikä ole, se on vaikea!",
 "sv": "Visst inte, den är svår!"
 },
 "q12-03": {
-"f": null,
+"f": "audio/q12-03.mp3",
 "fi": "Eikä ole, se on ihan pieni.",
 "sv": "Visst inte, den är jätteliten."
 },
 "q12-04": {
-"f": null,
+"f": "audio/q12-04.mp3",
 "fi": "Eikä ole, tänään on kylmä!",
 "sv": "Visst inte, i dag är det kallt!"
 },
 "q12-05": {
-"f": null,
+"f": "audio/q12-05.mp3",
 "fi": "Eikä ole! Se on käärme! Varo!",
 "sv": "Visst inte! Det är en orm! Akta dig!"
 },
 "q12-06": {
-"f": null,
+"f": "audio/q12-06.mp3",
 "fi": "Eikä ole!",
 "sv": "Visst inte!"
 },
 "q12-07": {
-"f": null,
+"f": "audio/q12-07.mp3",
 "fi": "Hups. Sinä olet oikeassa.",
 "sv": "Hoppsan. Du har rätt."
 },
 "q12-08": {
-"f": null,
+"f": "audio/q12-08.mp3",
 "fi": "Minä olen nopea!",
 "sv": "Jag är snabb!"
 },
 "q12-09": {
-"f": null,
+"f": "audio/q12-09.mp3",
 "fi": "Maali! Minä voitin!",
 "sv": "Mål! Jag vann!"
 },
 "p13a-00": {
-"f": null,
+"f": "audio/p13a-00.mp3",
 "fi": "Tervetuloa löytö... tavara... toimistoon! Huh, pitkä sana!",
 "sv": "Välkommen till hitte… gods… kontoret! Puh, vilket långt ord!"
 },
 "p13a-01": {
-"f": null,
+"f": "audio/p13a-01.mp3",
 "fi": "Täällä on paljon tavaroita. Ne ovat hukassa.",
 "sv": "Här finns massor av saker. De har kommit bort."
 },
 "p13a-02": {
-"f": null,
+"f": "audio/p13a-02.mp3",
 "fi": "Kenen skuutti toi on?",
 "sv": "Vems sparkcykel är det där?"
 },
 "p13a-03": {
-"f": null,
+"f": "audio/p13a-03.mp3",
 "fi": "Se on Eetin.",
 "sv": "Den är Eetis."
 },
 "p13a-04": {
-"f": null,
+"f": "audio/p13a-04.mp3",
 "fi": "Tämä on Eetin skuutti. Se on ihan uusi.",
 "sv": "Det här är Eetis sparkcykel. Den är helt ny."
 },
 "p13a-05": {
-"f": null,
+"f": "audio/p13a-05.mp3",
 "fi": "Eetin T-paita on puhdas.",
 "sv": "Eetis t-tröja är ren."
 },
 "p13a-06": {
-"f": null,
+"f": "audio/p13a-06.mp3",
 "fi": "Millainen Hopsun T-paita on?",
 "sv": "Hurdan är Hopsus t-tröja?"
 },
 "p13a-07": {
-"f": null,
+"f": "audio/p13a-07.mp3",
 "fi": "Se on likainen. Hyi!",
 "sv": "Den är smutsig. Usch!"
 },
 "p13a-08": {
-"f": null,
+"f": "audio/p13a-08.mp3",
 "fi": "Hopsun pallo on rikki.",
 "sv": "Hopsus boll är trasig."
 },
 "p13a-09": {
-"f": null,
+"f": "audio/p13a-09.mp3",
 "fi": "Larin kitara on vanha, mutta ehjä.",
 "sv": "Laris gitarr är gammal, men hel."
 },
 "p13a-10": {
-"f": null,
+"f": "audio/p13a-10.mp3",
 "fi": "Elsan huone on pieni, mutta kiva.",
 "sv": "Elsas rum är litet, men fint."
 },
 "p13a-11": {
-"f": null,
+"f": "audio/p13a-11.mp3",
 "fi": "Leon takki on ohut.",
 "sv": "Leos jacka är tunn."
 },
 "p13a-12": {
-"f": null,
+"f": "audio/p13a-12.mp3",
 "fi": "Emman takki on paksu!",
 "sv": "Emmas jacka är tjock!"
 },
 "p13a-13": {
-"f": null,
+"f": "audio/p13a-13.mp3",
 "fi": "Kenen?",
 "sv": "Vems?"
 },
 "p13a-14": {
-"f": null,
+"f": "audio/p13a-14.mp3",
 "fi": "Millainen?",
 "sv": "Hurdan?"
 },
 "p13a-15": {
-"f": null,
+"f": "audio/p13a-15.mp3",
 "fi": "Skuutti.",
 "sv": "Sparkcykel."
 },
 "p13a-16": {
-"f": null,
+"f": "audio/p13a-16.mp3",
 "fi": "T-paita.",
 "sv": "T-tröja."
 },
 "p13a-17": {
-"f": null,
+"f": "audio/p13a-17.mp3",
 "fi": "Kitara.",
 "sv": "Gitarr."
 },
 "p13a-18": {
-"f": null,
+"f": "audio/p13a-18.mp3",
 "fi": "Huone.",
 "sv": "Rum."
 },
 "p13a-19": {
-"f": null,
+"f": "audio/p13a-19.mp3",
 "fi": "Takki.",
 "sv": "Jacka."
 },
 "p13a-20": {
-"f": null,
+"f": "audio/p13a-20.mp3",
 "fi": "Kirja.",
 "sv": "Bok."
 },
 "p13a-21": {
-"f": null,
+"f": "audio/p13a-21.mp3",
 "fi": "Skuutti on puhekieltä. Kirjakielessä se on potkulauta.",
 "sv": "Skuutti är talspråk. I skriftspråket heter det potkulauta."
 },
 "p13a-22": {
-"f": null,
+"f": "audio/p13a-22.mp3",
 "fi": "Toi on puhekieltä. Kirjakielessä se on tuo.",
 "sv": "Toi är talspråk. I skriftspråket heter det tuo."
 },
 "p13b-00": {
-"f": null,
+"f": "audio/p13b-00.mp3",
 "fi": "Uusi, vanha.",
 "sv": "Ny, gammal."
 },
 "p13b-01": {
-"f": null,
+"f": "audio/p13b-01.mp3",
 "fi": "Puhdas, likainen.",
 "sv": "Ren, smutsig."
 },
 "p13b-02": {
-"f": null,
+"f": "audio/p13b-02.mp3",
 "fi": "Ehjä, rikki.",
 "sv": "Hel, trasig."
 },
 "p13b-03": {
-"f": null,
+"f": "audio/p13b-03.mp3",
 "fi": "Paksu, ohut.",
 "sv": "Tjock, tunn."
 },
 "p13b-04": {
-"f": null,
+"f": "audio/p13b-04.mp3",
 "fi": "Millainen se on?",
 "sv": "Hurdan är den?"
 },
 "p13b-05": {
-"f": null,
+"f": "audio/p13b-05.mp3",
 "fi": "Se on uusi.",
 "sv": "Den är ny."
 },
 "p13b-06": {
-"f": null,
+"f": "audio/p13b-06.mp3",
 "fi": "Se on vanha.",
 "sv": "Den är gammal."
 },
 "p13b-07": {
-"f": null,
+"f": "audio/p13b-07.mp3",
 "fi": "Se on puhdas.",
 "sv": "Den är ren."
 },
 "p13b-08": {
-"f": null,
+"f": "audio/p13b-08.mp3",
 "fi": "Se on likainen.",
 "sv": "Den är smutsig."
 },
 "p13b-09": {
-"f": null,
+"f": "audio/p13b-09.mp3",
 "fi": "Se on ehjä.",
 "sv": "Den är hel."
 },
 "p13b-10": {
-"f": null,
+"f": "audio/p13b-10.mp3",
 "fi": "Se on rikki.",
 "sv": "Den är trasig."
 },
 "p13b-11": {
-"f": null,
+"f": "audio/p13b-11.mp3",
 "fi": "Se on paksu.",
 "sv": "Den är tjock."
 },
 "p13b-12": {
-"f": null,
+"f": "audio/p13b-12.mp3",
 "fi": "Se on ohut.",
 "sv": "Den är tunn."
 },
 "p13b-13": {
-"f": null,
+"f": "audio/p13b-13.mp3",
 "fi": "Etsivä! Kuuntele nimet.",
 "sv": "Detektiven! Lyssna på namnen."
 },
 "p13b-14": {
-"f": null,
+"f": "audio/p13b-14.mp3",
 "fi": "Eetin. Hopsun. Larin. Elsan. Leon. Emman.",
 "sv": "Eetis. Hopsus. Laris. Elsas. Leos. Emmas."
 },
 "p13b-15": {
-"f": null,
+"f": "audio/p13b-15.mp3",
 "fi": "Mikä kirjain on lopussa?",
 "sv": "Vilken bokstav står sist?"
 },
 "p13b-16": {
-"f": null,
+"f": "audio/p13b-16.mp3",
 "fi": "N! Taas N!",
 "sv": "N! N igen!"
 },
 "p13b-17": {
-"f": null,
+"f": "audio/p13b-17.mp3",
 "fi": "Kenen tämä on?",
 "sv": "Vems är det här?"
 },
 "p13b-18": {
-"f": null,
+"f": "audio/p13b-18.mp3",
 "fi": "Se on Oravan.",
 "sv": "Den är Oravas."
 },
 "p13b-19": {
-"f": null,
+"f": "audio/p13b-19.mp3",
 "fi": "Se on Pöllö-open.",
 "sv": "Den är Pöllö-opes."
 },
 "p13b-20": {
-"f": null,
+"f": "audio/p13b-20.mp3",
 "fi": "Se on Peikon.",
 "sv": "Den är Peikkos."
 },
 "p13b-21": {
-"f": null,
+"f": "audio/p13b-21.mp3",
 "fi": "Se on Maton.",
 "sv": "Den är Matos."
 },
 "p13b-22": {
-"f": null,
+"f": "audio/p13b-22.mp3",
 "fi": "Maton? Matto? Onko matolla hattu?",
 "sv": "Matos? Matto? Har mattan en hatt?"
 },
 "p13b-23": {
-"f": null,
+"f": "audio/p13b-23.mp3",
 "fi": "Ei matto! Mato! Maton hattu!",
 "sv": "Inte matto! Mato! Matos hatt!"
 },
 "p13b-24": {
-"f": null,
+"f": "audio/p13b-24.mp3",
 "fi": "Se on Siilin.",
 "sv": "Den är Siilis."
 },
 "p13b-25": {
-"f": null,
+"f": "audio/p13b-25.mp3",
 "fi": "Se on Sagan.",
 "sv": "Den är Sagas."
 },
 "p13b-26": {
-"f": null,
+"f": "audio/p13b-26.mp3",
 "fi": "Se on Noan.",
 "sv": "Den är Noas."
 },
 "p13b-27": {
-"f": null,
+"f": "audio/p13b-27.mp3",
 "fi": "Kenen kaulaliina tämä on?",
 "sv": "Vems halsduk är det här?"
 },
 "p13b-28": {
-"f": null,
+"f": "audio/p13b-28.mp3",
 "fi": "Hups! Se on minun!",
 "sv": "Hoppsan! Den är min!"
 },
 "p13b-29": {
-"f": null,
+"f": "audio/p13b-29.mp3",
 "fi": "Peikon? Missä toinen K on? Hmm... Siitä myöhemmin!",
 "sv": "Peikon? Vart tog det andra K:et vägen? Hmm … det tar vi sen!"
 },
 "p13e-00": {
-"f": null,
+"f": "audio/p13e-00.mp3",
 "fi": "Kenen pallo on rikki?",
 "sv": "Vems boll är trasig?"
 },
 "p13e-01": {
-"f": null,
+"f": "audio/p13e-01.mp3",
 "fi": "Kenen skuutti on uusi?",
 "sv": "Vems sparkcykel är ny?"
 },
 "p13e-02": {
-"f": null,
+"f": "audio/p13e-02.mp3",
 "fi": "Kenen T-paita on likainen?",
 "sv": "Vems t-tröja är smutsig?"
 },
 "p13e-03": {
-"f": null,
+"f": "audio/p13e-03.mp3",
 "fi": "Kenen takki on ohut?",
 "sv": "Vems jacka är tunn?"
 },
 "p13e-04": {
-"f": null,
+"f": "audio/p13e-04.mp3",
 "fi": "Kenen takki on paksu?",
 "sv": "Vems jacka är tjock?"
 },
 "p13e-05": {
-"f": null,
+"f": "audio/p13e-05.mp3",
 "fi": "Kenen päärynä tämä on?",
 "sv": "Vems päron är det här?"
 },
 "p13e-06": {
-"f": null,
+"f": "audio/p13e-06.mp3",
 "fi": "Se on opettajan.",
 "sv": "Den är lärarens."
 },
 "p13e-07": {
-"f": null,
+"f": "audio/p13e-07.mp3",
 "fi": "Millainen Emman takki on?",
 "sv": "Hurdan är Emmas jacka?"
 },
 "p13e-08": {
-"f": null,
+"f": "audio/p13e-08.mp3",
 "fi": "Millainen Elsan huone on?",
 "sv": "Hurdant är Elsas rum?"
 },
 "p13e-09": {
-"f": null,
+"f": "audio/p13e-09.mp3",
 "fi": "Millainen Vilman pusero on?",
 "sv": "Hurdan är Vilmas tröja?"
 },
 "p13e-10": {
-"f": null,
+"f": "audio/p13e-10.mp3",
 "fi": "Millainen Larin kitara on?",
 "sv": "Hurdan är Laris gitarr?"
 },
 "p13e-11": {
-"f": null,
+"f": "audio/p13e-11.mp3",
 "fi": "Pusero.",
 "sv": "Tröja."
 },
 "p13e-12": {
-"f": null,
+"f": "audio/p13e-12.mp3",
 "fi": "Se on oranssi.",
 "sv": "Den är orange."
 },
 "p13e-13": {
-"f": null,
+"f": "audio/p13e-13.mp3",
 "fi": "Se on vanha, mutta ehjä.",
 "sv": "Den är gammal, men hel."
 },
 "p13e-14": {
-"f": null,
+"f": "audio/p13e-14.mp3",
 "fi": "Se on pieni, mutta kiva.",
 "sv": "Det är litet, men fint."
 },
 "p13e-15": {
-"f": null,
+"f": "audio/p13e-15.mp3",
 "fi": "Hopsun.",
 "sv": "Hopsus."
 },
 "p13e-16": {
-"f": null,
+"f": "audio/p13e-16.mp3",
 "fi": "Emman.",
 "sv": "Emmas."
 },
 "p13e-17": {
-"f": null,
+"f": "audio/p13e-17.mp3",
 "fi": "Eetin.",
 "sv": "Eetis."
 },
 "p13e-18": {
-"f": null,
+"f": "audio/p13e-18.mp3",
 "fi": "Leon.",
 "sv": "Leos."
 },
 "p13e-19": {
-"f": null,
+"f": "audio/p13e-19.mp3",
 "fi": "Nyt ristisanatehtävä!",
 "sv": "Nu ett korsord!"
 },
 "p13c-00": {
-"f": null,
+"f": "audio/p13c-00.mp3",
 "fi": "Kenen takki tämä on?",
 "sv": "Vems jacka är det här?"
 },
 "p13c-01": {
-"f": null,
+"f": "audio/p13c-01.mp3",
 "fi": "Onko tämä Leon pallo?",
 "sv": "Är det här Leos boll?"
 },
 "p13c-02": {
-"f": null,
+"f": "audio/p13c-02.mp3",
 "fi": "Hopsun kirja on hyvä.",
 "sv": "Hopsus bok är bra."
 },
 "p13c-03": {
-"f": null,
+"f": "audio/p13c-03.mp3",
 "fi": "Millainen tehtävä on?",
 "sv": "Hurdan är uppgiften?"
 },
 "p13c-04": {
-"f": null,
+"f": "audio/p13c-04.mp3",
 "fi": "Millainen Hopsun kirja on?",
 "sv": "Hurdan är Hopsus bok?"
 },
 "p13c-05": {
-"f": null,
+"f": "audio/p13c-05.mp3",
 "fi": "Millainen Suvin huone on?",
 "sv": "Hurdant är Suvis rum?"
 },
 "p13c-06": {
-"f": null,
+"f": "audio/p13c-06.mp3",
 "fi": "Millainen Leon takki on?",
 "sv": "Hurdan är Leos jacka?"
 },
 "p13c-07": {
-"f": null,
+"f": "audio/p13c-07.mp3",
 "fi": "Hopsun kirja on uusi ja hyvä.",
 "sv": "Hopsus bok är ny och bra."
 },
 "p13c-08": {
-"f": null,
+"f": "audio/p13c-08.mp3",
 "fi": "Suvin huone on kaunis.",
 "sv": "Suvis rum är vackert."
 },
 "p13c-09": {
-"f": null,
+"f": "audio/p13c-09.mp3",
 "fi": "Leon takki on sininen.",
 "sv": "Leos jacka är blå."
 },
 "p13c-10": {
-"f": null,
+"f": "audio/p13c-10.mp3",
 "fi": "Kenen skuutti tämä on? Se on Kallen skuutti.",
 "sv": "Vems sparkcykel är det här? Det är Kalles sparkcykel."
 },
 "p13c-11": {
-"f": null,
+"f": "audio/p13c-11.mp3",
 "fi": "Kenen appelsiini tämä on?",
 "sv": "Vems apelsin är det här?"
 },
 "p13c-12": {
-"f": null,
+"f": "audio/p13c-12.mp3",
 "fi": "Kenen huone tämä on?",
 "sv": "Vems rum är det här?"
 },
 "p13c-13": {
-"f": null,
+"f": "audio/p13c-13.mp3",
 "fi": "Tehtävä on helppo.",
 "sv": "Uppgiften är lätt."
 },
 "p13c-14": {
-"f": null,
+"f": "audio/p13c-14.mp3",
 "fi": "Millainen talvi on? Talvi on kylmä.",
 "sv": "Hurdan är vintern? Vintern är kall."
 },
 "p13c-15": {
-"f": null,
+"f": "audio/p13c-15.mp3",
 "fi": "Millainen aurinko on? Aurinko on kuuma.",
 "sv": "Hurdan är solen? Solen är varm."
 },
 "p13c-16": {
-"f": null,
+"f": "audio/p13c-16.mp3",
 "fi": "Millainen etana on? Etana on hidas.",
 "sv": "Hurdan är snigeln? Snigeln är långsam."
 },
 "p13c-17": {
-"f": null,
+"f": "audio/p13c-17.mp3",
 "fi": "Millainen pikajuna on? Pikajuna on nopea.",
 "sv": "Hurdant är snabbtåget? Snabbtåget är snabbt."
 },
 "p13c-18": {
-"f": null,
+"f": "audio/p13c-18.mp3",
 "fi": "Millainen höyhen on? Höyhen on kevyt.",
 "sv": "Hurdan är fjädern? Fjädern är lätt."
 },
 "p13c-19": {
-"f": null,
+"f": "audio/p13c-19.mp3",
 "fi": "Millainen bussi on? Bussi on painava.",
 "sv": "Hurdan är bussen? Bussen är tung."
 },
 "p13c-20": {
-"f": null,
+"f": "audio/p13c-20.mp3",
 "fi": "Millainen tyyny on? Tyyny on pehmeä.",
 "sv": "Hurdan är kudden? Kudden är mjuk."
 },
 "p13c-21": {
-"f": null,
+"f": "audio/p13c-21.mp3",
 "fi": "Millainen kivi on? Kivi on kova.",
 "sv": "Hurdan är stenen? Stenen är hård."
 },
 "p13c-22": {
-"f": null,
+"f": "audio/p13c-22.mp3",
 "fi": "Millainen sitruuna on? Sitruuna on hapan.",
 "sv": "Hurdan är citronen? Citronen är sur."
 },
 "p13c-23": {
-"f": null,
+"f": "audio/p13c-23.mp3",
 "fi": "Millainen karkki on? Karkki on makea.",
 "sv": "Hurdant är godiset? Godiset är sött."
 },
 "p13c-24": {
-"f": null,
+"f": "audio/p13c-24.mp3",
 "fi": "Kaikki tavarat ovat kotona! Hienoa työtä!",
 "sv": "Alla saker har kommit hem! Bra jobbat!"
 },
 "p13c-25": {
-"f": null,
+"f": "audio/p13c-25.mp3",
 "fi": "Löytötavaratoimisto on kiinni. Hyvää yötä...",
 "sv": "Hittegodskontoret är stängt. God natt …"
 },
 "q13-00": {
-"f": null,
+"f": "audio/q13-00.mp3",
 "fi": "Minun kaulaliinani! Se on vanha, mutta ehjä!",
 "sv": "Min halsduk! Den är gammal, men hel!"
 },
 "q13-01": {
-"f": null,
+"f": "audio/q13-01.mp3",
 "fi": "Kiitos, Siili!",
 "sv": "Tack, Siili!"
 },
 "o13-00": {
-"f": null,
+"f": "audio/o13-00.mp3",
 "fi": "Minun silmälasini! Nyt minä näen taas.",
 "sv": "Mina glasögon! Nu ser jag igen."
 },
 "o13-01": {
-"f": null,
+"f": "audio/o13-01.mp3",
 "fi": "Kiitos paljon!",
 "sv": "Tack så mycket!"
 },
 "pk13-00": {
-"f": null,
+"f": "audio/pk13-00.mp3",
 "fi": "Minun hattuni! Se on raidallinen ja likainen. Ihana!",
 "sv": "Min mössa! Den är randig och smutsig. Underbar!"
 },
 "pk13-01": {
-"f": null,
+"f": "audio/pk13-01.mp3",
 "fi": "Ho ho! Kiitos!",
 "sv": "Ho ho! Tack!"
 },
 "p12f-00": {
-"f": null,
+"f": "audio/p12f-00.mp3",
 "fi": "Tiedätkö mitä? Minä rakastan suunnistusta. Metsässä on niin hiljaista.",
 "sv": "Orientering! Det bästa jag vet. Och tänk så tyst det är i skogen."
 },
 "p12f-00s": {
-"f": null,
+"f": "audio/p12f-00s.mp3",
 "fi": "Orientering! Det bästa jag vet. Och tänk så tyst det är i skogen.",
 "sv": ""
 },
 "p12f-01": {
-"f": null,
+"f": "audio/p12f-01.mp3",
 "fi": "Mutta minä en osaa lukea karttaa. Kartta on aina väärin päin!",
 "sv": "Kartan är alltid upp och ner. Konstigt nog bara när jag håller i den."
 },
 "p12f-01s": {
-"f": null,
+"f": "audio/p12f-01s.mp3",
 "fi": "Kartan är alltid upp och ner. Konstigt nog bara när jag håller i den.",
 "sv": ""
 },
 "p12f-02": {
-"f": null,
+"f": "audio/p12f-02.mp3",
 "fi": "Orava juoksee tosi nopeasti. Hän hyppää puusta puuhun.",
 "sv": "Från träd till träd! Hon behöver ingen stig."
 },
 "p12f-02s": {
-"f": null,
+"f": "audio/p12f-02s.mp3",
 "fi": "Från träd till träd! Hon behöver ingen stig.",
 "sv": ""
 },
 "p12f-03": {
-"f": null,
+"f": "audio/p12f-03.mp3",
 "fi": "Orava sanoo aina: Eikä ole! Hän sanoo sen sata kertaa päivässä.",
 "sv": "Eikä ole, det är ungefär \"visst inte!\". Hundra gånger om dagen."
 },
 "p12f-03s": {
-"f": null,
+"f": "audio/p12f-03s.mp3",
 "fi": "Eikä ole, det är ungefär \"visst inte!\". Hundra gånger om dagen.",
 "sv": ""
 },
 "p12f-04": {
-"f": null,
+"f": "audio/p12f-04.mp3",
 "fi": "Kerran minä sanoin: Orava, sinä olet kiva. Ja hän sanoi: Eikä ole!",
 "sv": "Till och med när man säger något snällt. Visst inte!"
 },
 "p12f-04s": {
-"f": null,
+"f": "audio/p12f-04s.mp3",
 "fi": "Till och med när man säger något snällt. Visst inte!",
 "sv": ""
 },
 "p12f-05": {
-"f": null,
+"f": "audio/p12f-05.mp3",
 "fi": "Käärmeet pelottavat minua. Mutta Mato ei ole käärme. Mato on minun ystäväni.",
 "sv": "Ormar är läskiga. Men Mato är ingen orm. Han är min kompis. Fast nästan lika lång."
 },
 "p12f-05s": {
-"f": null,
+"f": "audio/p12f-05s.mp3",
 "fi": "Ormar är läskiga. Men Mato är ingen orm. Han är min kompis. Fast nästan lika lång.",
 "sv": ""
 },
 "p12f-06": {
-"f": null,
+"f": "audio/p12f-06.mp3",
 "fi": "Tämä kivi on tosi iso. Se on isompi kuin talo!",
 "sv": "Större än ett hus! Nåja. Större än mitt hus i alla fall."
 },
 "p12f-06s": {
-"f": null,
+"f": "audio/p12f-06s.mp3",
 "fi": "Större än ett hus! Nåja. Större än mitt hus i alla fall.",
 "sv": ""
 },
 "p12f-07": {
-"f": null,
+"f": "audio/p12f-07.mp3",
 "fi": "Minulla on uudet lenkkarit. Ne näyttävät tosi nopeilta.",
 "sv": "Nya gympaskor. De ser jättesnabba ut. Det är jag som är långsam."
 },
 "p12f-07s": {
-"f": null,
+"f": "audio/p12f-07s.mp3",
 "fi": "Nya gympaskor. De ser jättesnabba ut. Det är jag som är långsam.",
 "sv": ""
 },
 "p12f-08": {
-"f": null,
+"f": "audio/p12f-08.mp3",
 "fi": "Kun aurinko paistaa, minä olen iloinen. Kun sataa, minä olen vähän surullinen.",
 "sv": "Sol: glad igelkott. Regn: blöt igelkott."
 },
 "p12f-08s": {
-"f": null,
+"f": "audio/p12f-08s.mp3",
 "fi": "Sol: glad igelkott. Regn: blöt igelkott.",
 "sv": ""
 },
 "p12f-09": {
-"f": null,
+"f": "audio/p12f-09.mp3",
 "fi": "Mutta jäätelö auttaa aina. Jäätelö on kylmä, ja minä olen kuuma!",
 "sv": "Glass hjälper alltid. Särskilt efter en runda i skogen."
 },
 "p12f-09s": {
-"f": null,
+"f": "audio/p12f-09s.mp3",
 "fi": "Glass hjälper alltid. Särskilt efter en runda i skogen.",
 "sv": ""
 },
 "p12f-10": {
-"f": null,
+"f": "audio/p12f-10.mp3",
 "fi": "Tiedätkö, mikä on vaikea tehtävä? Löytää rasti, kun kartta on väärin päin.",
 "sv": "Det svåraste som finns? Att hitta kontrollen med kartan upp och ner."
 },
 "p12f-10s": {
-"f": null,
+"f": "audio/p12f-10s.mp3",
 "fi": "Det svåraste som finns? Att hitta kontrollen med kartan upp och ner.",
 "sv": ""
 },
 "p12f-11": {
-"f": null,
+"f": "audio/p12f-11.mp3",
 "fi": "Maali! Minä olen väsynyt, mutta iloinen.",
 "sv": "Trött men glad. Mest trött."
 },
 "p12f-11s": {
-"f": null,
+"f": "audio/p12f-11s.mp3",
 "fi": "Trött men glad. Mest trött.",
 "sv": ""
 },
 "p13f-00": {
-"f": null,
+"f": "audio/p13f-00.mp3",
 "fi": "Tiedätkö mitä? Koulussa katoaa joka päivä paljon tavaroita.",
 "sv": "Varje dag försvinner saker i skolan. Mössor, vantar, böcker. Vart tar allt vägen?"
 },
 "p13f-00s": {
-"f": null,
+"f": "audio/p13f-00s.mp3",
 "fi": "Varje dag försvinner saker i skolan. Mössor, vantar, böcker. Vart tar allt vägen?",
 "sv": ""
 },
 "p13f-01": {
-"f": null,
+"f": "audio/p13f-01.mp3",
 "fi": "Ne tulevat tänne, löytötavaratoimistoon. Ja minä pidän niistä huolta.",
 "sv": "Hit, till hittegodset. Och jag tar hand om dem. Någon måste ju."
 },
 "p13f-01s": {
-"f": null,
+"f": "audio/p13f-01s.mp3",
 "fi": "Hit, till hittegodset. Och jag tar hand om dem. Någon måste ju.",
 "sv": ""
 },
 "p13f-02": {
-"f": null,
+"f": "audio/p13f-02.mp3",
 "fi": "Täällä on kolmekymmentä pipoa. Kolmekymmentä! Kenen ne ovat?",
 "sv": "Pipo är mössa. Trettio mössor! Fryser ingen om öronen?"
 },
 "p13f-02s": {
-"f": null,
+"f": "audio/p13f-02s.mp3",
 "fi": "Pipo är mössa. Trettio mössor! Fryser ingen om öronen?",
 "sv": ""
 },
 "p13f-03": {
-"f": null,
+"f": "audio/p13f-03.mp3",
 "fi": "Ja yksi sukka. Vain yksi. Missä toinen sukka on?",
 "sv": "En ensam strumpa. Den andra är säkert ute på äventyr."
 },
 "p13f-03s": {
-"f": null,
+"f": "audio/p13f-03s.mp3",
 "fi": "En ensam strumpa. Den andra är säkert ute på äventyr.",
 "sv": ""
 },
 "p13f-04": {
-"f": null,
+"f": "audio/p13f-04.mp3",
 "fi": "Pöllö-ope hukkaa aina silmälasinsa. Ja ne ovat hänen päänsä päällä!",
 "sv": "Ugglan letar jämt efter glasögonen. De sitter på huvudet. Varje gång."
 },
 "p13f-04s": {
-"f": null,
+"f": "audio/p13f-04s.mp3",
 "fi": "Ugglan letar jämt efter glasögonen. De sitter på huvudet. Varje gång.",
 "sv": ""
 },
 "p13f-05": {
-"f": null,
+"f": "audio/p13f-05.mp3",
 "fi": "Peikko kerää kiiltäviä tavaroita. Joskus ne lähtevät hänen mukaansa kotiin.",
 "sv": "Peikko samlar på blanka saker. Ibland följer de med hem. Av misstag, säger han."
 },
 "p13f-05s": {
-"f": null,
+"f": "audio/p13f-05s.mp3",
 "fi": "Peikko samlar på blanka saker. Ibland följer de med hem. Av misstag, säger han.",
 "sv": ""
 },
 "p13f-06": {
-"f": null,
+"f": "audio/p13f-06.mp3",
 "fi": "Tämä T-paita on likainen. Hyi! Se haisee juustolta.",
 "sv": "Den luktar ost. Gammal ost. Jag vill inte veta varför."
 },
 "p13f-06s": {
-"f": null,
+"f": "audio/p13f-06s.mp3",
 "fi": "Den luktar ost. Gammal ost. Jag vill inte veta varför.",
 "sv": ""
 },
 "p13f-07": {
-"f": null,
+"f": "audio/p13f-07.mp3",
 "fi": "Tämä kitara on vanha, mutta ehjä. Kuuntele! Plim plom!",
 "sv": "Gammal men hel. Och nästan stämd."
 },
 "p13f-07s": {
-"f": null,
+"f": "audio/p13f-07s.mp3",
 "fi": "Gammal men hel. Och nästan stämd.",
 "sv": ""
 },
 "p13f-08": {
-"f": null,
+"f": "audio/p13f-08.mp3",
 "fi": "Minä kirjoitan kaikki nimet kirjaan. Eetin, Hopsun, Leon. Aina N lopussa!",
 "sv": "På finska slutar namnen på N. På svenska blir det ett S: Leos jacka, Emmas jacka."
 },
 "p13f-08s": {
-"f": null,
+"f": "audio/p13f-08s.mp3",
 "fi": "På finska slutar namnen på N. På svenska blir det ett S: Leos jacka, Emmas jacka.",
 "sv": ""
 },
 "p13f-09": {
-"f": null,
+"f": "audio/p13f-09.mp3",
 "fi": "Minun skuuttini on uusi ja nopea. Mutta minulla on lyhyet jalat.",
 "sv": "Ny och snabb sparkcykel. Korta ben, bara. Det går ändå."
 },
 "p13f-09s": {
-"f": null,
+"f": "audio/p13f-09s.mp3",
 "fi": "Ny och snabb sparkcykel. Korta ben, bara. Det går ändå.",
 "sv": ""
 },
 "p13f-10": {
-"f": null,
+"f": "audio/p13f-10.mp3",
 "fi": "Paksu takki on hyvä talvella. Ohut takki on hyvä keväällä.",
 "sv": "Tjock jacka på vintern, tunn på våren. Och taggar året runt."
 },
 "p13f-10s": {
-"f": null,
+"f": "audio/p13f-10s.mp3",
 "fi": "Tjock jacka på vintern, tunn på våren. Och taggar året runt.",
 "sv": ""
 },
 "p13f-11": {
-"f": null,
+"f": "audio/p13f-11.mp3",
 "fi": "Nyt kaikki tavarat ovat kotona. Löytötavaratoimisto on tyhjä!",
 "sv": "Allt har hittat hem. Tomt! Fast... vems är den här strumpan?"
 },
 "p13f-11s": {
-"f": null,
+"f": "audio/p13f-11s.mp3",
 "fi": "Allt har hittat hem. Tomt! Fast... vems är den här strumpan?",
 "sv": ""
 },
 "w12-kaunis": {
-"f": null,
+"f": "audio/w12-kaunis.mp3",
 "fi": "Kaunis.",
 "sv": "Vacker."
 },
 "w12-ruma": {
-"f": null,
+"f": "audio/w12-ruma.mp3",
 "fi": "Ruma.",
 "sv": "Ful."
 },
 "w12-lyhyt": {
-"f": null,
+"f": "audio/w12-lyhyt.mp3",
 "fi": "Lyhyt.",
 "sv": "Kort."
 },
 "w12-pitkä": {
-"f": null,
+"f": "audio/w12-pitka.mp3",
 "fi": "Pitkä.",
 "sv": "Lång."
 },
 "w12-hyvä": {
-"f": null,
+"f": "audio/w12-hyva.mp3",
 "fi": "Hyvä.",
 "sv": "Bra."
 },
 "w12-huono": {
-"f": null,
+"f": "audio/w12-huono.mp3",
 "fi": "Huono.",
 "sv": "Dålig."
 },
 "w12-oikein": {
-"f": null,
+"f": "audio/w12-oikein.mp3",
 "fi": "Oikein.",
 "sv": "Rätt."
 },
 "w12-väärin": {
-"f": null,
+"f": "audio/w12-vaarin.mp3",
 "fi": "Väärin.",
 "sv": "Fel."
 },
 "w12-helppo": {
-"f": null,
+"f": "audio/w12-helppo.mp3",
 "fi": "Helppo.",
 "sv": "Lätt."
 },
 "w12-vaikea": {
-"f": null,
+"f": "audio/w12-vaikea.mp3",
 "fi": "Vaikea.",
 "sv": "Svår."
 },
 "w12-iso": {
-"f": null,
+"f": "audio/w12-iso.mp3",
 "fi": "Iso.",
 "sv": "Stor."
 },
 "w12-pieni": {
-"f": null,
+"f": "audio/w12-pieni.mp3",
 "fi": "Pieni.",
 "sv": "Liten."
 },
 "w12-kuuma": {
-"f": null,
+"f": "audio/w12-kuuma.mp3",
 "fi": "Kuuma.",
 "sv": "Varm."
 },
 "w12-kylmä": {
-"f": null,
+"f": "audio/w12-kylma.mp3",
 "fi": "Kylmä.",
 "sv": "Kall."
 },
 "w12-likainen": {
-"f": null,
+"f": "audio/w12-likainen.mp3",
 "fi": "Likainen.",
 "sv": "Smutsig."
 },
 "w12-puhdas": {
-"f": null,
+"f": "audio/w12-puhdas.mp3",
 "fi": "Puhdas.",
 "sv": "Ren."
 },
 "w12-matala": {
-"f": null,
+"f": "audio/w12-matala.mp3",
 "fi": "Matala.",
 "sv": "Låg."
 },
 "w12-korkea": {
-"f": null,
+"f": "audio/w12-korkea.mp3",
 "fi": "Korkea.",
 "sv": "Hög."
 },
 "w12-kevyt": {
-"f": null,
+"f": "audio/w12-kevyt.mp3",
 "fi": "Kevyt.",
 "sv": "Lätt."
 },
 "w12-painava": {
-"f": null,
+"f": "audio/w12-painava.mp3",
 "fi": "Painava.",
 "sv": "Tung."
 },
 "w12-valkoinen": {
-"f": null,
+"f": "audio/w12-valkoinen.mp3",
 "fi": "Valkoinen.",
 "sv": "Vit."
 },
 "w12-musta": {
-"f": null,
+"f": "audio/w12-musta.mp3",
 "fi": "Musta.",
 "sv": "Svart."
 },
 "w12-auki": {
-"f": null,
+"f": "audio/w12-auki.mp3",
 "fi": "Auki.",
 "sv": "Öppen."
 },
 "w12-kiinni": {
-"f": null,
+"f": "audio/w12-kiinni.mp3",
 "fi": "Kiinni.",
 "sv": "Stängd."
 },
 "w12-täynnä": {
-"f": null,
+"f": "audio/w12-taynna.mp3",
 "fi": "Täynnä.",
 "sv": "Full."
 },
 "w12-tyhjä": {
-"f": null,
+"f": "audio/w12-tyhja.mp3",
 "fi": "Tyhjä.",
 "sv": "Tom."
 },
 "w12-leveä": {
-"f": null,
+"f": "audio/w12-levea.mp3",
 "fi": "Leveä.",
 "sv": "Bred."
 },
 "w12-kapea": {
-"f": null,
+"f": "audio/w12-kapea.mp3",
 "fi": "Kapea.",
 "sv": "Smal."
 },
 "w12-hidas": {
-"f": null,
+"f": "audio/w12-hidas.mp3",
 "fi": "Hidas.",
 "sv": "Långsam."
 },
 "w12-nopea": {
-"f": null,
+"f": "audio/w12-nopea.mp3",
 "fi": "Nopea.",
 "sv": "Snabb."
 },
 "w12-vanha": {
-"f": null,
+"f": "audio/w12-vanha.mp3",
 "fi": "Vanha.",
 "sv": "Gammal."
 },
 "w12-uusi": {
-"f": null,
+"f": "audio/w12-uusi.mp3",
 "fi": "Uusi.",
 "sv": "Ny."
 },
 "w12-ylös": {
-"f": null,
+"f": "audio/w12-ylos.mp3",
 "fi": "Ylös.",
 "sv": "Upp."
 },
 "w12-alas": {
-"f": null,
+"f": "audio/w12-alas.mp3",
 "fi": "Alas.",
 "sv": "Ner."
 }
