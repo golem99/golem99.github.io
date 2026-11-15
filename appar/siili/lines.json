@@ -7808,5 +7808,630 @@
 "f": "audio/p4s-02.mp3",
 "fi": "Ett, två, tre, fyra, fem! Hurra!",
 "sv": ""
+},
+"p5a-00": {
+"f": "audio/p5a-00.mp3",
+"fi": "Terve!",
+"sv": "Hej!"
+},
+"p5a-01": {
+"f": "audio/p5a-01.mp3",
+"fi": "Moi! Me olemme Siili ja Orava.",
+"sv": "Hej! Vi är Siili och Orava."
+},
+"p5a-02": {
+"f": "audio/p5a-02.mp3",
+"fi": "Ja te olette...?",
+"sv": "Och ni är …?"
+},
+"p5a-03": {
+"f": "audio/p5a-03.mp3",
+"fi": "Me olemme Saga ja Siili.",
+"sv": "Vi är Saga och Siili."
+},
+"p5a-04": {
+"f": "audio/p5a-04.mp3",
+"fi": "Minä olen. Sinä olet. Hän on.",
+"sv": "Jag är. Du är. Han eller hon är."
+},
+"p5a-05": {
+"f": "audio/p5a-05.mp3",
+"fi": "Me olemme. Te olette. He ovat.",
+"sv": "Vi är. Ni är. De är."
+},
+"p5a-06": {
+"f": "audio/p5a-06.mp3",
+"fi": "Ne ovat.",
+"sv": "De är (djur och saker)."
+},
+"p5a-07": {
+"f": "audio/p5a-07.mp3",
+"fi": "Me.",
+"sv": "Vi."
+},
+"p5a-08": {
+"f": "audio/p5a-08.mp3",
+"fi": "Te.",
+"sv": "Ni."
+},
+"p5a-09": {
+"f": "audio/p5a-09.mp3",
+"fi": "He.",
+"sv": "De (människor)."
+},
+"p5a-10": {
+"f": "audio/p5a-10.mp3",
+"fi": "Ne.",
+"sv": "De (djur och saker)."
+},
+"p5a-11": {
+"f": "audio/p5a-11.mp3",
+"fi": "Me olemme ystäviä.",
+"sv": "Vi är kompisar."
+},
+"p5a-12": {
+"f": "audio/p5a-12.mp3",
+"fi": "Te olette Saga ja Noa.",
+"sv": "Ni är Saga och Noa."
+},
+"p5a-13": {
+"f": "audio/p5a-13.mp3",
+"fi": "He ovat lapsia.",
+"sv": "De är barn."
+},
+"p5a-14": {
+"f": "audio/p5a-14.mp3",
+"fi": "Ne ovat eläimiä.",
+"sv": "De är djur."
+},
+"p5a-15": {
+"f": "audio/p5a-15.mp3",
+"fi": "Ne ovat palloja.",
+"sv": "De är bollar."
+},
+"p5a-16": {
+"f": "audio/p5a-16.mp3",
+"fi": "Hetkinen! Me olemme ne?",
+"sv": "Vänta lite! Är vi ne?"
+},
+"p5a-17": {
+"f": "audio/p5a-17.mp3",
+"fi": "Me emme ole ne! Me olemme me!",
+"sv": "Vi är inte ne! Vi är me!"
+},
+"p5a-18": {
+"f": "audio/p5a-18.mp3",
+"fi": "Pelataanko jotain?",
+"sv": "Ska vi spela något?"
+},
+"p5a-19": {
+"f": "audio/p5a-19.mp3",
+"fi": "Kuinka monta meitä on?",
+"sv": "Hur många är vi?"
+},
+"p5a-20": {
+"f": "audio/p5a-20.mp3",
+"fi": "Meitä on kaksi.",
+"sv": "Vi är två."
+},
+"p5a-21": {
+"f": "audio/p5a-21.mp3",
+"fi": "Meitä on kolme.",
+"sv": "Vi är tre."
+},
+"p5a-22": {
+"f": "audio/p5a-22.mp3",
+"fi": "Meitä on neljä.",
+"sv": "Vi är fyra."
+},
+"p5a-23": {
+"f": "audio/p5a-23.mp3",
+"fi": "Mä oon Siili. Se on puhekieltä.",
+"sv": "Jag är Siili. Det är talspråk."
+},
+"p5a-24": {
+"f": "audio/p5a-24.mp3",
+"fi": "Mä oon. Minä olen.",
+"sv": "Mä oon. Minä olen."
+},
+"p5b-00": {
+"f": "audio/p5b-00.mp3",
+"fi": "Leikitäänkö kirkkistä?",
+"sv": "Ska vi leka kyrkråtta?"
+},
+"p5b-01": {
+"f": "audio/p5b-01.mp3",
+"fi": "Hyvä idea!",
+"sv": "Bra idé!"
+},
+"p5b-02": {
+"f": "audio/p5b-02.mp3",
+"fi": "Kirkkis.",
+"sv": "Kyrkråtta."
+},
+"p5b-03": {
+"f": "audio/p5b-03.mp3",
+"fi": "Tervapata.",
+"sv": "Tjärbytta."
+},
+"p5b-04": {
+"f": "audio/p5b-04.mp3",
+"fi": "Purkkis.",
+"sv": "Burken."
+},
+"p5b-05": {
+"f": "audio/p5b-05.mp3",
+"fi": "Piiloleikki.",
+"sv": "Kurragömma."
+},
+"p5b-06": {
+"f": "audio/p5b-06.mp3",
+"fi": "Ristinolla.",
+"sv": "Tre i rad."
+},
+"p5b-07": {
+"f": "audio/p5b-07.mp3",
+"fi": "Laiva on lastattu.",
+"sv": "Skeppet är lastat."
+},
+"p5b-08": {
+"f": "audio/p5b-08.mp3",
+"fi": "Kymmenen tikkua laudalla.",
+"sv": "Tio pinnar på brädan."
+},
+"p5b-09": {
+"f": "audio/p5b-09.mp3",
+"fi": "Hedelmäsalaatti.",
+"sv": "Fruktsallad."
+},
+"p5b-10": {
+"f": "audio/p5b-10.mp3",
+"fi": "Mikä leikki tämä on?",
+"sv": "Vilken lek är det här?"
+},
+"p5b-11": {
+"f": "audio/p5b-11.mp3",
+"fi": "Piiloleikki! Minä lasken.",
+"sv": "Kurragömma! Jag räknar."
+},
+"p5b-12": {
+"f": "audio/p5b-12.mp3",
+"fi": "Yksi, kaksi, kolme, neljä, viisi, kuusi, seitsemän, kahdeksan, yhdeksän, kymmenen!",
+"sv": "Ett, två, tre, fyra, fem, sex, sju, åtta, nio, tio!"
+},
+"p5b-13": {
+"f": "audio/p5b-13.mp3",
+"fi": "Valmis tai ei, täältä tullaan!",
+"sv": "Den som inte gömt sig, han ska bli tagen!"
+},
+"p5b-14": {
+"f": "audio/p5b-14.mp3",
+"fi": "Missä sinä olet?",
+"sv": "Var är du?"
+},
+"p5b-15": {
+"f": "audio/p5b-15.mp3",
+"fi": "Löysin sinut, Orava!",
+"sv": "Jag hittade dig, Orava!"
+},
+"p5b-16": {
+"f": "audio/p5b-16.mp3",
+"fi": "Löysin sinut, Pöllö-ope!",
+"sv": "Jag hittade dig, Pöllö-ope!"
+},
+"p5b-17": {
+"f": "audio/p5b-17.mp3",
+"fi": "Ristinolla! Minä olen risti.",
+"sv": "Tre i rad! Jag är kryss."
+},
+"p5b-18": {
+"f": "audio/p5b-18.mp3",
+"fi": "Sinä olet nolla.",
+"sv": "Du är ring."
+},
+"p5b-19": {
+"f": "audio/p5b-19.mp3",
+"fi": "Sinun vuorosi.",
+"sv": "Din tur."
+},
+"p5b-20": {
+"f": "audio/p5b-20.mp3",
+"fi": "Minun vuoroni.",
+"sv": "Min tur."
+},
+"p5b-21": {
+"f": "audio/p5b-21.mp3",
+"fi": "Kolme suoraan! Sinä voitit!",
+"sv": "Tre i rad! Du vann!"
+},
+"p5b-22": {
+"f": "audio/p5b-22.mp3",
+"fi": "Kolme suoraan! Minä voitin!",
+"sv": "Tre i rad! Jag vann!"
+},
+"p5b-23": {
+"f": "audio/p5b-23.mp3",
+"fi": "Pelataanko vai leikitäänkö?",
+"sv": "Ska vi spela eller leka?"
+},
+"p5b-24": {
+"f": "audio/p5b-24.mp3",
+"fi": "Vai?",
+"sv": "Eller?"
+},
+"p5b-25": {
+"f": "audio/p5b-25.mp3",
+"fi": "Kirjoita oikea muoto!",
+"sv": "Skriv rätt form!"
+},
+"p5b-26": {
+"f": "audio/p5b-26.mp3",
+"fi": "Hienoa!",
+"sv": "Bra!"
+},
+"q5-00": {
+"f": "audio/q5-00.mp3",
+"fi": "Terve!",
+"sv": "Hej!"
+},
+"q5-01": {
+"f": "audio/q5-01.mp3",
+"fi": "Me olemme Siili ja Orava!",
+"sv": "Vi är Siili och Orava!"
+},
+"q5-02": {
+"f": "audio/q5-02.mp3",
+"fi": "Hyvä idea!",
+"sv": "Bra idé!"
+},
+"q5-03": {
+"f": "audio/q5-03.mp3",
+"fi": "Eikä ole! Minä en ole ne!",
+"sv": "Visst inte! Jag är inte ne!"
+},
+"q5-04": {
+"f": "audio/q5-04.mp3",
+"fi": "Hups! Löysit minut!",
+"sv": "Hoppsan! Du hittade mig!"
+},
+"q5-05": {
+"f": "audio/q5-05.mp3",
+"fi": "Minä olen nolla. Ja minä voitin!",
+"sv": "Jag är ring. Och jag vann!"
+},
+"o5-00": {
+"f": "audio/o5-00.mp3",
+"fi": "Terve, lapset!",
+"sv": "Hej, barn!"
+},
+"o5-01": {
+"f": "audio/o5-01.mp3",
+"fi": "Te olette Saga ja Siili.",
+"sv": "Ni är Saga och Siili."
+},
+"o5-02": {
+"f": "audio/o5-02.mp3",
+"fi": "Siili, eläimet ovat ne. Mutta te olette ystäviä.",
+"sv": "Siili, djur är ne. Men ni är kompisar."
+},
+"o5-03": {
+"f": "audio/o5-03.mp3",
+"fi": "Yksiii... kaksiii... kolmeee...",
+"sv": "Ett … två … tre …"
+},
+"o5-04": {
+"f": "audio/o5-04.mp3",
+"fi": "Löysit minut! Olipa hyvä piilopaikka.",
+"sv": "Du hittade mig! Vilket bra gömställe."
+},
+"p5f-00": {
+"f": "audio/p5f-00.mp3",
+"fi": "Torilla on aina paljon ihmisiä. Ja yksi siili.",
+"sv": "Torget! Massor av folk. Och en igelkott."
+},
+"p5f-01": {
+"f": "audio/p5f-01.mp3",
+"fi": "Minä rakastan piiloleikkiä. Minä olen pieni, ja piilopaikkoja on paljon.",
+"sv": "Kurragömma är bäst. Jag är liten, och det finns hur många gömställen som helst."
+},
+"p5f-02": {
+"f": "audio/p5f-02.mp3",
+"fi": "Mutta Orava löytää minut aina. Hän näkee piikit.",
+"sv": "Men Orava hittar mig alltid. Taggarna sticker ut. Bokstavligen."
+},
+"p5f-03": {
+"f": "audio/p5f-03.mp3",
+"fi": "Kerran minä piilouduin kukkaruukkuun. Se oli piikikäs paikka.",
+"sv": "En gång gömde jag mig i en blomkruka. Det var stickigt. För blomman."
+},
+"p5f-04": {
+"f": "audio/p5f-04.mp3",
+"fi": "Pöllö-ope laskee tosi hitaasti. Yksiii... kaksiii...",
+"sv": "Ugglan räknar jättelångsamt. Ett... två... Jag hinner somna."
+},
+"p5f-05": {
+"f": "audio/p5f-05.mp3",
+"fi": "Ristinollassa minä olen aina risti. Nolla on liian pyöreä.",
+"sv": "I tre i rad är jag alltid kryss. Nollan är för rund. Den rullar iväg."
+},
+"p5f-06": {
+"f": "audio/p5f-06.mp3",
+"fi": "Kirkkis on vähän pelottava leikki. Kirkko ja rotta... huh!",
+"sv": "Kyrkråtta låter lite läskigt. En kyrka och en råtta... hu!"
+},
+"p5f-07": {
+"f": "audio/p5f-07.mp3",
+"fi": "Laiva on lastattu... banaaneilla! Minä sanon aina banaaneilla.",
+"sv": "Skeppet är lastat med... bananer! Jag säger alltid bananer."
+},
+"p5f-08": {
+"f": "audio/p5f-08.mp3",
+"fi": "Hedelmäsalaatissa kaikki juoksevat. Minä käperryn palloksi.",
+"sv": "I fruktsallad springer alla. Jag rullar ihop mig. Det räknas också."
+},
+"p5f-09": {
+"f": "audio/p5f-09.mp3",
+"fi": "Me olemme kolme ystävää. Hyvä idea, eikö?",
+"sv": "Vi är tre kompisar. Bra idé, eller hur?"
+},
+"p5f-00s": {
+"f": "audio/p5f-00s.mp3",
+"fi": "Torget! Massor av folk. Och en igelkott.",
+"sv": ""
+},
+"p5f-01s": {
+"f": "audio/p5f-01s.mp3",
+"fi": "Kurragömma är bäst. Jag är liten, och det finns hur många gömställen som helst.",
+"sv": ""
+},
+"p5f-02s": {
+"f": "audio/p5f-02s.mp3",
+"fi": "Men Orava hittar mig alltid. Taggarna sticker ut. Bokstavligen.",
+"sv": ""
+},
+"p5f-03s": {
+"f": "audio/p5f-03s.mp3",
+"fi": "En gång gömde jag mig i en blomkruka. Det var stickigt. För blomman.",
+"sv": ""
+},
+"p5f-04s": {
+"f": "audio/p5f-04s.mp3",
+"fi": "Ugglan räknar jättelångsamt. Ett... två... Jag hinner somna.",
+"sv": ""
+},
+"p5f-05s": {
+"f": "audio/p5f-05s.mp3",
+"fi": "I tre i rad är jag alltid kryss. Nollan är för rund. Den rullar iväg.",
+"sv": ""
+},
+"p5f-06s": {
+"f": "audio/p5f-06s.mp3",
+"fi": "Kyrkråtta låter lite läskigt. En kyrka och en råtta... hu!",
+"sv": ""
+},
+"p5f-07s": {
+"f": "audio/p5f-07s.mp3",
+"fi": "Skeppet är lastat med... bananer! Jag säger alltid bananer.",
+"sv": ""
+},
+"p5f-08s": {
+"f": "audio/p5f-08s.mp3",
+"fi": "I fruktsallad springer alla. Jag rullar ihop mig. Det räknas också.",
+"sv": ""
+},
+"p5f-09s": {
+"f": "audio/p5f-09s.mp3",
+"fi": "Vi är tre kompisar. Bra idé, eller hur?",
+"sv": ""
+},
+"p5s-00": {
+"f": "audio/p5s-00.mp3",
+"fi": "Nu kan jag en svensk lek! Ska vi leka kyrkråtta?",
+"sv": ""
+},
+"p5s-01": {
+"f": "audio/p5s-01.mp3",
+"fi": "Jag är kyrka. Du är råtta.",
+"sv": ""
+},
+"p5s-02": {
+"f": "audio/p5s-02.mp3",
+"fi": "Vänta... varför är jag kyrka? Jag vill också vara råtta!",
+"sv": ""
+},
+"p5s-03": {
+"f": "audio/p5s-03.mp3",
+"fi": "Bra idé!",
+"sv": ""
+},
+"bn-00": {
+"f": "audio/bn-00.mp3",
+"fi": "Hups! Ei ihan.",
+"sv": "Hoppsan! Inte riktigt."
+},
+"bn-01": {
+"f": "audio/bn-01.mp3",
+"fi": "Hmm... yritä uudestaan!",
+"sv": "Hmm … försök igen!"
+},
+"bn-02": {
+"f": "audio/bn-02.mp3",
+"fi": "Melkein! Minä tein saman virheen eilen. Ja tänään.",
+"sv": "Nästan! Jag gjorde samma fel i går. Och i dag."
+},
+"bn-03": {
+"f": "audio/bn-03.mp3",
+"fi": "Ei hätää. Siilit eivät koskaan hätäile.",
+"sv": "Ingen fara. Igelkottar har aldrig bråttom."
+},
+"bn-04": {
+"f": "audio/bn-04.mp3",
+"fi": "Jes! Oikein!",
+"sv": "Ja! Rätt!"
+},
+"bn-05": {
+"f": "audio/bn-05.mp3",
+"fi": "Sinä olet nopeampi kuin Orava!",
+"sv": "Du är snabbare än Orava!"
+},
+"bn-06": {
+"f": "audio/bn-06.mp3",
+"fi": "Huippua! Piikit nousevat pystyyn!",
+"sv": "Toppen! Taggarna reser sig!"
+},
+"bn-07": {
+"f": "audio/bn-07.mp3",
+"fi": "Huh, kiipeilyteline on tosi korkea. Minä katson täältä alhaalta.",
+"sv": "Puh, klätterställningen är jättehög. Jag tittar härifrån."
+},
+"bn-08": {
+"f": "audio/bn-08.mp3",
+"fi": "Liukumäki! Viuuuuh!",
+"sv": "Rutschkanan! Viuuuuh!"
+},
+"bn-09": {
+"f": "audio/bn-09.mp3",
+"fi": "Keinu... maailma pyörii...",
+"sv": "Gungan … världen snurrar …"
+},
+"bn-10": {
+"f": "audio/bn-10.mp3",
+"fi": "Hiekkaa! Hiekkaa piikeissä! Kaikkialla!",
+"sv": "Sand! Sand i taggarna! Överallt!"
+},
+"bn-11": {
+"f": "audio/bn-11.mp3",
+"fi": "Au! Omena putosi! Kiitos, puu.",
+"sv": "Aj! Ett äpple ramlade! Tack, trädet."
+},
+"bn-12": {
+"f": "audio/bn-12.mp3",
+"fi": "Yksi, kaksi, kolme... missä minä olin?",
+"sv": "Ett, två, tre … var var jag?"
+},
+"bn-13": {
+"f": "audio/bn-13.mp3",
+"fi": "Minä osaan laskea! Paitsi yksitoista. Se on vaikea.",
+"sv": "Jag kan räkna! Utom elva. Den är svår."
+},
+"bn-14": {
+"f": "audio/bn-14.mp3",
+"fi": "Kymmenen omenaa. Ja yksi nälkäinen siili.",
+"sv": "Tio äpplen. Och en hungrig igelkott."
+},
+"bn-15": {
+"f": "audio/bn-15.mp3",
+"fi": "Kaksi plus kaksi on... kala! Ei, ei. Neljä!",
+"sv": "Två plus två är … fisk! Nej, nej. Fyra!"
+},
+"bn-16": {
+"f": "audio/bn-16.mp3",
+"fi": "Shh! Minä piiloudun. Älä kerro Oravalle!",
+"sv": "Sch! Jag gömmer mig. Säg inget till Orava!"
+},
+"bn-17": {
+"f": "audio/bn-17.mp3",
+"fi": "Ne? Minä en ole ne. Minä olen Siili!",
+"sv": "Ne? Jag är inte ne. Jag är Siili!"
+},
+"bn-18": {
+"f": "audio/bn-18.mp3",
+"fi": "Kuusi? Kuusi on numero. Ja kuusi on puu! Kuusi kuusta!",
+"sv": "Kuusi? Sex är ett tal. Och gran är ett träd! Sex granar!"
+},
+"bn-19": {
+"f": "audio/bn-19.mp3",
+"fi": "Tuli? Tuli on tulta. Ja Orava tuli. Tuli tuli!",
+"sv": "Tuli? Eld. Och Orava kom. Kom, eld!"
+},
+"bn-20": {
+"f": "audio/bn-20.mp3",
+"fi": "Kiva tavata. Tavata on myös lukea hitaasti. Ta-va-ta!",
+"sv": "Roligt att träffas. Tavata är också att stava långsamt. Ta-va-ta!"
+},
+"bn-21": {
+"f": "audio/bn-21.mp3",
+"fi": "Maali on maali. Ja maali on väriä. Minä maalaan maalin!",
+"sv": "Maali är mål. Och maali är färg. Jag målar målet!"
+},
+"bn-22": {
+"f": "audio/bn-22.mp3",
+"fi": "Hups. Se ei ollut minä. Se oli minun piikkini.",
+"sv": "Hoppsan. Det var inte jag. Det var mina taggar."
+},
+"bq-00": {
+"f": "audio/bq-00.mp3",
+"fi": "Siili, sinulla on omena selässä!",
+"sv": "Siili, du har ett äpple på ryggen!"
+},
+"bq-01": {
+"f": "audio/bq-01.mp3",
+"fi": "Minä näen sinut! Piikit näkyvät!",
+"sv": "Jag ser dig! Taggarna syns!"
+},
+"bq-02": {
+"f": "audio/bq-02.mp3",
+"fi": "Minä olen nopein!",
+"sv": "Jag är snabbast!"
+},
+"bq-03": {
+"f": "audio/bq-03.mp3",
+"fi": "Eikä ole! Minä en laske. Minä hyppään!",
+"sv": "Visst inte! Jag räknar inte. Jag hoppar!"
+},
+"bq-04": {
+"f": "audio/bq-04.mp3",
+"fi": "Kuusi kuusta! Kuusi kuusta! Hihihi!",
+"sv": "Sex granar! Sex granar! Hihihi!"
+},
+"bo-00": {
+"f": "audio/bo-00.mp3",
+"fi": "Hiljaa, olkaa hyvä.",
+"sv": "Tyst, tack."
+},
+"bo-01": {
+"f": "audio/bo-01.mp3",
+"fi": "Hyvä, Saga!",
+"sv": "Bra, Saga!"
+},
+"bo-02": {
+"f": "audio/bo-02.mp3",
+"fi": "Siili, omena on päälläsi.",
+"sv": "Siili, du har ett äpple på dig."
+},
+"bo-03": {
+"f": "audio/bo-03.mp3",
+"fi": "Hoo hoo... anteeksi, minä nukahdin.",
+"sv": "Hoo hoo … förlåt, jag somnade."
+},
+"bns-00": {
+"f": "audio/bns-00.mp3",
+"fi": "Kuusi betyder sex. Och gran! Sex granar blir kuusi kuusta. Snurrigt!",
+"sv": ""
+},
+"bns-01": {
+"f": "audio/bns-01.mp3",
+"fi": "Tuli betyder eld. Men det betyder också kom. Orava kom, tuli. Elden kom? Nej, vänta...",
+"sv": ""
+},
+"bns-02": {
+"f": "audio/bns-02.mp3",
+"fi": "Tavata betyder träffas. Men också att stava långsamt. Roligt att stava dig!",
+"sv": ""
+},
+"bns-03": {
+"f": "audio/bns-03.mp3",
+"fi": "Maali är mål. Och färg. Jag målar målet. Med färg. Som heter mål.",
+"sv": ""
+},
+"bns-04": {
+"f": "audio/bns-04.mp3",
+"fi": "Två plus två är fyra. Inte fisk. Det vet jag nu.",
+"sv": ""
+},
+"bns-05": {
+"f": "audio/bns-05.mp3",
+"fi": "Hoppsan, det där var fel. Det var inte jag. Det var mina taggar.",
+"sv": ""
 }
 }

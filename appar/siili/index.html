@@ -3006,6 +3006,44 @@ CHS.push({n:'13 · Eetin skuutti',h:'Eetin skuutti',sub:'Kapitel 13 · Hittegods
 if(AUTO){const _v=window.__view;window.__view=async(n,q=0)=>{if(n==='lost'||n==='lostbox'||n==='lostguests'){await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');await toLost();play('idle');
   if(n==='lostbox')await camBox13();if(n==='lostguests'){const a=await waitG13('pk');if(a){a.position.set(.36,0,.12);a.visible=true;a.rotation.y=-.4}const m=await waitG13('mato');if(m){m.position.set(-.3,0,.1);m.visible=true;m.userData.hat.visible=true}}return 'ok'}return _v(n,q)}}
 
+/* ---------- extra colour for the playground, the apple yard and the square (2026-11-16) ----------
+   Bunting, flower beds, butterflies, drifting leaves and balloons. Everything animates only while its scene is shown. */
+function bunting6(S,pts,cols=['#e8423a','#f2c230','#4f9a4a','#3f74b8','#e87ab0','#f28a2e']){const G=new THREE.Group();
+  for(let s=0;s<pts.length-1;s++){const a=new THREE.Vector3(...pts[s]),b=new THREE.Vector3(...pts[s+1]);const n=Math.max(4,Math.round(a.distanceTo(b)/.45));
+    const cord=new THREE.CatmullRomCurve3([a,a.clone().lerp(b,.5).add(new THREE.Vector3(0,-.35,0)),b]);G.add(new THREE.Mesh(new THREE.TubeGeometry(cord,24,.008,5),M6('#f4efe6')));
+    for(let i=1;i<n;i++){const p=cord.getPoint(i/n);const f=new THREE.Mesh(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-.11,0,0),new THREE.Vector3(.11,0,0),new THREE.Vector3(0,-.26,0)]),new THREE.MeshStandardMaterial({color:cols[(i+s)%cols.length],side:THREE.DoubleSide,roughness:.8}));
+      f.geometry.computeVertexNormals();f.position.copy(p);f.lookAt(p.clone().add(new THREE.Vector3(b.z-a.z,0,a.x-b.x)));f.userData.ph=Math.random()*6;G.add(f)}}
+  S.add(G);(function tick(now){requestAnimationFrame(tick);if(scene!==S)return;for(const f of G.children)if(f.userData.ph!==undefined)f.rotation.x=Math.sin(now/600+f.userData.ph)*.18})(0);return G}
+function flowers6(S,cx,cz,r,n=40,cols=['#e8423a','#f2c230','#e87ab0','#ffffff','#9b6fd0','#f28a2e']){const G=new THREE.Group();const stem=M6('#4f8a3a');
+  for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,d=Math.sqrt(Math.random())*r;const x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d,h=R01(.08,.18);
+    const s=new THREE.Mesh(new THREE.CylinderGeometry(.006,.006,h,4),stem);s.position.set(x,h/2,z);G.add(s);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(R01(.022,.04),8,6),M6(rnd(cols),{roughness:.7}));head.scale.y=.6;head.position.set(x,h,z);G.add(head)}
+  S.add(G);return G}
+function butterflies6(S,cx,cy,cz,n=5,R=2){const cols=['#f2c230','#e87ab0','#ffffff','#f28a2e','#7fb8e8'];const B=[];
+  for(let i=0;i<n;i++){const g=new THREE.Group();const m=new THREE.MeshStandardMaterial({color:rnd(cols),side:THREE.DoubleSide,roughness:.6});
+    for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.CircleGeometry(.03,10),m);w.scale.set(1,1.4,1);w.position.x=s*.028;w.userData.s=s;g.add(w)}
+    g.userData={ph:Math.random()*10,sp:R01(.3,.6),r:R01(.4,R),h:R01(.3,1.6)};S.add(g);B.push(g)}
+  (function tick(now){requestAnimationFrame(tick);if(scene!==S)return;const t=now/1000;for(const g of B){const u=g.userData,a=t*u.sp+u.ph;
+    g.position.set(cx+Math.cos(a)*u.r,cy+u.h+Math.sin(t*2.3+u.ph)*.15,cz+Math.sin(a*1.3)*u.r*.6);g.rotation.y=-a;for(const w of g.children)w.rotation.y=w.userData.s*Math.abs(Math.sin(t*14+u.ph))*1.2}})(0)}
+function leaves6(S,cx,cy,cz,sx,sz,n=40,cols=['#d9a441','#c46a2e','#b8402a','#e0b84a','#9aa83a']){const L=[];
+  for(let i=0;i<n;i++){const l=new THREE.Mesh(new THREE.CircleGeometry(.035,6),new THREE.MeshStandardMaterial({color:rnd(cols),side:THREE.DoubleSide,roughness:.8}));l.scale.y=.55;
+    l.userData={x:cx+R01(-sx,sx),z:cz+R01(-sz,sz),y:R01(0,cy),v:R01(.12,.3),ph:Math.random()*6};S.add(l);L.push(l)}
+  let last=performance.now();(function tick(now){requestAnimationFrame(tick);if(scene!==S){last=now;return}const dt=Math.min(.05,(now-last)/1000);last=now;
+    for(const l of L){const u=l.userData;u.y-=u.v*dt;if(u.y<.01){u.y=cy;u.x=cx+R01(-sx,sx);u.z=cz+R01(-sz,sz)}l.position.set(u.x+Math.sin(now/700+u.ph)*.25,u.y,u.z+Math.cos(now/900+u.ph)*.15);l.rotation.set(now/400+u.ph,now/600,0)}})(0)}
+function balloons6(S,x,y,z,cols=['#e8423a','#f2c230','#3f74b8','#e87ab0']){const G=new THREE.Group();
+  cols.forEach((c,i)=>{const b=new THREE.Mesh(new THREE.SphereGeometry(.13,18,14),M6(c,{roughness:.25,metalness:.05}));b.scale.y=1.2;const ox=(i-1.5)*.18,oy=.9+(i%2)*.18;b.position.set(ox,oy,0);b.userData.ph=i*1.7;G.add(b);
+    const s=new THREE.Mesh(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(ox,oy-.16,0),new THREE.Vector3(0,0,0)]),new THREE.LineBasicMaterial({color:'#666'}));G.add(new THREE.Line(s.geometry,s.material))});
+  G.position.set(x,y,z);S.add(G);(function tick(now){requestAnimationFrame(tick);if(scene!==S)return;for(const b of G.children)if(b.userData.ph!==undefined)b.position.y+=Math.sin(now/800+b.userData.ph)*.0008})(0);return G}
+
+let decor3=false,decor4=false;
+function decorate3(){if(decor3)return;decor3=true;const S=playS;S.background=new THREE.Color('#bfe0f5');
+  bunting6(S,[[-2.4,2.5,-4.4],[0,2.4,-4.2],[1.9,2.3,-3.5]]);bunting6(S,[[-2.4,1.4,-2.6],[-1.2,2,-1.6],[1.5,1.8,-1.4]],['#f2c230','#e87ab0','#7fb8e8','#ffffff']);
+  flowers6(S,-1.2,-.4,.5,40);flowers6(S,2.7,-1.6,.6,40);flowers6(S,-3.8,-3.2,.7,50);flowers6(S,.2,-6.6,1.2,70);
+  butterflies6(S,.2,.1,-1.6,6,2.2);leaves6(S,0,2.6,-2.5,4,3,30);balloons6(S,2.85,.45,.55)}
+function decorate4(){if(decor4)return;decor4=true;const S=appleS;S.background=new THREE.Color('#c4e2f5');
+  bunting6(S,[[-4,2.6,-7.6],[0,2.8,-7.4],[4.6,2.6,-6.2]]);flowers6(S,1.6,-.4,.5,40);flowers6(S,-1.9,-.2,.5,40,['#f2c230','#ffffff','#e8423a']);flowers6(S,3.5,-3.5,.8,40);
+  butterflies6(S,-.4,.2,-1.2,5,1.8);leaves6(S,-.4,3.2,-1.4,1.6,1.4,26,['#6f9a46','#9aa83a','#d9a441','#c46a2e'])}
+
 /* ================= Osa 1 · Kapitel 3 · Kiva tavata! – lekplatsen (2026-11-15) =================
    Eight parts on the playground built in buildPlay(). Repetition at the start of part 3–7, a word counts as learnt
    after two first-try answers. Lines: p3a- (hälsningar, Kuka hän on?), p3b- (hän vai se, olen/olet/on, ordsöket),
@@ -3058,13 +3096,13 @@ function guestsOut3(){for(const g of[sq3,owl3])if(g)g.visible=false}
 const camHome3=()=>camTo(PLAY_CAM[0],PLAY_CAM[1],1000);
 const camLook3=(p,ms=1100)=>camTo(new THREE.Vector3(.05,.5,1.25),new THREE.Vector3(...p),ms);
 const camGuests3=()=>camTo(new THREE.Vector3(.3,.34,1.05),new THREE.Vector3(.3,.2,-.2),1000);
-async function toPlay3(){if(scene!==playS){await toPlay();guestsOut3()}loadGuests3()}
+async function toPlay3(){if(scene!==playS){buildPlay();decorate3();await toPlay();guestsOut3()}loadGuests3()}
 
 /* ================= Part 1 · Hei! Kuka sinä olet? ================= */
 async function c3Hei(){await toPlay3();setMusic('home');play('wave');await tr11(P3A(0));
   play('present');await tr11(P3A(1));showWord('Minun nimeni on Siili.','Jag heter Siili.',2000);
   play('think');await tr11(P3A(2));showWord('Mun nimi on …','talspråk',1800);
-  play('happy');await tr11(P3A(3));play('wave');await tr11(P3A(4));await tr11(P3A(5));
+  play('happy');await tr11(P3A(3));play('wave');await tr11(P3A(4));play('think');await bt('bn-20');await bt('bns-02',{sub:false});await tr11(P3A(5));
   // the dialogue: Saga answers
   play('point');await say(P3A(0),{sub:false});
   let t=await mc11(shuffle([{t:'Moi! Minun nimeni on Saga.',ok:true},{t:'Kiitos samoin!'},{t:'Hän on Saga.'}]),{q:'Hei! Kuka sinä olet? Vad svarar du?'});addPaws(t?1:3);
@@ -3105,7 +3143,8 @@ async function c3Kuka(){await toPlay3();setMusic('home');await camGuests3();
 async function c3HanSe(){await toPlay3();await review3();setMusic('search');
   play('think');await tr11(P3B(0));showWord('hän','människa',1600);await say(P3B(8),{sub:false});showWord('se','djur, sak',1600);await say(P3B(9),{sub:false});await say(P3B(10),{sub:false});
   // a walk round the playground: everything is "se"
-  for(const th of THINGS3){await camLook3(th.look,900);play('point');showPic11(th.img,'');showWord(th.k,th.sv,1500);await say(P3B(th.l),{sub:false});hidePic();await sleep(200)}
+  const B3={kiipeilyteline:['bn-07'],'liukumäki':['bn-08'],keinu:['bn-09'],hiekkalaatikko:['bn-10'],maali:['bn-21','bns-03']};
+  for(const th of THINGS3){await camLook3(th.look,900);play('point');showPic11(th.img,'');showWord(th.k,th.sv,1500);await say(P3B(th.l),{sub:false});for(const b of B3[th.k]||[]){play(rnd(['happy','scared','think']));await bt(b,{sub:false})}hidePic();await sleep(200)}
   await camHome3();
   for(const th of shuffle(THINGS3).slice(0,4)){await camLook3(th.look,800);showPic11(th.img,'');ask('Vad är det på finska?');
     const t=await mc11(shuffle([th,...shuffle(THINGS3.filter(x=>x!==th)).slice(0,2)]).map(x=>({t:'Se on '+x.k+'.',ok:x===th})));hidePic();showWord(th.k,th.sv,1200);hit3('th-'+th.k,t);addPaws(t?1:3)}
@@ -3175,7 +3214,7 @@ async function c3Tell(){await toPlay3();await review3();setMusic('home');
   // Siili learns Swedish
   play('jump');await say(S3(0),{sub:false});play('happy');await say(S3(1),{sub:false});play('think');await say(S3(2),{sub:false});
   const t=await mc11(shuffle([{t:'Kiva tavata!',ok:true},{t:'Kiitos samoin!'},{t:'Hei hei!'}]),{q:'Hjälp Siili! Vad heter "Roligt att träffas!" på finska?'});addPaws(t?1:3);
-  play('wave');await say(S3(3),{sub:false});await praise()}
+  play('wave');await say(S3(3),{sub:false});play('shake');await bt('bn-22');await bt('bns-05',{sub:false});await praise()}
 
 /* ================= Part 8 · Koe – the test ================= */
 async function c3Test(){await toPlay3();setMusic('search');play('present');showWord('Koe!','prov',1800);await sleep(1200);
@@ -3243,21 +3282,21 @@ async function guestSay4(g,id){if(g&&!g.userData.sprite){if(!guestAnim(g,/talk|w
 function guestsOut4(){for(const g of[sq4,owl4])if(g)g.visible=false}
 const camHome4=()=>camTo(APPLE_CAM[0],APPLE_CAM[1],1000);
 const camTree4=()=>camTo(new THREE.Vector3(.2,1.1,2.9),new THREE.Vector3(-.4,2,-1.4),1200);
-async function toApple4(){if(scene!==appleS){await toApple();guestsOut4()}loadGuests4()}
+async function toApple4(){if(scene!==appleS){buildApple();decorate4();await toApple();guestsOut4()}loadGuests4()}
 
 /* ================= Part 1 · Kymmenen omenaa ================= */
 async function c4Apples(){await toApple4();resetApples6();setMusic('home');play('wave');
   // the numbers 0–10 first
-  for(let n=0;n<=10;n++){showWord(String(n),NUM4[n],900);await sayN4(n);await sleep(120)}
+  for(let n=0;n<=10;n++){showWord(String(n),NUM4[n],900);await sayN4(n);await sleep(120);if(n===6){play('think');await bt('bn-18');await bt('bns-00',{sub:false});await bt('bq-04',{sub:false})}}
   // the rhyme: one apple falls on every line
   await camTree4();play('present');await say(P4B(0));
-  for(let i=0;i<10;i++){showWord(String(10-i),'',1400);await say(P4B(1+i),{sub:false});await dropApple6(i);play(rnd(['happy','jump','point']))}
+  for(let i=0;i<10;i++){showWord(String(10-i),'',1400);await say(P4B(1+i),{sub:false});await dropApple6(i);play(rnd(['happy','jump','point']));if(i===0){play('scared');await bt('bn-11')}if(i===5)await bt('bn-12')}
   play('jump');await say(P4B(11));await camHome4();
   // how many are left on the tree? Saga counts with Siili
   resetApples6();await camTree4();
   for(const k of[3,6,8]){for(let i=0;i<10;i++)apples6[i].visible=true;resetApples6();for(let i=0;i<k;i++){apples6[i].visible=true;await dropApple6(i)}
     const left=10-k;await say(P4A(22),{sub:false});const t=await mc11(numCards4(near4(left),left),{q:'Kuinka monta omenaa? Räkna äpplena i trädet!'});await sayN4(left);addPaws(t?1:3)}
-  resetApples6();await camHome4();
+  resetApples6();await camHome4();await bt('bn-14');
   // listen and choose
   for(const n of shuffle([0,1,2,3,4,5,6,7,8,9,10]).slice(0,6))await POOL4['n-'+n]();
   await praise()}
@@ -3279,7 +3318,7 @@ async function c4Bone(){await toApple4();await review4();setMusic('search');play
 
 /* ================= Part 4 · Yksi plus yksi ================= */
 async function c4Plus(){await toApple4();await review4();setMusic('home');
-  play('point');await tr11(P4A(23));const sq=await guestIn4('sq',.55,-.35);await guestSay4(sq,Q4(0));
+  play('point');await tr11(P4A(23));const sq=await guestIn4('sq',.55,-.35);await guestSay4(sq,Q4(0));await guestSay4(sq,'bq-03');
   play('present');await tr11(P4A(24));await tr11(P4A(25));play('happy');await tr11(P4A(26));
   const ow=await guestIn4('owl',.62,.1);await guestSay4(ow,O4(0));play('think');await tr11(P4A(28));
   await guestSay4(ow,O4(2));await guestSay4(sq,Q4(1));
@@ -3287,7 +3326,7 @@ async function c4Plus(){await toApple4();await review4();setMusic('home');
   for(const l of[17,18,19,20]){play('present');await tr11(P4B(l))}
   // Siili counts wrong – Saga corrects him
   play('happy');await tr11(P4B(21));let t=await mc11(shuffle([{t:'Laske uudestaan!',ok:true},{t:'Oikein!'},{t:'Kiitos samoin!'}]),{q:'Sex plus sex är tjugo? Vad säger du till Siili?'});addPaws(t?1:3);
-  play('think');await tr11(P4B(22));await guestSay4(ow,O4(1));
+  play('think');await tr11(P4B(22));await bt('bn-15');await bt('bns-04',{sub:false});await guestSay4(ow,O4(1));
   // dice sums
   for(let r=0;r<6;r++){const a=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*3),neg=r>=3&&a>b,res=neg?a-b:a+b;ask(`${a} ${neg?'−':'+'} ${b} = ?`);showCount4(a,'t4-noppa');
     await sayN4(a);await say(P4C(neg?3+b:b),{sub:false});await say(P4C(0),{sub:false});const t=await mc11(numCards4(near4(res,12),res));hideCount4();ask('');await say(P4C(8),{sub:false});await sayN4(res);hit4('plus',t);addPaws(t?1:3)}
@@ -3302,7 +3341,7 @@ async function c4Code(){await toApple4();await review4();setMusic('search');show
   hidePic();await praise()}
 
 /* ================= Part 6 · Lisää 13–20 ================= */
-async function c4Teen(){await toApple4();await review4();setMusic('home');
+async function c4Teen(){await toApple4();await review4();setMusic('home');play('think');await bt('bn-13');
   for(let n=11;n<=20;n++){showWord(String(n),NUM4[n],1100);await sayN4(n);await sleep(150)}
   play('think');showWord('-toista','11–19',1600);await sleep(1400);
   for(const n of shuffle([13,14,15,16,17,18,19,20]).slice(0,5))await POOL4['n-'+n]();
@@ -3335,6 +3374,192 @@ CHS.splice(3,0,{n:'4 · Yksi plus yksi',h:'Yksi plus yksi',sub:'Kapitel 4 · Äp
 if(st.chv!==4){if(typeof st.ch==='number'&&st.ch>=3)st.ch++;st.chv=4;save()}
 if(typeof st.ch==='number')curCh=st.ch;
 {const _sa=showAlbum;showAlbum=function(){_sa();const box=$('#album6 .g').children[3];if(box&&st.stk4){box.querySelector('.s').innerHTML='<img src="img11/sticker4.webp" alt="" onerror="this.replaceWith(\'⭐\')">'}}}
+
+/* ================= Osa 1 · Kapitel 5 · Hyvä idea! – torget (2026-11-16) =================
+   A small cobblestone square with colourful wooden houses, a church tower, flower pots, benches, bunting and balloons.
+   Lines: p5a- (Terve!, me/te/he/ne), p5b- (lekarna, kurragömma, tre i rad), p5f-NN + p5f-NNs (Siili berättar),
+   p5s- (Siili lär sig kyrkråtta), q5- (Orava), o5- (Pöllö-ope). Pictures: img11/l5-*, g5-*, s5-*, sticker5. */
+const P5A=i=>'p5a-'+nn(i),P5B=i=>'p5b-'+nn(i),F5=i=>'p5f-'+nn(i),S5=i=>'p5s-'+nn(i),Q5=i=>'q5-'+nn(i),O5=i=>'o5-'+nn(i);
+const bt=(id,o)=>has6(id)?say(id,o):Promise.resolve();
+st.m5??={};st.r5??=[];
+function hit5(k,tries){st.m5[k]=(st.m5[k]||0)+(tries?0:1);if(!st.r5.includes(k))st.r5.push(k);save()}
+const POOL5={};function addR5(k,f){POOL5[k]=f}
+async function review5(n=3){const keys=st.r5.filter(k=>POOL5[k]);if(keys.length<3)return;showWord('Kertaus!','repetition',1600);await sleep(900);for(const k of shuffle(keys).slice(0,n))await POOL5[k]()}
+Object.assign(STORY,{'p5f-02':'s5-orava','p5f-03':'s5-ruukku','p5f-04':'s5-pollo','p5f-05':'s5-risti','p5f-07':'s5-laiva','p5f-08':'s5-pallo'});
+async function tell5(i){await storyPic(F5(i),async()=>{await say(F5(i));if(has6(F5(i)+'s'))await say(F5(i)+'s',{sub:false})});await sleep(200)}
+
+/* ---------- the words ---------- */
+const PRON5=[{k:'me',sv:'vi',img:'g5-me',l:7},{k:'te',sv:'ni',img:'g5-te',l:8},{k:'he',sv:'de (människor)',img:'g5-he',l:9},{k:'ne',sv:'de (djur, saker)',img:'g5-ankat',l:10},{k:'ne',sv:'de (djur, saker)',img:'g5-pallot',l:10}];
+const SENT5=[{l:11,img:'g5-me',fi:'Me olemme ystäviä.'},{l:12,img:'g5-te',fi:'Te olette Saga ja Noa.'},{l:13,img:'g5-he',fi:'He ovat lapsia.'},{l:14,img:'g5-ankat',fi:'Ne ovat eläimiä.'},{l:15,img:'g5-pallot',fi:'Ne ovat palloja.'}];
+const GAMES5=[{k:'kirkkis',sv:'kyrkråtta',img:'l5-kirkkis',l:2},{k:'tervapata',sv:'tjärbytta (kull)',img:'l5-hippa',l:3},{k:'purkkis',sv:'burken',img:'l5-purkkis',l:4},{k:'piiloleikki',sv:'kurragömma',img:'l5-piilo',l:5},
+  {k:'ristinolla',sv:'tre i rad',img:'l5-ristinolla',l:6},{k:'laiva on lastattu',sv:'skeppet är lastat',img:'l5-laiva',l:7},{k:'kymmenen tikkua laudalla',sv:'tio pinnar på brädan',img:'l5-tikut',l:8},{k:'hedelmäsalaatti',sv:'fruktsallad',img:'l5-hedelma',l:9}];
+const FORMS5=[{s:'Minä ___ Siili.',a:'olen'},{s:'Sinä ___ Saga.',a:'olet'},{s:'Hän ___ Orava.',a:'on'},{s:'Me ___ ystäviä.',a:'olemme'},{s:'Te ___ Saga ja Noa.',a:'olette'},
+  {s:'He ___ lapsia.',a:'ovat'},{s:'Ne ___ eläimiä.',a:'ovat'},{s:'Se ___ pallo.',a:'on'},{s:'Me ___ torilla.',a:'olemme'},{s:'Te ___ nopeita.',a:'olette'}];
+const ALLF5=['olen','olet','on','olemme','olette','ovat'];
+for(const p of PRON5.slice(0,4))addR5('pr-'+p.k,async()=>{showPic11(p.img,'');const t=await mc11(shuffle(['me','te','he','ne']).map(x=>({t:x,ok:x===p.k})),{q:'Me, te, he vai ne?'});hidePic();showWord(p.k,p.sv,1200);hit5('pr-'+p.k,t);addPaws(t?1:2)});
+for(const g of GAMES5)addR5('g-'+g.k,async()=>{showPic11(g.img,'');const t=await mc11(shuffle([g,...shuffle(GAMES5.filter(x=>x!==g)).slice(0,2)]).map(x=>({t:x.k,ok:x===g})),{q:'Mikä leikki tämä on?'});hidePic();showWord(g.k,g.sv,1300);await say(P5B(g.l),{sub:false});hit5('g-'+g.k,t);addPaws(t?1:2)});
+for(const f of FORMS5)addR5('f-'+f.s,async()=>{const t=await typeIt([f.a],'Skriv rätt form av olla: '+f.s);showWord(f.s.replace('___',f.a),'',1300);hit5('f-'+f.s,t);addPaws(t?1:2)});
+
+/* ---------- the square ---------- */
+const sqS=new THREE.Scene();let sqBuilt=false;const SQ_SPOTS={};
+function buildSquare5(){if(sqBuilt)return;sqBuilt=true;const S=sqS;S.background=new THREE.Color('#bfe0f5');S.fog=new THREE.FogExp2('#e8dcc8',.02);
+  lightRoom6(S,{sky:'#cfe2f6',ground:'#8a7a60',hemi:1.25,key:'#ffe0b0',keyI:3.1,keyPos:[-5,8,6],shadow:3.5});
+  // cobblestones
+  const cob=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({roughness:.95,map:tex(canvas(512,512,(g,W,H)=>{g.fillStyle='#8f8578';g.fillRect(0,0,W,H);
+    for(let y=0;y<H;y+=22)for(let x=-(y/22%2)*14;x<W;x+=28){g.fillStyle=`hsl(${R01(25,40)},${R01(8,18)}%,${R01(52,68)}%)`;g.beginPath();g.ellipse(x+14,y+11,12,9.5,0,0,Math.PI*2);g.fill();g.fillStyle='rgba(255,255,255,.12)';g.beginPath();g.ellipse(x+11,y+8,6,4,0,0,Math.PI*2);g.fill()}}),[10,10])}));
+  cob.rotation.x=-Math.PI/2;cob.receiveShadow=true;S.add(cob);
+  // chalk tic-tac-toe on the stones
+  {const ch=new THREE.Mesh(new THREE.PlaneGeometry(.9,.9),new THREE.MeshBasicMaterial({transparent:true,map:tex(canvas(256,256,(g,W,H)=>{g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=7;g.lineCap='round';
+    for(const k of[1,2]){g.beginPath();g.moveTo(W*k/3,18);g.lineTo(W*k/3,H-18);g.stroke();g.beginPath();g.moveTo(18,H*k/3);g.lineTo(W-18,H*k/3);g.stroke()}
+    g.strokeStyle='rgba(255,170,200,.9)';g.beginPath();g.moveTo(30,30);g.lineTo(70,70);g.moveTo(70,30);g.lineTo(30,70);g.stroke();g.strokeStyle='rgba(150,210,255,.9)';g.beginPath();g.arc(128,128,22,0,7);g.stroke()}))}));
+   ch.rotation.x=-Math.PI/2;ch.position.set(.55,.004,.15);S.add(ch);SQ_SPOTS.chalk=ch}
+  // a ring of colourful wooden houses and the church tower
+  const cols=['#e8c96a','#9b2f24','#8fb0c8','#a8c49a','#e8b8b0','#f1ece2','#d98a4a','#b9a7d6'];
+  [[-8,-7,.5],[-4.6,-9.5,.2],[-.6,-10.5,0],[3.4,-10,-.15],[7.4,-8,-.45],[9.5,-3.5,-1.1],[-9.8,-2.5,1.1]].forEach(([x,z,r],i)=>building6(S,x,z,3.4,R01(3.2,4.6),3,cols[i%cols.length],rnd(['#5a3a30','#3a3634','#6a2a24']),{floors:2,ry:r}));
+  {const T=new THREE.Group();bx6(T,2,7,2,M6('#f1ece2'),0,3.5,0);const sp=new THREE.Mesh(new THREE.ConeGeometry(1.5,3.4,4),M6('#3a4a4a',{roughness:.6}));sp.position.y=8.7;sp.rotation.y=Math.PI/4;T.add(sp);
+   const ball=new THREE.Mesh(new THREE.SphereGeometry(.18,12,10),M6('#d9a441',{metalness:.7,roughness:.3}));ball.position.y=10.5;T.add(ball);clock6(T,0,5.6,1.02,0,.5);T.position.set(1.5,0,-15);S.add(T)}
+  // flower pots, benches and lamp posts – the hiding places
+  const pot=(x,z,s=1)=>{const G=new THREE.Group();const p=new THREE.Mesh(new THREE.CylinderGeometry(.32*s,.24*s,.42*s,24),M6('#c46a3c',{roughness:.8}));p.position.y=.21*s;p.castShadow=true;G.add(p);
+    const soil=new THREE.Mesh(new THREE.CircleGeometry(.3*s,20),M6('#4a3424'));soil.rotation.x=-Math.PI/2;soil.position.y=.42*s;G.add(soil);G.position.set(x,0,z);S.add(G);flowers6(S,x,z,.26*s,22);for(const f of S.children.slice(-1)[0].children)f.position.y+=.42*s;return G};
+  SQ_SPOTS.pot=pot(-1.25,-1.3,1.3);pot(2.6,-2.8);pot(-3.2,-3.4);pot(4.2,-.8,.9);
+  const bench=(x,z,r)=>{const b=new THREE.Group();for(let i=0;i<3;i++)bx6(b,1.4,.04,.1,M6('#7a5434'),0,.42,i*.12-.12);bx6(b,1.4,.3,.04,M6('#7a5434'),0,.65,-.2);for(const s of[-1,1])bx6(b,.06,.56,.4,M6('#2f3a34',{metalness:.5}),s*.6,.14,-.05);b.position.set(x,0,z);b.rotation.y=r;S.add(b);return b};
+  SQ_SPOTS.bench=bench(1.5,-1.4,-.3);bench(-3.6,-.6,.9);
+  const lamp=(x,z)=>{const G=new THREE.Group();const pm=M6('#2f3a34',{metalness:.5,roughness:.4});const pole=new THREE.Mesh(new THREE.CylinderGeometry(.04,.06,2.6,12),pm);pole.position.y=1.3;G.add(pole);
+    const l=new THREE.Mesh(new THREE.SphereGeometry(.15,20,16),new THREE.MeshStandardMaterial({color:'#fff2d0',emissive:new THREE.Color('#ffc070'),emissiveIntensity:1.5}));l.position.y=2.7;G.add(l);G.position.set(x,0,z);S.add(G);return G};
+  SQ_SPOTS.lamp=lamp(.15,-2.6);lamp(-5,-4.5);lamp(5.5,-4.2);
+  // a tin can for purkkis, and a few things lying about
+  {const c=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.14,16),M6('#b8bcc0',{metalness:.8,roughness:.3}));c.position.set(-.7,.07,-.3);c.castShadow=true;S.add(c)}
+  {const b=new THREE.Mesh(new THREE.SphereGeometry(.11,20,14),M6('#3f74b8',{roughness:.5}));b.position.set(2.2,.11,-.4);b.castShadow=true;S.add(b)}
+  for(const [x,z] of[[-6,-1],[6.8,-1.4],[-7,-5],[8,-5.5]])tree6(S,x,z,R01(3.6,4.6),['#6f9a46','#7aa04a','#d9a441','#c46a2e']);
+  bunting6(S,[[-4.6,3.2,-6],[-1,2.8,-5],[3.4,3,-6.2],[7.4,3.4,-5.4]]);bunting6(S,[[-3.6,2.4,-3],[.15,2.6,-2.6],[4.2,2.4,-2.2]],['#ffffff','#3f74b8']);
+  balloons6(S,-2.4,.35,.2);butterflies6(S,0,.1,-1.5,6,2.4);motes6(S,0,1.4,-2,4,1.2,3,140,'#fff0d0');
+  // birds on the roofs
+  {const B=[];for(let i=0;i<5;i++){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(.08,10,8),M6(rnd(['#3a3a3a','#8a6a4a','#e8e2d8'])));body.scale.set(1,.8,1.4);g.add(body);
+    const h=new THREE.Mesh(new THREE.SphereGeometry(.05,10,8),body.material);h.position.set(0,.06,.09);g.add(h);g.position.set(R01(-6,7),R01(4,5),R01(-10,-7));g.userData.ph=Math.random()*6;S.add(g);B.push(g)}
+   (function tick(now){requestAnimationFrame(tick);if(scene!==S)return;for(const g of B)g.children[1].rotation.x=Math.max(0,Math.sin(now/300+g.userData.ph))*.6})(0)}
+}
+const SQ_CAM=[new THREE.Vector3(.05,.5,1.45),new THREE.Vector3(.05,.62,-1)];
+let sq5=null,owl5=null,g5Loading=false;
+function loadGuests5(){if(g5Loading)return;g5Loading=true;(async()=>{sq5=await guest6('squirrel.glb','squirrel',.21);sq5.visible=false;sqS.add(sq5);owl5=await guest6('owl.glb','owl',.27);owl5.visible=false;sqS.add(owl5)})();
+  (function tick(){requestAnimationFrame(tick);if(scene!==sqS)return;for(const g of[sq5,owl5])if(g?.userData.mixer)g.userData.mixer.update(1/60)})()}
+async function waitG5(n){for(let i=0;i<60;i++){const g=n==='sq'?sq5:owl5;if(g)return g;await sleep(100)}return null}
+async function guestIn5(n,x,z){const g=await waitG5(n);if(!g)return null;if(g.visible)return g;await enter6(g,x,z);return g}
+async function guestSay5(g,id){if(g&&!g.userData.sprite){if(!guestAnim(g,/talk|wave|dance|jump/))hop6(g,350)}else if(g)hop6(g,350);await say(id)}
+function guestsOut5(){for(const g of[sq5,owl5])if(g)g.visible=false}
+const camHome5=()=>camTo(SQ_CAM[0],SQ_CAM[1],1000);
+async function toSquare5(){if(scene!==sqS){await goScene(sqS,buildSquare5,SQ_CAM[0],SQ_CAM[1]);putSiiliIn(sqS,0,0,0);guestsOut5()}loadGuests5()}
+
+/* ================= Part 1 · Terve! ================= */
+async function c5Terve(){await toSquare5();setMusic('home');play('wave');await tr11(P5A(0));
+  const sq=await guestIn5('sq',.32,.05);await bt('bn-19');await guestSay5(sq,Q5(0));await bt('bns-01',{sub:false});
+  play('present');showPicSrc('img11/g5-me.webp','');await tr11(P5A(1));hidePic();await guestSay5(sq,Q5(1));
+  play('point');await tr11(P5A(2));
+  let t=await mc11(shuffle([{t:'Me olemme Saga ja Noa.',ok:true},{t:'Te olette Saga ja Noa.'},{t:'He ovat Saga ja Noa.'}]),{q:'Ja te olette …? Svara för dig och Noa!'});addPaws(t?1:3);hit5('me',t);
+  const ow=await guestIn5('owl',.58,-.1);await guestSay5(ow,O5(0));await guestSay5(ow,O5(1));
+  play('happy');await tr11(P5A(3));
+  play('think');await tr11(P5A(18));await tr11(P5A(19));
+  t=await mc11(shuffle([{t:'Meitä on neljä.',ok:true},{t:'Meitä on kaksi.'},{t:'Meitä on kolme.'}]),{q:'Siili, Orava, Pöllö-ope och du. Kuinka monta meitä on?'});addPaws(t?1:3);
+  play('jump');await tr11(P5A(22));await guestSay5(sq,Q5(2));guestsOut5();await praise()}
+
+/* ================= Part 2 · Me, te, he vai ne? ================= */
+async function c5Pron(){await toSquare5();await review5();setMusic('home');
+  for(const l of[4,5,6]){play('present');await tr11(P5A(l));await sleep(200)}
+  for(const p of PRON5.slice(0,4)){showPic11(p.img,'');showWord(p.k,p.sv,1500);await say(P5A(p.l),{sub:false});await sleep(300);hidePic()}
+  for(const s of SENT5){showPic11(s.img,'');await tr11(P5A(s.l));hidePic()}
+  for(const p of shuffle(PRON5)){showPic11(p.img,'');const t=await mc11(shuffle(['me','te','he','ne']).map(x=>({t:x,ok:x===p.k})),{q:'Me, te, he vai ne?'});hidePic();showWord(p.k,p.sv,1100);hit5('pr-'+p.k,t);addPaws(t?1:3)}
+  // Siili and Orava are animals – "ne"? Never!
+  showPic11('g5-siili','');play('shake');await tr11(P5A(16));play('jump');await tr11(P5A(17));await bt('bn-17');
+  const sq=await guestIn5('sq',.32,.05);await guestSay5(sq,Q5(3));const ow=await guestIn5('owl',.58,-.1);await guestSay5(ow,O5(2));hidePic();
+  for(const s of shuffle(SENT5).slice(0,3)){showPic11(s.img,'');const w=s.fi.split(' ')[0].toLowerCase();const t=await typeIt([w],'Skriv det första ordet: ___ '+s.fi.split(' ').slice(1).join(' '));hidePic();showWord(s.fi,'',1300);addPaws(t?1:3)}
+  guestsOut5();await praise()}
+
+/* ================= Part 3 · Mikä leikki? ================= */
+async function c5Leikit(){await toSquare5();await review5();setMusic('search');play('present');await tr11(P5B(0));play('jump');await tr11(P5B(1));
+  for(const g of GAMES5){showPic11(g.img,'');showWord(g.k,g.sv,1700);await say(P5B(g.l),{sub:false});await sleep(400);hidePic()}
+  play('think');await tr11(P5B(10));
+  for(const g of shuffle(GAMES5).slice(0,5))await POOL5['g-'+g.k]();
+  for(const g of shuffle(GAMES5).slice(0,3)){ask('Lyssna! Vilken lek?');await rep11(()=>say(P5B(g.l),{sub:false}));
+    const t=await mc11(shuffle([g,...shuffle(GAMES5.filter(x=>x!==g)).slice(0,2)]).map(x=>({t:'',e:pic11(x.img,96),ok:x===g})),{onWrong:()=>say(P5B(g.l),{sub:false})});unrep11();hit5('g-'+g.k,t);addPaws(t?1:3)}
+  for(const g of shuffle(GAMES5.filter(x=>!x.k.includes(' '))).slice(0,3)){showPic11(g.img,'');const t=await typeIt([g.k],'Skriv lekens namn på finska: '+g.sv);hidePic();showWord(g.k,g.sv,1200);hit5('g-'+g.k,t);addPaws(t?1:3)}
+  await praise()}
+
+/* ================= Part 4 · Piiloleikki ================= */
+const SPOTS5=[{k:'pot',e:'🪴',sv:'blomkrukan'},{k:'bench',e:'🪑',sv:'bänken'},{k:'lamp',e:'🏮',sv:'lyktstolpen'}];
+async function hideIn5(g,spot){const o=SQ_SPOTS[spot.k];if(!g||!o)return;g.position.set(o.position.x+.08,0,o.position.z-.38);g.rotation.y=0;g.visible=true}
+async function c5Piilo(){await toSquare5();await review5();setMusic('search');const sq=await guestIn5('sq',.32,.05);const ow=await guestIn5('owl',.58,-.1);
+  play('present');await tr11(P5B(11));await bt('bq-02');
+  // Siili counts with his eyes shut; the friends hide
+  play('curl');await say(P5B(12),{sub:false});const spots=shuffle(SPOTS5);await hideIn5(sq,spots[0]);await hideIn5(ow,spots[1]);play('jump');await tr11(P5B(13));
+  for(const [g,sp,found,reply] of[[sq,spots[0],15,Q5(4)],[ow,spots[1],16,O5(4)]]){await camTo(new THREE.Vector3(0,.9,1.6),new THREE.Vector3(0,.2,-2),900);play('think');await say(P5B(14),{sub:false});
+    const t=await mc11(SPOTS5.map(s=>({t:s.sv,e:`<div style="font-size:46px">${s.e}</div>`,ok:s===sp})),{q:'Var gömmer sig '+(g===sq?'Orava':'Pöllö-ope')+'?'});addPaws(t?1:3);
+    if(g){g.position.z+=.5;hop6(g,400)}play('jump');await tr11(P5B(found));if(g)await guestSay5(g,reply)}
+  if(sq)sq.position.set(.32,0,.05);if(ow)ow.position.set(.58,0,-.1);await camHome5();
+  // now the owl counts – very slowly – and Siili hides in the flower pot
+  await guestSay5(ow,O5(3));await bt('bo-03');showPic11('s5-ruukku','');await bt('bn-16');await bt('bq-01');
+  const t=await mc11(SPOTS5.map(s=>({t:s.sv,e:`<div style="font-size:46px">${s.e}</div>`,ok:s.k==='pot'})),{q:'Var har Siili gömt sig?'});hidePic();addPaws(t?1:3);
+  guestsOut5();await praise()}
+
+/* ================= Part 5 · Ristinolla ================= */
+(function(){const css=document.createElement('style');css.textContent=`
+#ttt5{position:absolute;left:3vw;top:50%;transform:translate(0,-50%);display:none;grid-template-columns:repeat(3,min(11vh,90px));gap:8px;background:#f4ead8;padding:12px;border-radius:20px;box-shadow:var(--shadow);pointer-events:none}
+#ttt5 div{width:min(11vh,90px);height:min(11vh,90px);background:#fffaf0;border-radius:12px;display:grid;place-items:center;font:800 min(8vh,64px) 'Baloo 2';color:#7a3b22}
+#ttt5 div.o{color:#3f74b8}#ttt5 div.win{background:#ffe9a8}`;document.head.append(css);const d=document.createElement('div');d.id='ttt5';d.innerHTML='<div></div>'.repeat(9);$('#ui').append(d)})();
+const LINES5=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function win5(b,p){return LINES5.find(l=>l.every(i=>b[i]===p))}
+function siiliMove5(b){const free=b.map((v,i)=>v?null:i).filter(i=>i!==null);for(const p of['X','O'])for(const i of free){const c=[...b];c[i]=p;if(win5(c,p))return i}if(!b[4])return 4;return rnd(free)}
+async function c5Risti(){await toSquare5();await review5();setMusic('search');await bt('bo-00');await camTo(new THREE.Vector3(.45,.6,.8),new THREE.Vector3(.55,0,.1),900);
+  play('present');await tr11(P5B(17));await tr11(P5B(18));let sagaWins=0;
+  for(let round=0;round<2;round++){const b=Array(9).fill(null);const el=$('#ttt5');const cells=[...el.children];cells.forEach(c=>{c.textContent='';c.className=''});el.style.display='grid';
+    let turn=round%2?'X':'O',res=null;
+    while(!res){if(turn==='O'){await say(P5B(19),{sub:false});const f=rnd(FORMS5);
+        const t=await mc11(shuffle([f.a,...shuffle(ALLF5.filter(x=>x!==f.a)).slice(0,2)]).map(x=>({t:x,ok:x===f.a})),{q:f.s});addPaws(t?1:2);showWord(f.s.replace('___',f.a),'',1000);
+        if(!t){const free=b.map((v,i)=>v?null:i).filter(i=>i!==null);let i;
+          if(AUTO)i=free[0];else{ask('Klicka i en ruta!');el.style.pointerEvents='auto';i=await new Promise(r=>cells.forEach((c,k)=>c.onclick=()=>{if(!b[k])r(k)}));el.style.pointerEvents='none';ask('')}
+          b[i]='O';cells[i].textContent='O';cells[i].className='o';sfx('newword',.3)}else{ask('Fel svar – Siili tar turen!');await sleep(900);ask('')}}
+      else{await say(P5B(20),{sub:false});play('think');await sleep(500);const i=siiliMove5(b);b[i]='X';cells[i].textContent='X';sfx('rustle',.3)}
+      const w=win5(b,turn);if(w){w.forEach(i=>cells[i].classList.add('win'));res=turn}else if(b.every(Boolean))res='draw';turn=turn==='O'?'X':'O'}
+    await sleep(500);if(res==='O'){sagaWins++;play('happy');await tr11(P5B(21))}else if(res==='X'){play('jump');await tr11(P5B(22))}else{const sq=await guestIn5('sq',.32,.05);await guestSay5(sq,Q5(5));guestsOut5()}
+    await sleep(600);el.style.display='none'}
+  await camHome5();if(sagaWins)addPaws(3);await praise()}
+
+/* ================= Part 6 · Kirjoita! ================= */
+async function c5Write(){await toSquare5();await review5();setMusic('home');play('point');await tr11(P5B(25));
+  for(const f of shuffle(FORMS5).slice(0,6)){const t=await typeIt([f.a],'Skriv rätt form av olla: '+f.s);showWord(f.s.replace('___',f.a),'',1300);hit5('f-'+f.s,t);addPaws(t?1:3)}
+  play('happy');await tr11(P5A(23));await tr11(P5A(24));
+  let t=await mc11(shuffle([{t:'minä olen',ok:true},{t:'sinä olet'},{t:'me olemme'}]),{q:'Mä oon är talspråk. Vad är det i skriftspråk?'});addPaws(t?1:3);
+  play('think');await tr11(P5B(23));await say(P5B(24),{sub:false});t=await mc11(shuffle([{t:'eller',ok:true},{t:'och'},{t:'men'}]),{q:'Vai? Vad betyder det?'});addPaws(t?1:3);
+  // Siili learns a Swedish game
+  play('jump');await bt(S5(0),{sub:false});play('happy');await bt(S5(1),{sub:false});play('think');await bt(S5(2),{sub:false});
+  t=await mc11(shuffle([{t:'Hyvä idea!',ok:true},{t:'Kiitos samoin!'},{t:'Laske uudestaan!'}]),{q:'Vad heter "Bra idé!" på finska?'});addPaws(t?1:3);play('happy');await bt(S5(3),{sub:false});await praise()}
+
+/* ================= Part 7 · Siili berättar ================= */
+async function c5Tell(){await toSquare5();await review5();setMusic('home');
+  for(let i=0;i<10;i++){play(rnd(['happy','think','present','point']));await tell5(i);
+    if(i===2){const t=await mc11(shuffle([{t:'Hän näkee piikit.',ok:true},{t:'Hän laskee hitaasti.'},{t:'Hän on risti.'}]),{q:'Varför hittar Orava alltid Siili?'});addPaws(t?1:3)}
+    if(i===5){const t=await mc11(shuffle([{t:'risti',ok:true},{t:'nolla'}]),{q:'Är Siili risti eller nolla?'});addPaws(t?1:3)}
+    if(i===7){const t=await mc11(shuffle([{t:'banaaneilla',ok:true},{t:'omenoilla'},{t:'palloilla'}]),{q:'Laiva on lastattu … vad säger Siili alltid?'});addPaws(t?1:3)}}
+  await praise()}
+
+/* ================= Part 8 · Koe ================= */
+async function c5Test(){await toSquare5();setMusic('search');play('present');showWord('Koe!','prov',1800);await sleep(1200);
+  const keys=Object.keys(POOL5);const left=()=>keys.filter(k=>(st.m5[k]||0)<2);let n=0;
+  while(left().length&&n<18){const k=rnd(left());await POOL5[k]();n++}
+  play('jump');sfx('fanfare',.5);await bt('bo-01');await tr11(P5B(1));await stickerN(5)}
+
+const PARTS5=[{n:'Terve!',d:'Me olemme …',f:c5Terve},{n:'Me, te, he vai ne?',d:'Vem är vem?',f:c5Pron},{n:'Mikä leikki?',d:'Åtta lekar',f:c5Leikit},
+  {n:'Piiloleikki',d:'Kurragömma på torget',f:c5Piilo},{n:'Ristinolla',d:'Tre i rad mot Siili',f:c5Risti},{n:'Kirjoita!',d:'Olen, olet … ovat',f:c5Write},
+  {n:'Siili berättar',d:'På torget',f:c5Tell},{n:'Koe',d:'Provet',f:c5Test}];
+CHS.splice(4,0,{n:'5 · Hyvä idea!',h:'Hyvä idea!',sub:'Kapitel 5 · Torget',P:PARTS5,key:'done5'});st.done5??=[];
+if(st.chv!==5){if(typeof st.ch==='number'&&st.ch>=4)st.ch++;st.chv=5;save()}
+if(typeof st.ch==='number')curCh=st.ch;
+{const _sa=showAlbum;showAlbum=function(){_sa();const box=$('#album6 .g').children[4];if(box&&st.stk5){box.querySelector('.s').innerHTML='<img src="img11/sticker5.webp" alt="" onerror="this.replaceWith(\'⭐\')">'}}}
+if(AUTO){const _v=window.__view;window.__view=async(n,q=0)=>{if(n==='square'){await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');await toSquare5();play('idle');return 'ok'}
+  if(n==='playdeco'){await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');await toPlay3();play('idle');return 'ok'}
+  if(n==='appledeco'){await ready;setQuality(q);$('#menu').classList.add('hidden');$('#start')?.classList.add('hidden');await toApple4();play('idle');return 'ok'}return _v(n,q)}}
+
+/* ---------- mellansnack (banter): reactions for every chapter, and wrong/right answers get some new lines ---------- */
+if(typeof OOPS!=='undefined')for(const k of['bn-00','bn-01','bn-02','bn-03'])OOPS.push(k);
+if(typeof PRAISE!=='undefined')for(const k of['bn-04','bn-05','bn-06'])PRAISE.push(k);
 
 /* ---------- loop ---------- */
 const clock=new THREE.Clock();let lastAct=performance.now();addEventListener('pointerdown',()=>lastAct=performance.now());
