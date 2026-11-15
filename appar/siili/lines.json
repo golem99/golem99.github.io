@@ -6783,5 +6783,1030 @@
 "f": "audio/w12-alas.mp3",
 "fi": "Alas.",
 "sv": "Ner."
+},
+"p3a-00": {
+"f": "audio/p3a-00.mp3",
+"fi": "Hei! Kuka sinä olet?",
+"sv": "Hej! Vem är du?"
+},
+"p3a-01": {
+"f": "audio/p3a-01.mp3",
+"fi": "Moi! Minun nimeni on Siili.",
+"sv": "Hej! Jag heter Siili."
+},
+"p3a-02": {
+"f": "audio/p3a-02.mp3",
+"fi": "Mun nimi on Siili. Se on puhekieltä.",
+"sv": "Jag heter Siili. Det är talspråk."
+},
+"p3a-03": {
+"f": "audio/p3a-03.mp3",
+"fi": "Minä olen siili.",
+"sv": "Jag är en igelkott."
+},
+"p3a-04": {
+"f": "audio/p3a-04.mp3",
+"fi": "Kiva tavata!",
+"sv": "Roligt att träffas!"
+},
+"p3a-05": {
+"f": "audio/p3a-05.mp3",
+"fi": "Kiitos samoin!",
+"sv": "Tack detsamma!"
+},
+"p3a-06": {
+"f": "audio/p3a-06.mp3",
+"fi": "Mikä sinun nimesi on?",
+"sv": "Vad heter du?"
+},
+"p3a-07": {
+"f": "audio/p3a-07.mp3",
+"fi": "Sinä olet Saga! Kiva tavata, Saga!",
+"sv": "Du är Saga! Roligt att träffas, Saga!"
+},
+"p3a-08": {
+"f": "audio/p3a-08.mp3",
+"fi": "Hei!",
+"sv": "Hej!"
+},
+"p3a-09": {
+"f": "audio/p3a-09.mp3",
+"fi": "Moi!",
+"sv": "Hej!"
+},
+"p3a-10": {
+"f": "audio/p3a-10.mp3",
+"fi": "Minun nimeni on...",
+"sv": "Jag heter …"
+},
+"p3a-11": {
+"f": "audio/p3a-11.mp3",
+"fi": "Mun nimi on...",
+"sv": "Jag heter … (talspråk)"
+},
+"p3a-12": {
+"f": "audio/p3a-12.mp3",
+"fi": "Minä olen...",
+"sv": "Jag är …"
+},
+"p3a-13": {
+"f": "audio/p3a-13.mp3",
+"fi": "Kiva tavata!",
+"sv": "Roligt att träffas!"
+},
+"p3a-14": {
+"f": "audio/p3a-14.mp3",
+"fi": "Kiitos samoin!",
+"sv": "Tack detsamma!"
+},
+"p3a-15": {
+"f": "audio/p3a-15.mp3",
+"fi": "Kuka hän on?",
+"sv": "Vem är han eller hon?"
+},
+"p3a-16": {
+"f": "audio/p3a-16.mp3",
+"fi": "Hän on Orava.",
+"sv": "Hon är Orava."
+},
+"p3a-17": {
+"f": "audio/p3a-17.mp3",
+"fi": "Hän on Pöllö-ope.",
+"sv": "Hon är Pöllö-ope."
+},
+"p3a-18": {
+"f": "audio/p3a-18.mp3",
+"fi": "Hän on Saga.",
+"sv": "Hon är Saga."
+},
+"p3a-19": {
+"f": "audio/p3a-19.mp3",
+"fi": "Hän on Noa.",
+"sv": "Han är Noa."
+},
+"p3a-20": {
+"f": "audio/p3a-20.mp3",
+"fi": "Kuka tuo on?",
+"sv": "Vem är det där?"
+},
+"p3a-21": {
+"f": "audio/p3a-21.mp3",
+"fi": "Hän on minun ystäväni.",
+"sv": "Hon är min kompis."
+},
+"p3a-22": {
+"f": "audio/p3a-22.mp3",
+"fi": "Hän on minun opettajani.",
+"sv": "Hon är min lärare."
+},
+"p3a-23": {
+"f": "audio/p3a-23.mp3",
+"fi": "Kuka sinä olet?",
+"sv": "Vem är du?"
+},
+"p3a-24": {
+"f": "audio/p3a-24.mp3",
+"fi": "Minä olen Siili.",
+"sv": "Jag är Siili."
+},
+"p3a-25": {
+"f": "audio/p3a-25.mp3",
+"fi": "Sinä olet Saga.",
+"sv": "Du är Saga."
+},
+"p3a-26": {
+"f": "audio/p3a-26.mp3",
+"fi": "Nyt sinä kirjoitat: Minun nimeni on Saga!",
+"sv": "Nu skriver du: Jag heter Saga!"
+},
+"p3b-00": {
+"f": "audio/p3b-00.mp3",
+"fi": "Hän vai se?",
+"sv": "Hän eller se?"
+},
+"p3b-01": {
+"f": "audio/p3b-01.mp3",
+"fi": "Se on pallo.",
+"sv": "Det är en boll."
+},
+"p3b-02": {
+"f": "audio/p3b-02.mp3",
+"fi": "Se on liukumäki.",
+"sv": "Det är en rutschkana."
+},
+"p3b-03": {
+"f": "audio/p3b-03.mp3",
+"fi": "Se on keinu.",
+"sv": "Det är en gunga."
+},
+"p3b-04": {
+"f": "audio/p3b-04.mp3",
+"fi": "Se on hiekkalaatikko.",
+"sv": "Det är en sandlåda."
+},
+"p3b-05": {
+"f": "audio/p3b-05.mp3",
+"fi": "Se on kiipeilyteline.",
+"sv": "Det är en klätterställning."
+},
+"p3b-06": {
+"f": "audio/p3b-06.mp3",
+"fi": "Se on maali.",
+"sv": "Det är ett mål."
+},
+"p3b-07": {
+"f": "audio/p3b-07.mp3",
+"fi": "Se on lapio.",
+"sv": "Det är en spade."
+},
+"p3b-08": {
+"f": "audio/p3b-08.mp3",
+"fi": "Ihminen on hän.",
+"sv": "En människa är hän."
+},
+"p3b-09": {
+"f": "audio/p3b-09.mp3",
+"fi": "Eläin on se.",
+"sv": "Ett djur är se."
+},
+"p3b-10": {
+"f": "audio/p3b-10.mp3",
+"fi": "Tavara on se.",
+"sv": "En sak är se."
+},
+"p3b-11": {
+"f": "audio/p3b-11.mp3",
+"fi": "Mato on eläin. Se on Mato.",
+"sv": "Mato är ett djur. Det är Mato."
+},
+"p3b-12": {
+"f": "audio/p3b-12.mp3",
+"fi": "Orava on eläin. Se on Orava.",
+"sv": "Orava är ett djur. Det är Orava."
+},
+"p3b-13": {
+"f": "audio/p3b-13.mp3",
+"fi": "Hetkinen! Minä olen siili. Olenko minä se?",
+"sv": "Vänta lite! Jag är en igelkott. Är jag se?"
+},
+"p3b-14": {
+"f": "audio/p3b-14.mp3",
+"fi": "Ei! Minä olen hän! En minä ole se!",
+"sv": "Nej! Jag är hän! Jag är inte se!"
+},
+"p3b-15": {
+"f": "audio/p3b-15.mp3",
+"fi": "No... ehkä vähän se.",
+"sv": "Nåja … kanske lite se."
+},
+"p3b-16": {
+"f": "audio/p3b-16.mp3",
+"fi": "Minä olen.",
+"sv": "Jag är."
+},
+"p3b-17": {
+"f": "audio/p3b-17.mp3",
+"fi": "Sinä olet.",
+"sv": "Du är."
+},
+"p3b-18": {
+"f": "audio/p3b-18.mp3",
+"fi": "Hän on.",
+"sv": "Han eller hon är."
+},
+"p3b-19": {
+"f": "audio/p3b-19.mp3",
+"fi": "Se on.",
+"sv": "Den eller det är."
+},
+"p3b-20": {
+"f": "audio/p3b-20.mp3",
+"fi": "Minä olen Siili.",
+"sv": "Jag är Siili."
+},
+"p3b-21": {
+"f": "audio/p3b-21.mp3",
+"fi": "Sinä olet Saga.",
+"sv": "Du är Saga."
+},
+"p3b-22": {
+"f": "audio/p3b-22.mp3",
+"fi": "Hän on Orava.",
+"sv": "Hon är Orava."
+},
+"p3b-23": {
+"f": "audio/p3b-23.mp3",
+"fi": "Se on pallo.",
+"sv": "Det är en boll."
+},
+"p3b-24": {
+"f": "audio/p3b-24.mp3",
+"fi": "Kirjoita oikea sana!",
+"sv": "Skriv rätt ord!"
+},
+"p3b-25": {
+"f": "audio/p3b-25.mp3",
+"fi": "Etsi ja kirjoita!",
+"sv": "Leta och skriv!"
+},
+"p3b-26": {
+"f": "audio/p3b-26.mp3",
+"fi": "Sinä.",
+"sv": "Du."
+},
+"p3b-27": {
+"f": "audio/p3b-27.mp3",
+"fi": "Nimi.",
+"sv": "Namn."
+},
+"p3b-28": {
+"f": "audio/p3b-28.mp3",
+"fi": "Se.",
+"sv": "Den, det."
+},
+"p3b-29": {
+"f": "audio/p3b-29.mp3",
+"fi": "On.",
+"sv": "Är."
+},
+"p3b-30": {
+"f": "audio/p3b-30.mp3",
+"fi": "Hän.",
+"sv": "Han, hon."
+},
+"p3b-31": {
+"f": "audio/p3b-31.mp3",
+"fi": "Löysit sanan!",
+"sv": "Du hittade ordet!"
+},
+"p3b-32": {
+"f": "audio/p3b-32.mp3",
+"fi": "Hienoa työtä!",
+"sv": "Bra jobbat!"
+},
+"p3d-00": {
+"f": "audio/p3d-00.mp3",
+"fi": "Missä sinä asut?",
+"sv": "Var bor du?"
+},
+"p3d-01": {
+"f": "audio/p3d-01.mp3",
+"fi": "Minä asun kerrostalossa.",
+"sv": "Jag bor i ett höghus."
+},
+"p3d-02": {
+"f": "audio/p3d-02.mp3",
+"fi": "Minä asun rivitalossa.",
+"sv": "Jag bor i ett radhus."
+},
+"p3d-03": {
+"f": "audio/p3d-03.mp3",
+"fi": "Minä asun omakotitalossa.",
+"sv": "Jag bor i en villa."
+},
+"p3d-04": {
+"f": "audio/p3d-04.mp3",
+"fi": "Kerrostalo.",
+"sv": "Höghus."
+},
+"p3d-05": {
+"f": "audio/p3d-05.mp3",
+"fi": "Rivitalo.",
+"sv": "Radhus."
+},
+"p3d-06": {
+"f": "audio/p3d-06.mp3",
+"fi": "Omakotitalo.",
+"sv": "Villa."
+},
+"p3d-07": {
+"f": "audio/p3d-07.mp3",
+"fi": "Minä asun portaiden alla!",
+"sv": "Jag bor under en trappa!"
+},
+"p3d-08": {
+"f": "audio/p3d-08.mp3",
+"fi": "Portaiden alla... Onko se kerrostalo? Ei. Rivitalo? Ei.",
+"sv": "Under en trappa … Är det ett höghus? Nej. Ett radhus? Nej."
+},
+"p3d-09": {
+"f": "audio/p3d-09.mp3",
+"fi": "Sanakirjassa ei ole sanaa portaiden alla.",
+"sv": "Det finns inget ord för under trappan i ordboken."
+},
+"p3d-10": {
+"f": "audio/p3d-10.mp3",
+"fi": "Mikä sinun osoitteesi on?",
+"sv": "Vad är din adress?"
+},
+"p3d-11": {
+"f": "audio/p3d-11.mp3",
+"fi": "Osoite.",
+"sv": "Adress."
+},
+"p3d-12": {
+"f": "audio/p3d-12.mp3",
+"fi": "Se on aika lähellä!",
+"sv": "Det är ganska nära!"
+},
+"p3d-13": {
+"f": "audio/p3d-13.mp3",
+"fi": "Minä tulen käymään!",
+"sv": "Jag kommer och hälsar på!"
+},
+"p3d-14": {
+"f": "audio/p3d-14.mp3",
+"fi": "Kiva tavata, Saga! Hei hei!",
+"sv": "Roligt att träffas, Saga! Hej då!"
+},
+"p3f-00": {
+"f": "audio/p3f-00.mp3",
+"fi": "Tämä on minun lempipaikkani. Leikkipuisto!",
+"sv": "Lekplatsen! Mitt favoritställe i hela världen. Nästan."
+},
+"p3f-01": {
+"f": "audio/p3f-01.mp3",
+"fi": "Täällä on keinu, liukumäki ja hiekkalaatikko.",
+"sv": "Gunga, rutschkana, sandlåda. Allt en igelkott behöver."
+},
+"p3f-02": {
+"f": "audio/p3f-02.mp3",
+"fi": "Minä olen tosi hyvä liukumäessä. Vauhti on kova!",
+"sv": "På rutschkanan är jag snabbast. Taggarna hjälper, tror jag."
+},
+"p3f-03": {
+"f": "audio/p3f-03.mp3",
+"fi": "Mutta keinussa minua pyörryttää.",
+"sv": "Men på gungan blir jag yr. Jättejättejätteyr."
+},
+"p3f-04": {
+"f": "audio/p3f-04.mp3",
+"fi": "Orava kiipeää aina ylimpään paikkaan. Hän ei pelkää mitään.",
+"sv": "Orava klättrar alltid högst upp. Hon är inte rädd för någonting."
+},
+"p3f-05": {
+"f": "audio/p3f-05.mp3",
+"fi": "Pöllö-ope keinuu, kun kukaan ei näe.",
+"sv": "Ugglan gungar när ingen ser. Jag har sett henne. Psst."
+},
+"p3f-06": {
+"f": "audio/p3f-06.mp3",
+"fi": "Hiekkalaatikossa on aina yksi lapio. Kenen se on?",
+"sv": "Det ligger alltid en ensam spade i sandlådan. Vems är den?"
+},
+"p3f-07": {
+"f": "audio/p3f-07.mp3",
+"fi": "Minä asun portaiden alla. Siellä on lämmin ja hiljaista.",
+"sv": "Jag bor under en trappa. Varmt och tyst. Och gratis."
+},
+"p3f-08": {
+"f": "audio/p3f-08.mp3",
+"fi": "Minulla on pieni sänky ja iso lamppu.",
+"sv": "En liten säng och en stor lampa. Mer behöver man inte."
+},
+"p3f-09": {
+"f": "audio/p3f-09.mp3",
+"fi": "Kiva, että sinä tulit, Saga. Nyt minulla on uusi ystävä.",
+"sv": "Roligt att du kom, Saga. Nu har jag en ny kompis."
+},
+"p3f-00s": {
+"f": "audio/p3f-00s.mp3",
+"fi": "Lekplatsen! Mitt favoritställe i hela världen. Nästan.",
+"sv": ""
+},
+"p3f-01s": {
+"f": "audio/p3f-01s.mp3",
+"fi": "Gunga, rutschkana, sandlåda. Allt en igelkott behöver.",
+"sv": ""
+},
+"p3f-02s": {
+"f": "audio/p3f-02s.mp3",
+"fi": "På rutschkanan är jag snabbast. Taggarna hjälper, tror jag.",
+"sv": ""
+},
+"p3f-03s": {
+"f": "audio/p3f-03s.mp3",
+"fi": "Men på gungan blir jag yr. Jättejättejätteyr.",
+"sv": ""
+},
+"p3f-04s": {
+"f": "audio/p3f-04s.mp3",
+"fi": "Orava klättrar alltid högst upp. Hon är inte rädd för någonting.",
+"sv": ""
+},
+"p3f-05s": {
+"f": "audio/p3f-05s.mp3",
+"fi": "Ugglan gungar när ingen ser. Jag har sett henne. Psst.",
+"sv": ""
+},
+"p3f-06s": {
+"f": "audio/p3f-06s.mp3",
+"fi": "Det ligger alltid en ensam spade i sandlådan. Vems är den?",
+"sv": ""
+},
+"p3f-07s": {
+"f": "audio/p3f-07s.mp3",
+"fi": "Jag bor under en trappa. Varmt och tyst. Och gratis.",
+"sv": ""
+},
+"p3f-08s": {
+"f": "audio/p3f-08s.mp3",
+"fi": "En liten säng och en stor lampa. Mer behöver man inte.",
+"sv": ""
+},
+"p3f-09s": {
+"f": "audio/p3f-09s.mp3",
+"fi": "Roligt att du kom, Saga. Nu har jag en ny kompis.",
+"sv": ""
+},
+"p3s-00": {
+"f": "audio/p3s-00.mp3",
+"fi": "Nu kan jag svenska! Roligt att träffas!",
+"sv": ""
+},
+"p3s-01": {
+"f": "audio/p3s-01.mp3",
+"fi": "Tack detsamma!",
+"sv": ""
+},
+"p3s-02": {
+"f": "audio/p3s-02.mp3",
+"fi": "Roligt att träffas! Tack detsamma! Roligt att... vänta, vem sa vad?",
+"sv": ""
+},
+"p3s-03": {
+"f": "audio/p3s-03.mp3",
+"fi": "Hej hej!",
+"sv": ""
+},
+"q3-00": {
+"f": "audio/q3-00.mp3",
+"fi": "Moi! Minä olen Orava.",
+"sv": "Hej! Jag är Orava."
+},
+"q3-01": {
+"f": "audio/q3-01.mp3",
+"fi": "Minä olen nopea!",
+"sv": "Jag är snabb!"
+},
+"q3-02": {
+"f": "audio/q3-02.mp3",
+"fi": "Kiva tavata!",
+"sv": "Roligt att träffas!"
+},
+"q3-03": {
+"f": "audio/q3-03.mp3",
+"fi": "Kiitos samoin!",
+"sv": "Tack detsamma!"
+},
+"q3-04": {
+"f": "audio/q3-04.mp3",
+"fi": "Siili, sinä olet se!",
+"sv": "Siili, du är se!"
+},
+"o3-00": {
+"f": "audio/o3-00.mp3",
+"fi": "Hyvää huomenta! Minä olen Pöllö-ope.",
+"sv": "God morgon! Jag är Pöllö-ope."
+},
+"o3-01": {
+"f": "audio/o3-01.mp3",
+"fi": "Kiva tavata, Saga.",
+"sv": "Roligt att träffas, Saga."
+},
+"o3-02": {
+"f": "audio/o3-02.mp3",
+"fi": "Siili, kirjassa eläin on se. Mutta sinä saat olla hän.",
+"sv": "Siili, i boken är ett djur se. Men du får vara hän."
+},
+"o3-03": {
+"f": "audio/o3-03.mp3",
+"fi": "Hups! Minä vain keinuin vähän.",
+"sv": "Hoppsan! Jag gungade bara lite."
+},
+"p4a-00": {
+"f": "audio/p4a-00.mp3",
+"fi": "Nolla.",
+"sv": "Noll."
+},
+"p4a-01": {
+"f": "audio/p4a-01.mp3",
+"fi": "Yksi.",
+"sv": "Ett."
+},
+"p4a-02": {
+"f": "audio/p4a-02.mp3",
+"fi": "Kaksi.",
+"sv": "Två."
+},
+"p4a-03": {
+"f": "audio/p4a-03.mp3",
+"fi": "Kolme.",
+"sv": "Tre."
+},
+"p4a-04": {
+"f": "audio/p4a-04.mp3",
+"fi": "Neljä.",
+"sv": "Fyra."
+},
+"p4a-05": {
+"f": "audio/p4a-05.mp3",
+"fi": "Viisi.",
+"sv": "Fem."
+},
+"p4a-06": {
+"f": "audio/p4a-06.mp3",
+"fi": "Kuusi.",
+"sv": "Sex."
+},
+"p4a-07": {
+"f": "audio/p4a-07.mp3",
+"fi": "Seitsemän.",
+"sv": "Sju."
+},
+"p4a-08": {
+"f": "audio/p4a-08.mp3",
+"fi": "Kahdeksan.",
+"sv": "Åtta."
+},
+"p4a-09": {
+"f": "audio/p4a-09.mp3",
+"fi": "Yhdeksän.",
+"sv": "Nio."
+},
+"p4a-10": {
+"f": "audio/p4a-10.mp3",
+"fi": "Kymmenen.",
+"sv": "Tio."
+},
+"p4a-11": {
+"f": "audio/p4a-11.mp3",
+"fi": "Yksitoista.",
+"sv": "Elva."
+},
+"p4a-12": {
+"f": "audio/p4a-12.mp3",
+"fi": "Kaksitoista.",
+"sv": "Tolv."
+},
+"p4a-13": {
+"f": "audio/p4a-13.mp3",
+"fi": "Kolmetoista.",
+"sv": "Tretton."
+},
+"p4a-14": {
+"f": "audio/p4a-14.mp3",
+"fi": "Neljätoista.",
+"sv": "Fjorton."
+},
+"p4a-15": {
+"f": "audio/p4a-15.mp3",
+"fi": "Viisitoista.",
+"sv": "Femton."
+},
+"p4a-16": {
+"f": "audio/p4a-16.mp3",
+"fi": "Kuusitoista.",
+"sv": "Sexton."
+},
+"p4a-17": {
+"f": "audio/p4a-17.mp3",
+"fi": "Seitsemäntoista.",
+"sv": "Sjutton."
+},
+"p4a-18": {
+"f": "audio/p4a-18.mp3",
+"fi": "Kahdeksantoista.",
+"sv": "Arton."
+},
+"p4a-19": {
+"f": "audio/p4a-19.mp3",
+"fi": "Yhdeksäntoista.",
+"sv": "Nitton."
+},
+"p4a-20": {
+"f": "audio/p4a-20.mp3",
+"fi": "Kaksikymmentä.",
+"sv": "Tjugo."
+},
+"p4a-21": {
+"f": "audio/p4a-21.mp3",
+"fi": "Kuinka monta?",
+"sv": "Hur många?"
+},
+"p4a-22": {
+"f": "audio/p4a-22.mp3",
+"fi": "Kuinka monta omenaa?",
+"sv": "Hur många äpplen?"
+},
+"p4a-23": {
+"f": "audio/p4a-23.mp3",
+"fi": "Katso! Kuka tuolla on?",
+"sv": "Titta! Vem är det där?"
+},
+"p4a-24": {
+"f": "audio/p4a-24.mp3",
+"fi": "Yksi plus yksi.",
+"sv": "Ett plus ett."
+},
+"p4a-25": {
+"f": "audio/p4a-25.mp3",
+"fi": "Siis kaksi.",
+"sv": "Alltså två."
+},
+"p4a-26": {
+"f": "audio/p4a-26.mp3",
+"fi": "Ja nyt meitä on kolme!",
+"sv": "Och nu är vi tre!"
+},
+"p4a-27": {
+"f": "audio/p4a-27.mp3",
+"fi": "Laske uudestaan!",
+"sv": "Räkna igen!"
+},
+"p4a-28": {
+"f": "audio/p4a-28.mp3",
+"fi": "Ai niin, neljä!",
+"sv": "Just det, fyra!"
+},
+"p4a-29": {
+"f": "audio/p4a-29.mp3",
+"fi": "Plus.",
+"sv": "Plus."
+},
+"p4a-30": {
+"f": "audio/p4a-30.mp3",
+"fi": "Miinus.",
+"sv": "Minus."
+},
+"p4a-31": {
+"f": "audio/p4a-31.mp3",
+"fi": "On.",
+"sv": "Är."
+},
+"p4b-00": {
+"f": "audio/p4b-00.mp3",
+"fi": "Lasketaan yhdessä!",
+"sv": "Vi räknar tillsammans!"
+},
+"p4b-01": {
+"f": "audio/p4b-01.mp3",
+"fi": "Puussa on kymmenen omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns tio äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-02": {
+"f": "audio/p4b-02.mp3",
+"fi": "Puussa on yhdeksän omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns nio äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-03": {
+"f": "audio/p4b-03.mp3",
+"fi": "Puussa on kahdeksan omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns åtta äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-04": {
+"f": "audio/p4b-04.mp3",
+"fi": "Puussa on seitsemän omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns sju äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-05": {
+"f": "audio/p4b-05.mp3",
+"fi": "Puussa on kuusi omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns sex äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-06": {
+"f": "audio/p4b-06.mp3",
+"fi": "Puussa on viisi omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns fem äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-07": {
+"f": "audio/p4b-07.mp3",
+"fi": "Puussa on neljä omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns fyra äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-08": {
+"f": "audio/p4b-08.mp3",
+"fi": "Puussa on kolme omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns tre äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-09": {
+"f": "audio/p4b-09.mp3",
+"fi": "Puussa on kaksi omenaa. Tuuli puhaltaa, yksi putoaa!",
+"sv": "I trädet finns två äpplen. Vinden blåser, ett ramlar ner!"
+},
+"p4b-10": {
+"f": "audio/p4b-10.mp3",
+"fi": "Puussa on yksi omena. Tuuli puhaltaa, se putoaa!",
+"sv": "I trädet finns ett äpple. Vinden blåser, det ramlar ner!"
+},
+"p4b-11": {
+"f": "audio/p4b-11.mp3",
+"fi": "Puussa on nolla omenaa! Nyt syödään!",
+"sv": "I trädet finns noll äpplen! Nu äter vi!"
+},
+"p4b-12": {
+"f": "audio/p4b-12.mp3",
+"fi": "Oikein!",
+"sv": "Rätt!"
+},
+"p4b-13": {
+"f": "audio/p4b-13.mp3",
+"fi": "Hienoa laskemista!",
+"sv": "Bra räknat!"
+},
+"p4b-14": {
+"f": "audio/p4b-14.mp3",
+"fi": "Kaivetaan luu!",
+"sv": "Vi gräver fram benet!"
+},
+"p4b-15": {
+"f": "audio/p4b-15.mp3",
+"fi": "Missä luu on?",
+"sv": "Var är benet?"
+},
+"p4b-16": {
+"f": "audio/p4b-16.mp3",
+"fi": "Löysit luun! Se on tosi iso!",
+"sv": "Du hittade benet! Det är jättestort!"
+},
+"p4b-17": {
+"f": "audio/p4b-17.mp3",
+"fi": "Kaksi plus kolme on viisi.",
+"sv": "Två plus tre är fem."
+},
+"p4b-18": {
+"f": "audio/p4b-18.mp3",
+"fi": "Neljä plus neljä on kahdeksan.",
+"sv": "Fyra plus fyra är åtta."
+},
+"p4b-19": {
+"f": "audio/p4b-19.mp3",
+"fi": "Kymmenen miinus yksi on yhdeksän.",
+"sv": "Tio minus ett är nio."
+},
+"p4b-20": {
+"f": "audio/p4b-20.mp3",
+"fi": "Viisi miinus kaksi on kolme.",
+"sv": "Fem minus två är tre."
+},
+"p4b-21": {
+"f": "audio/p4b-21.mp3",
+"fi": "Kuusi plus kuusi on kaksikymmentä!",
+"sv": "Sex plus sex är tjugo!"
+},
+"p4b-22": {
+"f": "audio/p4b-22.mp3",
+"fi": "Ei... kaksitoista!",
+"sv": "Nej … tolv!"
+},
+"p4b-23": {
+"f": "audio/p4b-23.mp3",
+"fi": "Voi ei! Minä unohdin koodin!",
+"sv": "Åh nej! Jag har glömt koden!"
+},
+"p4b-24": {
+"f": "audio/p4b-24.mp3",
+"fi": "Mikä koodi on?",
+"sv": "Vad är koden?"
+},
+"p4b-25": {
+"f": "audio/p4b-25.mp3",
+"fi": "Kaappi on auki! Kiitos!",
+"sv": "Skåpet är öppet! Tack!"
+},
+"p4c-00": {
+"f": "audio/p4c-00.mp3",
+"fi": "Paljonko on?",
+"sv": "Hur mycket är det?"
+},
+"p4c-01": {
+"f": "audio/p4c-01.mp3",
+"fi": "Plus yksi.",
+"sv": "Plus ett."
+},
+"p4c-02": {
+"f": "audio/p4c-02.mp3",
+"fi": "Plus kaksi.",
+"sv": "Plus två."
+},
+"p4c-03": {
+"f": "audio/p4c-03.mp3",
+"fi": "Plus kolme.",
+"sv": "Plus tre."
+},
+"p4c-04": {
+"f": "audio/p4c-04.mp3",
+"fi": "Miinus yksi.",
+"sv": "Minus ett."
+},
+"p4c-05": {
+"f": "audio/p4c-05.mp3",
+"fi": "Miinus kaksi.",
+"sv": "Minus två."
+},
+"p4c-06": {
+"f": "audio/p4c-06.mp3",
+"fi": "Miinus kolme.",
+"sv": "Minus tre."
+},
+"p4c-07": {
+"f": "audio/p4c-07.mp3",
+"fi": "Kuinka monta nyt?",
+"sv": "Hur många nu?"
+},
+"p4c-08": {
+"f": "audio/p4c-08.mp3",
+"fi": "Juuri niin!",
+"sv": "Precis!"
+},
+"q4-00": {
+"f": "audio/q4-00.mp3",
+"fi": "Katso, minä olen puussa!",
+"sv": "Titta, jag är i trädet!"
+},
+"q4-01": {
+"f": "audio/q4-01.mp3",
+"fi": "Minä lasken nopeasti: yksi, kaksi, kolme!",
+"sv": "Jag räknar snabbt: ett, två, tre!"
+},
+"q4-02": {
+"f": "audio/q4-02.mp3",
+"fi": "Minulla on kaksi pähkinää. Ja nyt kolme!",
+"sv": "Jag har två nötter. Och nu tre!"
+},
+"q4-03": {
+"f": "audio/q4-03.mp3",
+"fi": "Laske uudestaan, Siili!",
+"sv": "Räkna igen, Siili!"
+},
+"o4-00": {
+"f": "audio/o4-00.mp3",
+"fi": "Laske uudestaan!",
+"sv": "Räkna igen!"
+},
+"o4-01": {
+"f": "audio/o4-01.mp3",
+"fi": "Oikein! Hyvä, Siili!",
+"sv": "Rätt! Bra, Siili!"
+},
+"o4-02": {
+"f": "audio/o4-02.mp3",
+"fi": "Yksi plus yksi on kaksi.",
+"sv": "Ett plus ett är två."
+},
+"p4f-00": {
+"f": "audio/p4f-00.mp3",
+"fi": "Tämä on koulun omenapuu. Se on vanha ja iso.",
+"sv": "Skolans äppelträd. Gammalt och stort. Ungefär som ugglan."
+},
+"p4f-01": {
+"f": "audio/p4f-01.mp3",
+"fi": "Minä osaan laskea kahteenkymmeneen. Melkein.",
+"sv": "Jag kan räkna till tjugo. Nästan. Det är elva som krånglar."
+},
+"p4f-02": {
+"f": "audio/p4f-02.mp3",
+"fi": "Kerran minä laskin omenat. Niitä oli kaksitoista. Tai kaksikymmentä.",
+"sv": "Tolv äpplen. Eller tjugo. Någonstans mitt emellan."
+},
+"p4f-03": {
+"f": "audio/p4f-03.mp3",
+"fi": "Omena putosi minun päähäni. Nyt minulla on omena piikeissäni!",
+"sv": "Ett äpple ramlade ner på mig. Nu sitter det fast i taggarna. Matsäck!"
+},
+"p4f-04": {
+"f": "audio/p4f-04.mp3",
+"fi": "Orava piilottaa pähkinöitä. Hän ei muista, missä ne ovat.",
+"sv": "Orava gömmer nötter överallt. Sen glömmer hon var. Varje år."
+},
+"p4f-05": {
+"f": "audio/p4f-05.mp3",
+"fi": "Kerran me kaivoimme luun hiekkalaatikosta. Se oli tosi iso!",
+"sv": "Vi grävde fram ett ben i sandlådan. Jättestort. Vi bestämde att det var en dinosaurie."
+},
+"p4f-06": {
+"f": "audio/p4f-06.mp3",
+"fi": "Pöllö-ope sanoo aina: Laske uudestaan! Ja minä lasken uudestaan.",
+"sv": "Räkna igen, säger ugglan. Så jag räknar igen. Och igen. Och igen."
+},
+"p4f-07": {
+"f": "audio/p4f-07.mp3",
+"fi": "Minun kaapissani on koodilukko. Minä unohdan koodin joka päivä.",
+"sv": "Mitt skåp har ett kodlås. Jag glömmer koden varje dag. Ibland två gånger."
+},
+"p4f-08": {
+"f": "audio/p4f-08.mp3",
+"fi": "Noppa on minun lempileluni. Kuusi on paras numero!",
+"sv": "Tärningen är min favoritleksak. Sexan är bäst. Den har flest prickar."
+},
+"p4f-09": {
+"f": "audio/p4f-09.mp3",
+"fi": "Kymmenen omenaa ja kaksi ystävää. Se on hyvä päivä.",
+"sv": "Tio äpplen och två kompisar. Det är en bra dag."
+},
+"p4f-00s": {
+"f": "audio/p4f-00s.mp3",
+"fi": "Skolans äppelträd. Gammalt och stort. Ungefär som ugglan.",
+"sv": ""
+},
+"p4f-01s": {
+"f": "audio/p4f-01s.mp3",
+"fi": "Jag kan räkna till tjugo. Nästan. Det är elva som krånglar.",
+"sv": ""
+},
+"p4f-02s": {
+"f": "audio/p4f-02s.mp3",
+"fi": "Tolv äpplen. Eller tjugo. Någonstans mitt emellan.",
+"sv": ""
+},
+"p4f-03s": {
+"f": "audio/p4f-03s.mp3",
+"fi": "Ett äpple ramlade ner på mig. Nu sitter det fast i taggarna. Matsäck!",
+"sv": ""
+},
+"p4f-04s": {
+"f": "audio/p4f-04s.mp3",
+"fi": "Orava gömmer nötter överallt. Sen glömmer hon var. Varje år.",
+"sv": ""
+},
+"p4f-05s": {
+"f": "audio/p4f-05s.mp3",
+"fi": "Vi grävde fram ett ben i sandlådan. Jättestort. Vi bestämde att det var en dinosaurie.",
+"sv": ""
+},
+"p4f-06s": {
+"f": "audio/p4f-06s.mp3",
+"fi": "Räkna igen, säger ugglan. Så jag räknar igen. Och igen. Och igen.",
+"sv": ""
+},
+"p4f-07s": {
+"f": "audio/p4f-07s.mp3",
+"fi": "Mitt skåp har ett kodlås. Jag glömmer koden varje dag. Ibland två gånger.",
+"sv": ""
+},
+"p4f-08s": {
+"f": "audio/p4f-08s.mp3",
+"fi": "Tärningen är min favoritleksak. Sexan är bäst. Den har flest prickar.",
+"sv": ""
+},
+"p4f-09s": {
+"f": "audio/p4f-09s.mp3",
+"fi": "Tio äpplen och två kompisar. Det är en bra dag.",
+"sv": ""
+},
+"p4s-00": {
+"f": "audio/p4s-00.mp3",
+"fi": "Nu kan jag räkna på svenska! Ett, två, tre, fyra, femton!",
+"sv": ""
+},
+"p4s-01": {
+"f": "audio/p4s-01.mp3",
+"fi": "Femton? Nej... fem!",
+"sv": ""
+},
+"p4s-02": {
+"f": "audio/p4s-02.mp3",
+"fi": "Ett, två, tre, fyra, fem! Hurra!",
+"sv": ""
 }
 }
