@@ -80,7 +80,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .stage .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.3s ease}
 .stage .bg.show{opacity:1}
 #sprites{position:absolute;inset:0;pointer-events:none;z-index:2}
-.sprite{position:absolute;transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .6s, left 7s linear;filter:drop-shadow(0 6px 10px #0006)}
+.sprite{position:absolute;transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .6s, left 7s linear, top 7s linear;filter:drop-shadow(0 6px 10px #0006)}
 .sprite.show{opacity:1}
 .sprite.flip img{transform:scaleX(-1)}
 .sprite img{height:100%;width:auto;display:block}
@@ -352,7 +352,7 @@ const DIR={
  "ch09-a":{bg:"ch09-a-water-tower-view",atmo:"suburban-birds",
    1:{sfx:"page-turn"},2:{sfx:"raven-call",pose:"action-06"},7:{card:"Miljö =\nallt runt omkring oss"},
    11:{card:"Närmiljö =\ndär du bor och rör dig\nvarje dag"},
-   12:{card:null,sp:[{id:"ch09-vehicles-01",x:50,y:66,h:8,flip:1,move:66}],sfx:"bus-passing"},
+   12:{card:null,sp:[{id:"ch09-vehicles-01",x:55.6,y:64.7,h:5,move:70,my:59}],sfx:"bus-passing"},
    15:{task:{kind:"hot",need:3,title:"Tryck på tre saker du ser",spots:[
      {x:27,y:56,r:9,l:"Skolan"},{x:57,y:63,r:5,l:"Vägen"},{x:66,y:64,r:5,l:"Bron"},{x:75,y:74,r:6,l:"Ån"},{x:46,y:57,r:4,l:"Ån"},
      {x:86,y:24,r:8,l:"Skogen"},{x:20,y:25,r:8,l:"Skogen"},{x:69,y:40,r:7,l:"Höghuset"},{x:48,y:45,r:5,l:"Husen"},{x:30,y:36,r:4,l:"Husen"},{x:22,y:42,r:6,l:"Träden"}]}},
@@ -372,7 +372,7 @@ const DIR={
      {x:22,y:71,r:7,l:"Husen"},{x:39,y:66,r:6,l:"Husen"},{x:82,y:44,r:5,l:"Husen"},{x:17,y:46,r:6,l:"Husen"},
      {x:36,y:42,r:4,l:"Elledningarna"},{x:73,y:42,r:4,l:"Elledningarna"},{x:47,y:43,r:3,l:"Gatlampan"}],
      wrongs:[{x:72,y:73,r:9,l:"Ån fanns där innan"},{x:46,y:20,r:9,l:"Skogen fanns där innan"}]}},
-   10:{sp:[{id:"ch09-vehicles-01",x:20,y:55,h:8,flip:1,move:85}],sfx:"bus-passing"}},
+   10:{sp:[{id:"ch09-vehicles-01",x:44,y:55,h:5,move:80,my:51.5}],sfx:"bus-passing"}},
  "ch09-d":{bg:"ch09-d-forest-before",atmo:"forest-windy-birds",
    1:{sp:[{id:"ch09-park-animals-07",x:62,y:30,h:10,flip:1}]},
    3:{bg:"ch09-d-clearcut",atmo:"wind-in-forest",sp:[],sfx:"chainsaw",card:"Kalhygge"},4:{card:null,pose:"talk-06"},
@@ -595,7 +595,7 @@ function setSprites(list){
   (list||[]).forEach((p,k)=>{const d=document.createElement("div");d.className="sprite"+(p.flip?" flip":"");d.dataset.k=k;
     d.style.cssText=`left:${p.x}%;top:${p.y-p.h}%;height:${p.h}%;z-index:${2+Math.round(p.y/10)}`;
     d.innerHTML=`<img src="${P(p.id)}" alt="">`;box.appendChild(d);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{d.classList.add("show");if(p.move!=null)d.style.left=p.move+"%"}))});
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{d.classList.add("show");if(p.move!=null)d.style.left=p.move+"%";if(p.my!=null)d.style.top=(p.my-p.h)+"%"}))});
 }
 function setPose(p){const img=$("#kraxImg");const src=P("krax-poses-"+p);if(img.getAttribute("src")!==src)img.src=src}
 function kraxTalk(on){$("#krax").classList.toggle("talk",on)}
