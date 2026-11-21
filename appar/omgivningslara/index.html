@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ut med Krax – omgivningslära</title>
+<meta name="theme-color" content="#18261f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Krax">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --spruce:#18261f; --moss:#2f4a3a; --birch:#f2efe6; --paper:#e8e4d6; --lichen:#cdd38a; --rowan:#c8502e; --ink:#15191c; --bark:#6b5a48;
+  --bg:var(--birch); --fg:var(--ink); --panel:#fffdf7; --muted:#5d6660; --line:#cfd2c2;
+  --serif:"Fraunces",Georgia,serif; --sans:"Atkinson Hyperlegible",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{--bg:#121b16;--fg:#eceadf;--panel:#1c2a22;--muted:#a5ae9f;--line:#33463a}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:18px;line-height:1.45;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--lichen);outline-offset:3px}
+.screen{display:none;min-height:100%;flex-direction:column}
+.screen.on{display:flex}
+.wrap{width:100%;max-width:1100px;margin:0 auto;padding:0 20px}
+.iconbtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none}
+.iconbtn:hover{background:#ffffff1f}
+.iconbtn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:999px;font-weight:700;min-height:46px;background:var(--moss);color:var(--birch)}
+.btn.alt{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 2px var(--line)}
+.btn.big{font-size:1.15rem;padding:14px 26px}
+.btn.light{background:var(--lichen);color:var(--spruce)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.4;cursor:default}
+@media (prefers-color-scheme:dark){.btn{background:var(--lichen);color:var(--spruce)}}
+
+/* ---------- Start ---------- */
+.hero{position:relative;height:min(56vh,520px);background:var(--spruce) center 18%/cover no-repeat;color:var(--birch)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0000 40%,#0d1511e6)}
+.hero .ttl{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:0 26px 22px}
+.hero h1{font-family:var(--serif);font-weight:800;font-size:clamp(2.6rem,7vw,5rem);line-height:.95;margin:0;letter-spacing:-.02em}
+.hero p{margin:.4em 0 0;font-size:clamp(1rem,2vw,1.25rem);max-width:36em;opacity:.92}
+.hero .back,.hero .snd{position:absolute;top:max(12px,env(safe-area-inset-top));z-index:2;background:#0d151199;color:var(--birch)}
+.hero .back{left:12px;padding:8px 16px;border-radius:22px;text-decoration:none;font-size:.95rem}
+.hero .snd{right:12px}
+.chapters{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:24px 0 10px}
+@media (max-width:820px){.chapters{grid-template-columns:1fr}}
+.chap{background:var(--panel);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 var(--line)}
+.chap .cover{height:150px;background:center/cover;position:relative}
+.chap .cover span{position:absolute;left:16px;bottom:10px;color:#fff;font-family:var(--serif);font-weight:800;font-size:2.4rem;line-height:1;text-shadow:0 2px 12px #000a}
+.chap .body{padding:14px 18px 18px}
+.chap h2{font-family:var(--serif);font-size:1.5rem;margin:0 0 10px;line-height:1.1}
+.scenes{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:2px}
+.scenes button{width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:6px;font-size:1rem}
+.scenes button:hover{background:#7f8f7a22}
+.scenes .tick{width:20px;height:20px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 2px var(--line);display:grid;place-items:center;font-size:.8rem}
+.scenes .tick.done{background:var(--moss);box-shadow:none;color:var(--birch)}
+.chap .acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.mark{font-size:.92rem;color:var(--muted)}
+.exam{margin:10px 0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;padding:20px 22px;border-radius:10px;background:var(--spruce);color:var(--birch)}
+.exam h3{margin:0;font-family:var(--serif);font-size:1.6rem}
+.exam p{margin:2px 0 0;opacity:.85}
+.exam .btn{margin-left:auto;background:var(--lichen);color:var(--spruce)}
+.foot{text-align:center;padding:0 0 30px;font-size:.92rem;color:var(--muted)}
+.foot button{text-decoration:underline}
+
+/* ---------- Spelaren ---------- */
+#player{position:fixed;inset:0;background:#050806;color:var(--birch);overflow:hidden}
+#player.on{display:block}
+.blur{position:absolute;inset:-40px;background:center/cover;filter:blur(30px) brightness(.45);transition:background-image 1s}
+.stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100vw,150vh);height:min(100vh,66.667vw);overflow:hidden;background:#000;container-type:size}
+.stage .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.3s ease}
+.stage .bg.show{opacity:1}
+#sprites{position:absolute;inset:0;pointer-events:none;z-index:2}
+.sprite{position:absolute;transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .6s, left 7s linear;filter:drop-shadow(0 6px 10px #0006)}
+.sprite.show{opacity:1}
+.sprite.flip img{transform:scaleX(-1)}
+.sprite img{height:100%;width:auto;display:block}
+.sprite.tap{pointer-events:auto;cursor:pointer}
+.sprite.tap:hover{filter:drop-shadow(0 0 10px #fff9) drop-shadow(0 6px 10px #0006)}
+.sprite.seen{filter:drop-shadow(0 0 6px var(--lichen)) drop-shadow(0 6px 10px #0006)}
+#krax{position:absolute;bottom:3%;right:2%;height:44%;z-index:3;transition:opacity .5s,right .8s, left .8s;pointer-events:none;filter:drop-shadow(0 8px 14px #0008)}
+#krax img{height:100%;width:auto;display:block;transform:scaleX(-1)}
+#krax.left img{transform:none}
+#krax.talk{animation:bob .55s ease-in-out infinite alternate}
+#krax.hide{opacity:0}
+@keyframes bob{to{transform:translateY(-1.4%) rotate(-1.5deg)}}
+.card{position:absolute;left:3.5%;top:11%;z-index:4;max-width:52%;padding:.45em .8em .5em;background:#f7f4ebf2;color:var(--ink);
+  font-family:var(--serif);font-weight:700;font-size:clamp(1rem,3.6cqh,2.2rem);line-height:1.18;border-radius:4px;border-left:6px solid var(--rowan);
+  box-shadow:0 6px 24px #0006;opacity:0;transform:translateY(-8px);transition:opacity .5s,transform .5s;white-space:pre-line}
+.card.show{opacity:1;transform:none}
+.sub{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:9% 4% 2.4%;background:linear-gradient(180deg,#0000,#000000b5 55%);pointer-events:none}
+.sub p{margin:0 auto;max-width:88%;font-family:var(--serif);font-weight:500;font-size:clamp(1rem,4.1cqh,2rem);line-height:1.32;text-shadow:0 2px 6px #000,0 0 16px #000c;display:flex;gap:.5em;align-items:baseline}
+.sub b{font-family:var(--sans);font-size:.62em;letter-spacing:.02em;padding:.1em .55em;border-radius:1em;background:#ffffff22;flex:none;font-weight:700;position:relative;top:-.15em}
+.sub b.k{background:var(--rowan)}
+.sub.hide p{visibility:hidden}
+.top{position:absolute;left:0;right:0;top:0;z-index:8;display:flex;align-items:center;gap:6px;padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top));background:linear-gradient(180deg,#000a,#0000);transition:opacity .5s}
+.top h2{font-family:var(--serif);font-weight:700;font-size:1.15rem;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 8px #000}
+.ctrl{position:absolute;right:12px;bottom:12px;z-index:8;display:flex;gap:6px;align-items:center;background:#0d1511c4;border-radius:999px;padding:4px;transition:opacity .5s}
+.ctrl .play{background:var(--lichen);color:var(--spruce)}
+.ctrl .play svg{fill:currentColor;stroke:none}
+.dots{position:absolute;left:12px;bottom:22px;z-index:8;display:flex;gap:5px;transition:opacity .5s}
+.dots i{width:9px;height:9px;border-radius:50%;background:#ffffff40}
+.dots i.done{background:#cdd38aaa}.dots i.now{background:var(--lichen);transform:scale(1.4)}
+#player.tasking .sub{opacity:0}
+#player.idle .top,#player.idle .ctrl,#player.idle .dots{opacity:0}
+#player.idle{cursor:none}
+.bigstart{position:absolute;inset:0;z-index:9;display:grid;place-items:center;background:#0008}
+.bigstart .inner{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:20px}
+.bigstart h3{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.8rem);margin:0;line-height:1.05}
+.bigstart .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.scenetitle{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);z-index:6;font-family:var(--serif);font-weight:800;font-size:clamp(1.6rem,7cqh,3.6rem);
+  text-align:center;color:#fff;text-shadow:0 3px 24px #000;opacity:0;transition:opacity .8s;pointer-events:none;width:90%}
+.scenetitle small{display:block;font-family:var(--sans);font-weight:700;font-size:.38em;opacity:.85;margin-bottom:.3em}
+.scenetitle.show{opacity:1}
+
+/* ---------- Uppgifter på scenen ---------- */
+.task{position:absolute;inset:0;z-index:7}
+.taskbar{position:absolute;left:50%;top:9%;transform:translateX(-50%);background:#0d1511e0;color:var(--birch);border-radius:999px;padding:.4em 1.1em;font-weight:700;font-size:clamp(.9rem,3.2cqh,1.4rem);white-space:nowrap;display:flex;gap:.7em;align-items:center;z-index:2}
+.taskbar .n{background:var(--lichen);color:var(--spruce);border-radius:999px;padding:0 .6em}
+.hot{position:absolute;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer}
+.hot:hover{box-shadow:0 0 0 3px #ffffff55 inset}
+.pin{position:absolute;transform:translate(-50%,-100%);background:var(--birch);color:var(--ink);font-weight:700;padding:.2em .7em;border-radius:6px;font-size:clamp(.85rem,3cqh,1.3rem);box-shadow:0 4px 14px #0007;pointer-events:none;animation:popin .35s ease-out;white-space:nowrap}
+.pin::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--birch)}
+@keyframes popin{from{transform:translate(-50%,-80%) scale(.6);opacity:0}}
+.shade{position:absolute;inset:0;background:#0b120ecc}
+.tiles{position:absolute;left:4%;right:4%;top:20%;bottom:16%;display:grid;gap:1.6cqh 1.4cqw;grid-template-columns:repeat(var(--cols,5),1fr);align-content:center}
+.tile{background:#f7f4eb;color:var(--ink);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:1cqh .6cqw;gap:.4cqh;font-weight:700;font-size:clamp(.8rem,2.9cqh,1.25rem);height:26cqh;position:relative;overflow:hidden;transition:transform .15s}
+.tile:hover{transform:translateY(-2px)}
+.tile img{flex:1;min-height:0;max-width:100%;object-fit:contain}
+.tile.photo img{width:100%;object-fit:cover;border-radius:6px}
+.tile.ok{background:#d9ecc8;box-shadow:inset 0 0 0 4px #4d8a35}
+.tile.no{animation:shake .4s;background:#f4cfc4}
+.tile.ok::after{content:"✓";position:absolute;top:.3em;right:.5em;color:#2f6b1e;font-size:1.4em}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.sorter{position:absolute;left:0;right:0;top:15%;bottom:14%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3cqh}
+.sorter .item{display:flex;flex-direction:column;align-items:center;gap:1cqh;animation:popin2 .35s ease-out}
+.sorter .item img{height:36cqh;filter:drop-shadow(0 10px 18px #000a)}
+.sorter .item span{font-family:var(--serif);font-weight:800;font-size:clamp(1.2rem,5cqh,2.4rem);text-shadow:0 2px 10px #000}
+@keyframes popin2{from{transform:scale(.7);opacity:0}}
+.choices{display:flex;gap:2cqw;flex-wrap:wrap;justify-content:center}
+.choice{background:var(--birch);color:var(--ink);font-weight:800;font-size:clamp(1rem,4cqh,1.8rem);padding:.55em 1.3em;border-radius:999px;box-shadow:0 6px 20px #0007}
+.choice:hover{background:#fff}
+.choice.ok{background:#bfe0a6}.choice.no{background:#f4b9a8;animation:shake .4s}
+.layers{position:absolute;left:3%;top:15%;bottom:14%;width:34%;display:flex;flex-direction:column;gap:1.2cqh}
+.layers .choice{flex:1;border-radius:10px;text-align:left;padding:0 1em;display:flex;align-items:center;justify-content:space-between;font-size:clamp(.9rem,3.6cqh,1.5rem)}
+.layers .choice small{display:flex;gap:4px}
+.layers .choice small img{height:5cqh}
+.layerItem{position:absolute;left:62%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:1cqh}
+.layerItem img{height:44cqh;background:#f7f4ebee;border-radius:16px;padding:2cqh;box-shadow:0 10px 30px #000a;filter:drop-shadow(0 10px 18px #000a);animation:popin2 .35s ease-out}
+.layerItem span{font-family:var(--serif);font-weight:800;font-size:clamp(1.1rem,4.6cqh,2.2rem);text-shadow:0 2px 10px #000;color:#fff}
+.fact{position:absolute;right:3%;top:14%;width:36%;background:#f7f4eb;color:var(--ink);border-radius:10px;overflow:hidden;box-shadow:0 10px 30px #000a;z-index:3;animation:popin2 .3s ease-out}
+.fact img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.fact div{padding:.6em .9em .8em}
+.fact h4{margin:0;font-family:var(--serif);font-size:clamp(1.1rem,4.2cqh,1.9rem);line-height:1.1}
+.fact p{margin:.25em 0 0;font-size:clamp(.85rem,2.9cqh,1.2rem);line-height:1.3}
+.strip{position:absolute;left:3%;right:3%;bottom:4%;display:flex;gap:1cqw;justify-content:center}
+.strip .tile{height:19cqh;width:13cqw;flex:none}
+.taskgo{position:absolute;right:3%;bottom:4%;z-index:4}
+.counter{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2cqh}
+.counter img{height:50cqh;background:#f7f4ebee;border-radius:16px;padding:2cqh;box-shadow:0 10px 30px #000a}
+
+/* ---------- Frågor ---------- */
+#quiz{background:var(--bg);height:100%}
+#quiz .qtop{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--spruce);color:var(--birch)}
+#quiz .qtop h2{font-family:var(--serif);font-size:1.2rem;margin:0;flex:1}
+.qwrap{width:100%;max-width:1600px;margin:0 auto;padding:10px 16px 12px;display:grid;gap:10px 22px;flex:1;grid-template-columns:1fr;align-content:start}
+.qmeta{grid-column:1/-1;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem}
+.qmeta .bar{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.qmeta .bar i{display:block;height:100%;background:var(--moss);transition:width .4s}
+.kraxtag{display:inline-block;background:var(--rowan);color:#fff;font-weight:700;font-size:.85rem;padding:2px 10px;border-radius:12px}
+.qimg{position:relative;width:100%;aspect-ratio:3/2;max-height:36vh;border-radius:8px;overflow:hidden;background:#000}
+.qimg img{width:100%;height:100%;object-fit:cover;display:block}
+.qside{display:flex;flex-direction:column;gap:12px;min-width:0}
+@media (min-width:820px){
+  .qwrap{grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);align-items:start}
+  .qimg{aspect-ratio:auto;height:calc(100dvh - 120px);max-height:none}
+  .qwrap .result{grid-column:1/-1}
+}
+.q{font-family:var(--serif);font-size:clamp(1.25rem,2.4vw,1.7rem);line-height:1.22;font-weight:700;margin:0}
+.opts{display:grid;gap:8px}
+.opts.many{grid-template-columns:1fr 1fr}
+.opt{text-align:left;padding:11px 16px;border-radius:8px;background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);font-size:1.08rem;min-height:48px}
+.opt:hover{box-shadow:inset 0 0 0 2px var(--moss)}
+.opt.sel{box-shadow:inset 0 0 0 3px var(--moss);background:#dfe8cf}
+@media (prefers-color-scheme:dark){.opt.sel{background:#2f4a3a}}
+.opt.right{background:#d7ecc6;box-shadow:inset 0 0 0 3px #4d8a35;color:#1d3311}
+.opt.wrong{background:#f4cfc4;box-shadow:inset 0 0 0 3px var(--rowan);color:#4a1410}
+.opt .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--moss);color:var(--birch);font-weight:700;margin-right:10px;font-size:.9rem}
+.write{display:flex;gap:10px;flex-wrap:wrap}
+.write input{flex:1;min-width:180px;font:inherit;font-size:1.3rem;padding:12px 16px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--fg)}
+.fb{min-height:2.4em;font-family:var(--serif);font-size:1.2rem;display:flex;gap:12px;align-items:center}
+.face{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;border:3px solid var(--rowan)}
+.qbtns{display:flex;gap:10px;flex-wrap:wrap}
+.ordered{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:8px;border-radius:8px;border:2px dashed var(--line)}
+.chip{padding:8px 14px;border-radius:20px;background:var(--moss);color:var(--birch);font-size:1rem}
+.result{text-align:center;padding:30px 0;display:flex;flex-direction:column;align-items:center;gap:14px}
+.result h3{font-family:var(--serif);font-size:2.2rem;margin:0}
+.result .score{font-family:var(--serif);font-size:4rem;font-weight:800;line-height:1;color:var(--moss)}
+@media (prefers-color-scheme:dark){.result .score{color:var(--lichen)}}
+
+dialog{border:0;border-radius:10px;max-width:640px;width:92%;max-height:86vh;background:var(--panel);color:var(--fg);padding:22px 24px}
+dialog::backdrop{background:#000a}
+dialog h3{font-family:var(--serif);margin:0 0 8px;font-size:1.5rem}
+dialog p,dialog li{font-size:.92rem}
+@media (prefers-reduced-motion:reduce){.bg,.card,.sprite{transition:none}#krax.talk{animation:none}}
+</style>
+</head>
+<body>
+
+<section class="screen on" id="home" aria-label="Start">
+  <div class="hero" style="background-image:url(img/style-anchor.webp)">
+    <a class="back" href="../skola/">← Skolan</a>
+    <button class="iconbtn snd" id="sndHome" type="button"></button>
+    <div class="ttl">
+      <h1>Ut med Krax</h1>
+      <p>Korpen Krax tror att han vet allt om naturen. Följ med ut i stan och skogen, och rätta honom när han har fel.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="chapters" id="chapters"></div>
+    <div class="exam">
+      <div><h3>Provrepetition</h3><p>Femton frågor från båda kapitlen. Fyra av dem skriver du själv.</p></div>
+      <button class="btn big" id="examBtn" type="button">Öva inför provet</button>
+    </div>
+    <div class="foot"><button type="button" id="aboutBtn">Om bilder och ljud</button></div>
+  </div>
+</section>
+
+<section class="screen" id="player" aria-label="Lektion">
+  <div class="blur" id="blur"></div>
+  <div class="stage" id="stage">
+    <img class="bg" id="bgA" alt=""><img class="bg" id="bgB" alt="">
+    <div id="sprites"></div>
+    <div id="krax"><img id="kraxImg" alt="Krax"></div>
+    <div class="card" id="card"></div>
+    <div class="scenetitle" id="sceneTitle"></div>
+    <div class="sub" id="sub"><p id="say"></p></div>
+    <div class="task" id="task" hidden></div>
+    <div class="bigstart" id="bigstart"></div>
+  </div>
+  <div class="top">
+    <button class="iconbtn" id="plBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="plTitle"></h2>
+    <button class="iconbtn" id="txtBtn" type="button" aria-label="Text på och av" title="Text på och av"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h13"/></svg></button>
+    <button class="iconbtn" id="sndPl" type="button"></button>
+    <button class="iconbtn" id="fsBtn" type="button"></button>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="ctrl">
+    <button class="iconbtn" id="prevBtn" type="button" aria-label="Föregående replik"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-8 6 8 6z"/></svg></button>
+    <button class="iconbtn play" id="playBtn" type="button" aria-label="Paus"></button>
+    <button class="iconbtn" id="nextBtn" type="button" aria-label="Nästa replik"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l8 6-8 6z"/></svg></button>
+  </div>
+</section>
+
+<section class="screen" id="quiz" aria-label="Frågor">
+  <div class="qtop">
+    <button class="iconbtn" id="qBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="qTitle">Frågor</h2>
+    <button class="iconbtn" id="sndQ" type="button"></button>
+  </div>
+  <div class="qwrap" id="qwrap"></div>
+</section>
+
+<dialog id="about">
+  <h3>Om bilder och ljud</h3>
+  <p>Efter Sagas lärobok i omgivningslära, kapitel 9 och 10. Rösterna (Berättaren och Krax) är gjorda med ElevenLabs och bilderna med bildgeneratorer. Bilderna på faktakorten är riktiga foton från Wikimedia Commons.</p>
+  <p><b>Ljud:</b> Mixkit (mixkit.co), fri licens. Hackspettens trummande: ”Black woodpecker Dryocopus martius female drumming”, Alexander Kürthy (SanoAK), Wikimedia Commons, CC BY-SA 4.0. Motorsågen: ”Chainsaw 2”, ezwa, Wikimedia Commons, fri från upphovsrätt.</p>
+  <p><b>Foton:</b></p>
+  <ul id="credits"></ul>
+  <form method="dialog"><button class="btn" type="submit">Stäng</button></form>
+</dialog>
+
+<script>
+"use strict";
+// Frågor. t: mc (första svaret rätt), write (ans = godkända svar), multi (a = alla rätta, wrong = fel), order (a i rätt ordning)
+// krax: Krax påstår något fel och Saga rättar honom.
+const Q=[
+// ---------- Kapitel 9 ----------
+{id:"a1",c:"k9",img:"img/ch09-a-water-tower-view",q:"Vad betyder ordet miljö?",a:["Allt som finns runt omkring oss","En miljon av något","Bara skogen och sjön","Bara det som människan har byggt"]},
+{id:"a2",c:"k9",img:"img/ch09-a-water-tower-view",q:"Vad är din närmiljö?",a:["Platsen där du bor och rör dig varje dag","Ett land långt borta","Bara ditt eget rum","Allt som finns i rymden"]},
+{id:"a3",c:"k9",krax:1,img:"photo-raven",q:"Krax säger: ”Allt som rör sig lever. Molnen lever, för de springer över himlen.” Vad svarar du?",a:["Molnen rör sig, men de lever inte","Ja, molnen lever","Molnen lever bara när det regnar"]},
+{id:"a4",c:"k9",t:"multi",img:"img/ch09-b-lake-shore",q:"Vad hör till den levande naturen? Välj alla rätta svar.",a:["Haren","Svampen","Maskrosen","Myran"],wrong:["Stenen","Solen","Vattnet"]},
+{id:"a5",c:"k9",t:"multi",img:"img/ch09-b-lake-shore",q:"Vad hör till den icke-levande naturen? Välj alla rätta svar.",a:["Stenen","Vattnet","Luften","Solen"],wrong:["Grodan","Blåbäret"]},
+{id:"a6",c:"k9",img:"photo-pine-cones",q:"En torr kotte ligger på marken. Hör den till den levande naturen?",a:["Ja, den har suttit på ett träd som lever","Nej, den är torr och död","Nej, den är en sten"]},
+{id:"a7",c:"k9",krax:1,img:"img/ch09-b-lake-shore",q:"Krax säger: ”Stenen sover bara.” Vad är rätt?",a:["Stenen har aldrig levt","Stenen sover på dagen","Stenen vaknar på våren"]},
+{id:"a8",c:"k9",t:"write",img:"img/ch09-c-valley-today",q:"Skriv ordet. Vad kallas miljön som människan har byggt och förändrat?",ans:["kulturlandskap","ett kulturlandskap","kulturlandskapet"]},
+{id:"a9",c:"k9",img:"img/ch09-c-valley-stone-age",q:"Vad gjorde stenåldersmänniskorna?",a:["Byggde boplatser och odlade växter","Byggde motorvägar","Åkte buss till affären","Byggde elledningar"]},
+{id:"a10",c:"k9",t:"multi",img:"img/ch09-c-valley-today",q:"Vad i dalen är byggt av människor? Välj alla rätta svar.",a:["Vägen","Bron","Husen","Elledningarna"],wrong:["Ån","Granarna"]},
+{id:"a11",c:"k9",img:"img/ch09-d-clearcut",q:"Vad är ett kalhygge?",a:["Ett område där nästan alla träd har huggits ner på en gång","En skog där ingen människa har varit","En stor äng med blommor","En sjö som har torkat ut"]},
+{id:"a12",c:"k9",img:"img/ch09-d-clearcut",q:"Vilken förändring tar lång tid, under många år?",a:["Att klimatet blir varmare","Ett kalhygge","En ny väg"]},
+{id:"a13",c:"k9",img:"img/ch09-d-forest-before",q:"Vad händer med en art som inte klarar av att anpassa sig?",a:["Den försvinner från området","Den blir större","Den flyttar till månen"]},
+{id:"a14",c:"k9",t:"multi",img:"photo-dandelion-asphalt",q:"Var kan maskrosen växa? Välj alla rätta svar.",a:["På ängen","I en spricka i asfalten","Lågt i gräsmattan"],wrong:["På månen","Mitt i sjön"]},
+{id:"a15",c:"k9",t:"write",img:"img/ch09-e-park",q:"Skriv ordet. Vad kallas en sorts växt, djur eller svamp?",ans:["art","en art"]},
+{id:"a16",c:"k9",img:"photo-rowan",q:"Vilket träd har klasar av orangeröda bär?",a:["Rönnen","Lönnen","Aspen","Granen"]},
+{id:"a17",c:"k9",img:"photo-aspen",q:"Vilket träd har runda blad som darrar i minsta vind?",a:["Aspen","Rönnen","Lönnen","Tallen"]},
+{id:"a18",c:"k9",img:"photo-magpie",q:"Vilken fågel är släkt med korpen?",a:["Skatan","Sparven","Hackspetten","Grodan"]},
+{id:"a19",c:"k9",img:"img/ch09-f-market-square",q:"Varför bor många människor nära varandra i städer?",a:["De kan samarbeta och hjälpa varandra","Det finns ingen skog där","Det är förbjudet att bo på landet"]},
+{id:"a20",c:"k9",img:"photo-town-aerial",q:"Hur många människor bor i städer i Finland?",a:["Över fyra miljoner","Ungefär hundra","Över femtio miljoner"]},
+{id:"a21",c:"k9",krax:1,img:"img/ch09-f-market-square",q:"Krax vill ha en vulkan i sin stad. Vad behöver en stad på riktigt?",a:["Skolor, sjukhus och affärer","En vulkan och ett piratskepp","Ett slott på ett moln"]},
+{id:"a22",c:"k9",img:"img/ch09-g-house-finland",q:"Varför lutar taken på husen i Finland?",a:["Snön och vattnet glider av","Det ser roligare ut","Fåglarna vill sitta där"]},
+{id:"a23",c:"k9",img:"img/ch09-g-house-spain",q:"Vad kan ett platt tak användas till i Spanien?",a:["Som terrass eller för att samla regnvatten","Som skidbacke","Som parkering för bussar"]},
+{id:"a24",c:"k9",img:"img/ch09-g-house-spain",q:"Hur husen byggs beror på två saker. Vilka?",a:["Vilka material som finns och vilket klimat det är","Vilken färg man gillar och hur gammal man är","Hur många fåglar det finns"]},
+// ---------- Kapitel 10 ----------
+{id:"b1",c:"k10",img:"img/ch10-a-last-house",q:"Vad är ett naturlandskap?",a:["Natur som människan inte har rört","En park mitt i stan","Ett kalhygge","En trädgård"]},
+{id:"b2",c:"k10",t:"multi",img:"img/ch10-a-card-fell",q:"Vad finns i Finlands naturlandskap? Välj alla rätta svar.",a:["Skog","Myrar","Vattendrag","Fjäll"],wrong:["Motorvägar","Köpcentrum"]},
+{id:"b3",c:"k10",img:"img/ch10-b-forest",q:"Hur mycket av Finland är täckt av skog?",a:["Största delen","Nästan ingenting","Bara norra spetsen"]},
+{id:"b4",c:"k10",img:"photo-black-woodpecker",q:"Varför hackar hackspetten hål i trädstammarna?",a:["För att komma åt insekter","För att bygga ett tak","För att väcka Krax"]},
+{id:"b5",c:"k10",img:"photo-fox",q:"Vilket av djuren är ett däggdjur?",a:["Räven","Grodan","Myran","Spindeln"]},
+{id:"b6",c:"k10",t:"multi",img:"photo-moose",q:"Vad har alla däggdjur gemensamt? Välj alla rätta svar.",a:["De föder levande ungar","De matar ungarna med mjölk","De andas med lungor"],wrong:["De lägger ägg","De har sex ben"]},
+{id:"b7",c:"k10",krax:1,img:"photo-raven",q:"Krax säger: ”Jag andas med lungor, alltså är jag ett däggdjur.” Vad är rätt?",a:["Krax lägger ägg, så han är en fågel","Krax är ett däggdjur","Krax är en insekt"]},
+{id:"b8",c:"k10",img:"photo-fox-cubs",q:"Är människan ett däggdjur?",a:["Ja","Nej","Bara på sommaren"]},
+{id:"b9",c:"k10",t:"write",img:"photo-frog",q:"Skriv ordet. Grodor, ödlor och ormar är …",ans:["växelvarma","växelvarm"]},
+{id:"b10",c:"k10",img:"img/ch10-c-pond-summer",q:"Vad betyder det att ett djur är växelvarmt?",a:["Kroppstemperaturen följer vädret","Djuret byter färg","Djuret har alltid samma värme"]},
+{id:"b11",c:"k10",t:"multi",img:"photo-lizard",q:"Vilka djur är växelvarma? Välj alla rätta svar.",a:["Grodan","Ödlan","Ormen"],wrong:["Räven","Älgen"]},
+{id:"b12",c:"k10",t:"write",img:"img/ch10-c-pond-winter",q:"Skriv ordet. Vad kallas den djupa sömnen som grodan sover på vintern?",ans:["dvala","i dvala"]},
+{id:"b13",c:"k10",krax:1,img:"photo-ant",q:"Krax säger att myran har fyra ben. Hur många har den?",a:["Sex","Fyra","Åtta","Tio"]},
+{id:"b14",c:"k10",t:"multi",img:"photo-ant",q:"Vad har alla insekter? Välj alla rätta svar.",a:["En kropp i tre delar","Sex ben","Antenner","Ett hårt skal"],wrong:["Päls","Åtta ben"]},
+{id:"b15",c:"k10",img:"photo-spider",q:"Är spindeln en insekt?",a:["Nej, den har åtta ben och är ett spindeldjur","Ja, alla småkryp är insekter","Ja, den har sex ben"]},
+{id:"b16",c:"k10",img:"photo-spruce",q:"Vilka är Finlands vanligaste träd?",a:["Granen och tallen","Björken och lönnen","Rönnen och aspen"]},
+{id:"b17",c:"k10",img:"photo-spruce-cones",q:"Vilket träd har långa kottar som hänger neråt?",a:["Granen","Tallen","Björken"]},
+{id:"b18",c:"k10",img:"photo-pine-needles",q:"Hur sitter tallens barr?",a:["Två och två","Ett och ett","Tio och tio"]},
+{id:"b19",c:"k10",img:"img/ch10-e-trees-winter",q:"Varför är barrträden gröna hela året?",a:["Barren har en vaxyta som skyddar mot kyla och hetta","De målas gröna på hösten","De växer bara på sommaren"]},
+{id:"b20",c:"k10",krax:1,img:"photo-birch-winter",q:"Krax tror att björken är sjuk för att den tappat sina blad. Vad är rätt?",a:["Björken är ett lövträd och tappar löven till vintern","Björken är sjuk","Björken är ett barrträd"]},
+{id:"b21",c:"k10",t:"order",img:"img/ch10-f-forest-layers",q:"Lägg skogens skikt i rätt ordning, nerifrån och upp.",a:["Bottenskiktet","Fältskiktet","Buskskiktet","Trädskiktet"]},
+{id:"b22",c:"k10",img:"photo-blueberry",q:"I vilket skikt växer blåbär?",a:["Fältskiktet","Trädskiktet","Bottenskiktet","Buskskiktet"]},
+{id:"b23",c:"k10",img:"photo-moss",q:"I vilket skikt trivs mossor och lavar?",a:["Bottenskiktet","Trädskiktet","Buskskiktet","Fältskiktet"]},
+{id:"b24",c:"k10",img:"photo-raspberry",q:"I vilket skikt växer hallon och vide?",a:["Buskskiktet","Bottenskiktet","Trädskiktet","Fältskiktet"]},
+{id:"b25",c:"k10",img:"img/ch10-g-underground",q:"Varför är svampar inte växter?",a:["De kan inte göra sin egen näring","De är för små","De växer under vatten"]},
+{id:"b26",c:"k10",t:"write",img:"photo-mycelium",q:"Skriv ordet. Vad heter svampens tunna trådar under jorden?",ans:["mycel","mycelet","mycelium"]},
+{id:"b27",c:"k10",img:"photo-fly-agaric",q:"Flugsvampen är …",a:["giftig","god att äta","en växt"]},
+{id:"b28",c:"k10",img:"img/ch10-g-underground",q:"Vad är svamparnas viktigaste uppgift?",a:["Att bryta ner döda växter och träd till ny jord","Att göra skogen färgglad","Att mata fåglarna"]},
+{id:"b29",c:"k10",krax:1,img:"img/ch10-g-underground",q:"Krax tror att svamparna kan bryta ner hans gamla kapsyl. Vad är rätt?",a:["Nej, kapsylen har aldrig levt och ligger kvar i många år","Ja, svamparna äter allt","Ja, men bara på vintern"]},
+];
+
+const LINES={"ch09-a": {"title": "Vattentornet: miljö och närmiljö", "lines": [{"w": "N", "f": "omg-ch09-a-narrator", "s": 0, "e": 6.57, "t": "Högst upp i det gamla vattentornet, med utsikt över hela stan, bor en korp som heter Krax."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 0, "e": 5.39, "t": "Krax! Det är jag. Jag är den smartaste fågeln i hela stan."}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 7.62, "e": 9.85, "t": "Det säger han i alla fall själv."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 5.64, "e": 11.23, "t": "Det säger alla. ... Eller, det säger jag. Ofta."}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 10.82, "e": 15.85, "t": "I dag ska vi ta reda på vad ordet miljö betyder. Krax, vet du det?"}, {"w": "K", "f": "omg-ch09-a-krax", "s": 12.34, "e": 19.89, "t": "Självklart! Miljö är när man har en miljon av något. En miljon maskar. Mums."}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 16.18, "e": 24.95, "t": "Inte riktigt. Miljön är allt som finns runt omkring oss. Klassrummet, ditt hem, gatan utanför."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 20.9, "e": 25.35, "t": "Så... soptunnan bakom affären är också miljö?"}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 25.22, "e": 26.99, "t": "Ja, den också."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 25.76, "e": 29.17, "t": "Då har jag världens finaste miljö!"}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 27.22, "e": 40.61, "t": "Din närmiljö är platsen där du bor och rör dig varje dag. Krax närmiljö är allt han ser härifrån: skolan, vägen, bron, ån och skogen runt omkring."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 29.62, "e": 33.75, "t": "Och där! En stor blå sten som kör på vägen!"}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 41.08, "e": 43.03, "t": "Det där är en buss, Krax."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 34.32, "e": 37.57, "t": "...Jag visste det. Jag testade dig bara."}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 43.76, "e": 47.93, "t": "Hjälp Krax. Tryck på tre saker du ser från tornet."}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 48.46, "e": 51.43, "t": "Bra! Du har skarpa ögon."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 38.48, "e": 42.33, "t": "Nästan lika skarpa som mina. Nästan."}, {"w": "N", "f": "omg-ch09-a-narrator", "s": 51.64, "e": 57.89, "t": "Nu flyger vi ner till sjön. Där ska vi ta reda på vad som lever, och vad som inte gör det."}, {"w": "K", "f": "omg-ch09-a-krax", "s": 43.04, "e": 49.08, "t": "Det vet jag redan! Allt som rör sig lever. Och stenar, de sover bara."}]}, "ch09-b": {"title": "Sjön: levande och icke-levande", "lines": [{"w": "K", "f": "omg-ch09-b-krax", "s": 0, "e": 7.55, "t": "Allt som rör sig lever. Titta, vattnet rör sig. Och molnen springer över himlen. Alltså lever de."}, {"w": "N", "f": "omg-ch09-b-narrator-1", "s": 0, "e": 13.35, "t": "Vattnet och molnen rör sig, men de lever inte. Naturen delas i två delar. Den levande naturen är allt som lever eller har levt: djur, växter och svampar."}, {"w": "K", "f": "omg-ch09-b-krax", "s": 7.82, "e": 9.71, "t": "Och stenen sover."}, {"w": "N", "f": "omg-ch09-b-narrator-1", "s": 13.42, "e": 22.99, "t": "Stenen sover inte, Krax. Den har aldrig levt. Den hör till den icke-levande naturen, precis som vattnet, luften och solen."}, {"w": "K", "f": "omg-ch09-b-krax", "s": 9.8, "e": 12.91, "t": "Men solen är ju varm. Då lever den väl?"}, {"w": "N", "f": "omg-ch09-b-narrator-1", "s": 22.96, "e": 33.81, "t": "Varm, ja. Levande, nej. Och den torra kotten på marken har suttit på ett träd som lever. Allt som har levt hör till den levande naturen."}, {"w": "N", "f": "omg-ch09-b-narrator-1", "s": 33.72, "e": 39.47, "t": "Hjälp Krax att sortera. Dra varje sak till levande eller icke-levande."}, {"w": "N", "f": "omg-ch09-b-narrator-2", "s": 0, "e": 11.63, "t": "Bra sorterat. Tillsammans bildar den levande och den icke-levande naturen en helhet. Växterna behöver både vatten, luft och sol."}, {"w": "K", "f": "omg-ch09-b-krax", "s": 13.26, "e": 15.79, "t": "Nu flyger vi! Vart ska vi?"}, {"w": "N", "f": "omg-ch09-b-narrator-2", "s": 11.72, "e": 16.93, "t": "Över dalen. Och tusentals år bakåt i tiden."}, {"w": "K", "f": "omg-ch09-b-krax", "s": 15.68, "e": 19.07, "t": "Bakåt? Jag kan inte flyga baklänges."}]}, "ch09-c": {"title": "Dalen: stenåldern och i dag", "lines": [{"w": "N", "f": "omg-ch09-c-narrator", "s": 0, "e": 8.85, "t": "Så här såg dalen ut för tusentals år sedan. Bara skog och vatten. Inga vägar och inga hus."}, {"w": "K", "f": "omg-ch09-c-krax", "s": 0, "e": 2.25, "t": "Men var låg affären?"}, {"w": "N", "f": "omg-ch09-c-narrator", "s": 9.0, "e": 17.37, "t": "Det fanns ingen affär. Sedan kom stenåldersmänniskorna. De byggde boplatser och lärde sig att odla växter."}, {"w": "K", "f": "omg-ch09-c-krax", "s": 2.3, "e": 4.8, "t": "Och sedan byggde de en motorväg."}, {"w": "N", "f": "omg-ch09-c-narrator", "s": 17.68, "e": 27.75, "t": "Först byggde de enkla vägar, för att lättare ta sig fram. Mycket senare kom fler byggnader, elledningar, parker och trädgårdar."}, {"w": "N", "f": "omg-ch09-c-narrator", "s": 27.98, "e": 37.33, "t": "Människor har bearbetat naturen i tusentals år. Miljön som människan har byggt och förändrat kallas kulturlandskap."}, {"w": "K", "f": "omg-ch09-c-krax", "s": 4.78, "e": 9.19, "t": "Kultur, det kan jag. Det är teater. Och opera."}, {"w": "N", "f": "omg-ch09-c-narrator", "s": 37.42, "e": 42.35, "t": "Inte den här gången. Tryck på allt i dalen som är byggt av människor."}, {"w": "N", "f": "omg-ch09-c-narrator", "s": 42.58, "e": 48.77, "t": "Vägen, bron, husen och elledningarna. Allt det där är kulturlandskap."}, {"w": "K", "f": "omg-ch09-c-krax", "s": 9.16, "e": 12.67, "t": "Och bussen! Den stora blå stenen."}]}, "ch09-d": {"title": "Skogen blir kalhygge, maskrosen", "lines": [{"w": "N", "f": "omg-ch09-d-narrator-1", "s": 0, "e": 7.35, "t": "I den här skogen bodde Krax kusin, skatan Skrälla. Hon hade sitt bo i en hög gran."}, {"w": "K", "f": "omg-ch09-d-krax", "s": 0, "e": 4.83, "t": "Hon hade den bästa utsikten i hela dalen. Näst efter min."}, {"w": "N", "f": "omg-ch09-d-narrator-1", "s": 7.62, "e": 14.73, "t": "Men i dag ser det ut så här. Alla träd är nerhuggna. Det kallas kalhygge."}, {"w": "K", "f": "omg-ch09-d-krax", "s": 4.82, "e": 10.01, "t": "Vem har gjort det? Bävrar? Väldigt stora bävrar?"}, {"w": "N", "f": "omg-ch09-d-narrator-1", "s": 15.54, "e": 32.85, "t": "Människor. Miljön förändras, och ofta är det människan som förändrar den. Ett kalhygge går snabbt. Andra förändringar tar lång tid, som när klimatet blir varmare lite i taget, under många år."}, {"w": "K", "f": "omg-ch09-d-krax", "s": 10.1, "e": 12.89, "t": "Och Skrälla? Vart tog hon vägen?"}, {"w": "N", "f": "omg-ch09-d-narrator-1", "s": 33.2, "e": 44.93, "t": "Arter anpassar sig. De hittar ett nytt sätt att leva. De som inte klarar det försvinner från området. Skrälla flyttade in till parken."}, {"w": "N", "f": "omg-ch09-d-narrator-2", "s": 0, "e": 13.91, "t": "Och här är mästaren på att anpassa sig: maskrosen. Den växer på ängen och i sprickor i asfalten. Och när gräsklipparen kommer, växer den så lågt att klipparen susar rakt över."}, {"w": "K", "f": "omg-ch09-d-krax", "s": 12.82, "e": 14.52, "t": "Den fuskar ju!"}, {"w": "N", "f": "omg-ch09-d-narrator-2", "s": 14.7, "e": 16.43, "t": "Den anpassar sig."}]}, "ch09-e": {"title": "Parken: arter", "lines": [{"w": "N", "f": "omg-ch09-e-narrator", "s": 0, "e": 8.41, "t": "I parken, mitt bland husen, lever massor av arter. En art är en sorts växt, djur eller svamp."}, {"w": "K", "f": "omg-ch09-e-krax", "s": 0, "e": 3.51, "t": "Jag är en art. Den finaste."}, {"w": "N", "f": "omg-ch09-e-narrator", "s": 8.44, "e": 22.89, "t": "Korpen är en art, ja. Titta på träden. Lönnen har handformade blad. Rönnen har klasar av orangeröda bär. Och aspens runda blad darrar i minsta vind."}, {"w": "K", "f": "omg-ch09-e-krax", "s": 3.5, "e": 6.91, "t": "Den fryser. Stackars asp."}, {"w": "N", "f": "omg-ch09-e-narrator", "s": 23.02, "e": 34.53, "t": "Den fryser inte, Krax. Bladen sitter på långa, platta skaft, så de rör sig lätt. I gräsmattan växer maskros, groblad och vitklöver."}, {"w": "K", "f": "omg-ch09-e-krax", "s": 7.6, "e": 10.67, "t": "Och där är ekorren, sparven och Skrälla."}, {"w": "N", "f": "omg-ch09-e-narrator", "s": 34.74, "e": 38.97, "t": "Skatan och korpen är släkt. Båda är kråkfåglar."}, {"w": "K", "f": "omg-ch09-e-krax", "s": 11.24, "e": 13.01, "t": "Det pratar vi inte om."}, {"w": "N", "f": "omg-ch09-e-narrator", "s": 39.18, "e": 42.19, "t": "Tryck på växterna och djuren i parken."}]}, "ch09-f": {"title": "Torget: staden", "lines": [{"w": "N", "f": "omg-ch09-f-narrator", "s": 0, "e": 14.37, "t": "Torget. I staden bor många människor nära varandra. Städer började bildas för tusentals år sedan. När man bor nära varandra kan man samarbeta och hjälpa varandra."}, {"w": "K", "f": "omg-ch09-f-krax", "s": 0, "e": 1.93, "t": "Som när jag hjälper mig själv till pommes frites."}, {"w": "N", "f": "omg-ch09-f-narrator", "s": 16.1, "e": 32.91, "t": "Ungefär. I staden finns skolor, jobb, sjukhus och affärer. Och lekplatser, sportplaner och bibliotek. I Finland bor över fyra miljoner människor i städer. Det är de flesta som bor i landet."}, {"w": "K", "f": "omg-ch09-f-krax", "s": 2.52, "e": 9.47, "t": "Jag har ritat en egen stad. Den har en vulkan, ett piratskepp och ett slott på ett moln."}, {"w": "N", "f": "omg-ch09-f-narrator", "s": 34.96, "e": 37.21, "t": "Hjälp Krax. Välj det som en stad behöver."}, {"w": "N", "f": "omg-ch09-f-narrator", "s": 37.6, "e": 43.23, "t": "Skolan, sjukhuset och affären följer med. Vulkanen får stanna hemma."}, {"w": "K", "f": "omg-ch09-f-krax", "s": 9.34, "e": 11.55, "t": "Men den var ju det bästa!"}]}, "ch09-g": {"title": "Taken i Finland och Spanien", "lines": [{"w": "K", "f": "omg-ch09-g-krax", "s": 0, "e": 3.01, "t": "Jag har varit i Spanien. På semester."}, {"w": "N", "f": "omg-ch09-g-narrator", "s": 0, "e": 12.01, "t": "I Spanien är det varmt och torrt. Där bygger man ofta husen av ljus sten, och taken är platta. I Finland bygger man många hus av trä, och taken lutar."}, {"w": "K", "f": "omg-ch09-g-krax", "s": 3.48, "e": 6.49, "t": "Spanjorerna har glömt att luta sina tak."}, {"w": "N", "f": "omg-ch09-g-narrator", "s": 12.02, "e": 24.35, "t": "Nej, det beror på klimatet. Här snöar det. På ett platt tak blir snön liggande, och vattnet kan ge fuktskador. På ett lutande tak glider snön och vattnet av."}, {"w": "K", "f": "omg-ch09-g-krax", "s": 6.62, "e": 12.2, "t": "I Spanien snöar det inte. Där hade jag en solstol på taket."}, {"w": "N", "f": "omg-ch09-g-narrator", "s": 24.28, "e": 37.07, "t": "Precis. Där kan det platta taket bli en terrass, eller samla regnvatten. Hur husen byggs beror på två saker: vilka material som finns, och vilket klimat det är."}]}, "ch09-h": {"title": "Vattentornet i solnedgång", "lines": [{"w": "N", "f": "omg-ch09-h-narrator", "s": 0, "e": 3.62, "t": "Solen går ner över vattentornet. Vad har vi lärt oss i dag, Krax?"}, {"w": "K", "f": "omg-ch09-h-krax", "s": 0, "e": 2.09, "t": "Att stenar sover."}, {"w": "N", "f": "omg-ch09-h-narrator", "s": 3.7, "e": 6.04, "t": "Krax."}, {"w": "K", "f": "omg-ch09-h-krax", "s": 2.78, "e": 13.49, "t": "Jag skojade bara. Den levande och den icke-levande naturen hör ihop. Och miljön som människan har förändrat kallas kulturlandskap."}, {"w": "N", "f": "omg-ch09-h-narrator", "s": 6.12, "e": 17.55, "t": "Och arter anpassar sig för att överleva, som maskrosen. Ett uppdrag till dig: hitta tre levande och tre icke-levande saker där du bor."}, {"w": "K", "f": "omg-ch09-h-krax", "s": 13.4, "e": 18.52, "t": "I morgon flyger vi ut i skogen. Där vet jag allt. Krax!"}]}, "ch10-a": {"title": "Sista huset: naturlandskap", "lines": [{"w": "N", "f": "omg-ch10-a-narrator", "s": 0, "e": 14.25, "t": "Förbi sista huset och sista vägen börjar naturlandskapet. Det är natur som människan inte har rört. Här finns inga hus, inga vägar och inga spår av att någon har bott här."}, {"w": "K", "f": "omg-ch10-a-krax", "s": 0, "e": 3.08, "t": "Inga affärer heller? Var köper man mat?"}, {"w": "N", "f": "omg-ch10-a-narrator", "s": 14.96, "e": 27.79, "t": "Djuren hittar sin mat själva. I Finland består naturlandskapet ofta av skog, myrar, vattendrag och fjäll. Största delen av Finland är täckt av skog."}, {"w": "K", "f": "omg-ch10-a-krax", "s": 3.16, "e": 5.33, "t": "Och motorvägar."}, {"w": "N", "f": "omg-ch10-a-narrator", "s": 28.9, "e": 35.16, "t": "Motorvägar hör till kulturlandskapet. Välj det som hör till Finlands naturlandskap."}]}, "ch10-b": {"title": "Skogen: hackspetten, älgen och räven", "lines": [{"w": "K", "f": "omg-ch10-b-krax", "s": 0, "e": 6.39, "t": "Skogen kryllar av liv, säger de. Jag ser ingen. Och vem är det som knackar?"}, {"w": "N", "f": "omg-ch10-b-narrator", "s": 0, "e": 5.63, "t": "Det är hackspetten. Den hackar hål i trädstammarna för att komma åt insekter."}, {"w": "N", "f": "omg-ch10-b-narrator", "s": 5.68, "e": 19.25, "t": "Och där borta står en älg. Älgen och räven är skogens stora djur. De är däggdjur. Däggdjur föder levande ungar, matar dem med mjölk och andas med lungor."}, {"w": "K", "f": "omg-ch10-b-krax", "s": 6.44, "e": 11.03, "t": "Då är jag också ett däggdjur. Jag andas med lungor."}, {"w": "N", "f": "omg-ch10-b-narrator", "s": 20.26, "e": 21.39, "t": "Lägger du ägg, Krax?"}, {"w": "K", "f": "omg-ch10-b-krax", "s": 11.16, "e": 13.69, "t": "Kanske. Några stycken."}, {"w": "N", "f": "omg-ch10-b-narrator", "s": 22.38, "e": 34.97, "t": "Då är du en fågel. Men du som lyssnar är ett däggdjur. Människan är också ett däggdjur. Vid lyan leker rävungarna, och rävmamman ger dem mjölk."}, {"w": "K", "f": "omg-ch10-b-krax", "s": 13.82, "e": 16.51, "t": "Ingen har någonsin gett mig mjölk."}, {"w": "N", "f": "omg-ch10-b-narrator", "s": 34.88, "e": 37.8, "t": "Tryck på djuren du hittar i skogen."}]}, "ch10-c": {"title": "Dammen: växelvarma djur", "lines": [{"w": "N", "f": "omg-ch10-c-narrator", "s": 0, "e": 9.23, "t": "Vid dammen sitter grodan. Grodor, ödlor och ormar är växelvarma. Deras kroppstemperatur följer vädret."}, {"w": "K", "f": "omg-ch10-c-krax", "s": 0, "e": 3.58, "t": "Så när det är varmt ute blir grodan varm?"}, {"w": "N", "f": "omg-ch10-c-narrator", "s": 9.22, "e": 16.67, "t": "Precis. På sommaren är den pigg och snabb. Men när det blir kallt blir den långsam och stel."}, {"w": "N", "f": "omg-ch10-c-narrator", "s": 16.76, "e": 28.47, "t": "På vintern går de i dvala. De sover djupt i flera månader. Kroppstemperaturen sjunker nästan till noll grader, och hjärtat slår väldigt långsamt."}, {"w": "K", "f": "omg-ch10-c-krax", "s": 3.52, "e": 9.64, "t": "Jag knackade på en groda i januari. Den svarade inte. Väldigt oartigt."}, {"w": "N", "f": "omg-ch10-c-narrator", "s": 28.44, "e": 39.81, "t": "Den sov. När våren kommer och solen värmer igen, vaknar den. Du och Krax är inte växelvarma. Ni håller samma värme i kroppen hela året."}]}, "ch10-d": {"title": "Myrstacken: insekter och spindeln", "lines": [{"w": "K", "f": "omg-ch10-d-krax", "s": 0, "e": 4.05, "t": "En myra! Den har fyra ben. Jag har räknat."}, {"w": "N", "f": "omg-ch10-d-narrator", "s": 0, "e": 13.45, "t": "De flesta djuren i skogen är små insekter. Alla insekter är byggda på samma sätt: en kropp i tre delar, sex ben, antenner på huvudet och ett hårt skal utanpå."}, {"w": "N", "f": "omg-ch10-d-narrator", "s": 16.38, "e": 18.21, "t": "Räkna myrans ben, så får vi se vem som har rätt."}, {"w": "K", "f": "omg-ch10-d-krax", "s": 4.14, "e": 7.27, "t": "Sex. Jag sa nästan sex."}, {"w": "K", "f": "omg-ch10-d-krax", "s": 7.5, "e": 10.61, "t": "Men spindeln där borta är också en insekt."}, {"w": "N", "f": "omg-ch10-d-narrator", "s": 19.76, "e": 20.61, "t": "Räkna dess ben."}, {"w": "N", "f": "omg-ch10-d-narrator", "s": 20.88, "e": 27.79, "t": "Åtta! Spindeln har åtta ben. Den är ingen insekt. Den är ett spindeldjur."}]}, "ch10-e": {"title": "Träden: barrträd och lövträd", "lines": [{"w": "N", "f": "omg-ch10-e-narrator-1", "s": 0, "e": 13.13, "t": "Träden är skogens största växter. Finlands vanligaste träd är granen och tallen. De kan bli fyrtio meter höga. Lika högt som ett hus med tretton våningar."}, {"w": "K", "f": "omg-ch10-e-krax", "s": 0, "e": 3.43, "t": "Jag har flugit högre. Mycket högre."}, {"w": "N", "f": "omg-ch10-e-narrator-1", "s": 13.92, "e": 28.25, "t": "Granen och tallen är barrträd. De har smala, hårda blad som kallas barr. Barren har en vaxyta som skyddar mot kyla och hetta. Därför är barrträden gröna hela året."}, {"w": "K", "f": "omg-ch10-e-krax", "s": 3.36, "e": 8.07, "t": "Hjälp! Björken har tappat alla sina blad! Den är sjuk!"}, {"w": "N", "f": "omg-ch10-e-narrator-1", "s": 28.18, "e": 37.55, "t": "Den är inte sjuk. Björken är ett lövträd. Lövträden tappar sina löv till vintern och får nya på våren."}, {"w": "N", "f": "omg-ch10-e-narrator-1", "s": 37.88, "e": 52.85, "t": "Så här skiljer du granen från tallen. Granens kottar är långa och hänger neråt. Tallens kottar är små och runda. Granens barr sitter ett och ett, tallens två och två."}, {"w": "K", "f": "omg-ch10-e-krax", "s": 8.04, "e": 12.28, "t": "Den här kotten är lång. Alltså kommer den från tallen."}, {"w": "N", "f": "omg-ch10-e-narrator-2", "s": 0, "e": 5.25, "t": "Lång och hängande? Då kommer den från granen, Krax."}]}, "ch10-f": {"title": "Skogens våningar", "lines": [{"w": "N", "f": "omg-ch10-f-narrator", "s": 0, "e": 6.11, "t": "Skogen växer i våningar, som ett hus. Våningarna kallas skikt."}, {"w": "K", "f": "omg-ch10-f-krax", "s": 0, "e": 2.81, "t": "Då är jag hissvärd! Högst upp först."}, {"w": "N", "f": "omg-ch10-f-narrator", "s": 6.38, "e": 17.27, "t": "Högst upp är trädskiktet, med trädtopparna. Under det är buskskiktet, med små trädplantor och buskar, som hallon och vide."}, {"w": "K", "f": "omg-ch10-f-krax", "s": 2.74, "e": 5.93, "t": "Nästa våning: mossa och lavar!"}, {"w": "N", "f": "omg-ch10-f-narrator", "s": 17.28, "e": 34.09, "t": "Inte än. Först kommer fältskiktet, med gräs, örter som harsyra, och risväxter som blåbär. Allra längst ner är bottenskiktet, med mossor och lavar. Där myllrar insekterna."}, {"w": "K", "f": "omg-ch10-f-krax", "s": 5.94, "e": 8.52, "t": "Jag ville bara se om du lyssnade."}, {"w": "N", "f": "omg-ch10-f-narrator", "s": 34.36, "e": 38.84, "t": "Nu får du köra hissen. Sätt varje växt på rätt våning."}]}, "ch10-g": {"title": "Under jorden: svamparna", "lines": [{"w": "N", "f": "omg-ch10-g-narrator-1", "s": 0, "e": 3.79, "t": "Under marken gömmer skogen en hemlighet."}, {"w": "K", "f": "omg-ch10-g-krax", "s": 0, "e": 1.31, "t": "En skatt!"}, {"w": "N", "f": "omg-ch10-g-narrator-1", "s": 5.08, "e": 18.27, "t": "Svampar. Svampar är inte växter. De kan inte göra sin egen näring, så de tar den från annat, till exempel trädrötter. Det du ser ovanför marken är bara svampens fruktkropp."}, {"w": "N", "f": "omg-ch10-g-narrator-1", "s": 19.18, "e": 30.69, "t": "Under jorden finns mycelet, tunna trådar som lever vidare även på vintern. Titta på flugsvampen: hatten, ringen, foten och mycelet."}, {"w": "K", "f": "omg-ch10-g-krax", "s": 1.9, "e": 3.93, "t": "Flugsvamp. Mums."}, {"w": "N", "f": "omg-ch10-g-narrator-1", "s": 31.28, "e": 47.15, "t": "Nej, Krax! Flugsvampen är giftig. Plocka aldrig svamp för att äta utan en vuxen som kan svamp. Det finns matsvampar och giftsvampar, tickor på trädstammar, mögel och jäst. Jäst finns i brödet."}, {"w": "K", "f": "omg-ch10-g-krax", "s": 4.02, "e": 8.53, "t": "Och mögel finns på brödet, om man glömmer det en vecka. Det vet jag."}, {"w": "N", "f": "omg-ch10-g-narrator-1", "s": 47.4, "e": 53.24, "t": "Svamparnas viktigaste uppgift är att bryta ner döda växter och träd till ny jord."}, {"w": "K", "f": "omg-ch10-g-krax", "s": 8.6, "e": 12.2, "t": "Kan de bryta ner kapsylen jag tappade här i våras?"}, {"w": "N", "f": "omg-ch10-g-narrator-2", "s": 0, "e": 9.72, "t": "Nej. En kapsyl har aldrig levt. Den ligger kvar i jorden i många år. Därför slänger man aldrig skräp i skogen."}]}, "ch10-h": {"title": "Skogen i solnedgång", "lines": [{"w": "N", "f": "omg-ch10-h-narrator", "s": 0, "e": 3.48, "t": "Solen går ner över skogen. Vad har vi lärt oss, Krax?"}, {"w": "K", "f": "omg-ch10-h-krax", "s": 0, "e": 1.73, "t": "Att jag är ett däggdjur."}, {"w": "N", "f": "omg-ch10-h-narrator", "s": 3.56, "e": 5.52, "t": "Krax."}, {"w": "K", "f": "omg-ch10-h-krax", "s": 3.3, "e": 13.07, "t": "Skämt! Däggdjur föder levande ungar och ger dem mjölk. Och grodor är växelvarma och går i dvala på vintern."}, {"w": "N", "f": "omg-ch10-h-narrator", "s": 5.6, "e": 23.8, "t": "Gran och tall är Finlands vanligaste träd, och skogen växer i fyra skikt. Ett sista uppdrag: nästa gång du är i skogen, leta efter alla fyra skikten. Och hittar du en kotte, avgör om den kommer från en gran eller en tall."}, {"w": "K", "f": "omg-ch10-h-krax", "s": 13.06, "e": 18.68, "t": "Fråga mig. Jag vet alltid. Nästan alltid. Krax!"}]}};
+const CREDITS=["maple: Martin Bobka (= Martin120), CC BY-SA 2.5", "rowan: George Chernilevsky, CC BY-SA 4.0", "aspen: Šarūnas Šimkus, CC BY-SA 3.0", "dandelion: Mathieu Kappler, CC BY-SA 4.0", "dandelion-asphalt: BlonBoah, CC BY-SA 4.0", "plantain: Rasbak, CC BY-SA 3.0", "white-clover: Matt Lavin from Bozeman, Montana, USA, CC BY-SA 2.0", "squirrel: Peter Trimming, CC BY 2.0", "sparrow: Rhododendrites, CC BY-SA 4.0", "magpie: Alexis Lours, CC BY 4.0", "raven: Frank Schulenburg, CC BY-SA 4.0", "hare: Charles J. Sharp, CC BY-SA 4.0", "clearcut: Øyvind Holmstad, CC BY-SA 4.0", "town-aerial: Vnnen, CC BY-SA 4.0", "house-spain: Vincent van Zeijst, CC BY-SA 4.0", "house-finland: Ximonic (Simo Räsänen), CC BY-SA 4.0", "fox: ClaudiaTen, CC BY-SA 4.0", "fox-cubs: Divlja Srbija, CC BY-SA 4.0", "moose: GlacierNPS, Public domain", "black-woodpecker: Dion Art, CC BY-SA 4.0", "frog: Chmee2, CC BY 3.0", "lizard: Charles J. Sharp, CC BY-SA 4.0", "grass-snake: Charles J. Sharp, CC BY-SA 4.0", "ant: Richard Bartz, Munich Makro Freak, CC BY-SA 2.5", "anthill: Tholst93, CC BY-SA 3.0", "spider: Didier Descouens, CC BY-SA 3.0", "spruce: Ivar Leidus, CC BY-SA 3.0 ee", "pine: Mickaël Delcey (Silverkey), CC BY-SA 3.0", "spruce-needles: MrPanyGoff, CC BY-SA 3.0", "pine-needles: George Chernilevsky, CC BY 4.0", "spruce-cones: MrPanyGoff, CC BY-SA 3.0", "pine-cones: George Chernilevsky, CC BY-SA 4.0", "birch-summer: Percita at Flickr, CC BY-SA 2.0", "birch-winter: Юрий Д.К., CC BY 4.0", "moss: Bertport, CC BY-SA 4.0", "lichen: jensu, CC0", "wood-sorrel: Jörg Hempel, CC BY-SA 3.0 de", "polypody: Michael Linnenbach, CC BY-SA 4.0", "blueberry: Lalakmus, CC BY-SA 4.0", "raspberry: Kollányi Gábor, CC BY-SA 3.0", "willow: Bernie, Public domain", "chanterelle:  , CC BY-SA 3.0", "fly-agaric: Kieran Roy Powell, CC BY 4.0", "bracket-fungus: George Chernilevsky, Public domain", "mycelium: The original uploader was Lex vB at Dutch Wikipedia., CC BY-SA 3.0", "bog: Ninara, CC BY 2.0", "rapids: Jukka Kemppinen, CC BY-SA 2.0", "fell: Ximonic (Simo Räsänen), CC BY-SA 4.0"];
+
+// ---------- Regi: bild, kort, ljud, figurer och uppgifter per replik ----------
+// nyckeln är repliknumret (1 = första repliken i scenen). task körs EFTER repliken.
+const P=n=>"sprites/"+n+".webp";
+const DIR={
+ "ch09-a":{bg:"ch09-a-water-tower-view",atmo:"suburban-birds",
+   1:{sfx:"page-turn"},2:{sfx:"raven-call",pose:"action-06"},7:{card:"Miljö =\nallt runt omkring oss"},
+   11:{card:"Närmiljö =\ndär du bor och rör dig\nvarje dag"},
+   12:{card:null,sp:[{id:"ch09-vehicles-01",x:50,y:66,h:8,flip:1,move:66}],sfx:"bus-passing"},
+   15:{task:{kind:"hot",need:3,title:"Tryck på tre saker du ser",spots:[
+     {x:27,y:56,r:9,l:"Skolan"},{x:57,y:63,r:5,l:"Vägen"},{x:66,y:64,r:5,l:"Bron"},{x:75,y:74,r:6,l:"Ån"},{x:46,y:57,r:4,l:"Ån"},
+     {x:86,y:24,r:8,l:"Skogen"},{x:20,y:25,r:8,l:"Skogen"},{x:69,y:40,r:7,l:"Höghuset"},{x:48,y:45,r:5,l:"Husen"},{x:30,y:36,r:4,l:"Husen"},{x:22,y:42,r:6,l:"Träden"}]}},
+   18:{pose:"action-01",sfx:"bird-wings-flapping"},19:{pose:"talk-04"}},
+ "ch09-b":{bg:"ch09-b-lake-shore",atmo:"river-and-birds",
+   1:{pose:"talk-03"},2:{card:"Levande natur:\ndjur, växter, svampar"},4:{card:"Icke-levande natur:\nstenar, vatten, luft, sol"},
+   7:{card:null,task:{kind:"sort",title:"Levande eller icke-levande?",a:"Levande",b:"Icke-levande",items:[
+     ["ch09-sort-icons-01","Haren","a"],["ch09-sort-icons-05","Stenen","b"],["ch09-sort-icons-03","Maskrosen","a"],["ch09-sort-icons-04","Solen","b"],
+     ["ch09-sort-icons-07","Grodan","a"],["ch09-sort-icons-06","Vattnet","b"],["ch09-sort-icons-02","Svampen","a"],["ch09-sort-icons-10","Molnet","b"],
+     ["ch09-sort-icons-09","Kotten","a"],["ch09-sort-icons-08","Myran","a"],["ch09-sort-icons-11","Blåbäret","a"],["ch09-sort-icons-12","Björklövet","a"]]}},
+   8:{card:"Levande + icke-levande\n= en helhet"},9:{card:null,pose:"action-04",sfx:"bird-wings-flapping"},11:{pose:"action-05"}},
+ "ch09-c":{bg:"ch09-c-valley-stone-age",atmo:"forest-quiet",
+   1:{sfx:"magical-light"},3:{card:"Stenåldern:\nboplatser och odling"},5:{card:"Vägar, hus,\nelledningar, parker"},
+   6:{bg:"ch09-c-valley-today",atmo:"suburban-birds",card:"Kulturlandskap"},7:{card:null},
+   8:{task:{kind:"hot",need:4,cats:1,title:"Tryck på allt som människor har byggt",spots:[
+     {x:24,y:53,r:5,l:"Vägen"},{x:87,y:49,r:5,l:"Vägen"},{x:60,y:56,r:7,l:"Bron"},{x:72,y:56,r:5,l:"Bron"},
+     {x:22,y:71,r:7,l:"Husen"},{x:39,y:66,r:6,l:"Husen"},{x:82,y:44,r:5,l:"Husen"},{x:17,y:46,r:6,l:"Husen"},
+     {x:36,y:42,r:4,l:"Elledningarna"},{x:73,y:42,r:4,l:"Elledningarna"},{x:47,y:43,r:3,l:"Gatlampan"}],
+     wrongs:[{x:72,y:73,r:9,l:"Ån fanns där innan"},{x:46,y:20,r:9,l:"Skogen fanns där innan"}]}},
+   10:{sp:[{id:"ch09-vehicles-01",x:20,y:55,h:8,flip:1,move:85}],sfx:"bus-passing"}},
+ "ch09-d":{bg:"ch09-d-forest-before",atmo:"forest-windy-birds",
+   1:{sp:[{id:"ch09-park-animals-07",x:62,y:30,h:10,flip:1}]},
+   3:{bg:"ch09-d-clearcut",atmo:"wind-in-forest",sp:[],sfx:"chainsaw",card:"Kalhygge"},4:{card:null,pose:"talk-06"},
+   5:{card:"Snabb förändring: kalhygge\nLångsam: varmare klimat"},7:{card:"Arter anpassar sig"},
+   8:{bg:"ch09-d-dandelion-world",atmo:"morning-garden",card:null,sfxAt:[.72,"lawn-mower"]},9:{pose:"talk-07"}},
+ "ch09-e":{bg:"ch09-e-park",atmo:"urban-park-traffic",
+   2:{sfx:"raven-call",pose:"talk-02"},3:{card:"Lönn, rönn och asp"},5:{card:"Maskros, groblad\noch vitklöver"},
+   6:{card:null,sp:[{id:"ch09-park-animals-01",x:18,y:93,h:15},{id:"ch09-park-animals-04",x:40,y:82,h:7},{id:"ch09-park-animals-06",x:58,y:86,h:11,flip:1}],sfx:"songbird-chirp"},
+   7:{card:"Kråkfåglar:\nskata och korp"},8:{card:null},
+   9:{task:{kind:"explore",need:6,title:"Tryck på växterna och djuren",items:[
+     {hot:{x:8,y:30,r:9},n:"Lönn",ph:"photo-maple",f:"Lönnen har stora, handformade blad."},
+     {hot:{x:40,y:30,r:10},n:"Rönn",ph:"photo-rowan",f:"Rönnen har klasar av orangeröda bär."},
+     {hot:{x:72,y:30,r:9},n:"Asp",ph:"photo-aspen",f:"Aspens runda blad darrar i minsta vind."},
+     {sp:0,n:"Ekorre",ph:"photo-squirrel",f:"Ekorren samlar nötter och kottar inför vintern."},
+     {sp:1,n:"Sparv",ph:"photo-sparrow",f:"Sparven trivs där det bor människor."},
+     {sp:2,n:"Skata",ph:"photo-magpie",f:"Skatan är en kråkfågel, precis som korpen."},
+     {tile:"photo-dandelion",n:"Maskros",f:"Maskrosen klarar sig nästan överallt."},
+     {tile:"photo-plantain",n:"Groblad",f:"Grobladet har bladnerver som går bredvid varandra."},
+     {tile:"photo-white-clover",n:"Vitklöver",f:"Vitklövern har blad i tre delar och vita blommor."}]}}},
+ "ch09-f":{bg:"ch09-f-market-square",atmo:"city-traffic",
+   1:{sfx:"crowd-talking-loop"},3:{card:"Över 4 miljoner finländare\nbor i städer"},
+   4:{card:null,pose:"action-08",sp:[{id:"ch09-town-icons-08",x:20,y:60,h:24},{id:"ch09-town-icons-09",x:42,y:58,h:20},{id:"ch09-town-icons-10",x:62,y:52,h:22}],sfx:"fairy-sparkle"},
+   5:{sp:[],task:{kind:"pick",title:"Välj det som en stad behöver",cols:5,items:[
+     ["ch09-town-icons-01","Skola",1],["ch09-town-icons-08","Vulkan",0],["ch09-town-icons-02","Sjukhus",1],["ch09-town-icons-03","Affär",1],["ch09-town-icons-09","Piratskepp",0],
+     ["ch09-town-icons-04","Bibliotek",1],["ch09-town-icons-05","Lekplats",1],["ch09-town-icons-10","Slott på ett moln",0],["ch09-town-icons-06","Sportplan",1],["ch09-town-icons-07","Brandstation",1]]}},
+   7:{pose:"talk-06"}},
+ "ch09-g":{bg:"ch09-g-house-spain",atmo:"morning-garden",
+   2:{card:"Spanien:\nljus sten, platta tak",img2:["ch09-g-house-finland",.62,"Finland:\nträ, lutande tak"]},
+   4:{bg:"ch09-g-house-finland",atmo:"winter-wind-loop",card:"Snön glider av\nett lutande tak"},
+   5:{bg:"ch09-g-house-spain",atmo:"morning-garden",card:null,pose:"talk-08"},6:{card:"Material + klimat"}},
+ "ch09-h":{bg:"ch09-a-water-tower-sunset",atmo:"summer-night-forest",
+   3:{pose:"talk-06"},4:{card:"Levande + icke-levande\nKulturlandskap"},5:{card:"Uppdrag: hitta 3 levande\noch 3 icke-levande saker"},6:{card:null,pose:"action-01",sfxAt:[.8,"raven-call"]}},
+ "ch10-a":{bg:"ch10-a-last-house",atmo:"breeze-through-trees",
+   1:{card:"Naturlandskap:\nnatur som människan inte har rört"},3:{card:null,bg:"ch10-a-card-forest",img2:["ch10-a-card-bog",.55]},
+   4:{bg:"ch10-a-card-river"},5:{bg:"ch10-a-card-fell",task:{kind:"pick",title:"Vad hör till Finlands naturlandskap?",cols:3,photo:1,items:[
+     ["img/ch10-a-card-forest","Skog",1],["img/ch09-f-market-square","Torg",0],["img/ch10-a-card-bog","Myr",1],["img/ch09-c-valley-today","Väg och bro",0],["img/ch10-a-card-river","Vattendrag",1],["img/ch10-a-card-fell","Fjäll",1]]}}},
+ "ch10-b":{bg:"ch10-b-forest",atmo:"forest-european-ambience",
+   1:{sfx:"black-woodpecker-drumming",pose:"talk-07"},2:{sp:[{id:"ch10-woodpecker-01",x:14,y:52,h:24}]},
+   3:{sp:[{id:"ch10-woodpecker-01",x:14,y:52,h:24},{id:"ch10-moose-05",x:28,y:66,h:30,move:46}],sfx:"dry-leaves-rustling",card:"Däggdjur: levande ungar,\nmjölk, lungor"},
+   4:{card:null},6:{pose:"talk-09"},
+   7:{bg:"ch10-b-fox-den",atmo:"forest-quiet",sp:[{id:"ch10-fox-02",x:22,y:78,h:32},{id:"ch10-fox-11",x:44,y:84,h:14},{id:"ch10-fox-09",x:60,y:88,h:16}]},
+   9:{bg:"ch10-b-forest",atmo:"forest-european-ambience",sp:[{id:"ch10-woodpecker-01",x:14,y:52,h:24},{id:"ch10-moose-01",x:40,y:66,h:30},{id:"ch10-fox-05",x:62,y:84,h:18}],
+     task:{kind:"explore",need:3,title:"Tryck på djuren i skogen",items:[
+     {sp:0,n:"Hackspett",ph:"photo-black-woodpecker",f:"Spillkråkan är Finlands största hackspett. Den hackar hål i trädstammarna för att komma åt insekter."},
+     {sp:1,n:"Älg",ph:"photo-moose",f:"Skogens största djur. Ett däggdjur som äter blad, kvistar och gräs."},
+     {sp:2,n:"Räv",ph:"photo-fox",f:"Ett däggdjur. Rävmamman ger ungarna mjölk i lyan."},
+     {tile:"photo-fox-cubs",n:"Rävungar",f:"Rävungarna föds levande och dricker mjölk."}]}}},
+ "ch10-c":{bg:"ch10-c-pond-summer",atmo:"forest-frogs",
+   1:{sp:[{id:"ch10-cold-blooded-01",x:55,y:74,h:14}],card:"Växelvarma:\ngroda, ödla, orm"},
+   3:{card:null,sp:[{id:"ch10-cold-blooded-03",x:40,y:70,h:16,move:30}],sfx:"long-pop"},
+   4:{bg:"ch10-c-pond-winter",atmo:"winter-wind-loop",sp:[],card:"Dvala"},5:{card:null,pose:"talk-06"},
+   6:{bg:"ch10-c-pond-summer",atmo:"forest-frogs",sp:[{id:"ch10-cold-blooded-02",x:55,y:74,h:14}]}},
+ "ch10-d":{bg:"ch10-d-anthill",atmo:"forest-quiet",
+   1:{sp:[{id:"ch10-small-creatures-01",x:30,y:82,h:12,move:40}],pose:"talk-04"},
+   2:{card:"Insekt: tre kroppsdelar,\nsex ben, antenner,\nhårt skal"},
+   3:{card:null,sp:[],task:{kind:"count",title:"Hur många ben har myran?",img:"ch10-small-creatures-03",opts:["4","6","8"],ok:"6"}},
+   5:{sp:[{id:"ch10-small-creatures-04",x:22,y:60,h:22}]},
+   6:{sp:[],task:{kind:"count",title:"Hur många ben har spindeln?",img:"ch10-small-creatures-04",opts:["6","8","10"],ok:"8"}},
+   7:{card:"Spindeln är ett spindeldjur"}},
+ "ch10-e":{bg:"ch10-e-trees-summer",atmo:"forest-windy-birds",
+   1:{card:"Gran och tall:\nupp till 40 meter"},2:{card:null,pose:"action-01"},3:{card:"Barrträd:\nbarr med vaxyta"},
+   4:{bg:"ch10-e-trees-winter",atmo:"winter-wind-loop",card:null,pose:"talk-06"},5:{card:"Lövträd tappar\nlöven på vintern"},
+   6:{bg:"ch10-e-trees-summer",atmo:"forest-windy-birds",card:"Gran: långa kottar, ett barr\nTall: små kottar, två barr"},
+   7:{card:null,sp:[{id:"ch09-sort-icons-09",x:30,y:80,h:16}]},8:{sp:[]}},
+ "ch10-f":{bg:"ch10-f-forest-layers",atmo:"forest-european-ambience",
+   1:{card:"Skogen växer i skikt"},2:{card:null,pose:"talk-02"},3:{card:"Trädskiktet\nBuskskiktet"},5:{card:"Fältskiktet\nBottenskiktet"},6:{card:null},
+   7:{task:{kind:"layers",title:"Sätt varje växt på rätt våning",items:[
+     ["ch10-layer-plants-01","Mossa","b"],["ch10-layer-plants-07","Hallon","bu"],["ch10-layer-plants-06","Blåbär","f"],["ch10-layer-plants-10","Tall","t"],
+     ["ch10-layer-plants-02","Lav","b"],["ch10-layer-plants-04","Harsyra","f"],["ch10-layer-plants-08","Vide","bu"],["ch10-layer-plants-03","Gräs","f"]]}}},
+ "ch10-g":{bg:"ch10-g-underground",atmo:"forest-quiet",
+   1:{sfx:"digging-in-garden"},2:{pose:"action-08"},3:{card:"Svampar är inte växter"},
+   4:{card:"Hatt, ring, fot\noch mycel",sp:[{id:"ch10-fungi-03",x:22,y:92,h:62}]},5:{card:null},
+   6:{card:"Flugsvampen är giftig!",sp:[{id:"ch10-fungi-03",x:22,y:92,h:62}],img2:null},
+   7:{card:null,sp:[{id:"ch10-fungi-04",x:20,y:82,h:16},{id:"ch10-fungi-05",x:40,y:84,h:18}]},
+   8:{sp:[],card:"Svampar gör ny jord\nav döda växter"},10:{card:"Släng aldrig skräp\ni skogen"}},
+ "ch10-h":{bg:"ch10-h-forest-sunset",atmo:"summer-night-forest",
+   3:{pose:"talk-06"},5:{card:"Uppdrag: leta upp\nskogens fyra skikt"},6:{card:null,pose:"action-01",sfxAt:[.85,"raven-call"]}}
+};
+const CHAPTERS=[
+ {id:"k9",n:9,title:"Din omgivning är din närmiljö",cover:"ch09-a-water-tower-view",scenes:["ch09-a","ch09-b","ch09-c","ch09-d","ch09-e","ch09-f","ch09-g","ch09-h"]},
+ {id:"k10",n:10,title:"Naturmiljö",cover:"ch10-b-forest",scenes:["ch10-a","ch10-b","ch10-c","ch10-d","ch10-e","ch10-f","ch10-g","ch10-h"]}
+];
+const SHORT={"ch09-a":"Vattentornet","ch09-b":"Sjön","ch09-c":"Dalen förr och nu","ch09-d":"Kalhygget och maskrosen","ch09-e":"Parken","ch09-f":"Torget","ch09-g":"Taken","ch09-h":"Solnedgång vid tornet",
+ "ch10-a":"Naturlandskapet","ch10-b":"Skogens djur","ch10-c":"Dammen","ch10-d":"Myrstacken","ch10-e":"Träden","ch10-f":"Skogens våningar","ch10-g":"Under jorden","ch10-h":"Solnedgång i skogen"};
+// korta repliker: [fil, stycke]
+const GEN={
+ nRight:[["omg-general-narrator",0],["omg-general-narrator",1],["omg-general-narrator",2]],
+ nWrong:[["omg-general-narrator",3],["omg-general-narrator",4]],
+ nNext:["omg-general-narrator",5], nDone:["omg-general-narrator",6],
+ kRight:[["omg-general-krax",0],["omg-general-krax",1],["omg-general-krax",2]],
+ kWrong:[["omg-general-krax",3],["omg-general-krax",4]], kStreak:["omg-general-krax",5], kHello:["omg-general-krax",6]
+};
+
+// ---------- Sparat ----------
+const KEY="omg.v1";
+function loadS(){try{return Object.assign({scenes:{},best:{},stats:{}},JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return {scenes:{},best:{},stats:{}}}}
+let S=loadS();
+function saveS(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.random()*a.length|0];
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));scrollTo(0,0)}
+
+// ---------- Ljud (datorn: elementvolym) ----------
+let sndOn=true;try{sndOn=localStorage.getItem(KEY+".snd")!=="0"}catch(e){}
+const ATMO=0.32, ATMO_DUCK=0.13, SFXV=0.55;
+let speaking=false;
+function fadeEl(el,to,ms,done){const from=el.volume,t0=performance.now();
+  (function step(t){const k=Math.min(1,(t-t0)/ms);el.volume=Math.min(1,Math.max(0,from+(to-from)*k));if(k<1)requestAnimationFrame(step);else done&&done()})(t0)}
+const aA=new Audio(),aB=new Audio();[aA,aB].forEach(a=>{a.loop=true;a.preload="none"});
+let aCur=aA,aName=null;
+function atmoLevel(){return sndOn?(speaking?ATMO_DUCK:ATMO):0}
+function atmo(name){
+  if(name===aName)return;aName=name;
+  const next=aCur===aA?aB:aA,prev=aCur;
+  fadeEl(prev,0,1600,()=>prev.pause());
+  if(!name){aCur=next;return}
+  next.src="sfx/"+name+".mp3";next.volume=0;next.play().catch(()=>{});fadeEl(next,atmoLevel(),1600);aCur=next;
+}
+function duck(on){speaking=on;if(aName&&!aCur.paused)fadeEl(aCur,atmoLevel(),on?300:1200)}
+const pool=[];
+function sfx(name){if(!sndOn||!name)return;let el=pool.find(e=>e.paused);if(!el){el=new Audio();pool.push(el)}
+  el.src="sfx/"+name+".mp3";el.volume=SFXV;el.play().catch(()=>{});
+  setTimeout(()=>{if(!el.paused)fadeEl(el,0,1500,()=>el.pause())},9000)}
+function stopSfx(){pool.forEach(e=>e.pause())}
+// röster: ett element per fil
+const vEls={};
+function vEl(f){let e=vEls[f];if(!e){e=vEls[f]=new Audio("voice/"+f+".mp3");e.preload="auto"}return e}
+let vCur=null,vStopT=null,vToken=0;
+function playSeg(f,s,e){ // lovar att lösas när repliken är slut (eller avbruten)
+  stopVoice();const tok=++vToken;const el=vEl(f);vCur=el;
+  return new Promise(res=>{
+    const done=()=>{if(tok!==vToken)return;clearInterval(vStopT);el.pause();duck(false);kraxTalk(false);res(true)};
+    const go=()=>{el.currentTime=s;el.play().then(()=>{duck(true);
+      vStopT=setInterval(()=>{if(el.currentTime>=e-.02||el.ended)done()},40)}).catch(()=>{res(false)})};
+    if(el.readyState>=1)go();else el.addEventListener("loadedmetadata",go,{once:true});
+    el.onended=done;
+  });
+}
+function stopVoice(){vToken++;clearInterval(vStopT);if(vCur)vCur.pause();duck(false);kraxTalk(false)}
+function say(g){const[f,i]=g;const p=ALIGNMAP[f]?.[i];if(!p)return Promise.resolve();kraxTalk(f.includes("krax"));return playSeg(f,p[0],p[1])}
+function sndIcon(){
+  const on='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>';
+  const off='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+  ["#sndHome","#sndPl","#sndQ"].forEach(s=>{const b=$(s);b.innerHTML=sndOn?on:off;b.setAttribute("aria-label",sndOn?"Bakgrundsljud av":"Bakgrundsljud på");b.title=b.getAttribute("aria-label")})}
+function toggleSnd(){sndOn=!sndOn;try{localStorage.setItem(KEY+".snd",sndOn?"1":"0")}catch(e){}if(aName)fadeEl(aCur,atmoLevel(),300);if(!sndOn)stopSfx();sndIcon()}
+["#sndHome","#sndPl","#sndQ"].forEach(s=>$(s).addEventListener("click",toggleSnd));sndIcon();
+
+// ---------- Startsidan ----------
+function renderHome(){
+  const box=$("#chapters");box.innerHTML="";
+  for(const C of CHAPTERS){
+    const heard=C.scenes.filter(s=>S.scenes[s]).length;const b=S.best[C.id];
+    const d=document.createElement("article");d.className="chap";
+    d.innerHTML=`<div class="cover" style="background-image:url(img/${C.cover}.webp)"><span>Kapitel ${C.n}</span></div>
+      <div class="body"><h2>${C.title}</h2><ol class="scenes">${C.scenes.map((s,i)=>`<li><button type="button" data-s="${s}"><span class="tick ${S.scenes[s]?"done":""}">${S.scenes[s]?"✓":""}</span>${i+1}. ${SHORT[s]}</button></li>`).join("")}</ol>
+      <div class="acts"><button class="btn" type="button" data-play="${C.id}">${heard?(heard===C.scenes.length?"Från början igen":"Fortsätt"):"Starta kapitlet"}</button>
+      <button class="btn alt" type="button" data-quiz="${C.id}">Frågor</button>
+      <span class="mark">${heard} av ${C.scenes.length} scener${b!=null?` · bästa: <b>${b}%</b>`:""}</span></div></div>`;
+    box.appendChild(d);
+  }
+  box.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>openChapter(CHAPTERS.find(c=>c.scenes.includes(b.dataset.s)),b.dataset.s));
+  box.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>{const C=CHAPTERS.find(c=>c.id===b.dataset.play);const first=C.scenes.find(s=>!S.scenes[s])||C.scenes[0];openChapter(C,first)});
+  box.querySelectorAll("[data-quiz]").forEach(b=>b.onclick=()=>startQuiz(b.dataset.quiz));
+  const eb=S.best.exam;$("#examBtn").textContent=eb==null?"Öva inför provet":`Öva igen (bästa: ${eb}%)`;
+}
+$("#examBtn").onclick=()=>startQuiz("exam");
+$("#aboutBtn").onclick=()=>$("#about").showModal();
+$("#credits").innerHTML=CREDITS.map(c=>`<li>${c}</li>`).join("");
+
+// ---------- Spelaren ----------
+let CH=null,steps=[],si=0,playing=false,showTxt=true,runTok=0;
+try{showTxt=localStorage.getItem(KEY+".txt")!=="0"}catch(e){}
+function buildSteps(C){
+  const out=[];
+  for(const sc of C.scenes){
+    const D=DIR[sc]||{};const lines=LINES[sc].lines;
+    lines.forEach((l,i)=>{const o=D[i+1]||{};out.push({t:"line",sc,n:i+1,l,o,first:i===0});
+      if(o.task)out.push({t:"task",sc,task:o.task})});
+  }
+  return out;
+}
+function openChapter(C,startScene){
+  CH=C;steps=buildSteps(C);si=Math.max(0,steps.findIndex(s=>s.sc===startScene));
+  $("#plTitle").textContent=`Kapitel ${C.n}: ${C.title}`;
+  $("#dots").innerHTML=C.scenes.map(()=>"<i></i>").join("");
+  resetStage(steps[si].sc);
+  bigStart(`<h3>${SHORT[steps[si].sc]}</h3><div class="row"><button class="btn big light" id="goBtn" type="button">Börja</button></div>`,()=>{run(si)});
+  playing=false;playIcon();show("player");
+}
+function bigStart(html,onGo){const b=$("#bigstart");b.innerHTML=`<div class="inner">${html}</div>`;b.hidden=false;
+  const g=$("#goBtn");if(g){g.onclick=()=>{b.hidden=true;onGo()};setTimeout(()=>g.focus(),50)}}
+// scenens tillstånd vid ett visst steg (så att hopp bakåt/framåt blir rätt)
+function sceneState(idx){
+  const st=steps[idx],D=DIR[st.sc]||{};
+  const s={bg:D.bg,atmo:D.atmo,card:null,sp:[],pose:"talk-01"};
+  for(let j=steps.findIndex(x=>x.sc===st.sc);j<=idx;j++){const x=steps[j];if(x.t!=="line")continue;const o=x.o;
+    if(o.bg)s.bg=o.bg;if(o.atmo)s.atmo=o.atmo;if("card" in o)s.card=o.card;if(o.sp)s.sp=o.sp;if(o.pose)s.pose=o.pose;
+    if(j<idx&&o.img2)s.bg=o.img2[0]}
+  return s;
+}
+function resetStage(sc){const D=DIR[sc]||{};setBg(D.bg,true);setSprites([]);setCard(null);$("#say").innerHTML="";setPose("talk-01")}
+let front,back,curBg=null;front=$("#bgA");back=$("#bgB");
+function setBg(name,instant){
+  if(!name||name===curBg)return;curBg=name;const url="img/"+name+".webp";
+  $("#blur").style.backgroundImage=`url(${url})`;
+  back.src=url;
+  const swap=()=>{back.classList.add("show");front.classList.remove("show");[front,back]=[back,front]};
+  if(instant){front.classList.remove("show");back.classList.add("show");[front,back]=[back,front];return}
+  if(back.complete&&back.naturalWidth)requestAnimationFrame(swap);else back.onload=()=>{back.onload=null;swap()};
+}
+let cardT;
+function setCard(t){const c=$("#card");clearTimeout(cardT);
+  if(!t){c.classList.remove("show");return}
+  if(c.classList.contains("show")&&c.textContent===t)return;
+  c.classList.remove("show");cardT=setTimeout(()=>{c.textContent=t;c.classList.add("show")},250)}
+let curSp="[]";
+function setSprites(list){
+  const key=JSON.stringify(list||[]);if(key===curSp)return;curSp=key;
+  const box=$("#sprites");const old=[...box.children];old.forEach(e=>{e.classList.remove("show");setTimeout(()=>e.remove(),650)});
+  (list||[]).forEach((p,k)=>{const d=document.createElement("div");d.className="sprite"+(p.flip?" flip":"");d.dataset.k=k;
+    d.style.cssText=`left:${p.x}%;top:${p.y-p.h}%;height:${p.h}%;z-index:${2+Math.round(p.y/10)}`;
+    d.innerHTML=`<img src="${P(p.id)}" alt="">`;box.appendChild(d);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{d.classList.add("show");if(p.move!=null)d.style.left=p.move+"%"}))});
+}
+function setPose(p){const img=$("#kraxImg");const src=P("krax-poses-"+p);if(img.getAttribute("src")!==src)img.src=src}
+function kraxTalk(on){$("#krax").classList.toggle("talk",on)}
+function sceneTitle(sc){const C=CH;const t=$("#sceneTitle");t.innerHTML=`<small>Kapitel ${C.n}</small>${SHORT[sc]}`;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
+function dots(){if(!steps[si])return;const k=CH.scenes.indexOf(steps[si].sc);document.querySelectorAll("#dots i").forEach((d,j)=>d.className=j<k?"done":j===k?"now":"")}
+function preload(i){for(let j=i+1;j<Math.min(steps.length,i+6);j++){const x=steps[j];if(x.t==="line"){vEl(x.l.f);const b=x.o.bg;if(b){const im=new Image();im.src="img/"+b+".webp"}}}}
+
+async function run(i){
+  const tok=++runTok;si=i;playing=true;playIcon();
+  while(si<steps.length&&tok===runTok){
+    const st=steps[si];
+    if(st.t==="line"){
+      if(st.first){S.scenes[st.sc]=S.scenes[st.sc]||0;sceneTitle(st.sc);if(st.n===1&&si===0||steps[si-1]?.sc!==st.sc)await wait(1300,tok)}
+      applyLine(si);preload(si);
+      $("#say").innerHTML=`<b class="${st.l.w==="K"?"k":""}">${st.l.w==="K"?"Krax":"Berättaren"}</b><span>${st.l.t}</span>`;
+      $("#sub").classList.toggle("hide",!showTxt);
+      kraxTalk(st.l.w==="K");
+      const o=st.o;if(o.img2){const[nm,at,cd]=o.img2;const dur=(st.l.e-st.l.s)*1000;setTimeout(()=>{if(tok===runTok){setBg(nm);if(cd)setCard(cd)}},dur*at)}
+      if(o.sfxAt){const dur=(st.l.e-st.l.s)*1000;setTimeout(()=>{if(tok===runTok)sfx(o.sfxAt[1])},dur*o.sfxAt[0])}
+      const ok=await playSeg(st.l.f,st.l.s,st.l.e);
+      if(tok!==runTok)return;
+      if(!ok){playing=false;playIcon();return}
+      const nx=steps[si+1];
+      if(!nx||nx.sc!==st.sc){S.scenes[st.sc]=Date.now();saveS();await wait(900,tok)}
+      else await wait(nx&&nx.t==="line"&&nx.l.w!==st.l.w?280:420,tok);
+    } else {
+      playing=false;playIcon();
+      const ok=await runTask(st.task,tok);if(tok!==runTok||!ok)return;
+      playing=true;playIcon();
+    }
+    if(tok!==runTok)return;
+    si++;dots();
+  }
+  if(tok===runTok&&si>=steps.length)finishChapter();
+}
+function wait(ms,tok){return new Promise(r=>setTimeout(()=>r(),ms))}
+function applyLine(i){
+  const st=steps[i],o=st.o;dots();
+  if(o.bg)setBg(o.bg);if(o.atmo||st.first){const s=sceneState(i);atmo(sndOn||true?s.atmo:null)}
+  if("card" in o)setCard(o.card);if(o.sp)setSprites(o.sp);if(o.pose)setPose(o.pose);
+  if(o.sfx)sfx(o.sfx);
+}
+function jump(i){ // hoppa till steg i (replik), bygg upp scenen
+  i=Math.max(0,Math.min(steps.length-1,i));while(steps[i].t!=="line"&&i>0)i--;
+  runTok++;stopVoice();closeTask();
+  const s=sceneState(i);setBg(s.bg);atmo(s.atmo);setCard(s.card);setSprites(s.sp);setPose(s.pose);
+  $("#bigstart").hidden=true;run(i);
+}
+function pause(){runTok++;stopVoice();playing=false;playIcon();$("#player").classList.remove("idle")}
+function playIcon(){$("#playBtn").innerHTML=playing?'<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>':'<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>';
+  $("#playBtn").setAttribute("aria-label",playing?"Paus":"Spela")}
+$("#playBtn").onclick=()=>{if(!$("#bigstart").hidden){$("#goBtn")?.click();return}
+  if(!$("#task").hidden)return; playing?pause():jump(si)};
+$("#prevBtn").onclick=()=>{let j=si-1;while(j>0&&steps[j].t!=="line")j--;jump(j)};
+$("#nextBtn").onclick=()=>{let j=si+1;while(j<steps.length&&steps[j].t!=="line")j++;if(j>=steps.length){pause();finishChapter();return}jump(j)};
+$("#txtBtn").onclick=()=>{showTxt=!showTxt;try{localStorage.setItem(KEY+".txt",showTxt?"1":"0")}catch(e){}$("#sub").classList.toggle("hide",!showTxt)};
+$("#plBack").onclick=()=>{pause();closeTask();atmo(null);stopSfx();renderHome();show("home")};
+function finishChapter(){
+  pause();saveS();
+  sfx("level-completed");setCard(null);
+  bigStart(`<h3>Kapitel ${CH.n} klart!</h3><p>Nu får du visa vad du kommer ihåg.</p><div class="row"><button class="btn big light" id="goBtn" type="button">Frågor om kapitlet</button><button class="btn big alt" style="color:#fff" id="homeBtn" type="button">Tillbaka</button></div>`,()=>startQuiz(CH.id));
+  $("#homeBtn").onclick=()=>{$("#bigstart").hidden=true;atmo(null);renderHome();show("home")};
+  say(GEN.nDone);
+}
+
+// ---------- Uppgifter ----------
+let taskDone=null;
+function closeTask(){$("#player").classList.remove("tasking");const t=$("#task");t.hidden=true;t.innerHTML="";$("#krax").classList.remove("hide");if(taskDone){const d=taskDone;taskDone=null;d(false)}}
+function finishTask(){sfx("achievement-bell");const d=taskDone;taskDone=null;setTimeout(()=>{$("#player").classList.remove("tasking");const t=$("#task");t.hidden=true;t.innerHTML="";$("#krax").classList.remove("hide");d&&d(true)},900)}
+function right(){sfx("quick-positive");if(Math.random()<.35)say(pick(Math.random()<.5?GEN.nRight:GEN.kRight))}
+function wrong(){sfx("cartoon-boing");if(Math.random()<.5)say(pick(GEN.kWrong))}
+function runTask(T,tok){
+  return new Promise(res=>{taskDone=res;$("#player").classList.add("tasking");const t=$("#task");t.hidden=false;t.innerHTML="";
+    ({hot:taskHot,sort:taskSort,pick:taskPick,explore:taskExplore,count:taskCount,layers:taskLayers})[T.kind](T,t)});
+}
+function bar(t,T,txt){const b=document.createElement("div");b.className="taskbar";b.innerHTML=`<span>${T.title}</span><span class="n" id="tn">${txt||""}</span>`;t.appendChild(b)}
+function photoSrc(n){return n.startsWith("img/")?n+".webp":"photos/"+n+".webp"}
+function taskHot(T,t){
+  bar(t,T,`0 av ${T.need}`);const found=new Set();
+  const add=(s,ok)=>{const h=document.createElement("button");h.type="button";h.className="hot";h.setAttribute("aria-label",s.l);
+    h.style.cssText=`left:${s.x}%;top:${s.y}%;width:${s.r*2}cqw;height:${s.r*2}cqw`;
+    h.onclick=()=>{if(!ok){wrong();pin(s,true);return}
+      if(found.has(s.l)){pin(s);return}found.add(s.l);right();pin(s);$("#tn").textContent=`${Math.min(found.size,T.need)} av ${T.need}`;
+      if(found.size>=T.need)finishTask()};t.appendChild(h)};
+  const pin=(s,bad)=>{const p=document.createElement("div");p.className="pin";p.textContent=s.l;if(bad)p.style.background="#f4cfc4";p.style.left=s.x+"%";p.style.top=(s.y-s.r*1.2)+"%";t.appendChild(p);if(bad)setTimeout(()=>p.remove(),1800)};
+  T.spots.forEach(s=>add(s,true));(T.wrongs||[]).forEach(s=>add(s,false));
+}
+function taskSort(T,t){
+  $("#krax").classList.add("hide");
+  const sh=document.createElement("div");sh.className="shade";t.appendChild(sh);
+  const items=T.items.slice().sort(()=>Math.random()-.5);let k=0,score=0;bar(t,T,`1 av ${items.length}`);
+  const box=document.createElement("div");box.className="sorter";t.appendChild(box);
+  const next=()=>{if(k>=items.length){finishTask();return}const[im,name,side]=items[k];$("#tn").textContent=`${k+1} av ${items.length}`;
+    box.innerHTML=`<div class="item"><img src="${P(im)}" alt=""><span>${name}</span></div><div class="choices"><button class="choice" type="button" data-s="a">${T.a}</button><button class="choice" type="button" data-s="b">${T.b}</button></div>`;
+    box.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{if(b.dataset.s===side){b.classList.add("ok");right();k++;setTimeout(next,650)}else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}})};
+  next();
+}
+function taskPick(T,t){
+  $("#krax").classList.add("hide");
+  const sh=document.createElement("div");sh.className="shade";t.appendChild(sh);
+  const need=T.items.filter(x=>x[2]).length;let got=0;bar(t,T,`0 av ${need}`);
+  const g=document.createElement("div");g.className="tiles";g.style.setProperty("--cols",T.cols||5);t.appendChild(g);
+  T.items.forEach(([im,name,ok])=>{const b=document.createElement("button");b.type="button";b.className="tile"+(T.photo?" photo":"");
+    b.innerHTML=`<img src="${T.photo?photoSrc(im):P(im)}" alt=""><span>${name}</span>`;
+    b.onclick=()=>{if(b.classList.contains("ok"))return;if(ok){b.classList.add("ok");got++;right();$("#tn").textContent=`${got} av ${need}`;if(got>=need)finishTask()}
+      else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}};g.appendChild(b)});
+}
+function taskExplore(T,t){
+  bar(t,T,`0 av ${T.need}`);const seen=new Set();let fact=null;
+  const go=document.createElement("button");go.type="button";go.className="btn light taskgo";go.textContent="Fortsätt";go.disabled=true;
+  go.onclick=()=>{if(!go.disabled){fact&&fact.remove();finishTask()}};
+  const open=(it,k,el)=>{fact&&fact.remove();fact=document.createElement("div");fact.className="fact";
+    fact.innerHTML=`<img src="${photoSrc(it.ph||it.tile)}" alt=""><div><h4>${it.n}</h4><p>${it.f}</p></div>`;t.appendChild(fact);
+    if(!seen.has(k)){seen.add(k);sfx("long-pop");el&&el.classList.add("seen");}
+    $("#tn").textContent=`${Math.min(seen.size,T.need)} av ${T.need}`;if(seen.size>=T.need){go.disabled=false}};
+  const strip=document.createElement("div");strip.className="strip";
+  T.items.forEach((it,k)=>{
+    if(it.hot){const h=document.createElement("button");h.type="button";h.className="hot";h.setAttribute("aria-label",it.n);
+      h.style.cssText=`left:${it.hot.x}%;top:${it.hot.y}%;width:${it.hot.r*2}cqw;height:${it.hot.r*2}cqw`;h.onclick=()=>open(it,k);t.appendChild(h)}
+    else if(it.sp!=null){const s=$("#sprites").children;const el=[...s].find(e=>e.dataset.k==it.sp&&e.classList.contains("show"));
+      if(el){el.classList.add("tap");el.onclick=()=>open(it,k,el)}}
+    else if(it.tile){const b=document.createElement("button");b.type="button";b.className="tile photo";b.innerHTML=`<img src="${photoSrc(it.tile)}" alt=""><span>${it.n}</span>`;b.onclick=()=>open(it,k,b);strip.appendChild(b)}
+  });
+  if(strip.children.length)t.appendChild(strip);t.appendChild(go);
+  // knappen under figurerna: flytta sprite-lagret över uppgiften
+  $("#sprites").style.zIndex=8;
+  const restore=taskDone;taskDone=(v)=>{$("#sprites").style.zIndex="";[...$("#sprites").children].forEach(e=>{e.classList.remove("tap");e.onclick=null});restore(v)};
+}
+function taskCount(T,t){
+  $("#krax").classList.add("hide");
+  const sh=document.createElement("div");sh.className="shade";t.appendChild(sh);bar(t,T,"");
+  const c=document.createElement("div");c.className="counter";c.innerHTML=`<img src="${P(T.img)}" alt=""><div class="choices">${T.opts.map(o=>`<button class="choice" type="button">${o}</button>`).join("")}</div>`;t.appendChild(c);
+  c.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{if(b.textContent===T.ok){b.classList.add("ok");right();finishTask()}else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}});
+}
+function taskLayers(T,t){
+  $("#krax").classList.add("hide");
+  const L=[["t","Trädskiktet"],["bu","Buskskiktet"],["f","Fältskiktet"],["b","Bottenskiktet"]];
+  const items=T.items.slice().sort(()=>Math.random()-.5);let k=0;bar(t,T,`1 av ${items.length}`);
+  const col=document.createElement("div");col.className="layers";
+  col.innerHTML=L.map(([id,n])=>`<button class="choice" type="button" data-l="${id}"><span>${n}</span><small></small></button>`).join("");t.appendChild(col);
+  const it=document.createElement("div");it.className="layerItem";t.appendChild(it);
+  const next=()=>{if(k>=items.length){finishTask();return}const[im,name]=items[k];$("#tn").textContent=`${k+1} av ${items.length}`;it.innerHTML=`<img src="${P(im)}" alt=""><span>${name}</span>`};
+  col.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const[im,,l]=items[k]||[];if(!im)return;
+    if(b.dataset.l===l){b.classList.add("ok");setTimeout(()=>b.classList.remove("ok"),500);b.querySelector("small").insertAdjacentHTML("beforeend",`<img src="${P(im)}" alt="">`);right();k++;next()}
+    else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}});
+  next();
+}
+
+// Helskärm och tangenter
+const fsOn='<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',fsOff='<svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+function fsIcon(){const f=!!document.fullscreenElement;$("#fsBtn").innerHTML=f?fsOff:fsOn;$("#fsBtn").setAttribute("aria-label",f?"Avsluta helskärm":"Helskärm");$("#fsBtn").title=$("#fsBtn").getAttribute("aria-label")}
+$("#fsBtn").onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else (document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen||(()=>{})).call(document.documentElement)};
+document.addEventListener("fullscreenchange",fsIcon);fsIcon();
+if(!document.fullscreenEnabled&&!document.webkitFullscreenEnabled)$("#fsBtn").style.display="none";
+let idleT;function wake(){const p=$("#player");p.classList.remove("idle");clearTimeout(idleT);idleT=setTimeout(()=>{if(playing&&$("#task").hidden)p.classList.add("idle")},3000)}
+["mousemove","pointerdown","keydown"].forEach(e=>document.addEventListener(e,()=>{if($("#player").classList.contains("on"))wake()}));
+document.addEventListener("keydown",e=>{if(!$("#player").classList.contains("on"))return;if(e.target.closest("button")&&e.key===" ")return;
+  if(e.key===" "){e.preventDefault();$("#playBtn").click()}else if(e.key==="ArrowRight")$("#nextBtn").click();else if(e.key==="ArrowLeft")$("#prevBtn").click();else if(e.key==="f"||e.key==="F")$("#fsBtn").click()});
+
+// ---------- Frågor ----------
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>s.toLowerCase().trim().replace(/[^a-zåäö0-9]/g,"");
+let QZ=null;
+function startQuiz(kind){
+  atmo(null);stopVoice();
+  let list,title;
+  const w=q=>{const s=S.stats[q.id];return Math.random()+(s?s.w*2-s.r*.5:1)};
+  if(kind==="exam"){
+    const writes=shuffle(Q.filter(q=>q.t==="write")).slice(0,4);
+    const rest=Q.filter(q=>q.t!=="write").sort((a,b)=>w(b)-w(a));
+    const chosen=writes.slice();for(const c of ["k9","k10"])for(const q of rest.filter(q=>q.c===c).slice(0,4))chosen.push(q);
+    for(const q of rest){if(chosen.length>=15)break;if(!chosen.includes(q))chosen.push(q)}
+    list=shuffle(chosen.slice(0,15));title="Provrepetition";
+  } else {list=shuffle(Q.filter(q=>q.c===kind).sort((a,b)=>w(b)-w(a)).slice(0,12));title=CHAPTERS.find(c=>c.id===kind).title}
+  QZ={kind,list,i:0,right:0,streak:0,requeued:new Set()};
+  $("#qTitle").textContent=title;show("quiz");renderQ();
+}
+function renderQ(){
+  const z=QZ,q=z.list[z.i],W=$("#qwrap");const pct=Math.round(z.i/z.list.length*100);
+  W.innerHTML=`<div class="qmeta"><span>Fråga ${z.i+1} av ${z.list.length}</span><div class="bar"><i style="width:${pct}%"></i></div>${q.krax?'<span class="kraxtag">Rätta Krax</span>':""}</div>
+    <div class="qimg"><img src="${photoSrc(q.img)}" alt=""></div>
+    <div class="qside"><h3 class="q">${q.q}</h3><div id="ans"></div><div class="fb" id="fb" aria-live="polite"></div><div class="qbtns" id="qb"></div></div>`;
+  const A=$("#ans");
+  if(!q.t||q.t==="mc"){A.className="opts";
+    shuffle(q.a).forEach((t,k)=>{const b=document.createElement("button");b.type="button";b.className="opt";b.dataset.t=t;
+      b.innerHTML=`<span class="n">${"ABCD"[k]}</span>${t}`;b.onclick=()=>answerMC(b,t===q.a[0]);A.appendChild(b)})}
+  else if(q.t==="write"){A.className="write";A.innerHTML=`<input id="win" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Ditt svar"><button class="btn" id="wok" type="button">Svara</button>`;
+    const go=()=>{const v=norm($("#win").value);if(!v)return;$("#wok").disabled=true;answerDone(q.ans.some(a=>norm(a)===v),q.ans[0])};
+    $("#wok").onclick=go;$("#win").onkeydown=e=>{if(e.key==="Enter")go()};setTimeout(()=>$("#win").focus(),50)}
+  else if(q.t==="order"){const picked=[];A.innerHTML=`<div class="ordered" id="ord"></div><div class="opts many" id="ordOpts" style="margin-top:10px"></div>`;
+    const draw=()=>{$("#ord").innerHTML=picked.map((t,k)=>`<span class="chip">${k+1}. ${t}</span>`).join("")||'<span class="mark">Tryck i rätt ordning.</span>'};draw();
+    shuffle(q.a).forEach(t=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;
+      b.onclick=()=>{if(b.disabled)return;picked.push(t);b.disabled=true;b.style.opacity=.35;draw();if(picked.length===q.a.length)answerDone(picked.every((p,k)=>p===q.a[k]),q.a.join(", "))};$("#ordOpts").appendChild(b)});
+    $("#qb").innerHTML=`<button class="btn alt" type="button" id="ordReset">Börja om</button>`;$("#ordReset").onclick=()=>renderQ()}
+  else if(q.t==="multi"){A.className="opts"+(q.a.length+q.wrong.length>5?" many":"");const sel=new Set();
+    shuffle(q.a.concat(q.wrong)).forEach(t=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;b.setAttribute("aria-pressed","false");
+      b.onclick=()=>{if(A.dataset.done)return;sel.has(t)?sel.delete(t):sel.add(t);b.classList.toggle("sel");b.setAttribute("aria-pressed",sel.has(t))};A.appendChild(b)});
+    $("#qb").innerHTML=`<button class="btn" type="button" id="mok">Klar</button>`;
+    $("#mok").onclick=()=>{if(!sel.size)return;A.dataset.done=1;const ok=q.a.every(t=>sel.has(t))&&[...sel].every(t=>q.a.includes(t));
+      A.querySelectorAll(".opt").forEach(b=>{const t=b.textContent;if(q.a.includes(t))b.classList.add("right");else if(sel.has(t))b.classList.add("wrong")});answerDone(ok,q.a.join(", "))}}
+}
+function answerMC(btn,ok){const A=$("#ans");if(A.dataset.done)return;A.dataset.done=1;const q=QZ.list[QZ.i];
+  A.querySelectorAll(".opt").forEach(b=>{if(b.dataset.t===q.a[0])b.classList.add("right")});if(!ok)btn.classList.add("wrong");answerDone(ok,q.a[0])}
+function answerDone(ok,correct){
+  const z=QZ,q=z.list[z.i];const st=S.stats[q.id]||(S.stats[q.id]={r:0,w:0});ok?st.r++:st.w++;saveS();
+  let line;
+  if(ok){z.right++;z.streak++;line=z.streak===3?GEN.kStreak:pick(q.krax?GEN.nRight:GEN.nRight.concat(GEN.kRight));sfx("quick-positive");
+    $("#fb").innerHTML=`<img class="face" src="img/krax-head-closeup.webp" alt=""><span>Rätt!</span>`}
+  else{z.streak=0;sfx("cartoon-boing");const again=!z.requeued.has(q.id)&&z.list.length-z.i>1;
+    if(again){z.requeued.add(q.id);z.list.splice(Math.min(z.list.length,z.i+3),0,q)}
+    line=pick(GEN.kWrong);$("#fb").innerHTML=`<img class="face" src="img/krax-head-closeup.webp" alt=""><span>Rätt svar: <b>${correct}</b>${again?" Frågan kommer tillbaka.":""}</span>`;
+    if(q.t==="write")$("#win").disabled=true}
+  say(line);
+  $("#qb").innerHTML=`<button class="btn big" type="button" id="qNext">${z.i+1<z.list.length?"Nästa fråga":"Se resultatet"}</button>`;$("#qNext").onclick=nextQ;$("#qNext").focus();
+}
+function nextQ(){stopVoice();QZ.i++;if(QZ.i>=QZ.list.length)return endQuiz();renderQ()}
+function endQuiz(){
+  const z=QZ,pct=Math.round(z.right/z.list.length*100),k=z.kind;if(S.best[k]==null||pct>S.best[k])S.best[k]=pct;saveS();
+  const msg=pct>=90?"Du kan det här nu. Bättre än Krax!":pct>=70?"Bra jobbat! Lite till, så sitter det.":"Bra försök. Titta på scenerna igen och prova en gång till.";
+  $("#qwrap").innerHTML=`<div class="result"><img class="face" src="img/krax-head-closeup.webp" alt="Krax" style="width:110px;height:110px">
+    <div class="score">${z.right} av ${z.list.length}</div><h3>${msg}</h3>
+    <div class="qbtns" style="justify-content:center"><button class="btn big" type="button" id="again">Prova igen</button><button class="btn alt big" type="button" id="home2">Till startsidan</button></div></div>`;
+  $("#again").onclick=()=>startQuiz(k);$("#home2").onclick=()=>{renderHome();show("home")};
+  sfx(pct>=70?"level-completed":"trombone-disappoint");say(pct>=70?GEN.nDone:GEN.kWrong[1]);
+}
+$("#qBack").onclick=()=>{stopVoice();renderHome();show("home")};
+
+// ---------- Start ----------
+const ALIGNMAP={"omg-general-narrator": [[0, 0.82], [0.71, 2.08], [1.99, 3.42], [3.51, 6.34], [6.57, 8.76], [9.05, 10.26], [10.35, 13.48]], "omg-general-krax": [[0.57, 1.58], [1.81, 3.62], [3.79, 7.74], [8.55, 9.9], [9.99, 14.62], [14.67, 16.58], [18.55, 22.75]]};
+renderHome();
+let welcomed=false;
+document.addEventListener("pointerdown",()=>{if(welcomed)return;welcomed=true;if($("#home").classList.contains("on")&&Object.keys(S.scenes).length)say(GEN.kHello)});
+</script>
+</body>
+</html>
