@@ -119,15 +119,19 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 
 /* ---------- Frågor ---------- */
 #quiz{background:var(--bg);height:100%}
-.qwrap{width:100%;max-width:1200px;margin:0 auto;padding:14px 18px 18px;display:grid;gap:12px 26px;flex:1;
+.qwrap{width:100%;max-width:1600px;margin:0 auto;padding:10px 16px 12px;display:grid;gap:10px 22px;flex:1;
   grid-template-columns:1fr;align-content:start}
-.qimg{position:relative;width:100%;aspect-ratio:16/8;max-height:30vh;border-radius:6px;overflow:hidden;background:#000}
+.qimg{position:relative;width:100%;aspect-ratio:16/9;max-height:34vh;border-radius:6px;overflow:hidden;background:#000}
 .qimg img{width:100%;height:100%;object-fit:cover;display:block}
 .qimg .card{font-size:clamp(1rem,2.4vw,1.6rem);top:8%}
 .qside{display:flex;flex-direction:column;gap:12px;min-width:0}
 @media (min-width:820px){
-  .qwrap{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start;padding-top:18px}
+  .qwrap{grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);align-items:start}
   .qwrap .qmeta{grid-column:1/-1}
+  .qimg{aspect-ratio:auto;height:calc(100dvh - 128px);max-height:none}
+  .qwrap .result{grid-column:1/-1}
+}
+.qmeta{grid-column:1/-1}
   .qimg{aspect-ratio:4/3;max-height:calc(100dvh - 170px)}
   .qwrap .result{grid-column:1/-1}
 }
@@ -430,7 +434,7 @@ function music(name){
 }
 function fadeEl(el,to,ms,done){
   const from=el.volume,t0=performance.now();
-  (function step(t){const k=Math.min(1,(t-t0)/ms);el.volume=from+(to-from)*k;if(k<1)requestAnimationFrame(step);else done&&done()})(t0);
+  (function step(t){const k=Math.min(1,(t-t0)/ms);el.volume=Math.min(1,Math.max(0,from+(to-from)*k));if(k<1)requestAnimationFrame(step);else done&&done()})(t0);
 }
 function stopMusic(){music(null)}
 
