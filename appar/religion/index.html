@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Selmas tält – religion</title>
+<meta name="theme-color" content="#232a52">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Selma">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;1,500&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#232a52; --night2:#1a2042; --sand:#efdfbf; --sand2:#e3cc9f;
+  --ink:#2b1d12; --red:#a8322d; --ochre:#d9a441; --indigo:#34407a; --brass:#b88a3b;
+  --bg:var(--sand); --fg:var(--ink); --panel:#f7ecd4; --muted:#6d5a44; --line:#cdb48a;
+  --serif:"Alegreya",Georgia,serif; --sans:"Atkinson Hyperlegible",system-ui,sans-serif;
+  --stripe:repeating-linear-gradient(90deg,var(--red) 0 18px,var(--ochre) 18px 26px,var(--indigo) 26px 44px,var(--sand2) 44px 48px,var(--red) 48px 54px,var(--indigo) 54px 60px);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:var(--night2);--fg:#f1e4c8;--panel:#272f5c;--muted:#b9ab90;--line:#454f86}
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:18px;line-height:1.45;
+  -webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--ochre);outline-offset:3px}
+.screen{display:none;min-height:100%;flex-direction:column}
+.screen.on{display:flex}
+.stripe{height:14px;background:var(--stripe);flex:none}
+.wrap{width:100%;max-width:980px;margin:0 auto;padding:0 18px}
+
+/* ---------- Topprad ---------- */
+.top{display:flex;align-items:center;gap:10px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));
+  background:var(--night);color:#f3e6c9}
+.top h2{font-family:var(--serif);font-weight:700;font-size:1.25rem;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.3rem;flex:none}
+.iconbtn:hover{background:#ffffff18}
+.iconbtn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Startsidan ---------- */
+#home{background:var(--bg)}
+.hero{position:relative;background:var(--night) center/cover no-repeat;aspect-ratio:16/8;max-height:62vh;width:100%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#1a204200 45%,#1a2042e0 100%)}
+.hero .ttl{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:0 22px 18px;color:#f6ead0}
+.hero h1{font-family:var(--serif);font-weight:800;font-size:clamp(2.2rem,6.5vw,4.2rem);line-height:1;margin:0;letter-spacing:-.01em;
+  text-shadow:0 2px 18px #0008}
+.hero p{margin:.35em 0 0;font-family:var(--serif);font-style:italic;font-size:clamp(1.05rem,2.4vw,1.35rem);max-width:34em;text-shadow:0 1px 10px #000a}
+.hero .snd{position:absolute;top:max(10px,env(safe-area-inset-top));right:10px;z-index:2;color:#f6ead0;background:#1a204299}
+.hero .back{position:absolute;top:max(10px,env(safe-area-inset-top));left:10px;z-index:2;color:#f6ead0;background:#1a204299;
+  font-size:.95rem;padding:8px 14px;border-radius:22px;text-decoration:none}
+
+.lessons{list-style:none;margin:22px auto 8px;padding:0;display:grid;gap:14px}
+.lesson{display:grid;grid-template-columns:150px 1fr;gap:0;background:var(--panel);border-radius:6px;overflow:hidden;
+  border-left:8px solid var(--c,var(--red))}
+.lesson img{width:150px;height:100%;min-height:118px;object-fit:cover;display:block}
+.lesson .body{padding:12px 16px 14px;display:flex;flex-direction:column;gap:8px}
+.lesson h3{margin:0;font-family:var(--serif);font-size:1.45rem;line-height:1.1;font-weight:700}
+.lesson .sub{color:var(--muted);font-size:.95rem;margin:0}
+.lesson .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:24px;font-weight:700;min-height:44px;
+  background:var(--night);color:#f6ead0}
+.btn.alt{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 2px var(--line)}
+.btn.big{font-size:1.15rem;padding:14px 24px}
+.btn:active{transform:translateY(1px)}
+.mark{font-size:.9rem;color:var(--muted)}
+.mark b{color:var(--red)}
+@media (prefers-color-scheme:dark){.btn{background:var(--ochre);color:var(--night2)} .mark b{color:var(--ochre)}}
+.exam{margin:12px auto 26px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;padding:18px 20px;border-radius:6px;
+  background:var(--night);color:#f3e6c9}
+.exam h3{margin:0;font-family:var(--serif);font-size:1.5rem}
+.exam p{margin:2px 0 0;font-size:.95rem;opacity:.85}
+.exam .btn{background:var(--ochre);color:var(--night2);margin-left:auto}
+.foot{text-align:center;padding:4px 0 30px;font-size:.9rem;color:var(--muted)}
+.foot button{text-decoration:underline;color:inherit}
+@media (max-width:560px){
+  .lesson{grid-template-columns:96px 1fr}.lesson img{width:96px}
+  .lesson h3{font-size:1.25rem}
+}
+
+/* ---------- Spelaren ---------- */
+#player{background:#120f0c;color:#f3e6c9;height:100%}
+.stage{position:relative;width:100%;aspect-ratio:16/9;max-height:calc(100vh - 230px);background:#000;margin:0 auto;overflow:hidden}
+@supports (height:100dvh){.stage{max-height:calc(100dvh - 230px)}}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.2s ease}
+.stage img.show{opacity:1}
+.card{position:absolute;left:4%;top:6%;max-width:70%;padding:.45em .8em .5em;background:#f3e3bfef;color:var(--ink);
+  font-family:var(--serif);font-weight:800;font-size:clamp(1.1rem,3.2vw,2.3rem);line-height:1.15;border-radius:3px;
+  box-shadow:0 4px 20px #0006;opacity:0;transform:translateY(-6px);transition:opacity .6s,transform .6s;white-space:pre-line}
+.card.show{opacity:1;transform:none}
+.sub2{flex:1;display:flex;flex-direction:column;justify-content:space-between;width:100%;max-width:980px;margin:0 auto;padding:14px 18px 0}
+.line{display:flex;gap:14px;align-items:flex-start;min-height:4.8em}
+.face{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:38% 35%;flex:none;border:3px solid var(--ochre);transition:transform .2s}
+.face.talk{animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-3px) rotate(-2deg)}}
+.line p{margin:0;font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.5rem);line-height:1.45;font-weight:500}
+.line p.hide{visibility:hidden}
+.ctrl{display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 0 max(14px,env(safe-area-inset-bottom))}
+.ctrl .play{width:64px;height:64px;background:var(--ochre);color:var(--night2)}
+.ctrl .play svg{width:30px;height:30px;fill:currentColor;stroke:none}
+.dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:0 10px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#ffffff30}
+.dots i.done{background:#d9a44199}.dots i.now{background:var(--ochre);transform:scale(1.35)}
+.bigstart{position:absolute;inset:0;display:grid;place-items:center;background:#0006;z-index:3}
+.bigstart .btn{background:var(--ochre);color:var(--night2);font-size:1.3rem;padding:16px 30px}
+
+/* ---------- Frågor ---------- */
+#quiz{background:var(--bg)}
+.qwrap{width:100%;max-width:760px;margin:0 auto;padding:16px 18px 30px;display:flex;flex-direction:column;gap:14px;flex:1}
+.qimg{position:relative;width:100%;aspect-ratio:16/8;border-radius:6px;overflow:hidden;background:#000}
+.qimg img{width:100%;height:100%;object-fit:cover;display:block}
+.qimg .card{font-size:clamp(1rem,3vw,1.7rem)}
+.qmeta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem}
+.qmeta .bar{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.qmeta .bar i{display:block;height:100%;background:var(--red);transition:width .4s}
+.extra{display:inline-block;background:var(--ochre);color:var(--night2);font-weight:700;font-size:.85rem;padding:2px 10px;border-radius:12px}
+.q{font-family:var(--serif);font-size:clamp(1.3rem,3.4vw,1.8rem);line-height:1.25;font-weight:700;margin:0}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;padding:14px 18px;border-radius:6px;background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);font-size:1.1rem;min-height:54px}
+.opt:hover{box-shadow:inset 0 0 0 2px var(--brass)}
+.opt.sel{box-shadow:inset 0 0 0 3px var(--indigo);background:#d9e0f7}
+@media (prefers-color-scheme:dark){.opt.sel{background:#3a4683}}
+.opt.right{background:#d7ecc6;box-shadow:inset 0 0 0 3px #4d8a35;color:#1d3311}
+.opt.wrong{background:#f4cfc4;box-shadow:inset 0 0 0 3px var(--red);color:#4a1410}
+.opt .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--night);color:#f3e6c9;font-weight:700;margin-right:10px;font-size:.9rem}
+.write{display:flex;gap:10px;flex-wrap:wrap}
+.write input{flex:1;min-width:180px;font:inherit;font-size:1.3rem;padding:12px 16px;border-radius:6px;border:2px solid var(--line);background:var(--panel);color:var(--fg)}
+.fb{min-height:2.4em;font-family:var(--serif);font-size:1.2rem;display:flex;gap:12px;align-items:center}
+.fb .face{width:48px;height:48px}
+.qbtns{display:flex;gap:10px;flex-wrap:wrap}
+.ordered{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:8px;border-radius:6px;border:2px dashed var(--line)}
+.chip{padding:8px 14px;border-radius:20px;background:var(--night);color:#f3e6c9;font-size:1rem}
+.result{text-align:center;padding:30px 0;display:flex;flex-direction:column;align-items:center;gap:14px}
+.result h3{font-family:var(--serif);font-size:2.4rem;margin:0}
+.result .score{font-family:var(--serif);font-size:4rem;font-weight:800;line-height:1;color:var(--red)}
+@media (prefers-color-scheme:dark){.result .score{color:var(--ochre)}}
+
+/* ---------- Om ---------- */
+dialog{border:0;border-radius:8px;max-width:560px;width:92%;background:var(--panel);color:var(--fg);padding:22px 24px}
+dialog::backdrop{background:#0009}
+dialog h3{font-family:var(--serif);margin:0 0 8px;font-size:1.5rem}
+dialog p,dialog li{font-size:.95rem}
+@media (prefers-reduced-motion:reduce){.stage img,.card{transition:none}.face.talk{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- ============ START ============ -->
+<section class="screen on" id="home" aria-label="Start">
+  <div class="hero" style="background-image:url(img/style-anchor.webp)">
+    <a class="back" href="../skola/">Till skolan</a>
+    <button class="iconbtn snd" id="sndHome" type="button" aria-label="Musik och ljud av"></button>
+    <div class="ttl">
+      <h1>Selmas tält</h1>
+      <p>Den gamla kamelen Selma har burit berättelser genom öknen i tusentals år. Sätt dig ner och lyssna.</p>
+    </div>
+  </div>
+  <div class="stripe"></div>
+  <div class="wrap">
+    <ul class="lessons" id="lessons"></ul>
+    <div class="exam">
+      <div><h3>Provrepetition</h3><p>Femton frågor från alla kapitel. Fem av dem skriver du själv.</p></div>
+      <button class="btn big" id="examBtn" type="button">Öva inför provet</button>
+    </div>
+    <div class="foot"><button type="button" id="aboutBtn">Om ljud och bilder</button></div>
+  </div>
+</section>
+
+<!-- ============ SPELAREN ============ -->
+<section class="screen" id="player" aria-label="Lektion">
+  <div class="top">
+    <button class="iconbtn" id="plBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="plTitle">Lektion</h2>
+    <button class="iconbtn" id="txtBtn" type="button" aria-label="Text av" title="Text på och av"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h13"/></svg></button>
+    <button class="iconbtn" id="sndPl" type="button" aria-label="Musik och ljud av"></button>
+  </div>
+  <div class="stage" id="stage">
+    <img id="imA" alt=""><img id="imB" alt="">
+    <div class="card" id="card"></div>
+    <div class="bigstart" id="bigstart"><button class="btn" id="startBtn" type="button">Börja lyssna</button></div>
+  </div>
+  <div class="sub2">
+    <div class="line"><img class="face" id="face" src="img/selma-head-closeup.webp" alt="Selma"><p id="say"></p></div>
+    <div>
+      <div class="dots" id="dots"></div>
+      <div class="ctrl">
+        <button class="iconbtn" id="prevBtn" type="button" aria-label="Föregående"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-8 6 8 6z"/></svg></button>
+        <button class="iconbtn play" id="playBtn" type="button" aria-label="Paus"></button>
+        <button class="iconbtn" id="nextBtn" type="button" aria-label="Nästa"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l8 6-8 6z"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FRÅGOR ============ -->
+<section class="screen" id="quiz" aria-label="Frågor">
+  <div class="top">
+    <button class="iconbtn" id="qBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="qTitle">Frågor</h2>
+    <button class="iconbtn" id="sndQ" type="button" aria-label="Musik och ljud av"></button>
+  </div>
+  <div class="stripe"></div>
+  <div class="qwrap" id="qwrap"></div>
+</section>
+
+<dialog id="about">
+  <h3>Om ljud och bilder</h3>
+  <p>Selmas röst är gjord med ElevenLabs, musiken med Suno och bilderna med bildgeneratorer, efter Sagas religionsbok, kapitel 7–11.</p>
+  <p>Ljudeffekter:</p>
+  <ul>
+    <li>Mixkit (mixkit.co), fri licens.</li>
+    <li>Kamelens skrik: ”Cri du chameau”, J.P. Longre m.fl., Wikimedia Commons, CC BY-SA 3.0.</li>
+    <li>Elefant och baby: Wikimedia Commons, CC0.</li>
+  </ul>
+  <p>Selma berättar vad berättelserna i Bibeln säger och vad människor tror. Det som står i boken kommer först. Det som är markerat ”Mer än boken” är extra.</p>
+  <form method="dialog"><button class="btn" type="submit">Stäng</button></form>
+</dialog>
+
+<script>
+"use strict";
+// Frågebank. a[0] är rätt svar i flervalsfrågor (blandas vid visning).
+// t: mc = flerval, write = skriv själv, order = ordna, multi = välj alla som stämmer.
+// x: true = "Mer än boken". img = bild som visas.
+const Q=[
+// ---------- Kapitel 7 och 8: Bibeln ----------
+{id:"k7-01",c:"k7",q:"Vad kallas böcker som människor respekterar och tycker är särskilt viktiga?",a:["Heliga skrifter","Sagoböcker","Lärorika böcker"],img:"07-library"},
+{id:"k7-02",c:"k7",q:"Vad är de kristnas heliga skrift?",a:["Bibeln","Koranen","Toran"],img:"07-library"},
+{id:"k7-03",c:"k7",t:"write",q:"Hur många böcker består Bibeln av? Skriv siffran.",ans:["66","sextiosex"],img:"07-two-shelves"},
+{id:"k7-04",c:"k7",q:"Vilka två delar består Bibeln av?",a:["Gamla testamentet och Nya testamentet","Första boken och Andra boken","Psaltaren och Moseboken"],img:"07-two-shelves"},
+{id:"k7-05",c:"k7",q:"Vad berättar Gamla testamentet om?",a:["Israels folk","Jesus liv","De första kristna"],img:"07-two-shelves"},
+{id:"k7-06",c:"k7",q:"Vad börjar Nya testamentet med?",a:["Berättelsen om när Jesus föds","Berättelsen om hur världen kom till","Noa och arken"],img:"07-two-shelves"},
+{id:"k7-07",c:"k7",q:"Hur gamla är en del av berättelserna i Gamla testamentet?",a:["Över 3 000 år","Ungefär 200 år","Ungefär 50 år"],img:"ctx-scribe"},
+{id:"k7-07b",c:"k7",q:"Hur gamla är berättelserna i Nya testamentet?",a:["Ungefär 2 000 år","Över 10 000 år","Ungefär 100 år"],img:"ctx-scribe"},
+{id:"k7-08",c:"k7",q:"Hur många böcker har Gamla testamentet?",a:["39","27","66"],img:"07-two-shelves"},
+{id:"k7-09",c:"k7",q:"Hur många böcker har Nya testamentet?",a:["27","39","12"],img:"07-two-shelves"},
+{id:"k7-10",c:"k7",q:"Till hur många språk är Bibeln översatt?",a:["Mer än 2 500","Ungefär 25","Bara till svenska och latin"],img:"07-world-of-languages"},
+{id:"k7-11",c:"k7",q:"Hur lång tid tar det att översätta hela Bibeln till ett nytt språk?",a:["Ungefär 12 år","En vecka","100 år"],img:"07-world-of-languages"},
+{id:"k7-12",c:"k7",q:"Vad betyder förkortningen Ps.?",a:["Psaltaren","Profeten","Påsken"],img:"07-two-shelves"},
+{id:"k7-13",c:"k7",q:"Vad betyder förkortningen 2 Mos.?",a:["Andra Moseboken","Två Moses","Andra Mosaiken"],img:"07-two-shelves"},
+{id:"k7-14",c:"k7",q:"Ps. 23:1–4. Vad betyder 23?",a:["Kapitlet","Versen","Sidan"],card:"Ps. 23:1–4",img:"07-two-shelves"},
+{id:"k7-15",c:"k7",q:"Ps. 23:1–4. Vad betyder 1–4?",a:["Verserna","Kapitlen","Böckerna"],card:"Ps. 23:1–4",img:"07-two-shelves"},
+{id:"k7-16",c:"k7",q:"Hur är kapitlen utmärkta i Bibeln?",a:["Med stora siffror","Med små siffror","Med färger"],img:"07-library"},
+{id:"k7-17",c:"k7",q:"Hur är verserna utmärkta i Bibeln?",a:["Med små siffror i texten","Med stora siffror","Med stjärnor"],img:"07-library"},
+{id:"k7-18",c:"k7",q:"Var ser du på vilken sida en bok i Bibeln börjar?",a:["I innehållsförteckningen","På sista sidan","På omslaget"],img:"07-library"},
+{id:"k7-19",c:"k7",q:"Vilka två böcker i Bibeln har namn efter kvinnor?",a:["Rut och Ester","Sara och Rebecka","Maria och Marta"],img:"07-two-shelves"},
+{id:"k7-20",c:"k7",t:"multi",q:"Vilka av de här böckerna i Bibeln har pojknamn? Välj alla som stämmer.",a:["Josua","Daniel","Jona","Mika","Johannes"],wrong:["Rut","Ester"],img:"07-two-shelves"},
+{id:"k7-21",c:"k7",x:1,q:"Vad heter judarnas heliga skrift?",a:["Toran","Koranen","Psaltaren"],img:"ctx-three-houses"},
+{id:"k7-21b",c:"k7",x:1,q:"Vad heter muslimernas heliga skrift?",a:["Koranen","Toran","Bibeln"],img:"ctx-three-houses"},
+{id:"k7-22",c:"k7",x:1,q:"Hur kopierades Bibeln innan det fanns tryckerier?",a:["Den skrevs av för hand","Den fotograferades","Den kopierades i en maskin"],img:"ctx-scribe"},
+{id:"k7-23",c:"k7",x:1,q:"När kom den första hela Bibeln på svenska?",a:["1541","1941","541"],img:"ctx-printing"},
+{id:"k7-24",c:"k7",x:1,q:"Vilket språk skrevs Gamla testamentet mest på?",a:["Hebreiska","Svenska","Engelska"],img:"ctx-scribe"},
+
+// ---------- Kapitel 9: Berättelser i Gamla testamentet ----------
+{id:"k9-01",c:"k9",q:"Vem byggde en ark?",a:["Noa","Mose","David"],img:"09-noah-boarding"},
+{id:"k9-02",c:"k9",q:"Vem såldes som slav till Egypten?",a:["Josef","Jona","Abraham"],img:"09-joseph-sold"},
+{id:"k9-03",c:"k9",q:"Vem vann över Goljat?",a:["David","Josef","Jakob"],img:"09-david-goliath"},
+{id:"k9-04",c:"k9",q:"Vem flydde undan den uppgift han fått av Gud?",a:["Jona","Noa","Esau"],img:"09-jonah-fish"},
+{id:"k9-05",c:"k9",q:"Vem blev ståthållare åt farao?",a:["Josef","Mose","Isak"],img:"09-joseph-egypt"},
+{id:"k9-06",c:"k9",q:"Vad skapade Gud enligt skapelseberättelsen?",a:["Himlen och jorden, solen och månen, vattnet, växterna, djuren och människan","Bara himlen och stjärnorna","Bara människan"],img:"09-creation"},
+{id:"k9-07",c:"k9",q:"Vilken uppgift fick människan enligt berättelsen?",a:["Att ta hand om världen","Att bygga städer","Att räkna stjärnorna"],img:"09-creation"},
+{id:"k9-08",c:"k9",q:"Hur många djur av varje sort fick följa med i arken?",a:["Två","Ett","Tio"],img:"09-noah-boarding"},
+{id:"k9-09",c:"k9",q:"Vad lovade Gud Abraham?",a:["Lika många efterkommande som det finns stjärnor på himlen","Ett slott i Egypten","Ett skepp"],img:"10-stars-sand"},
+{id:"k9-10",c:"k9",q:"Varför sålde bröderna Josef?",a:["De var avundsjuka","Han var sjuk","Han ville resa"],img:"09-joseph-sold"},
+{id:"k9-11",c:"k9",q:"Vad gjorde Josef när bröderna ångrade sig?",a:["Han förlät dem","Han sålde dem","Han jagade bort dem"],img:"09-joseph-egypt"},
+{id:"k9-12",c:"k9",q:"Var gömde mamman baby Mose?",a:["I en korg i floden Nilen","I en grotta","I ett tält"],img:"09-moses-basket"},
+{id:"k9-13",c:"k9",q:"Vem hittade korgen med Mose?",a:["Faraos dotter","Farao själv","En fiskare"],img:"09-moses-basket"},
+{id:"k9-14",c:"k9",q:"Vem ledde israeliterna ut ur slaveriet i Egypten?",a:["Mose","Josef","David"],img:"09-moses-exodus"},
+{id:"k9-15",c:"k9",q:"Vad gav Gud Israels folk, som de skulle försöka leva efter?",a:["Tio budord","Tio sånger","Tio guldmynt"],img:"09-ten-commandments"},
+{id:"k9-16",c:"k9",q:"Vad hade David som vapen mot Goljat?",a:["En stenslunga","Ett svärd","En pilbåge"],img:"09-david-goliath"},
+{id:"k9-17",c:"k9",q:"Vad blev David senare?",a:["Kung över Israels folk","Ståthållare åt farao","Fiskare"],img:"09-david-goliath"},
+{id:"k9-18",c:"k9",q:"Hur länge var Jona i fiskens buk?",a:["Tre dagar och tre nätter","En vecka","Ett år"],img:"09-jonah-fish"},
+{id:"k9-19",c:"k9",q:"Vilken stad gick Jona till?",a:["Nineve","Babylon","Rom"],img:"09-jonah-nineveh"},
+{id:"k9-20",c:"k9",t:"order",q:"Ordna berättelserna i den ordning de kommer i boken.",a:["Världen skapas","Noa och syndafloden","Abraham och det förlovade landet","Jakob och Esau","Josef","Mose","David och Goljat","Jona"],img:"09-creation"},
+{id:"k9-21",c:"k9",x:1,q:"Vems son var Josef?",a:["Jakobs","Abrahams","Moses"],img:"09-joseph-sold"},
+{id:"k9-22",c:"k9",x:1,q:"Vad betyder ordet buk?",a:["Mage","Båt","Grotta"],img:"09-jonah-fish"},
+
+// ---------- Kapitel 10: Abrahams resa ----------
+{id:"k10-01",c:"k10",q:"Vad önskade Abraham och Sara sig allra mest?",a:["Ett barn","Ett nytt tält","Fler får"],img:"10-home-babylon"},
+{id:"k10-02",c:"k10",q:"Vad lovade Gud Abraham?",a:["Ett land och lika många släktingar som sandkorn och stjärnor","En kamel av guld","Att han skulle bli kung i Babylon"],img:"10-stars-sand"},
+{id:"k10-03",c:"k10",q:"Varför skrattade Sara?",a:["Hon tyckte att hon var för gammal för att få barn","Gästen sa något roligt","Abraham ramlade"],img:"10-sara-laughs"},
+{id:"k10-04",c:"k10",t:"write",q:"Vad hette Abrahams och Saras son? Skriv namnet.",ans:["isak","isaac","isac"],img:"10-isaac-born"},
+{id:"k10-05",c:"k10",q:"Vad betyder namnet Isak?",a:["Han skrattar","Pappa till många","Den förstfödde"],img:"10-isaac-born"},
+{id:"k10-06",c:"k10",q:"Vad betyder namnet Abraham?",a:["Pappa till många","Han skrattar","Stjärnornas vän"],img:"10-stars-sand"},
+{id:"k10-07",c:"k10",t:"write",q:"Vad heter det förlovade landet? Skriv namnet.",ans:["kanaan","kanan","kanaans","canaan"],img:"10-canaan"},
+{id:"k10-08",c:"k10",q:"Var föddes Abraham?",a:["I Babylon, i dagens Irak","I Egypten","I Kanaan"],img:"10-home-babylon"},
+{id:"k10-09",c:"k10",q:"Vad är en patriark?",a:["En uppskattad förfader","En kung","En präst"],img:"abraham-sara-sheet"},
+{id:"k10-10",c:"k10",q:"I vilka tre religioner är Abraham viktig?",a:["Judendom, kristendom och islam","Bara kristendom","Hinduism, buddhism och islam"],img:"ctx-three-houses"},
+{id:"k10-11",c:"k10",q:"Hur levde Abraham?",a:["Som kringresande herde, och han bodde i tält","I ett slott i Babylon","Som fiskare vid havet"],img:"10-journey"},
+{id:"k10-12",c:"k10",q:"Vilka kom på besök till Abrahams tält?",a:["Tre män, som Abraham trodde var änglar","Tre kameler","Tre kungar"],img:"10-three-visitors"},
+{id:"k10-13",c:"k10",t:"multi",q:"Hur kände sig Sara när hon skrattade bakom tältdörren? Välj alla som passar.",a:["Förvånad","Tveksam","Generad"],wrong:["Arg","Rädd"],img:"10-sara-laughs"},
+{id:"k10-14",c:"k10",x:1,q:"Varför flyttade herdarna hela tiden?",a:["De behövde nytt bete och vatten åt djuren","De tyckte om att resa","De var på semester"],img:"ctx-shepherd-life"},
+{id:"k10-15",c:"k10",x:1,q:"Vad heter Abraham i islam?",a:["Ibrahim","Isak","Ismael"],img:"ctx-three-houses"},
+{id:"k10-16",c:"k10",x:1,q:"Vad var tälten gjorda av?",a:["Getragg","Plast","Sten"],img:"ctx-shepherd-life"},
+
+// ---------- Kapitel 11: Jakobs och Esaus gräl ----------
+{id:"k11-01",c:"k11",q:"Vem var den äldre av tvillingarna?",a:["Esau","Jakob"],img:"11-twins"},
+{id:"k11-02",c:"k11",q:"Vem var en skicklig jägare?",a:["Esau","Jakob"],img:"11-twins"},
+{id:"k11-03",c:"k11",q:"Vem trivdes hemma vid tälten med sin mamma?",a:["Jakob","Esau"],img:"11-twins"},
+{id:"k11-04",c:"k11",t:"write",q:"Vad hette tvillingarnas pappa? Skriv namnet.",ans:["isak","isaac","isac"],img:"11-isaac-calls"},
+{id:"k11-05",c:"k11",t:"write",q:"Vad hette tvillingarnas mamma? Skriv namnet.",ans:["rebecka","rebekka","rebeka","rebecca","rebekah"],img:"11-rebekka-plan"},
+{id:"k11-06",c:"k11",q:"Vem skulle få faderns välsignelse?",a:["Esau, den äldsta sonen","Jakob","Rebecka"],img:"11-isaac-calls"},
+{id:"k11-07",c:"k11",q:"Vad betydde det att få faderns välsignelse?",a:["Att man blev familjens ledare, överhuvud","Att man fick ett nytt tält","Att man blev kung"],img:"11-isaac-calls"},
+{id:"k11-08",c:"k11",q:"Vad täckte Rebecka Jakobs händer och hals med?",a:["Getskinn","Lera","Fårull"],img:"11-rebekka-plan"},
+{id:"k11-09",c:"k11",q:"Vad sa Isak när han kände på Jakob?",a:["Din röst låter som Jakobs, men dina händer är Esaus","Du luktar som en kamel","Du är min yngsta son"],img:"11-blessing"},
+{id:"k11-10",c:"k11",q:"Vad hände när Esau fick veta att Jakob lurat honom?",a:["Esau blev rasande och Jakob måste fly","Bröderna blev bästa vänner direkt","Isak blev frisk"],img:"11-esau-furious"},
+{id:"k11-11",c:"k11",q:"Hur länge var Jakob borta?",a:["Tjugo år","Tjugo dagar","Två år"],img:"11-jakob-flees"},
+{id:"k11-12",c:"k11",q:"Hur många män hade Esau med sig?",a:["Fyrahundra","Fyra","Fyrtio"],img:"11-esau-approaches"},
+{id:"k11-13",c:"k11",q:"Hur många gånger bugade sig Jakob för Esau?",a:["Sju","Tre","Tolv"],img:"11-esau-approaches"},
+{id:"k11-14",c:"k11",q:"Vad gjorde Esau när bröderna möttes?",a:["Han sprang fram och kramade Jakob","Han jagade bort honom","Han tog hans får"],img:"11-reunion"},
+{id:"k11-15",c:"k11",q:"Vad kan man lära sig av berättelsen?",a:["Att man inte ska lura någon, och att man kan förlåta","Att man alltid ska springa fort","Att getskinn är varma"],img:"11-reunion"},
+{id:"k11-16",c:"k11",q:"Hur kände sig Esau när välsignelsen var borta?",a:["Besviken och arg","Lycklig","Sömnig"],img:"11-esau-furious"},
+{id:"k11-17",c:"k11",q:"Hur kände sig Jakob när Esau och 400 män var på väg?",a:["Rädd","Uttråkad","Arg"],img:"11-esau-approaches"},
+{id:"k11-18",c:"k11",q:"Hur kände sig bröderna när de kramades?",a:["Lyckliga och rörda","Arga","Besvikna"],img:"11-reunion"},
+{id:"k11-19",c:"k11",x:1,q:"Vilket nytt namn fick Jakob?",a:["Israel","Isak","Esau"],img:"11-reunion"},
+{id:"k11-20",c:"k11",x:1,q:"Hur många söner fick Jakob?",a:["Tolv","Två","Sju"],img:"09-joseph-sold"},
+];
+
+const ALIGN={"l1-a-1":{"dur":47.15,"paras":[{"text":"Mmm. Välkommen. Jag heter Selma, och jag är en kamel. En gammal kamel.","start":0.0,"end":6.94},{"text":"I min packväska bär jag något värdefullt. Inte mat, inte vatten. Berättelser.","start":8.3,"end":15.46},{"text":"I många religioner finns det böcker som människor respekterar och tycker är särskilt viktiga. Sådana böcker kallas heliga skrifter.","start":16.08,"end":25.6},{"text":"Judarnas heliga skrift kallas Toran. Muslimernas heliga skrift heter Koranen. Och de kristnas heliga skrift, det är Bibeln.","start":26.4,"end":36.76},{"text":"Bibeln ser ut som en enda tjock bok. Men egentligen är den en hel boksamling. Den består av sextiosex böcker.","start":37.2,"end":46.84}]},"l1-a-2":{"dur":40.99,"paras":[{"text":"I Bibeln finns spännande och lärorika berättelser, visdomsord, glada och sorgliga öden, dikter, brev och råd om hur man ska leva. Den berättar om möten mellan Gud och människor.","start":0.0,"end":15.06},{"text":"Bibeln består av två delar: Gamla testamentet och Nya testamentet. Ordet testamente betyder ungefär förbund, ett löfte mellan två parter.","start":15.88,"end":27.82},{"text":"Gamla testamentet, som förkortas GT, berättar om Israels folk. En del av berättelserna är över tretusen år gamla. Det har trettionio böcker.","start":28.35,"end":40.58}]},"l1-a-3":{"dur":38.61,"paras":[{"text":"Nya testamentet, som förkortas NT, börjar med berättelsen om när Jesus föds. Det berättar om Jesus liv och om de första kristna. De berättelserna är ungefär tvåtusen år gamla. Nya testamentet har tjugosju böcker.","start":0.0,"end":18.32},{"text":"Trettionio plus tjugosju. Räkna själv. Jo, det blir sextiosex.","start":19.44,"end":23.18},{"text":"Bibeln skrevs inte av en enda person. Den skrevs av många människor, under mer än tusen år. Gamla testamentet skrevs mest på hebreiska, och Nya testamentet på grekiska.","start":25.32,"end":38.32}]},"l1-a-4":{"dur":45.17,"paras":[{"text":"Långt innan det fanns tryckerier skrevs allt av för hand. Skrivare satt vid sina oljelampor och skrev av bokrullarna, bokstav för bokstav. Ett enda fel, och man fick börja om.","start":0.0,"end":14.2},{"text":"För ungefär femhundrasjuttio år sedan började man trycka böcker med tryckpress. Bibeln var en av de första stora böckerna som trycktes. Och år femtonhundrafyrtioett kom den första hela Bibeln på svenska.","start":14.8,"end":29.9},{"text":"I dag är Bibeln översatt till mer än tvåtusenfemhundra språk. Det tar ungefär tolv år att översätta hela Bibeln till ett nytt språk. Den är en av världens äldsta och mest kända böcker.","start":30.96,"end":44.8}]},"l1-b-1":{"dur":44.72,"paras":[{"text":"Men hur hittar man rätt i en bok med sextiosex böcker? Mmm. Det finns knep.","start":0.0,"end":6.42},{"text":"Först: innehållsförteckningen. Där ser du om en bok hör till Gamla eller Nya testamentet, och på vilken sida den börjar. Och högst upp på varje sida står det vilken bok sidan hör till.","start":7.04,"end":21.1},{"text":"Böckernas namn förkortas. Ps. betyder Psaltaren. Två Mos. betyder Andra Moseboken.","start":21.66,"end":30.2},{"text":"Alla böcker i Bibeln är indelade i kapitel. Kapitlen är utmärkta med stora siffror.","start":30.8,"end":37.28},{"text":"Och kapitlen är indelade i verser. Verserna är utmärkta med små siffror i texten.","start":37.92,"end":44.44}]},"l1-b-2":{"dur":49.56,"paras":[{"text":"Så när det står Ps. tjugotre, kolon, ett till fyra, betyder det: Psaltaren, kapitel tjugotre, vers ett till fyra.","start":0.0,"end":8.72},{"text":"Den texten handlar förresten om en herde. Den börjar: Herren är min herde. Den har länge sagts vara skriven av kung David, som själv var herdepojke när han var liten. Honom ska du snart få träffa.","start":10.7,"end":25.78},{"text":"Titta på bokhyllan. Många böcker har ett pojknamn: Josua, Daniel, Jona, Mika, Johannes och många fler. Men bara två böcker har namn efter kvinnor. De heter Rut och Ester.","start":26.26,"end":41.96},{"text":"Nu ska du få prova själv. Mmm. Jag väntar. Jag är bra på att vänta.","start":43.18,"end":49.3}]},"l2-a-1":{"dur":46.99,"paras":[{"text":"Nu öppnar jag packväskan. Här är mina finaste bokrullar: berättelser ur Gamla testamentet.","start":0.0,"end":7.54},{"text":"Bibeln börjar med berättelsen om hur världen kom till. Enligt berättelsen var allting först tyst och tomt.","start":8.16,"end":16.38},{"text":"Sedan skapade Gud himlen och jorden, solen och månen, vattnet, växterna och djuren. Gud skapade också människan, och hennes uppgift är att ta hand om världen.","start":16.92,"end":30.74},{"text":"Nästa rulle. Noa och syndafloden. Människorna var onda mot varandra. Gud sa åt Noa att bygga en ark, en jättestor båt, som skulle rymma Noas familj och två djur av varje sort.","start":31.3,"end":46.5}]},"l2-a-2":{"dur":50.83,"paras":[{"text":"Noa lydde. Två elefanter, två giraffer, två får. Och två kameler, naturligtvis.","start":0.6,"end":8.16},{"text":"Gud lät en syndaflod komma, som skulle utrota all ondska ur världen. Det regnade och regnade. Men till sist sjönk vattnet undan, och de som varit ombord på arken klarade sig.","start":8.84,"end":23.64},{"text":"Abraham och det förlovade landet. I den här berättelsen gör Gud en överenskommelse med Abraham. Gud säger åt Abraham att flytta till ett land som Gud ska visa honom.","start":24.24,"end":37.98},{"text":"När Abraham gör som Gud säger, lovar Gud att han ska få lika många efterkommande som det finns stjärnor på himlen. Mmm. Det är många barnbarnsbarn.","start":38.5,"end":49.32}]},"l2-a-3":{"dur":29.57,"paras":[{"text":"Tvillingarna Jakob och Esau. Herdarna hade som vana att pappan skulle välsigna den äldsta sonen. Då blev sonen familjens nya ledare.","start":0.0,"end":10.66},{"text":"Men Jakob lurade sin blinda pappa, så att pappan välsignade Jakob i stället för storebror Esau. Bröderna kom i gräl och Jakob flydde. Flera år senare slöt bröderna fred med varandra. Den berättelsen ska vi höra hela, sen.","start":11.26,"end":29.16}]},"l2-b-1":{"dur":50.99,"paras":[{"text":"Jakob fick tolv söner. Josef sägs ha varit den han älskade allra mest.","start":0.0,"end":6.12},{"text":"Och det gjorde bröderna avundsjuka. Så avundsjuka att de sålde Josef som slav till Egypten.","start":6.8,"end":14.56},{"text":"Men Gud hjälpte Josef, och han blev ståthållare åt farao. Det betyder att han styrde landet åt kungen.","start":15.12,"end":23.12},{"text":"Några år senare drabbades brödernas land av hungersnöd. Bröderna reste till Egypten för att be om hjälp. Där mötte de Josef. Bröderna ångrade vad de hade gjort, och Josef förlät dem.","start":23.78,"end":38.4},{"text":"Moses. Farao i Egypten hotade med att döda alla nyfödda hebreiska pojkar. En mamma gömde sin baby i en korg i floden Nilen.","start":39.16,"end":50.54}]},"l2-b-2":{"dur":41.33,"paras":[{"text":"Faraos dotter hittade korgen, tog hand om babyn och gav den namnet Mose. När Mose växte upp blev han israeliternas ledare och ledde sitt folk ut ur slaveriet i Egypten.","start":1.18,"end":14.64},{"text":"Tio budorden. Gud gav Israels folk tio budord, som människorna skulle försöka leva efter.","start":15.48,"end":23.22},{"text":"David och Goljat! Herdepojken David vann över den jättelika soldaten Goljat, med bara en stenslunga som vapen.","start":23.98,"end":33.4},{"text":"David blev senare kung över Israels folk. Samma David som sägs ha skrivit psalmen om herden.","start":33.88,"end":40.98}]},"l2-b-3":{"dur":39.47,"paras":[{"text":"Och till sist, min favorit. Jona i fiskens buk. Gud gav Jona en uppgift som han vägrade utföra. Jona flydde till havet, där en stor fisk svalde honom.","start":0.0,"end":14.16},{"text":"Jona var kvar i fiskens buk, alltså magen, i tre dagar och tre nätter. Mmm. Inte en trevlig plats att bo på.","start":15.12,"end":23.86},{"text":"Till sist gick han med på att ta sig an uppgiften. Jona gick till staden Nineve och berättade att Gud hade sagt att invånarna måste börja leva på ett bättre sätt och uppföra sig väl. Och invånarna lydde.","start":24.5,"end":39.12}]},"l3-a-1":{"dur":35.4,"paras":[{"text":"Innan vi går ut på Abrahams resa ska du få veta hur folk levde på den tiden.","start":0.0,"end":4.98},{"text":"Många var herdar. De hade får och getter, och de flyttade hela tiden till nya platser där det fanns gräs för djuren och vatten att dricka. De bodde i tält gjorda av getragg, som var lätta att packa ihop.","start":5.76,"end":21.06},{"text":"Och de reste med kameler, förstås. Utan oss hade det inte blivit många resor.","start":21.5,"end":26.86},{"text":"Vatten var det allra viktigaste. Herdarna kunde bråka om en brunn, för utan vatten dör djuren.","start":27.46,"end":34.98}]},"l3-a-2":{"dur":45.56,"paras":[{"text":"Abraham är en patriark. Det betyder en uppskattad förfader. Han är viktig i tre religioner: judendom, kristendom och islam. I islam kallas han Ibrahim.","start":0.0,"end":14.3},{"text":"Abraham föddes i Babylon, i det som i dag är Irak. Abraham och hans fru Sara var ledsna, för de hade inga barn.","start":15.1,"end":24.86},{"text":"Abraham var redan en gammal man, när han en dag berättade en stor nyhet för Sara.","start":25.5,"end":31.42},{"text":"Gud har kallat på mig. Han sade att vi ska lämna min pappas marker, och gå till det land han visar oss. Han har lovat att ge oss barn och göra vår familj till ett stort folk!","start":32.22,"end":45.16}]},"l3-a-3":{"dur":52.04,"paras":[{"text":"Abraham och Sara packade allt de ägde. De gav sig av på en lång resa genom främmande länder.","start":0.0,"end":7.14},{"text":"Mmm. Och jag var med. Jag var ung då. Snabbare. Snyggare. Nåja.","start":8.5,"end":13.86},{"text":"Till sist kom de fram till Kanaan. Landet var grönt och vackert. Det kallas det förlovade landet, alltså landet som Gud hade lovat dem.","start":14.54,"end":25.42},{"text":"Abraham letade efter en plats där det fanns tillräckligt med bete för fåren och getterna. Då uppmanade Gud Abraham att se åt norr, söder, öster och väster.","start":26.38,"end":38.42},{"text":"Allt land du ser ger jag dig och din släkt. Kan du räkna alla sandkorn på marken, eller alla stjärnor på himlen? En dag ska dina släktingar vara lika många.","start":39.08,"end":51.56}]},"l3-b-1":{"dur":47.65,"paras":[{"text":"Åren gick. Men Abraham och Sara fick inget barn.","start":0.0,"end":4.54},{"text":"En varm dag fick de besök av tre män. Abraham bugade sig djupt. Han kände på sig att männen var änglar som Gud hade skickat.","start":5.3,"end":16.44},{"text":"Om ett år kommer din fru Sara att föda en son, sade en av änglarna.","start":17.12,"end":22.58},{"text":"Sara stod bakom tältets dörr och lyssnade. Hon började skratta. Hur skulle en rynkig gammal kvinna som hon kunna få barn?","start":23.1,"end":32.58},{"text":"Varför skrattar Sara? frågade gästen.","start":33.2,"end":36.0},{"text":"Sara steg generat fram. Jag skrattade inte, sade hon.","start":36.54,"end":41.06},{"text":"Visst skrattade du, sade gästen. Finns det något som är omöjligt för Gud?","start":41.7,"end":47.14}]},"l3-b-2":{"dur":36.28,"paras":[{"text":"Ett år senare fick Abraham och Sara en son. De gav honom namnet Isak. Det betyder: han skrattar.","start":0.0,"end":9.06},{"text":"Abraham var uthållig och trogen mot Gud. Han levde som kringresande herde och bodde i tält hela livet. Och namnet Abraham betyder: pappa till många.","start":9.74,"end":22.9},{"text":"Mmm. Fundera på hur Abraham och Sara kände sig i berättelsen. Var de hoppfulla? Trötta? Förvånade? Generade? Nu får du välja.","start":24.76,"end":36.0}]},"l4-a-1":{"dur":32.84,"paras":[{"text":"Kommer du ihåg Isak, han som fick sitt namn för att Sara skrattade? Nu har han blivit gammal. Han har två söner, och de är tvillingar.","start":0.0,"end":10.22},{"text":"Esau var den äldre av tvillingarna, den förstfödda. Han var en skicklig jägare och trivdes ute i markerna.","start":10.82,"end":18.26},{"text":"Jakob var den yngre. Han trivdes hemma vid tälten, med sin mamma Rebecka.","start":18.9,"end":23.58},{"text":"Isak var redan en gammal man och nästan blind. En dag kallade han till sig sin äldsta son, Esau.","start":25.2,"end":32.52}]},"l4-a-2":{"dur":49.48,"paras":[{"text":"Jag lever inte länge till. Du är min äldsta son, och jag vill ge dig min välsignelse. På det sättet säkrar jag att du blir familjens ledare efter min död. Gå ut och skjut ett vilt, och laga min älsklingsmat. Kom sedan tillbaka till mig.","start":0.0,"end":20.42},{"text":"Den äldsta sonens välsignelse kallas den förstföddas välsignelse. Den som fick den blev familjens överhuvud.","start":21.18,"end":29.7},{"text":"Men av en händelse hörde mor Rebecka vad hennes man sa. Hon skyndade sig till Jakob.","start":30.0,"end":36.16},{"text":"Jakob! Gå fort efter två getter från ängen. Jag ska laga din fars favoriträtt av dem. Klä dig sedan i Esaus kläder. Nu har du chansen att få din fars välsignelse!","start":36.48,"end":49.08}]},"l4-a-3":{"dur":33.65,"paras":[{"text":"Men Esau är hårig, och jag är alldeles slät, sa Jakob. Tänk om far känner igen mig?","start":0.0,"end":7.46},{"text":"Jakob tvekade. Men Rebecka täckte Jakobs händer och hals med getskinn. Sedan tog Jakob maten och gick in till sin far.","start":8.58,"end":18.32},{"text":"Den blinda Isak kände på sin son.","start":19.0,"end":21.42},{"text":"Din röst låter som Jakobs, men dina händer är Esaus, sa Isak.","start":22.24,"end":28.78},{"text":"Planen lyckades. Isak välsignade Jakob.","start":28.78,"end":32.84}]},"l4-b-1":{"dur":43.81,"paras":[{"text":"När Esau fick reda på vad som hade hänt, rusade han till sin far.","start":0.0,"end":4.4},{"text":"Far, välsigna mig med! bad den gråtande Esau.","start":5.16,"end":9.46},{"text":"Men faderns välsignelse kunde bara ges till en son, och den gick inte att ta tillbaka.","start":10.08,"end":15.76},{"text":"Esau var rasande, och han bestämde sig för att döda sin bror. Jakob var tvungen att fly till släktingar långt borta.","start":16.44,"end":25.3},{"text":"Tjugo år senare längtade Jakob hem till sin bror. Han undrade om Esau fortfarande var arg.","start":26.32,"end":33.3},{"text":"En natt drömde Jakob att en ängel sa åt honom att återvända hem. Då tog Jakob med sig sin familj och gav sig av hemåt.","start":33.88,"end":43.44}]},"l4-b-2":{"dur":43.08,"paras":[{"text":"Han skickade sina tjänare i förväg för att ge Esau ett meddelande. Men de kom tillbaka med en skrämmande nyhet: Esau och fyrahundra män var på väg mot Jakob!","start":0.0,"end":11.98},{"text":"Herre, hjälp mig, bad Jakob. Jag är rädd att min bror fortfarande hatar mig. Du har alltid skyddat mig. Fortsätt att ta hand om mig och min familj.","start":14.22,"end":25.16},{"text":"När morgonen grydde såg Jakob Esau och hans trupper. Då bugade sig Jakob djupt, sju gånger.","start":25.44,"end":33.78},{"text":"Men Esau sprang mot honom och kramade honom hårt. De grät båda två. Jakob hade kommit hem.","start":34.36,"end":42.74}]},"l4-b-3":{"dur":50.29,"paras":[{"text":"Senare fick Jakob ett nytt namn: Israel. Hans tolv söner blev förfäder till Israels tolv stammar. Och en av sönerna var Josef, han som såldes till Egypten. Så hänger berättelserna ihop.","start":0.0,"end":16.32},{"text":"Jakob är, precis som sin farfar Abraham och sin pappa Isak, en patriark, en förfader, inom judendom och kristendom.","start":17.5,"end":27.12},{"text":"Mmm. Vad kan vi lära oss av berättelsen? Kanske att det är fel att lura någon, och att det går att förlåta, även efter lång tid.","start":28.68,"end":38.62},{"text":"Hur kände sig bröderna? Besvikna, arga, rädda, saknande, lyckliga, rörda? Fundera på det, så tittar vi tillsammans.","start":39.28,"end":49.92}]},"general-1":{"dur":35.47,"paras":[{"text":"Mmm. Rätt.","start":0.0,"end":1.38},{"text":"Precis så. Bra.","start":2.04,"end":3.98},{"text":"Det där visste inte ens jag när jag var ung.","start":4.64,"end":6.78},{"text":"Du är en riktig berättelsekännare.","start":7.26,"end":9.58},{"text":"Nästan. Tänk en gång till.","start":10.22,"end":12.34},{"text":"Ingen brådska. Kameler har aldrig bråttom.","start":13.0,"end":15.74},{"text":"Titta på bilden, där finns ett tips.","start":16.78,"end":18.98},{"text":"Tre rätt i rad! Nu tuggar jag av glädje.","start":19.64,"end":23.06},{"text":"Nästa fråga.","start":23.6,"end":24.36},{"text":"Välkommen tillbaka. Jag har packat väskan med nya frågor.","start":24.9,"end":28.28},{"text":"Klart! Du kan det här nu.","start":28.96,"end":30.86},{"text":"Lycka till på provet. Jag väntar här i öknen. Mmm.","start":31.26,"end":34.24}]},"general-2":{"dur":60.84,"paras":[{"text":"Välkommen till mitt klassrum. Välj en lektion, eller öva inför provet.","start":0.0,"end":5.18},{"text":"Lektion ett. Bibeln, en hel boksamling.","start":6.0,"end":10.0},{"text":"Lektion två. Berättelser i Gamla testamentet.","start":10.76,"end":14.6},{"text":"Lektion tre. Abrahams resa.","start":15.24,"end":18.18},{"text":"Lektion fyra. Jakobs och Esaus gräl.","start":18.74,"end":22.42},{"text":"Nu är det provrepetition. Femton frågor från alla kapitel. Ta god tid på dig.","start":23.04,"end":29.22},{"text":"Den här gången skriver du svaret själv.","start":29.72,"end":32.0},{"text":"Ordna berättelserna i rätt ordning. Börja med den som kommer först.","start":32.7,"end":37.0},{"text":"Hur kände sig personerna i berättelsen? Välj de känslor som passar.","start":37.72,"end":42.48},{"text":"Den frågan tar vi igen lite senare. Då sitter den.","start":43.18,"end":46.64},{"text":"Psst. Det här står inte i boken. Det är något extra ur min packväska.","start":47.08,"end":50.96},{"text":"Mmm. Den visste du redan. Du är snabbare än en kamel.","start":51.3,"end":56.3},{"text":"Bra jobbat i dag. Kom tillbaka i morgon, så repeterar vi.","start":56.3,"end":60.6}]},"general-3":{"dur":10.19,"paras":[{"text":"Rätt! Min puckel skakar av glädje.","start":0.0,"end":3.44},{"text":"Fel, men modigt. Det gillar jag.","start":3.98,"end":7.02},{"text":"Ha! Nu glömde jag nästan att tugga.","start":7.54,"end":9.94}]}};
+
+// ---------- Lektionerna: bild, kort, ljud och musik per stycke ----------
+// [bild, {card, sfx, music, img2, at}]
+const LESSONS=[
+ {id:1,title:"Bibeln",sub:"Kapitel 7 och 8: Bibeln är de kristnas heliga skrift, och hur du läser Bibeln",cover:"07-library",c:"var(--red)",quiz:"k7",intro:1,parts:[
+  ["l1-a-1","selma-theme",[["style-anchor",{sfx:"bell-chime"}],["style-anchor"],["07-library"],["ctx-three-houses",{card:"Judarna: Toran\nMuslimerna: Koranen\nDe kristna: Bibeln"}],["07-two-shelves",{card:"66 böcker",sfx:"book-paging"}]]],
+  ["l1-a-2",null,[["07-library"],["07-two-shelves",{card:"Gamla testamentet\nNya testamentet"}],["07-two-shelves",{card:"GT: 39 böcker\növer 3 000 år gamla"}]]],
+  ["l1-a-3",null,[["07-two-shelves",{card:"NT: 27 böcker\nca 2 000 år gamla"}],["07-two-shelves",{card:"39 + 27 = 66"}],["ctx-scribe",{card:"GT: hebreiska\nNT: grekiska"}]]],
+  ["l1-a-4",null,[["ctx-scribe",{sfx:"writing-on-paper"}],["ctx-printing",{card:"1541: första hela\nBibeln på svenska"}],["07-world-of-languages",{card:"Mer än 2 500 språk"}]]],
+  ["l1-b-1",null,[["07-two-shelves",{sfx:"page-turn"}],["07-library",{card:"Innehållsförteckningen"}],["07-two-shelves",{card:"Ps. = Psaltaren\n2 Mos. = Andra Moseboken"}],["07-library",{card:"Kapitel: stora siffror"}],["07-library",{card:"Vers: små siffror"}]]],
+  ["l1-b-2",null,[["07-library",{card:"Ps. 23:1–4\nbok · kapitel · vers"}],["ctx-shepherd-life",{sfx:"sheep"}],["07-two-shelves",{card:"Kvinnonamn: Rut och Ester"}],["style-anchor"]]]
+ ]},
+ {id:2,title:"Berättelser i Gamla testamentet",sub:"Kapitel 9: från skapelsen till Jona i fiskens buk",cover:"09-noah-boarding",c:"var(--indigo)",quiz:"k9",intro:2,parts:[
+  ["l2-a-1","creation",[["style-anchor",{sfx:"page-turn"}],["09-creation"],["09-creation",{sfx:"morning-birds"}],["09-noah-boarding",{music:"flood"}]]],
+  ["l2-a-2",null,[["09-noah-boarding",{sfx:"elephant-trumpet"}],["09-noah-flood",{sfx:"rain-thunder-storm"}],["10-canaan",{music:"journey"}],["10-stars-sand"]]],
+  ["l2-a-3",null,[["11-twins"],["11-blessing"]]],
+  ["l2-b-1","flood",[["09-joseph-sold",{sfx:"camel-cry"}],["09-joseph-sold"],["09-joseph-egypt"],["09-joseph-egypt",{music:"reunion"}],["09-moses-basket",{music:"creation",sfx:"river-flowing"}]]],
+  ["l2-b-2",null,[["09-moses-basket",{img2:"09-moses-exodus",at:.55}],["09-ten-commandments",{sfx:"choir-shine"}],["09-david-goliath",{music:"journey",sfx:"sling-whoosh"}],["09-david-goliath"]]],
+  ["l2-b-3","flood",[["09-jonah-fish",{sfx:"deep-water-bubbles"}],["09-jonah-fish"],["09-jonah-nineveh",{music:"journey",sfx:"crowd-talking-loop"}]]]
+ ]},
+ {id:3,title:"Abrahams resa",sub:"Kapitel 10: Abraham, Sara och löftet om stjärnorna",cover:"10-journey",c:"var(--ochre)",quiz:"k10",intro:3,parts:[
+  ["l3-a-1","journey",[["ctx-shepherd-life"],["ctx-shepherd-life",{sfx:"sheep"}],["10-journey",{sfx:"camel-cry"}],["ctx-shepherd-life"]]],
+  ["l3-a-2",null,[["ctx-three-houses"],["10-home-babylon"],["10-home-babylon"],["10-home-babylon",{music:"creation"}]]],
+  ["l3-a-3","journey",[["10-journey",{sfx:"desert-wind"}],["10-journey"],["10-canaan"],["10-canaan",{sfx:"sheep"}],["10-stars-sand",{music:"creation",sfx:"night-insects"}]]],
+  ["l3-b-1","creation",[["10-canaan"],["10-three-visitors",{sfx:"magical-light"}],["10-three-visitors"],["10-sara-laughs"],["10-three-visitors"],["10-sara-laughs"],["10-three-visitors"]]],
+  ["l3-b-2","reunion",[["10-isaac-born"],["ctx-shepherd-life"],["10-isaac-born"]]]
+ ]},
+ {id:4,title:"Jakobs och Esaus gräl",sub:"Kapitel 11: tvillingarna, välsignelsen och försoningen",cover:"11-reunion",c:"#5b7a3a",quiz:"k11",intro:4,parts:[
+  ["l4-a-1","creation",[["11-twins"],["11-twins"],["11-twins"],["11-isaac-calls"]]],
+  ["l4-a-2",null,[["11-isaac-calls"],["11-isaac-calls",{card:"Den förstföddas\nvälsignelse"}],["11-isaac-calls"],["11-rebekka-plan",{sfx:"goat-baa"}]]],
+  ["l4-a-3",null,[["11-rebekka-plan"],["11-rebekka-plan"],["11-blessing"],["11-blessing"],["11-blessing"]]],
+  ["l4-b-1","flood",[["11-esau-furious"],["11-esau-furious"],["11-esau-furious"],["11-jakob-flees",{sfx:"desert-wind"}],["11-jakob-flees",{music:"creation"}],["11-angel-dream",{sfx:"magical-light"}]]],
+  ["l4-b-2","flood",[["11-esau-approaches",{sfx:"horse-gallop-dirt"}],["11-esau-approaches"],["11-esau-approaches"],["11-reunion",{music:"reunion"}]]],
+  ["l4-b-3",null,[["11-reunion",{img2:"09-joseph-sold",at:.6}],["11-reunion"],["selma-sunset",{music:"selma-theme"}],["selma-sunset"]]]
+ ]}
+];
+const CH={k7:"Bibeln",k9:"Berättelser i Gamla testamentet",k10:"Abrahams resa",k11:"Jakobs och Esaus gräl"};
+
+// ---------- Sparat ----------
+const KEY="religion.v1";
+function loadS(){try{return Object.assign({lessons:{},best:{},stats:{}},JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return {lessons:{},best:{},stats:{}}}}
+let S=loadS();
+function saveS(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+const $=s=>document.querySelector(s);
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));scrollTo(0,0)}
+
+// ---------- Ljud ----------
+let AC=null, musicBus=null, sfxBus=null, voiceBus=null, sndOn=true;
+try{sndOn=localStorage.getItem(KEY+".snd")!=="0"}catch(e){}
+const DUCK=0.05, OPEN=0.13;
+function ctx(){
+  if(AC) {if(AC.state==="suspended")AC.resume();return AC}
+  try{
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    musicBus=AC.createGain();musicBus.gain.value=sndOn?OPEN:0;musicBus.connect(AC.destination);
+    sfxBus=AC.createGain();sfxBus.gain.value=sndOn?0.35:0;sfxBus.connect(AC.destination);
+    voiceBus=AC.createGain();voiceBus.gain.value=1;voiceBus.connect(AC.destination);
+  }catch(e){AC=null}
+  return AC;
+}
+const routed=new WeakSet();
+function route(el,bus){
+  if(!AC||routed.has(el))return;
+  try{AC.createMediaElementSource(el).connect(bus);routed.add(el)}catch(e){}
+}
+function ramp(g,v,t){if(!g)return;const n=AC.currentTime;g.gain.cancelScheduledValues(n);g.gain.setValueAtTime(g.gain.value,n);g.gain.linearRampToValueAtTime(v,n+t)}
+let speaking=false;
+function duck(on){speaking=on;if(AC&&sndOn)ramp(musicBus,on?DUCK:OPEN,on?.35:1.4);else fallbackVol()}
+function fallbackVol(){ // utan WebAudio: element.volume (fungerar inte på iPhone, men på dator)
+  if(AC)return;[mA,mB].forEach(m=>m.volume=sndOn?(speaking?DUCK:OPEN):0)}
+
+// Musik: två spelare som tonar över i varandra
+const mA=new Audio(),mB=new Audio();[mA,mB].forEach(m=>{m.loop=true;m.preload="none"});
+let mCur=mA,mName=null;
+const mGain=new Map();
+function music(name){
+  if(name===mName)return; mName=name;
+  ctx();
+  const next=mCur===mA?mB:mA, prev=mCur;
+  route(next,musicBus);route(prev,musicBus);
+  // tona ut den gamla med elementets volym (räcker för en övertoning), sedan pausa
+  fadeEl(prev,0,1500,()=>prev.pause());
+  if(!name){mCur=next;return}
+  next.src="music/"+name+".mp3";next.currentTime=0;next.volume=0;
+  next.play().catch(()=>{});fadeEl(next,1,1500);
+  mCur=next;fallbackVol();
+}
+function fadeEl(el,to,ms,done){
+  const from=el.volume,t0=performance.now();
+  (function step(t){const k=Math.min(1,(t-t0)/ms);el.volume=from+(to-from)*k;if(k<1)requestAnimationFrame(step);else done&&done()})(t0);
+}
+function stopMusic(){music(null)}
+
+// Ljudeffekter
+const sfxPool=[];
+function sfx(name){
+  if(!sndOn||!name)return; ctx();
+  let el=sfxPool.find(e=>e.paused);
+  if(!el){el=new Audio();sfxPool.push(el)}
+  route(el,sfxBus); el.src="sfx/"+name+".mp3"; el.volume=AC?1:0.35;
+  el.play().catch(()=>{});
+  setTimeout(()=>{if(!el.paused)fadeEl(el,0,1200,()=>el.pause())},7000);
+}
+
+// Selmas korta repliker (urklipp ur general-filerna)
+const gen={};
+function clip(file,i){
+  ctx();
+  const a=ALIGN[file]; if(!a)return Promise.resolve();
+  const p=a.paras[i]; const prevEnd=i?a.paras[i-1].end:0;
+  const st=Math.max(prevEnd+.05,p.start-.25), en=p.end+.3;
+  let el=gen[file]; if(!el){el=gen[file]=new Audio("voice/"+file+".mp3");el.preload="auto"}
+  route(el,voiceBus);
+  return new Promise(res=>{
+    el.pause();el.currentTime=st;duck(true);faceTalk(true);
+    const stop=()=>{el.pause();duck(false);faceTalk(false);res()};
+    el.play().then(()=>setTimeout(stop,(en-st)*1000)).catch(()=>{faceTalk(false);duck(false);res()});
+  });
+}
+function faceTalk(on){document.querySelectorAll(".face").forEach(f=>f.classList.toggle("talk",on))}
+
+function sndIcon(){
+  const on='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>';
+  const off='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+  ["#sndHome","#sndPl","#sndQ"].forEach(s=>{const b=$(s);b.innerHTML=sndOn?on:off;b.setAttribute("aria-label",sndOn?"Musik och ljud av":"Musik och ljud på")});
+}
+function toggleSnd(){
+  sndOn=!sndOn;try{localStorage.setItem(KEY+".snd",sndOn?"1":"0")}catch(e){}
+  ctx(); if(AC){ramp(musicBus,sndOn?(speaking?DUCK:OPEN):0,.3);ramp(sfxBus,sndOn?.35:0,.3)} else fallbackVol();
+  sndIcon();
+}
+["#sndHome","#sndPl","#sndQ"].forEach(s=>$(s).addEventListener("click",toggleSnd));sndIcon();
+
+// ---------- Startsidan ----------
+function stars(k){const b=S.best[k];return b==null?"":` · bästa: <b>${b}%</b>`}
+function renderHome(){
+  const ul=$("#lessons");ul.innerHTML="";
+  for(const L of LESSONS){
+    const li=document.createElement("li");li.className="lesson";li.style.setProperty("--c",L.c);
+    const heard=S.lessons[L.id];
+    li.innerHTML=`<img src="img/${L.cover}.webp" alt="">
+      <div class="body"><h3>${L.id}. ${L.title}</h3><p class="sub">${L.sub}</p>
+      <div class="acts"><button class="btn" type="button" data-play="${L.id}">${heard?"Lyssna igen":"Lyssna"}</button>
+      <button class="btn alt" type="button" data-quiz="${L.quiz}">Frågor</button></div>
+      <div class="mark">${heard?"Lyssnat":"Inte lyssnat än"}${stars(L.quiz)}</div></div>`;
+    ul.appendChild(li);
+  }
+  ul.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>openLesson(+b.dataset.play));
+  ul.querySelectorAll("[data-quiz]").forEach(b=>b.onclick=()=>{ctx();startQuiz(b.dataset.quiz)});
+  const eb=S.best.exam; $("#examBtn").textContent=eb==null?"Öva inför provet":`Öva igen (bästa: ${eb}%)`;
+}
+$("#examBtn").onclick=()=>{ctx();startQuiz("exam")};
+$("#aboutBtn").onclick=()=>$("#about").showModal();
+
+// ---------- Spelaren ----------
+let L=null, beats=[], bi=0, vEl=new Audio(), playing=false, curChunk=null, showTxt=true;
+vEl.preload="auto";
+try{showTxt=localStorage.getItem(KEY+".txt")!=="0"}catch(e){}
+function buildBeats(lesson){
+  const out=[];let music=null;
+  for(const [chunk,mus,cues] of lesson.parts){
+    const a=ALIGN[chunk];
+    cues.forEach((c,i)=>{
+      const p=a.paras[i];const o=c[1]||{};
+      let m=null; if(i===0&&mus)m=mus; if(o.music)m=o.music;
+      out.push({chunk,i,img:c[0],o,music:m,start:i===0?0:Math.max(0,p.start-.15),end:p.end,text:p.text});
+    });
+  }
+  // musik ärvs framåt
+  let cur=lesson.parts[0][1]; for(const b of out){if(b.music)cur=b.music;b.mus=cur}
+  return out;
+}
+function openLesson(id){
+  L=LESSONS.find(x=>x.id===id); beats=buildBeats(L); bi=0;
+  $("#plTitle").textContent=`${L.id}. ${L.title}`;
+  $("#dots").innerHTML=beats.map(()=>"<i></i>").join("");
+  setImg(beats[0].img,true); $("#card").classList.remove("show"); $("#say").textContent="";
+  $("#bigstart").style.display=""; playing=false; playIcon();
+  show("player");
+}
+$("#startBtn").onclick=()=>{ctx();$("#bigstart").style.display="none";route(vEl,voiceBus);
+  clip("general-2",L.intro).then(()=>{goBeat(0)})};
+let front=$("#imA"),back=$("#imB"),curImg=null;
+function setImg(name,instant){
+  if(name===curImg)return; curImg=name;
+  back.src="img/"+name+".webp"; back.alt="";
+  const swap=()=>{back.classList.add("show");front.classList.remove("show");[front,back]=[back,front]};
+  if(instant){front.classList.remove("show");back.classList.add("show");[front,back]=[back,front];return}
+  if(back.complete)requestAnimationFrame(swap);else back.onload=()=>{back.onload=null;swap()};
+}
+let cardT;
+function setCard(t){const c=$("#card");clearTimeout(cardT);
+  if(!t){c.classList.remove("show");return}
+  if(c.classList.contains("show")&&c.textContent===t)return;
+  c.classList.remove("show");cardT=setTimeout(()=>{c.textContent=t;c.classList.add("show")},250)}
+function goBeat(i,seek=true){
+  if(i<0)i=0; if(i>=beats.length){finishLesson();return}
+  bi=i;const b=beats[i];
+  // preload nästa bild
+  if(beats[i+1]){const pre=new Image();pre.src="img/"+beats[i+1].img+".webp"}
+  setImg(b.img);setCard(b.o.card||null);
+  $("#say").textContent=b.text;$("#say").classList.toggle("hide",!showTxt);
+  document.querySelectorAll("#dots i").forEach((d,k)=>{d.className=k<i?"done":k===i?"now":""});
+  if(b.mus)music(b.mus);
+  if(b.o.sfx)sfx(b.o.sfx);
+  if(seek){
+    if(curChunk!==b.chunk){curChunk=b.chunk;vEl.src="voice/"+b.chunk+".mp3"}
+    vEl.currentTime=b.start; play();
+  }
+}
+function play(){vEl.play().then(()=>{playing=true;duck(true);faceTalk(true);playIcon()}).catch(()=>{playing=false;playIcon()})}
+function pause(){vEl.pause();playing=false;duck(false);faceTalk(false);playIcon()}
+function playIcon(){$("#playBtn").innerHTML=playing?'<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>':'<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>';
+  $("#playBtn").setAttribute("aria-label",playing?"Paus":"Spela")}
+vEl.addEventListener("timeupdate",()=>{
+  const b=beats[bi];if(!b||b.chunk!==curChunk)return;
+  const t=vEl.currentTime;
+  if(b.o.img2&&t>b.start+(b.end-b.start)*b.o.at)setImg(b.o.img2);
+  const nx=beats[bi+1];
+  if(nx&&nx.chunk===curChunk&&t>=nx.start)goBeat(bi+1,false);
+});
+vEl.addEventListener("ended",()=>{
+  // nästa ljudfil
+  let j=bi+1;while(j<beats.length&&beats[j].chunk===curChunk)j++;
+  if(j>=beats.length){pause();finishLesson();return}
+  duck(false);setTimeout(()=>goBeat(j),600);
+});
+$("#playBtn").onclick=()=>{ctx();if($("#bigstart").style.display!=="none"){$("#startBtn").click();return}playing?pause():play()};
+$("#prevBtn").onclick=()=>{const b=beats[bi];goBeat(vEl.currentTime-b.start>2.5?bi:bi-1)};
+$("#nextBtn").onclick=()=>goBeat(bi+1);
+$("#txtBtn").onclick=()=>{showTxt=!showTxt;try{localStorage.setItem(KEY+".txt",showTxt?"1":"0")}catch(e){}$("#say").classList.toggle("hide",!showTxt)};
+$("#plBack").onclick=()=>{pause();stopMusic();setCard(null);renderHome();show("home")};
+function finishLesson(){
+  pause();S.lessons[L.id]=Date.now();saveS();
+  setCard(null);
+  $("#say").textContent="Bra lyssnat! Nu får du visa vad du kommer ihåg.";$("#say").classList.remove("hide");
+  $("#bigstart").innerHTML=`<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button class="btn" id="toQuiz" type="button">Frågor om lektionen</button><button class="btn" style="background:#f3e6c9;color:#2b1d12" id="toHome" type="button">Tillbaka till tältet</button></div>`;
+  $("#bigstart").style.display="";
+  $("#toQuiz").onclick=()=>{resetBig();startQuiz(L.quiz)};
+  $("#toHome").onclick=()=>{resetBig();stopMusic();renderHome();show("home")};
+}
+function resetBig(){$("#bigstart").innerHTML='<button class="btn" id="startBtn" type="button">Börja lyssna</button>';
+  $("#startBtn").onclick=()=>{ctx();$("#bigstart").style.display="none";route(vEl,voiceBus);clip("general-2",L.intro).then(()=>goBeat(0))}}
+
+// ---------- Frågor ----------
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>s.toLowerCase().trim().replace(/[^a-zåäö0-9]/g,"");
+let QZ=null;
+function pickExam(){
+  const writes=shuffle(Q.filter(q=>q.t==="write"));
+  const rest=Q.filter(q=>q.t!=="write");
+  const w=q=>{const s=S.stats[q.id];return 1+(s?s.w*2-s.r*.5:1)+(q.x?-.5:0)};
+  const pool=shuffle(rest).sort((a,b)=>w(b)-w(a));
+  const chosen=writes.slice(0,5);
+  for(const ch of ["k7","k9","k10","k11"]) for(const q of pool.filter(q=>q.c===ch).slice(0,2)) chosen.push(q);
+  for(const q of pool){if(chosen.length>=15)break;if(!chosen.includes(q))chosen.push(q)}
+  return shuffle(chosen.slice(0,15));
+}
+function startQuiz(kind){
+  stopMusic();
+  let list,title;
+  if(kind==="exam"){list=pickExam();title="Provrepetition"}
+  else{const all=Q.filter(q=>q.c===kind);
+    const book=shuffle(all.filter(q=>!q.x)).slice(0,8), ex=shuffle(all.filter(q=>q.x)).slice(0,2);
+    list=shuffle(book.concat(ex));title=CH[kind]}
+  QZ={kind,list,i:0,right:0,total:list.length,streak:0,requeued:new Set(),said:{}};
+  $("#qTitle").textContent=title;
+  show("quiz");music("quiz");
+  if(kind==="exam")clip("general-2",5);
+  renderQ();
+}
+function renderQ(){
+  const z=QZ, q=z.list[z.i]; const W=$("#qwrap");
+  const pct=Math.round(z.i/z.list.length*100);
+  W.innerHTML=`<div class="qmeta"><span>Fråga ${z.i+1} av ${z.list.length}</span><div class="bar"><i style="width:${pct}%"></i></div>${q.x?'<span class="extra">Mer än boken</span>':""}</div>
+    <div class="qimg"><img src="img/${q.img||"style-anchor"}.webp" alt="">${q.card?`<div class="card show">${q.card}</div>`:""}</div>
+    <h3 class="q">${q.q}</h3><div id="ans"></div>
+    <div class="fb" id="fb" aria-live="polite"></div><div class="qbtns" id="qb"></div>`;
+  const A=$("#ans");
+  if(q.x&&!z.said.x){z.said.x=1;clip("general-2",10)}
+  if(!q.t||q.t==="mc"){
+    A.className="opts";
+    shuffle(q.a).forEach((t,k)=>{const b=document.createElement("button");b.type="button";b.className="opt";
+      b.innerHTML=`<span class="n">${"ABCD"[k]}</span>${t}`;b.onclick=()=>answerMC(b,t===q.a[0]);A.appendChild(b)});
+  } else if(q.t==="write"){
+    if(!z.said.w){z.said.w=1;clip("general-2",6)}
+    A.className="write";A.innerHTML=`<input id="win" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Ditt svar"><button class="btn" id="wok" type="button">Svara</button>`;
+    const go=()=>{const v=norm($("#win").value);if(!v)return;answerDone(q.ans.some(a=>norm(a)===v),q.ans[0][0].toUpperCase()+q.ans[0].slice(1))};
+    $("#wok").onclick=go;$("#win").onkeydown=e=>{if(e.key==="Enter")go()};setTimeout(()=>$("#win").focus(),50);
+  } else if(q.t==="order"){
+    if(!z.said.o){z.said.o=1;clip("general-2",7)}
+    const picked=[];A.innerHTML=`<div class="ordered" id="ord" aria-label="Din ordning"></div><div class="opts" id="ordOpts" style="margin-top:10px"></div>`;
+    const draw=()=>{$("#ord").innerHTML=picked.map((t,k)=>`<span class="chip">${k+1}. ${t}</span>`).join("")||'<span class="mark">Tryck på berättelserna i rätt ordning.</span>'};
+    draw();
+    shuffle(q.a).forEach(t=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;
+      b.onclick=()=>{if(b.disabled)return;picked.push(t);b.disabled=true;b.style.opacity=.35;draw();
+        if(picked.length===q.a.length){const ok=picked.every((p,k)=>p===q.a[k]);answerDone(ok,q.a.map((t,k)=>`${k+1}. ${t}`).join(", "))}};
+      $("#ordOpts").appendChild(b)});
+    $("#qb").innerHTML=`<button class="btn alt" type="button" id="ordReset">Börja om</button>`;
+    $("#ordReset").onclick=()=>renderQ();
+  } else if(q.t==="multi"){
+    if(q.c==="k10"||q.c==="k11"){if(!z.said.f){z.said.f=1;clip("general-2",8)}}
+    A.className="opts";const sel=new Set();
+    shuffle(q.a.concat(q.wrong)).forEach(t=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;b.setAttribute("aria-pressed","false");
+      b.onclick=()=>{if(A.dataset.done)return;sel.has(t)?sel.delete(t):sel.add(t);b.classList.toggle("sel");b.setAttribute("aria-pressed",sel.has(t))};A.appendChild(b)});
+    $("#qb").innerHTML=`<button class="btn" type="button" id="mok">Klar</button>`;
+    $("#mok").onclick=()=>{if(!sel.size)return;A.dataset.done=1;
+      const ok=q.a.every(t=>sel.has(t))&&[...sel].every(t=>q.a.includes(t));
+      A.querySelectorAll(".opt").forEach(b=>{const t=b.textContent;if(q.a.includes(t))b.classList.add("right");else if(sel.has(t))b.classList.add("wrong")});
+      answerDone(ok,q.a.join(", "),true)};
+  }
+}
+function answerMC(btn,ok){
+  const A=$("#ans");if(A.dataset.done)return;A.dataset.done=1;
+  const q=QZ.list[QZ.i];
+  A.querySelectorAll(".opt").forEach(b=>{if(b.textContent.slice(1)===q.a[0])b.classList.add("right")});
+  if(!ok)btn.classList.add("wrong");
+  answerDone(ok,q.a[0],true);
+}
+function answerDone(ok,correct,marked){
+  const z=QZ,q=z.list[z.i];
+  const st=S.stats[q.id]||(S.stats[q.id]={r:0,w:0}); ok?st.r++:st.w++; saveS();
+  let line;
+  if(ok){
+    z.right++; z.streak++;
+    if(z.streak===3){line=[ "general-1",7]}
+    else if(q.x) line=["general-1",2];
+    else line=shuffle([["general-1",0],["general-1",1],["general-3",0],["general-3",2],["general-1",3]])[0];
+    $("#fb").innerHTML=`<img class="face" src="img/selma-head-closeup.webp" alt=""><span>Rätt!</span>`;
+  } else {
+    z.streak=0;
+    const again=!z.requeued.has(q.id)&&z.list.length-z.i>1;
+    if(again){z.requeued.add(q.id);const pos=Math.min(z.list.length,z.i+3);z.list.splice(pos,0,q);line=["general-2",9]}
+    else line=shuffle([["general-3",1],["general-1",4]])[0];
+    $("#fb").innerHTML=`<img class="face" src="img/selma-head-closeup.webp" alt=""><span>Rätt svar: <b>${correct}</b></span>`;
+    if(!marked&&q.t==="write")$("#win").disabled=true;
+  }
+  clip(line[0],line[1]);
+  $("#qb").innerHTML=`<button class="btn big" type="button" id="qNext">${z.i+1<z.list.length?"Nästa fråga":"Se resultatet"}</button>`;
+  $("#qNext").onclick=nextQ;$("#qNext").focus();
+}
+function nextQ(){QZ.i++;if(QZ.i>=QZ.list.length)return endQuiz();renderQ()}
+function endQuiz(){
+  const z=QZ;const pct=Math.round(z.right/z.list.length*100);
+  const k=z.kind; if(S.best[k]==null||pct>S.best[k])S.best[k]=pct; saveS();
+  const msg=pct>=90?"Du kan det här nu.":pct>=70?"Bra jobbat! Lite till, så sitter det.":"Bra försök. Lyssna på lektionen igen och prova en gång till.";
+  $("#qwrap").innerHTML=`<div class="result"><img class="face" src="img/selma-head-closeup.webp" alt="Selma" style="width:110px;height:110px">
+    <div class="score">${z.right} av ${z.list.length}</div><h3>${msg}</h3>
+    <div class="qbtns" style="justify-content:center"><button class="btn big" type="button" id="again">Prova igen</button><button class="btn alt big" type="button" id="home2">Tillbaka till tältet</button></div></div>`;
+  $("#again").onclick=()=>startQuiz(k);$("#home2").onclick=()=>{stopMusic();renderHome();show("home")};
+  (k==="exam"&&pct>=80?clip("general-1",11):clip("general-2",12)).then(()=>{if(pct===100)clip("general-1",10)});
+}
+$("#qBack").onclick=()=>{stopMusic();renderHome();show("home")};
+
+// ---------- Start ----------
+renderHome();
+let welcomed=false;
+document.addEventListener("pointerdown",e=>{if(welcomed)return;welcomed=true;ctx();
+  if($("#home").classList.contains("on")&&!e.target.closest("button,a")){music("selma-theme");clip("general-2",0)}});
+</script>
+</body>
+</html>

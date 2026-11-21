@@ -161,7 +161,7 @@ const ROOMS=[
   {id:"finska",name:"Finska",c:"var(--fi)",href:"../siili/",img:"../siili/img6/vilkutan.webp",alt:"Siili vinkar",who:"Siili lär dig finska",inside:"Tervetuloa!"},
   {id:"matte",name:"Matematik",c:"var(--ma)",href:"../sjuan/",img:"../sjuan/img/troll-friendly.webp",alt:"Matematiktrollet",who:"Tabellresan",inside:"Välkommen ombord!"},
   {id:"rum3",name:"Klassrum 3",c:"var(--sv)",locked:true,who:"Snart"},
-  {id:"rum4",name:"Klassrum 4",c:"var(--re)",locked:true,who:"Snart"},
+  {id:"religion",name:"Religion",c:"var(--re)",href:"../religion/",img:"../religion/icon-192.png",alt:"Kamelen Selma",who:"Selmas tält",inside:"Välkommen!"},
   {id:"rum5",name:"Klassrum 5",c:"var(--li)",locked:true,who:"Snart"},
 ];
 
@@ -177,6 +177,10 @@ function matteNote(){
   return s.av;
 }
 
+function religionNote(){
+  const s=load("religion.v1"); if(!s||!s.lessons) return "";
+  const n=Object.keys(s.lessons).length; return n?`${n} av 4 lektioner`:"";
+}
 function build(){
   const hall=$("#hall");
   for(const r of ROOMS){
@@ -187,6 +191,7 @@ function build(){
     let note="", win=r.locked?'<span aria-hidden="true">🔒</span>':`<img src="${r.img}" alt="${r.alt}">`;
     let who=r.who;
     if(r.id==="finska") note=siiliNote();
+    if(r.id==="religion") note=religionNote();
     if(r.id==="matte"){const av=matteNote(); if(av&&av.img){who=`Tabellresan med ${av.name||"din kompis"}`;
       win=`<img src="../sjuan/img/avatars/${av.img}.webp" alt="${av.name||"Din kompis"}" onerror="this.src='${r.img}'">`}}
     el.innerHTML=`<div class="plate">${r.name}</div>
