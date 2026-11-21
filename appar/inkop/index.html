@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inköp</title>
+<meta name="theme-color" content="#f4eee1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16221b" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Inköp">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root {
+  color-scheme: light dark;
+  --paper: #f4eee1; --card: #fbf8f1; --ink: #22301f; --soft: #6b705f; --line: #ddd4bf;
+  --green: #2f5a3d; --on-green: #f7f2e6; --tomato: #cf4a2c; --tomato-bg: #f6ddd3; --hay: #e8dcb4;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #16221b; --card: #1e2d24; --ink: #ece5d2; --soft: #a0a893; --line: #31443a; --green: #8fc29a; --on-green: #12201a; --tomato: #ef7a5b; --tomato-bg: #3a2620; --hay: #3a3a22; }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; }
+body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); }
+header { padding: 14px 18px 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+h1 { font-family: var(--serif); font-size: 1.9rem; margin: 0; letter-spacing: -0.01em; font-weight: 700; }
+h1 span { color: var(--tomato); }
+.sync { font-size: 0.78rem; color: var(--soft); display: flex; align-items: center; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--soft); }
+.sync.ok .dot { background: #4c9a62; } .sync.off .dot { background: var(--tomato); }
+main { flex: 1; overflow-y: auto; padding: 4px 14px calc(96px + env(safe-area-inset-bottom)); -webkit-overflow-scrolling: touch; }
+nav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: var(--card); border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); z-index: 5; }
+nav button { flex: 1; background: none; border: 0; color: var(--soft); font: inherit; font-size: 0.8rem; padding: 6px 0; min-height: 52px; display: flex; flex-direction: column; align-items: center; gap: 2px; border-radius: 12px; }
+nav button svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+nav button[aria-current="true"] { color: var(--green); font-weight: 700; }
+nav button[aria-current="true"] svg { stroke-width: 2.3; }
+.progress { margin: 4px 4px 12px; }
+.bar { height: 10px; background: var(--hay); border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+.bar i { display: block; height: 100%; background: var(--green); width: 0; transition: width .3s; }
+.progress p { margin: 6px 0 0; font-size: 0.85rem; color: var(--soft); }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 12px; scrollbar-width: none; }
+.chip { flex: none; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 0.9rem; min-height: 40px; }
+.chip[aria-pressed="true"] { background: var(--green); color: var(--on-green); border-color: var(--green); }
+.add { display: flex; gap: 8px; margin: 0 2px 14px; }
+.add input { flex: 1; min-width: 0; }
+input, textarea, select { font: inherit; color: var(--ink); background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; width: 100%; }
+textarea { resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--green); border-color: var(--green); }
+.btn { font: inherit; font-weight: 600; border: 1.5px solid var(--green); background: var(--card); color: var(--green); border-radius: 12px; padding: 12px 18px; min-height: 48px; }
+.btn.primary { background: var(--green); color: var(--on-green); }
+.btn.danger { border-color: var(--tomato); color: var(--tomato); }
+.btn[disabled] { opacity: .5; }
+section.sec { margin-bottom: 18px; }
+section.sec h2 { font-family: var(--serif); font-size: 1.05rem; font-style: italic; color: var(--soft); margin: 0 4px 6px; font-weight: 400; display: flex; justify-content: space-between; }
+.row { display: flex; align-items: center; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 6px; }
+.row .tick { flex: none; width: 56px; height: 56px; background: none; border: 0; display: grid; place-items: center; }
+.row .tick span { width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--green); display: grid; place-items: center; color: transparent; font-weight: 700; }
+.row.done .tick span { background: var(--green); color: var(--on-green); }
+.row .body { flex: 1; min-width: 0; background: none; border: 0; text-align: left; font: inherit; color: inherit; padding: 10px 12px 10px 0; min-height: 56px; }
+.row .name { display: block; font-weight: 600; }
+.row .meta { display: block; font-size: 0.84rem; color: var(--soft); margin-top: 1px; }
+.row.done .name { text-decoration: line-through; color: var(--soft); font-weight: 400; }
+.row.done { background: transparent; }
+.tag { display: inline-block; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; background: var(--tomato-bg); color: var(--tomato); margin-left: 6px; font-weight: 600; vertical-align: 1px; }
+.tag.flex { background: var(--hay); color: var(--ink); }
+.empty { text-align: center; color: var(--soft); padding: 44px 20px; font-family: var(--serif); font-size: 1.1rem; line-height: 1.5; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; }
+.card h3 { font-family: var(--serif); font-size: 1.2rem; margin: 0 0 4px; }
+.card p { margin: 4px 0; }
+.small { font-size: 0.85rem; color: var(--soft); }
+.recipe-card { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; display: block; }
+.recipe-text { white-space: pre-wrap; line-height: 1.55; font-size: 1.02rem; max-width: 62ch; }
+.back { background: none; border: 0; color: var(--green); font: inherit; font-weight: 600; padding: 10px 4px; min-height: 44px; }
+.sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 20; display: flex; align-items: flex-end; }
+.sheet { background: var(--paper); width: 100%; border-radius: 22px 22px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); max-height: 90%; overflow-y: auto; }
+.sheet h3 { font-family: var(--serif); margin: 0 0 12px; font-size: 1.3rem; }
+.field { margin-bottom: 12px; } .field label { display: block; font-size: 0.85rem; color: var(--soft); margin-bottom: 4px; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.toast { position: fixed; left: 16px; right: 16px; bottom: calc(86px + env(safe-area-inset-bottom)); background: var(--ink); color: var(--paper); padding: 12px 16px; border-radius: 12px; z-index: 30; text-align: center; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 2px 14px; }
+</style>
+</head>
+<body>
+<header><h1>Inköp<span>.</span></h1><div class="sync" id="sync"><i class="dot"></i><span>Ansluter…</span></div></header>
+<main id="main"></main>
+<nav id="nav">
+  <button data-tab="list" aria-current="true"><svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Listan</button>
+  <button data-tab="recipes" aria-current="false"><svg viewBox="0 0 24 24"><path d="M4 5.5C6.5 4.3 9.5 4.3 12 6c2.5-1.7 5.5-1.7 8-.5V19c-2.5-1.2-5.5-1.2-8 .5-2.5-1.7-5.5-1.7-8-.5V5.5z"/><path d="M12 6v13.5"/></svg>Recept</button>
+  <button data-tab="more" aria-current="false"><svg viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg>Hämta vecka</button>
+</nav>
+<div id="layer"></div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB2CwwLFdPrLnbTEfSSBF94OHdhqq534sQ",
+  authDomain: "inkop-26de7.firebaseapp.com",
+  projectId: "inkop-26de7",
+  storageBucket: "inkop-26de7.firebasestorage.app",
+  messagingSenderId: "418185092749",
+  appId: "1:418185092749:web:2b966a4d6cc23ef9a28cc4"
+};
+/* Enkel spärr, inte riktig säkerhet: databasreglerna släpper bara in anrop under den här koden. */
+const TEAM = "o9MFJcbLfyLi8Xdw3gRECYpdEQ8yC4pp";
+const SECTIONS = ['Frukt & grönt', 'Kött & fisk', 'Mejeri & ägg', 'Frys', 'Skafferi', 'Bröd', 'Övrigt'];
+
+const S = { tab: 'list', store: '', items: [], recipes: [], open: '', edit: null, armed: '', importText: '', online: null, ready: false };
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const str = (v, n) => (typeof v === 'string' ? v : v == null ? '' : String(v)).trim().slice(0, n);
+
+let db, itemsCol, recipesCol;
+function connect() {
+  const app = initializeApp(firebaseConfig);
+  try { db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
+  catch (e) { db = initializeFirestore(app, {}); }
+  itemsCol = collection(db, 'teams', TEAM, 'items');
+  recipesCol = collection(db, 'teams', TEAM, 'recipes');
+  onSnapshot(itemsCol, { includeMetadataChanges: true }, snap => {
+    S.items = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.n || 0) - (b.n || 0));
+    S.ready = true; setSync(navigator.onLine); render();
+  }, err => { setSync(false, err); });
+  onSnapshot(recipesCol, snap => {
+    S.recipes = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.n || 0) - (b.n || 0));
+    render();
+  }, () => {});
+}
+function setSync(ok, err) {
+  const el = $('sync'); el.className = 'sync ' + (ok ? 'ok' : 'off');
+  el.lastElementChild.textContent = err ? 'Ingen kontakt' : ok ? 'Synkad' : 'Offline, sparas när du får nät';
+}
+const save = (col, obj) => { const { id, ...rest } = obj; return setDoc(doc(col, id), rest, { merge: true }).catch(() => toast('Kunde inte spara just nu.')); };
+
+let toastT;
+function toast(t) {
+  $('layer').querySelectorAll('.toast').forEach(x => x.remove());
+  const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; $('layer').appendChild(d);
+  clearTimeout(toastT); toastT = setTimeout(() => d.remove(), 3200);
+}
+
+/* ---------- vyer ---------- */
+function stores() { const set = []; S.items.forEach(i => { if (i.store && !set.includes(i.store)) set.push(i.store); }); return set; }
+function vList() {
+  const all = S.items, done = all.filter(i => i.done).length;
+  let h = '';
+  if (all.length) {
+    const pct = Math.round(done / all.length * 100);
+    h += '<div class="progress"><div class="bar"><i style="width:' + pct + '%"></i></div><p>' + done + ' av ' + all.length + ' varor i korgen</p></div>';
+  }
+  const st = stores();
+  if (st.length > 1) h += '<div class="chips" role="group" aria-label="Butik"><button class="chip" data-act="store" data-v="" aria-pressed="' + (S.store === '') + '">Alla</button>' + st.map(s => '<button class="chip" data-act="store" data-v="' + esc(s) + '" aria-pressed="' + (S.store === s) + '">' + esc(s) + '</button>').join('') + '</div>';
+  h += '<form class="add" data-form="add"><input id="addname" type="text" placeholder="Lägg till vara…" autocomplete="off" enterkeyhint="done" maxlength="80"><button class="btn primary" type="submit">Lägg till</button></form>';
+  const shown = all.filter(i => !S.store || i.store === S.store);
+  if (!all.length) return h + '<div class="empty">Listan är tom.<br>Hämta veckan från Köket under <b>Hämta vecka</b>, eller lägg till en vara här ovanför.</div>';
+  const secs = SECTIONS.concat([...new Set(shown.map(i => i.section).filter(s => s && !SECTIONS.includes(s)))]);
+  secs.forEach(sec => {
+    const rows = shown.filter(i => (i.section || 'Övrigt') === sec || (!SECTIONS.includes(i.section) && sec === 'Övrigt' && !i.section));
+    if (!rows.length) return;
+    rows.sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0));
+    h += '<section class="sec"><h2><span>' + esc(sec) + '</span><span>' + rows.filter(r => !r.done).length + ' kvar</span></h2>';
+    rows.forEach(i => {
+      const meta = [i.qty, i.got ? 'köpte: ' + i.got : '', i.note].filter(Boolean).join(' · ');
+      h += '<div class="row' + (i.done ? ' done' : '') + '"><button class="tick" data-act="tick" data-id="' + esc(i.id) + '" aria-label="' + (i.done ? 'Ta ur korgen' : 'Lägg i korgen') + ': ' + esc(i.name) + '" aria-pressed="' + !!i.done + '"><span>✓</span></button>'
+        + '<button class="body" data-act="edit" data-id="' + esc(i.id) + '"><span class="name">' + esc(i.name) + (i.ask && !i.done ? '<span class="tag">Kolla hemma</span>' : '') + (i.flex && !i.done ? '<span class="tag flex">Välj efter pris</span>' : '') + '</span>'
+        + (meta ? '<span class="meta">' + esc(meta) + '</span>' : '') + '</button></div>';
+    });
+    h += '</section>';
+  });
+  if (done) h += '<div class="toolbar"><button class="btn" data-act="clear-done">' + (S.armed === 'clear' ? 'Tryck igen för att rensa' : 'Rensa avbockade (' + done + ')') + '</button></div>';
+  return h;
+}
+function vRecipes() {
+  if (S.open) {
+    const r = S.recipes.find(x => x.id === S.open);
+    if (r) return '<button class="back" data-act="back">‹ Alla recept</button><article class="card"><h3>' + esc(r.name) + '</h3>' + (r.uses ? '<p class="small">' + esc(r.uses) + '</p>' : '') + (r.desc ? '<p><em>' + esc(r.desc) + '</em></p>' : '') + '<div class="btns"><button class="btn' + (r.cooked ? '' : ' primary') + '" data-act="cooked" data-id="' + esc(r.id) + '">' + (r.cooked ? 'Lagad ✓ (ångra)' : 'Markera som lagad') + '</button></div></article><div class="card"><div class="recipe-text">' + esc(r.text) + '</div></div>';
+    S.open = '';
+  }
+  if (!S.recipes.length) return '<div class="empty">Inga recept än.<br>De följer med när du hämtar veckan från Köket.</div>';
+  return S.recipes.map(r => '<button class="card recipe-card" data-act="open" data-id="' + esc(r.id) + '"><h3>' + esc(r.name) + (r.cooked ? ' <span class="tag flex">lagad</span>' : '') + '</h3>' + (r.uses ? '<p class="small">' + esc(r.uses) + '</p>' : '') + (r.desc ? '<p>' + esc(r.desc) + '</p>' : '') + '</button>').join('');
+}
+function vMore() {
+  const has = S.items.length || S.recipes.length;
+  return '<div class="card"><h3>Hämta veckan från Köket</h3><p class="small">I Köket: öppna Listan och tryck <b>Kopiera till Inköp-appen</b>. Klistra sedan in här.</p>'
+    + '<div class="field"><textarea id="imp" rows="6" placeholder="Klistra in här…" data-imp="1">' + esc(S.importText) + '</textarea></div>'
+    + '<div class="btns"><button class="btn primary" data-act="import">' + (S.armed === 'import' ? 'Tryck igen: ersätter nuvarande lista' : 'Hämta veckan') + '</button></div>'
+    + (has ? '<p class="small">Det som redan är avbockat följer med om varan finns kvar. Nuvarande lista och recept ersätts.</p>' : '') + '</div>'
+    + '<div class="card"><h3>Om appen</h3><p class="small">Du och Ulrika delar samma lista i realtid. Appen fungerar även utan nät i butiken och synkar när du är uppkopplad igen. Skyddet är en enkel spärr i form av en lång kod, inte riktig säkerhet, så här sparas bara varor och recept, aldrig kostnader eller kvitton.</p></div>';
+}
+function vEdit() {
+  const i = S.items.find(x => x.id === S.edit); if (!i) return '';
+  const stOpts = stores();
+  return '<div class="sheet-bg" data-act="sheet-bg"><div class="sheet" role="dialog" aria-label="Ändra vara"><h3>Ändra vara</h3>'
+    + '<div class="field"><label for="e-name">Vara</label><input id="e-name" value="' + esc(i.name) + '" maxlength="80"></div>'
+    + '<div class="field"><label for="e-qty">Mängd enligt listan</label><input id="e-qty" value="' + esc(i.qty) + '" maxlength="40"></div>'
+    + '<div class="field"><label for="e-got">Köpte faktiskt (om det blev något annat)</label><input id="e-got" value="' + esc(i.got) + '" maxlength="60" placeholder="t.ex. 1 kg istället för 1,5 kg"></div>'
+    + '<div class="field"><label for="e-note">Anteckning</label><input id="e-note" value="' + esc(i.note) + '" maxlength="80"></div>'
+    + '<div class="field"><label for="e-sec">Avdelning</label><select id="e-sec">' + SECTIONS.map(s => '<option' + (s === (i.section || 'Övrigt') ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select></div>'
+    + (stOpts.length ? '<div class="field"><label for="e-store">Butik</label><select id="e-store">' + stOpts.map(s => '<option' + (s === i.store ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select></div>' : '')
+    + '<div class="btns"><button class="btn primary" data-act="edit-save">Spara</button><button class="btn" data-act="edit-close">Avbryt</button><button class="btn danger" data-act="edit-del">' + (S.armed === 'del' ? 'Tryck igen' : 'Ta bort') + '</button></div></div></div>';
+}
+function render() {
+  const keep = document.activeElement && document.activeElement.id === 'addname' ? document.activeElement.value : null;
+  const main = $('main'), top = main.scrollTop;
+  main.innerHTML = S.tab === 'list' ? vList() : S.tab === 'recipes' ? vRecipes() : vMore();
+  main.scrollTop = top;
+  if (keep !== null && $('addname')) { $('addname').value = keep; $('addname').focus(); }
+  document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.tab === S.tab)));
+  $('layer').querySelectorAll('.sheet-bg').forEach(x => x.remove());
+  if (S.edit) $('layer').insertAdjacentHTML('afterbegin', vEdit());
+}
+
+/* ---------- handlingar ---------- */
+function nextN() { return S.items.reduce((m, i) => Math.max(m, i.n || 0), 0) + 1; }
+function addItem(name) {
+  name = str(name, 80); if (!name) return;
+  save(itemsCol, { id: uid(), name, qty: '', store: S.store || (stores()[0] || ''), section: 'Övrigt', note: '', flex: false, ask: false, done: false, got: '', manual: true, n: nextN() });
+}
+function normItem(i, n, old) {
+  const section = SECTIONS.includes(i.section) ? i.section : 'Övrigt';
+  const o = old || {};
+  return { name: str(i.name, 80), qty: str(i.qty, 40), store: str(i.store, 40), section, note: str(i.note, 80), flex: !!i.flex, ask: !!i.ask, done: o.done != null ? !!o.done : !!i.done, got: o.got || '', n };
+}
+async function doImport() {
+  let data;
+  try { data = JSON.parse(S.importText.trim()); } catch (e) { toast('Det där ser inte ut som veckan från Köket.'); return; }
+  const items = Array.isArray(data.items) ? data.items.filter(i => i && str(i.name, 80)) : [];
+  const recipes = Array.isArray(data.recipes) ? data.recipes.filter(r => r && str(r.name, 100) && str(r.text, 8000)) : [];
+  if (!items.length && !recipes.length) { toast('Hittade varken varor eller recept.'); return; }
+  const oldBy = {}; S.items.forEach(i => { oldBy[i.name.toLowerCase()] = i; });
+  const oldRec = {}; S.recipes.forEach(r => { oldRec[r.name.toLowerCase()] = r; });
+  const ops = [];
+  S.items.forEach(i => ops.push(b => b.delete(doc(itemsCol, i.id))));
+  S.recipes.forEach(r => ops.push(b => b.delete(doc(recipesCol, r.id))));
+  items.forEach((i, k) => { const o = oldBy[str(i.name, 80).toLowerCase()]; ops.push(b => b.set(doc(itemsCol, uid() + k), normItem(i, k + 1, o))); });
+  recipes.forEach((r, k) => { const o = oldRec[str(r.name, 100).toLowerCase()]; ops.push(b => b.set(doc(recipesCol, uid() + 'r' + k), { name: str(r.name, 100), desc: str(r.desc, 200), uses: str(r.uses, 160), text: str(r.text, 8000), cooked: o ? !!o.cooked : false, n: k + 1 })); });
+  try {
+    for (let k = 0; k < ops.length; k += 400) { const b = writeBatch(db); ops.slice(k, k + 400).forEach(f => f(b)); await b.commit(); }
+  } catch (e) { toast('Kunde inte hämta veckan just nu.'); return; }
+  S.importText = ''; S.armed = ''; S.tab = 'list'; S.store = ''; render();
+  toast(items.length + ' varor och ' + recipes.length + ' recept hämtade.');
+}
+function arm(k) { if (S.armed === k) { S.armed = ''; return true; } S.armed = k; render(); setTimeout(() => { if (S.armed === k) { S.armed = ''; render(); } }, 4000); return false; }
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act],[data-tab]'); if (!t) return;
+  if (t.dataset.tab) { S.tab = t.dataset.tab; S.open = ''; S.armed = ''; render(); $('main').scrollTop = 0; return; }
+  const id = t.dataset.id, it = S.items.find(x => x.id === id);
+  switch (t.dataset.act) {
+    case 'store': S.store = t.dataset.v; render(); break;
+    case 'tick': if (it) { it.done = !it.done; render(); save(itemsCol, { id, done: it.done }); } break;
+    case 'edit': S.edit = id; render(); break;
+    case 'sheet-bg': if (e.target === t) { S.edit = null; S.armed = ''; render(); } break;
+    case 'edit-close': S.edit = null; S.armed = ''; render(); break;
+    case 'edit-save': {
+      const sec = $('e-sec').value, st = $('e-store') ? $('e-store').value : (it && it.store) || '';
+      const upd = { id: S.edit, name: str($('e-name').value, 80) || (it && it.name) || '', qty: str($('e-qty').value, 40), got: str($('e-got').value, 60), note: str($('e-note').value, 80), section: sec, store: st };
+      S.edit = null; render(); save(itemsCol, upd); break;
+    }
+    case 'edit-del': if (arm('del')) { const d = S.edit; S.edit = null; render(); deleteDoc(doc(itemsCol, d)).catch(() => toast('Kunde inte ta bort just nu.')); } else if (S.edit) { render(); } break;
+    case 'clear-done': if (arm('clear')) { const b = writeBatch(db); S.items.filter(i => i.done).forEach(i => b.delete(doc(itemsCol, i.id))); b.commit().catch(() => toast('Kunde inte rensa just nu.')); } break;
+    case 'open': S.open = id; render(); $('main').scrollTop = 0; break;
+    case 'back': S.open = ''; render(); break;
+    case 'cooked': { const r = S.recipes.find(x => x.id === id); if (r) { r.cooked = !r.cooked; render(); save(recipesCol, { id, cooked: r.cooked }); } break; }
+    case 'import': if (!S.items.length && !S.recipes.length || arm('import')) doImport(); break;
+  }
+});
+document.addEventListener('submit', e => {
+  if (e.target.dataset.form === 'add') { e.preventDefault(); const inp = $('addname'); addItem(inp.value); inp.value = ''; inp.focus(); }
+});
+document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.imp) S.importText = e.target.value; });
+window.addEventListener('online', () => setSync(true)); window.addEventListener('offline', () => setSync(false));
+
+render();
+try { connect(); } catch (e) { setSync(false, e); }
+</script>
+</body>
+</html>
