@@ -85,45 +85,61 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   .lesson h3{font-size:1.25rem}
 }
 
-/* ---------- Spelaren ---------- */
-#player{background:#120f0c;color:#f3e6c9;height:100%}
-.stage{position:relative;width:100%;aspect-ratio:16/9;max-height:calc(100vh - 230px);background:#000;margin:0 auto;overflow:hidden}
-@supports (height:100dvh){.stage{max-height:calc(100dvh - 230px)}}
+/* ---------- Spelaren (helskärm) ---------- */
+#player{position:fixed;inset:0;background:#000;color:#f6ead0;overflow:hidden}
+#player.on{display:block}
+.stage{position:absolute;inset:0;background:#000}
 .stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.2s ease}
+@media (min-aspect-ratio:3/2){.stage img{object-fit:cover}}
 .stage img.show{opacity:1}
-.card{position:absolute;left:4%;top:6%;max-width:70%;padding:.45em .8em .5em;background:#f3e3bfef;color:var(--ink);
-  font-family:var(--serif);font-weight:800;font-size:clamp(1.1rem,3.2vw,2.3rem);line-height:1.15;border-radius:3px;
+#player .top{position:absolute;left:0;right:0;top:0;z-index:4;background:linear-gradient(180deg,#000a,#0000);transition:opacity .5s}
+#player.idle .top,#player.idle .ctrlbar{opacity:0}
+#player.idle{cursor:none}
+.card{position:absolute;left:4%;top:12%;z-index:2;max-width:60%;padding:.45em .8em .5em;background:#f3e3bfef;color:var(--ink);
+  font-family:var(--serif);font-weight:800;font-size:clamp(1.1rem,2.8vw,2.4rem);line-height:1.15;border-radius:3px;
   box-shadow:0 4px 20px #0006;opacity:0;transform:translateY(-6px);transition:opacity .6s,transform .6s;white-space:pre-line}
 .card.show{opacity:1;transform:none}
-.sub2{flex:1;display:flex;flex-direction:column;justify-content:space-between;width:100%;max-width:980px;margin:0 auto;padding:14px 18px 0}
-.line{display:flex;gap:14px;align-items:flex-start;min-height:4.8em}
-.face{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:38% 35%;flex:none;border:3px solid var(--ochre);transition:transform .2s}
+.overlay{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:60px 4vw max(14px,env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#0000 0,#000000a8 42%,#000000d0 100%)}
+.line{display:flex;gap:16px;align-items:flex-end;max-width:1100px;margin:0 auto;min-height:3.2em}
+.face{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:38% 35%;flex:none;border:3px solid var(--ochre);transition:transform .2s}
 .face.talk{animation:bob 1.6s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-3px) rotate(-2deg)}}
-.line p{margin:0;font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.5rem);line-height:1.45;font-weight:500}
+.line p{margin:0;font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.85rem);line-height:1.4;font-weight:500;text-shadow:0 2px 6px #000,0 0 18px #000c}
 .line p.hide{visibility:hidden}
-.ctrl{display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 0 max(14px,env(safe-area-inset-bottom))}
-.ctrl .play{width:64px;height:64px;background:var(--ochre);color:var(--night2)}
-.ctrl .play svg{width:30px;height:30px;fill:currentColor;stroke:none}
-.dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:0 10px}
-.dots i{width:8px;height:8px;border-radius:50%;background:#ffffff30}
-.dots i.done{background:#d9a44199}.dots i.now{background:var(--ochre);transform:scale(1.35)}
-.bigstart{position:absolute;inset:0;display:grid;place-items:center;background:#0006;z-index:3}
+.ctrlbar{transition:opacity .5s}
+.ctrl{display:flex;align-items:center;justify-content:center;gap:14px;padding:8px 0 0}
+.ctrl .play{width:60px;height:60px;background:var(--ochre);color:var(--night2)}
+.ctrl .play svg{width:28px;height:28px;fill:currentColor;stroke:none}
+.dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:10px 10px 0}
+.dots i{width:8px;height:8px;border-radius:50%;background:#ffffff40}
+.dots i.done{background:#d9a441aa}.dots i.now{background:var(--ochre);transform:scale(1.35)}
+.bigstart{position:absolute;inset:0;display:grid;place-items:center;background:#0006;z-index:5}
 .bigstart .btn{background:var(--ochre);color:var(--night2);font-size:1.3rem;padding:16px 30px}
 
 /* ---------- Frågor ---------- */
-#quiz{background:var(--bg)}
-.qwrap{width:100%;max-width:760px;margin:0 auto;padding:16px 18px 30px;display:flex;flex-direction:column;gap:14px;flex:1}
-.qimg{position:relative;width:100%;aspect-ratio:16/8;border-radius:6px;overflow:hidden;background:#000}
+#quiz{background:var(--bg);height:100%}
+.qwrap{width:100%;max-width:1200px;margin:0 auto;padding:14px 18px 18px;display:grid;gap:12px 26px;flex:1;
+  grid-template-columns:1fr;align-content:start}
+.qimg{position:relative;width:100%;aspect-ratio:16/8;max-height:30vh;border-radius:6px;overflow:hidden;background:#000}
 .qimg img{width:100%;height:100%;object-fit:cover;display:block}
-.qimg .card{font-size:clamp(1rem,3vw,1.7rem)}
+.qimg .card{font-size:clamp(1rem,2.4vw,1.6rem);top:8%}
+.qside{display:flex;flex-direction:column;gap:12px;min-width:0}
+@media (min-width:820px){
+  .qwrap{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start;padding-top:18px}
+  .qwrap .qmeta{grid-column:1/-1}
+  .qimg{aspect-ratio:4/3;max-height:calc(100dvh - 170px)}
+  .qwrap .result{grid-column:1/-1}
+}
 .qmeta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem}
 .qmeta .bar{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
 .qmeta .bar i{display:block;height:100%;background:var(--red);transition:width .4s}
 .extra{display:inline-block;background:var(--ochre);color:var(--night2);font-weight:700;font-size:.85rem;padding:2px 10px;border-radius:12px}
-.q{font-family:var(--serif);font-size:clamp(1.3rem,3.4vw,1.8rem);line-height:1.25;font-weight:700;margin:0}
-.opts{display:grid;gap:10px}
-.opt{text-align:left;padding:14px 18px;border-radius:6px;background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);font-size:1.1rem;min-height:54px}
+.q{font-family:var(--serif);font-size:clamp(1.25rem,2.4vw,1.7rem);line-height:1.25;font-weight:700;margin:0}
+.opts{display:grid;gap:8px}
+.opts.many{grid-template-columns:1fr 1fr}
+.opts.many .opt{min-height:44px;padding:9px 14px;font-size:1rem}
+.opt{text-align:left;padding:11px 16px;border-radius:6px;background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);font-size:1.08rem;min-height:48px}
 .opt:hover{box-shadow:inset 0 0 0 2px var(--brass)}
 .opt.sel{box-shadow:inset 0 0 0 3px var(--indigo);background:#d9e0f7}
 @media (prefers-color-scheme:dark){.opt.sel{background:#3a4683}}
@@ -175,20 +191,21 @@ dialog p,dialog li{font-size:.95rem}
 
 <!-- ============ SPELAREN ============ -->
 <section class="screen" id="player" aria-label="Lektion">
-  <div class="top">
-    <button class="iconbtn" id="plBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <h2 id="plTitle">Lektion</h2>
-    <button class="iconbtn" id="txtBtn" type="button" aria-label="Text av" title="Text på och av"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h13"/></svg></button>
-    <button class="iconbtn" id="sndPl" type="button" aria-label="Musik och ljud av"></button>
-  </div>
   <div class="stage" id="stage">
     <img id="imA" alt=""><img id="imB" alt="">
     <div class="card" id="card"></div>
     <div class="bigstart" id="bigstart"><button class="btn" id="startBtn" type="button">Börja lyssna</button></div>
   </div>
-  <div class="sub2">
+  <div class="top">
+    <button class="iconbtn" id="plBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="plTitle">Lektion</h2>
+    <button class="iconbtn" id="txtBtn" type="button" aria-label="Text av" title="Text på och av"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h13"/></svg></button>
+    <button class="iconbtn" id="sndPl" type="button" aria-label="Musik och ljud av"></button>
+    <button class="iconbtn" id="fsBtn" type="button" aria-label="Helskärm" title="Helskärm"></button>
+  </div>
+  <div class="overlay">
     <div class="line"><img class="face" id="face" src="img/selma-head-closeup.webp" alt="Selma"><p id="say"></p></div>
-    <div>
+    <div class="ctrlbar">
       <div class="dots" id="dots"></div>
       <div class="ctrl">
         <button class="iconbtn" id="prevBtn" type="button" aria-label="Föregående"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-8 6 8 6z"/></svg></button>
@@ -535,7 +552,7 @@ function goBeat(i,seek=true){
   }
 }
 function play(){vEl.play().then(()=>{playing=true;duck(true);faceTalk(true);playIcon()}).catch(()=>{playing=false;playIcon()})}
-function pause(){vEl.pause();playing=false;duck(false);faceTalk(false);playIcon()}
+function pause(){vEl.pause();playing=false;duck(false);faceTalk(false);playIcon();$("#player").classList.remove("idle")}
 function playIcon(){$("#playBtn").innerHTML=playing?'<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>':'<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>';
   $("#playBtn").setAttribute("aria-label",playing?"Paus":"Spela")}
 vEl.addEventListener("timeupdate",()=>{
@@ -567,6 +584,19 @@ function finishLesson(){
 }
 function resetBig(){$("#bigstart").innerHTML='<button class="btn" id="startBtn" type="button">Börja lyssna</button>';
   $("#startBtn").onclick=()=>{ctx();$("#bigstart").style.display="none";route(vEl,voiceBus);clip("general-2",L.intro).then(()=>goBeat(0))}}
+
+// Helskärm
+const fsOn='<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+const fsOff='<svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+function fsIcon(){const f=!!document.fullscreenElement;$("#fsBtn").innerHTML=f?fsOff:fsOn;$("#fsBtn").setAttribute("aria-label",f?"Avsluta helskärm":"Helskärm")}
+$("#fsBtn").onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else (document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen||(()=>{})).call(document.documentElement)};
+document.addEventListener("fullscreenchange",fsIcon);fsIcon();
+if(!document.fullscreenEnabled&&!document.webkitFullscreenEnabled)$("#fsBtn").style.display="none";
+// Knapparna försvinner när musen är still under uppspelning
+let idleT;function wake(){const p=$("#player");p.classList.remove("idle");clearTimeout(idleT);idleT=setTimeout(()=>{if(playing)p.classList.add("idle")},3000)}
+["mousemove","pointerdown","keydown"].forEach(e=>document.addEventListener(e,()=>{if($("#player").classList.contains("on"))wake()}));
+document.addEventListener("keydown",e=>{if(!$("#player").classList.contains("on"))return;
+  if(e.key===" "){if(e.target.closest("button"))return;e.preventDefault();$("#playBtn").click()} else if(e.key==="ArrowRight")$("#nextBtn").click(); else if(e.key==="ArrowLeft")$("#prevBtn").click(); else if(e.key==="f"||e.key==="F")$("#fsBtn").click()});
 
 // ---------- Frågor ----------
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -600,8 +630,8 @@ function renderQ(){
   const pct=Math.round(z.i/z.list.length*100);
   W.innerHTML=`<div class="qmeta"><span>Fråga ${z.i+1} av ${z.list.length}</span><div class="bar"><i style="width:${pct}%"></i></div>${q.x?'<span class="extra">Mer än boken</span>':""}</div>
     <div class="qimg"><img src="img/${q.img||"style-anchor"}.webp" alt="">${q.card?`<div class="card show">${q.card}</div>`:""}</div>
-    <h3 class="q">${q.q}</h3><div id="ans"></div>
-    <div class="fb" id="fb" aria-live="polite"></div><div class="qbtns" id="qb"></div>`;
+    <div class="qside"><h3 class="q">${q.q}</h3><div id="ans"></div>
+    <div class="fb" id="fb" aria-live="polite"></div><div class="qbtns" id="qb"></div></div>`;
   const A=$("#ans");
   if(q.x&&!z.said.x){z.said.x=1;clip("general-2",10)}
   if(!q.t||q.t==="mc"){
@@ -615,7 +645,7 @@ function renderQ(){
     $("#wok").onclick=go;$("#win").onkeydown=e=>{if(e.key==="Enter")go()};setTimeout(()=>$("#win").focus(),50);
   } else if(q.t==="order"){
     if(!z.said.o){z.said.o=1;clip("general-2",7)}
-    const picked=[];A.innerHTML=`<div class="ordered" id="ord" aria-label="Din ordning"></div><div class="opts" id="ordOpts" style="margin-top:10px"></div>`;
+    const picked=[];A.innerHTML=`<div class="ordered" id="ord" aria-label="Din ordning"></div><div class="opts many" id="ordOpts" style="margin-top:10px"></div>`;
     const draw=()=>{$("#ord").innerHTML=picked.map((t,k)=>`<span class="chip">${k+1}. ${t}</span>`).join("")||'<span class="mark">Tryck på berättelserna i rätt ordning.</span>'};
     draw();
     shuffle(q.a).forEach(t=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;
@@ -626,7 +656,7 @@ function renderQ(){
     $("#ordReset").onclick=()=>renderQ();
   } else if(q.t==="multi"){
     if(q.c==="k10"||q.c==="k11"){if(!z.said.f){z.said.f=1;clip("general-2",8)}}
-    A.className="opts";const sel=new Set();
+    A.className="opts"+(q.a.length+q.wrong.length>5?" many":"");const sel=new Set();
     shuffle(q.a.concat(q.wrong)).forEach(t=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;b.setAttribute("aria-pressed","false");
       b.onclick=()=>{if(A.dataset.done)return;sel.has(t)?sel.delete(t):sel.add(t);b.classList.toggle("sel");b.setAttribute("aria-pressed",sel.has(t))};A.appendChild(b)});
     $("#qb").innerHTML=`<button class="btn" type="button" id="mok">Klar</button>`;
