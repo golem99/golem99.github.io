@@ -83,6 +83,37 @@ section.sec h2 { font-family: var(--serif); font-size: 1.05rem; font-style: ital
 .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .toast { position: fixed; left: 16px; right: 16px; bottom: calc(86px + env(safe-area-inset-bottom)); background: var(--ink); color: var(--paper); padding: 12px 16px; border-radius: 12px; z-index: 30; text-align: center; }
 .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 2px 14px; }
+.day-h { font-family: var(--serif); font-size: 1.15rem; margin: 18px 4px 8px; display: flex; align-items: baseline; gap: 8px; }
+.day-h small { font-family: var(--sans); font-size: 0.8rem; color: var(--soft); font-weight: 400; }
+.day-h.today { color: var(--tomato); }
+.slot { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--soft); font-weight: 700; }
+.thaw { background: #dbe8f0; color: #1d3a4c; border: 1.5px solid #9dbfd3; border-radius: 16px; padding: 12px 14px 6px; margin: 0 0 14px; }
+.thaw h3 { margin: 0 0 6px; font-size: 1rem; display: flex; gap: 8px; align-items: center; }
+.thaw .row { background: rgba(255,255,255,.55); border-color: #b5cfdd; }
+.thaw .row .tick span { border-color: #2c5a75; }
+.thaw .row.done .tick span { background: #2c5a75; color: #fff; }
+.thaw .meta { color: #47667a !important; }
+@media (prefers-color-scheme: dark) {
+  .thaw { background: #1b2e3a; color: #d6e8f3; border-color: #2f5269; }
+  .thaw .row { background: rgba(255,255,255,.05); border-color: #2f5269; }
+  .thaw .row .tick span { border-color: #8cc0de; } .thaw .row.done .tick span { background: #8cc0de; color: #10202a; }
+  .thaw .meta { color: #9dbcd0 !important; }
+}
+.src { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: 1px; letter-spacing: .02em; }
+.src.kyl { background: #e3eef5; color: #2c5a75; } .src.frys { background: #dbe2fb; color: #2d3f97; } .src.skafferi { background: var(--hay); color: var(--ink); }
+.src.tina { background: #2c5a75; color: #fff; }
+@media (prefers-color-scheme: dark) { .src.kyl { background: #213846; color: #a9d2ea; } .src.frys { background: #232c55; color: #b9c6ff; } }
+.cook h2 { font-family: var(--serif); font-size: 1.6rem; margin: 2px 4px 4px; line-height: 1.15; }
+.cook .lead { margin: 0 4px 10px; color: var(--soft); }
+.cook h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--soft); margin: 18px 4px 8px; display: flex; justify-content: space-between; }
+.cook .row .name { font-weight: 500; font-size: 1.05rem; }
+.step { display: flex; gap: 12px; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px; margin-bottom: 8px; font: inherit; color: inherit; font-size: 1.12rem; line-height: 1.45; }
+.step b { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--green); display: grid; place-items: center; font-size: 0.95rem; color: var(--green); }
+.step.now { border: 2px solid var(--green); box-shadow: 0 2px 0 var(--line); }
+.step.now b { background: var(--green); color: var(--on-green); }
+.step.done { background: transparent; color: var(--soft); font-size: 1rem; }
+.step.done b { background: var(--soft); border-color: var(--soft); color: var(--paper); }
+.awake { font-size: 0.8rem; color: var(--soft); margin: 4px 4px 0; }
 </style>
 </head>
 <body>
@@ -96,7 +127,7 @@ section.sec h2 { font-family: var(--serif); font-size: 1.05rem; font-style: ital
 <div id="layer"></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB2CwwLFdPrLnbTEfSSBF94OHdhqq534sQ",
@@ -154,6 +185,7 @@ function vList() {
     const pct = Math.round(done / all.length * 100);
     h += '<div class="progress"><div class="bar"><i style="width:' + pct + '%"></i></div><p>' + done + ' av ' + all.length + ' varor i korgen</p></div>';
   }
+  h += vThaw();
   const st = stores();
   if (st.length > 1) h += '<div class="chips" role="group" aria-label="Butik"><button class="chip" data-act="store" data-v="" aria-pressed="' + (S.store === '') + '">Alla</button>' + st.map(s => '<button class="chip" data-act="store" data-v="' + esc(s) + '" aria-pressed="' + (S.store === s) + '">' + esc(s) + '</button>').join('') + '</div>';
   h += '<form class="add" data-form="add"><input id="addname" type="text" placeholder="Lägg till vara…" autocomplete="off" enterkeyhint="done" maxlength="80"><button class="btn primary" type="submit">Lägg till</button></form>';
@@ -176,14 +208,115 @@ function vList() {
   if (done) h += '<div class="toolbar"><button class="btn" data-act="clear-done">' + (S.armed === 'clear' ? 'Tryck igen för att rensa' : 'Rensa avbockade (' + done + ')') + '</button></div>';
   return h;
 }
+/* ---------- datum ---------- */
+const DAYS = ['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
+function isoOf(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function today() { return isoOf(new Date()); }
+function addDays(iso, n) { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return isoOf(d); }
+function dayName(iso) { const d = new Date(iso + 'T12:00:00'); return DAYS[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1); }
+function dayLabel(iso) { const t = today(); if (iso === t) return 'I dag'; if (iso === addDays(t, 1)) return 'I morgon'; const n = dayName(iso); return n.charAt(0).toUpperCase() + n.slice(1); }
+const recDays = r => (Array.isArray(r.days) ? r.days : []).filter(d => d && d.date);
+const firstDate = r => recDays(r).map(d => d.date).sort()[0] || '';
+
+/* ---------- receptets delar ---------- */
+function parts(r) {
+  const lines = String(r.text || '').split('\n').map(s => s.trim());
+  const ia = lines.findIndex(l => /^ingredienser\s*:?$/i.test(l)), ib = lines.findIndex(l => /^gör så här\s*:?$/i.test(l));
+  const time = (lines.find(l => /^tid\s*:/i.test(l)) || '').replace(/^tid\s*:\s*/i, '');
+  const portions = (lines.find(l => /^portioner\s*:/i.test(l)) || '').replace(/^portioner\s*:\s*/i, '');
+  const ingText = ia >= 0 ? lines.slice(ia + 1, ib > ia ? ib : undefined).filter(l => l && !/^(tid|portioner)\s*:/i.test(l)) : [];
+  const stepLines = ib >= 0 ? lines.slice(ib + 1).filter(l => l && !/^portioner\s*:/i.test(l)) : [];
+  const steps = [];
+  stepLines.forEach(l => { const m = l.match(/^\d+[.)]\s*(.*)$/); if (m) steps.push(m[1]); else if (steps.length) steps[steps.length - 1] += ' ' + l; else steps.push(l); });
+  const ing = Array.isArray(r.ing) && r.ing.length ? r.ing : ingText.map(t => ({ t, src: '', thaw: false }));
+  return { time, portions, ing, steps, plain: ia < 0 && ib < 0 };
+}
+const SRC = { kyl: 'Kyl', frys: 'Frys', skafferi: 'Skafferi' };
+const cookOf = r => (r.cook && typeof r.cook === 'object') ? r.cook : {};
+
+/* ---------- tining ---------- */
+function thawFor(iso) {
+  const out = [];
+  S.recipes.forEach(r => {
+    const d = recDays(r).find(x => x.date === iso); if (!d) return;
+    const c = cookOf(r);
+    (Array.isArray(r.ing) ? r.ing : []).forEach((g, k) => { if (g && g.thaw) out.push({ r, k, t: g.t, slot: d.slot, done: !!c['t' + k] }); });
+  });
+  return out;
+}
+function vThaw() {
+  const hour = new Date().getHours(), t = today();
+  let h = '';
+  const todayLeft = thawFor(t).filter(x => !x.done);
+  if (todayLeft.length) h += thawCard('Till i dag: borde redan tina', 'Ta fram nu om du glömde i går.', todayLeft);
+  if (hour >= 12) { const tm = thawFor(addDays(t, 1)); if (tm.length && tm.some(x => !x.done)) h += thawCard('I kväll: ta fram ur frysen', 'Till i morgon, ' + dayName(addDays(t, 1)) + '.', tm); }
+  return h;
+}
+function thawCard(title, sub, rows) {
+  return '<div class="thaw"><h3>❄ ' + esc(title) + '</h3><p class="small" style="color:inherit;opacity:.8;margin:0 0 8px">' + esc(sub) + '</p>'
+    + rows.map(x => '<div class="row' + (x.done ? ' done' : '') + '"><button class="tick" data-act="ck" data-id="' + esc(x.r.id) + '" data-k="t' + x.k + '" aria-pressed="' + x.done + '" aria-label="Framtaget: ' + esc(x.t) + '"><span>✓</span></button>'
+      + '<button class="body" data-act="open" data-id="' + esc(x.r.id) + '"><span class="name">' + esc(x.t) + '</span><span class="meta">' + esc(x.r.name) + ' · ' + esc(x.slot) + '</span></button></div>').join('') + '</div>';
+}
+
+/* ---------- recept ---------- */
+function vCook(r) {
+  const p = parts(r), c = cookOf(r), d = recDays(r);
+  let h = '<button class="back" data-act="back">‹ Alla recept</button><div class="cook">';
+  h += '<p class="slot" style="margin:6px 4px 2px">' + esc(d.length ? d.map(x => dayLabel(x.date) + ' ' + x.slot).join(' · ') : (r.uses || '')) + '</p>';
+  h += '<h2>' + esc(r.name) + '</h2>';
+  const lead = [p.time ? 'Tid: ' + p.time : '', r.desc].filter(Boolean).join(' · ');
+  if (lead) h += '<p class="lead">' + esc(lead) + '</p>';
+  if (p.plain) return h + '<div class="card"><div class="recipe-text">' + esc(r.text) + '</div></div>' + cookBtns(r) + '</div>';
+  const gotN = p.ing.filter((g, k) => c['i' + k]).length;
+  h += '<h4><span>Ingredienser</span><span>' + gotN + ' av ' + p.ing.length + ' framme</span></h4>';
+  p.ing.forEach((g, k) => {
+    const on = !!c['i' + k];
+    const chip = (g.src && SRC[g.src] ? '<span class="src ' + g.src + '">' + SRC[g.src] + '</span>' : '') + (g.thaw ? '<span class="src tina">Tinas dagen före</span>' : '');
+    h += '<div class="row' + (on ? ' done' : '') + '"><button class="tick" data-act="ck" data-id="' + esc(r.id) + '" data-k="i' + k + '" aria-pressed="' + on + '" aria-label="Framme: ' + esc(g.t) + '"><span>✓</span></button>'
+      + '<button class="body" data-act="ck" data-id="' + esc(r.id) + '" data-k="i' + k + '"><span class="name">' + esc(g.t) + chip + '</span></button></div>';
+  });
+  if (p.steps.length) {
+    const doneN = p.steps.filter((s, k) => c['s' + k]).length, now = p.steps.findIndex((s, k) => !c['s' + k]);
+    h += '<h4><span>Gör så här</span><span>' + doneN + ' av ' + p.steps.length + ' klara</span></h4>';
+    p.steps.forEach((s, k) => {
+      const on = !!c['s' + k];
+      h += '<button class="step' + (on ? ' done' : k === now ? ' now' : '') + '" data-act="ck" data-id="' + esc(r.id) + '" data-k="s' + k + '" aria-pressed="' + on + '"><b>' + (on ? '✓' : k + 1) + '</b><span>' + esc(s) + '</span></button>';
+    });
+  }
+  if (p.portions) h += '<div class="card"><p class="small" style="margin:0">Portioner</p><p>' + esc(p.portions) + '</p></div>';
+  return h + cookBtns(r) + (WL.ok ? '<p class="awake">Skärmen hålls vaken medan receptet är öppet.</p>' : '') + '</div>';
+}
+function cookBtns(r) {
+  return '<div class="btns" style="margin:14px 2px"><button class="btn' + (r.cooked ? '' : ' primary') + '" data-act="cooked" data-id="' + esc(r.id) + '">' + (r.cooked ? 'Lagad ✓ (ångra)' : 'Markera som lagad') + '</button>'
+    + (Object.values(cookOf(r)).some(Boolean) ? '<button class="btn" data-act="cook-reset" data-id="' + esc(r.id) + '">' + (S.armed === 'reset' ? 'Tryck igen' : 'Börja om') + '</button>' : '') + '</div>';
+}
+function recCard(r, slot) {
+  const thaw = (Array.isArray(r.ing) ? r.ing : []).some(g => g && g.thaw);
+  return '<button class="card recipe-card" data-act="open" data-id="' + esc(r.id) + '">' + (slot ? '<span class="slot">' + esc(slot) + '</span>' : '')
+    + '<h3>' + esc(r.name) + (r.cooked ? ' <span class="tag flex">lagad</span>' : '') + (thaw && !r.cooked ? ' <span class="src frys">Frys</span>' : '') + '</h3>'
+    + (r.desc ? '<p class="small">' + esc(r.desc) + '</p>' : '') + '</button>';
+}
 function vRecipes() {
   if (S.open) {
     const r = S.recipes.find(x => x.id === S.open);
-    if (r) return '<button class="back" data-act="back">‹ Alla recept</button><article class="card"><h3>' + esc(r.name) + '</h3>' + (r.uses ? '<p class="small">' + esc(r.uses) + '</p>' : '') + (r.desc ? '<p><em>' + esc(r.desc) + '</em></p>' : '') + '<div class="btns"><button class="btn' + (r.cooked ? '' : ' primary') + '" data-act="cooked" data-id="' + esc(r.id) + '">' + (r.cooked ? 'Lagad ✓ (ångra)' : 'Markera som lagad') + '</button></div></article><div class="card"><div class="recipe-text">' + esc(r.text) + '</div></div>';
+    if (r) return vCook(r);
     S.open = '';
   }
   if (!S.recipes.length) return '<div class="empty">Inga recept än.<br>De följer med när du hämtar veckan från Köket.</div>';
-  return S.recipes.map(r => '<button class="card recipe-card" data-act="open" data-id="' + esc(r.id) + '"><h3>' + esc(r.name) + (r.cooked ? ' <span class="tag flex">lagad</span>' : '') + '</h3>' + (r.uses ? '<p class="small">' + esc(r.uses) + '</p>' : '') + (r.desc ? '<p>' + esc(r.desc) + '</p>' : '') + '</button>').join('');
+  let h = vThaw();
+  const dated = S.recipes.filter(r => recDays(r).length), undated = S.recipes.filter(r => !recDays(r).length);
+  const t = today(), dates = [...new Set(dated.flatMap(r => recDays(r).map(d => d.date)))].sort();
+  const upcoming = dates.filter(d => d >= t), past = dates.filter(d => d < t);
+  const order = { frukost: 0, lunch: 1, middag: 2 };
+  const dayBlock = iso => {
+    const rows = []; dated.forEach(r => recDays(r).forEach(d => { if (d.date === iso) rows.push({ r, slot: d.slot }); }));
+    rows.sort((a, b) => (order[a.slot] ?? 3) - (order[b.slot] ?? 3));
+    return '<div class="day-h' + (iso === t ? ' today' : '') + '">' + esc(dayLabel(iso)) + (iso === t || iso === addDays(t, 1) ? '<small>' + esc(dayName(iso)) + '</small>' : '') + '</div>' + rows.map(x => recCard(x.r, x.slot)).join('');
+  };
+  h += upcoming.map(dayBlock).join('');
+  if (undated.length) h += '<div class="day-h">Veckans recept</div>' + undated.map(r => recCard(r, r.uses)).join('');
+  if (past.length) h += '<div class="day-h" style="color:var(--soft)">Tidigare dagar</div>' + past.reverse().map(dayBlock).join('').replace(/class="day-h"/g, 'class="day-h" style="font-size:.95rem;color:var(--soft)"');
+  return h;
 }
 function vMore() {
   const has = S.items.length || S.recipes.length;
@@ -214,6 +347,7 @@ function render() {
   document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.tab === S.tab)));
   $('layer').querySelectorAll('.sheet-bg').forEach(x => x.remove());
   if (S.edit) $('layer').insertAdjacentHTML('afterbegin', vEdit());
+  wake();
 }
 
 /* ---------- handlingar ---------- */
@@ -227,6 +361,8 @@ function normItem(i, n, old) {
   const o = old || {};
   return { name: str(i.name, 80), qty: str(i.qty, 40), store: str(i.store, 40), section, note: str(i.note, 80), flex: !!i.flex, ask: !!i.ask, done: o.done != null ? !!o.done : !!i.done, got: o.got || '', n };
 }
+function normDays(a) { return (Array.isArray(a) ? a : []).filter(d => d && /^\d{4}-\d\d-\d\d$/.test(d.date)).slice(0, 14).map(d => ({ date: d.date, slot: str(d.slot, 12) })); }
+function normIng(a) { return (Array.isArray(a) ? a : []).filter(g => g && str(g.t, 120)).slice(0, 40).map(g => ({ t: str(g.t, 120), src: ['kyl', 'frys', 'skafferi'].includes(g.src) ? g.src : '', thaw: !!g.thaw })); }
 async function doImport() {
   let data;
   try { data = JSON.parse(S.importText.trim()); } catch (e) { toast('Det där ser inte ut som veckan från Köket.'); return; }
@@ -239,13 +375,24 @@ async function doImport() {
   S.items.forEach(i => ops.push(b => b.delete(doc(itemsCol, i.id))));
   S.recipes.forEach(r => ops.push(b => b.delete(doc(recipesCol, r.id))));
   items.forEach((i, k) => { const o = oldBy[str(i.name, 80).toLowerCase()]; ops.push(b => b.set(doc(itemsCol, uid() + k), normItem(i, k + 1, o))); });
-  recipes.forEach((r, k) => { const o = oldRec[str(r.name, 100).toLowerCase()]; ops.push(b => b.set(doc(recipesCol, uid() + 'r' + k), { name: str(r.name, 100), desc: str(r.desc, 200), uses: str(r.uses, 160), text: str(r.text, 8000), cooked: o ? !!o.cooked : false, n: k + 1 })); });
+  recipes.forEach((r, k) => { const o = oldRec[str(r.name, 100).toLowerCase()]; ops.push(b => b.set(doc(recipesCol, uid() + 'r' + k), { name: str(r.name, 100), desc: str(r.desc, 200), uses: str(r.uses, 160), text: str(r.text, 8000), cooked: o ? !!o.cooked : false, n: k + 1, days: normDays(r.days), ing: normIng(r.ing), cook: {} })); });
   try {
     for (let k = 0; k < ops.length; k += 400) { const b = writeBatch(db); ops.slice(k, k + 400).forEach(f => f(b)); await b.commit(); }
   } catch (e) { toast('Kunde inte hämta veckan just nu.'); return; }
   S.importText = ''; S.armed = ''; S.tab = 'list'; S.store = ''; render();
   toast(items.length + ' varor och ' + recipes.length + ' recept hämtade.');
 }
+/* Skärmen vaken medan ett recept är öppet */
+const WL = { ok: 'wakeLock' in navigator, lock: null };
+async function wake() {
+  const want = S.tab === 'recipes' && !!S.open && document.visibilityState === 'visible';
+  if (!WL.ok) return;
+  try {
+    if (want && !WL.lock) { WL.lock = await navigator.wakeLock.request('screen'); WL.lock.addEventListener('release', () => { WL.lock = null; }); }
+    else if (!want && WL.lock) { const l = WL.lock; WL.lock = null; await l.release(); }
+  } catch (e) { WL.lock = null; }
+}
+document.addEventListener('visibilitychange', wake);
 function arm(k) { if (S.armed === k) { S.armed = ''; return true; } S.armed = k; render(); setTimeout(() => { if (S.armed === k) { S.armed = ''; render(); } }, 4000); return false; }
 
 document.addEventListener('click', e => {
@@ -265,9 +412,20 @@ document.addEventListener('click', e => {
     }
     case 'edit-del': if (arm('del')) { const d = S.edit; S.edit = null; render(); deleteDoc(doc(itemsCol, d)).catch(() => toast('Kunde inte ta bort just nu.')); } else if (S.edit) { render(); } break;
     case 'clear-done': if (arm('clear')) { const b = writeBatch(db); S.items.filter(i => i.done).forEach(i => b.delete(doc(itemsCol, i.id))); b.commit().catch(() => toast('Kunde inte rensa just nu.')); } break;
-    case 'open': S.open = id; render(); $('main').scrollTop = 0; break;
+    case 'open': S.open = id; S.tab = 'recipes'; render(); $('main').scrollTop = 0; break;
     case 'back': S.open = ''; render(); break;
     case 'cooked': { const r = S.recipes.find(x => x.id === id); if (r) { r.cooked = !r.cooked; render(); save(recipesCol, { id, cooked: r.cooked }); } break; }
+    case 'ck': {
+      const r = S.recipes.find(x => x.id === id), k = t.dataset.k; if (!r || !k) break;
+      const c = Object.assign({}, cookOf(r)); c[k] = !c[k]; r.cook = c; render();
+      setDoc(doc(recipesCol, id), { cook: { [k]: c[k] } }, { merge: true }).catch(() => toast('Kunde inte spara just nu.'));
+      break;
+    }
+    case 'cook-reset': {
+      const r = S.recipes.find(x => x.id === id); if (!r) break;
+      if (arm('reset')) { r.cook = {}; render(); updateDoc(doc(recipesCol, id), { cook: {} }).catch(() => toast('Kunde inte spara just nu.')); } else render();
+      break;
+    }
     case 'import': if (!S.items.length && !S.recipes.length || arm('import')) doImport(); break;
   }
 });
