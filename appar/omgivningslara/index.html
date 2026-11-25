@@ -77,7 +77,22 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 #player.on{display:block}
 .blur{position:absolute;inset:-40px;background:center/cover;filter:blur(30px) brightness(.45);transition:background-image 1s}
 .stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100vw,150vh);height:min(100vh,66.667vw);overflow:hidden;background:#000;container-type:size}
-.stage .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.3s ease}
+/* Bred skärm: bilden i full höjd till vänster, Krax och faktakort i en kolumn till höger */
+#player:not(.side) .stage{box-shadow:0 0 0 1px #cdd38a40,0 0 70px #000c}
+#player.side .stage{left:0;top:0;transform:none;width:var(--sw);height:100%;box-shadow:1px 0 0 #cdd38a55,12px 0 40px #000b}
+#side{display:none}
+#player.side #side{display:block;position:absolute;top:0;bottom:0;right:0;left:var(--sw);
+  background:linear-gradient(180deg,#0e1813e0,#0a110dee);overflow:hidden}
+#side::before{content:"";position:absolute;inset:12px;border:1px solid #cdd38a33;border-radius:10px;pointer-events:none}
+#side::after{content:"";position:absolute;left:50%;top:12px;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:#cdd38a66;box-shadow:0 0 0 4px #0e1813}
+#side .card{position:absolute;left:26px;right:26px;top:74px;max-width:none;font-size:clamp(1.1rem,1.55vw,2rem)}
+#side #krax{left:0;right:0;margin:0 auto;width:fit-content;bottom:86px;height:min(54vh,calc((100vw - var(--sw)) * 1.15))}
+#side #krax.hide{opacity:1}
+#player.side .ctrl{right:auto;left:calc(var(--sw) + (100vw - var(--sw)) / 2);transform:translateX(-50%)}
+.blur{filter:blur(30px) brightness(.55)!important}
+.sorter .item{cursor:grab;touch-action:none;transition:transform .25s}
+.sorter .item.drag{cursor:grabbing;transition:none;position:relative;z-index:5}
+.stage .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.3s ease,transform 4.5s cubic-bezier(.4,0,.2,1)}
 .stage .bg.show{opacity:1}
 #sprites{position:absolute;inset:0;pointer-events:none;z-index:2}
 .sprite{position:absolute;transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .6s, left 7s linear, top 7s linear;filter:drop-shadow(0 6px 10px #0006)}
@@ -247,6 +262,7 @@ dialog p,dialog li{font-size:.92rem}
     <div class="task" id="task" hidden></div>
     <div class="bigstart" id="bigstart"></div>
   </div>
+  <div id="side"></div>
   <div class="top">
     <button class="iconbtn" id="plBack" type="button" aria-label="Tillbaka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <h2 id="plTitle"></h2>
@@ -349,11 +365,11 @@ const CREDITS=["maple: Martin Bobka (= Martin120), CC BY-SA 2.5", "rowan: George
 // nyckeln är repliknumret (1 = första repliken i scenen). task körs EFTER repliken.
 const P=n=>"sprites/"+n+".webp";
 const DIR={
- "ch09-a":{bg:"ch09-a-water-tower-view",atmo:"suburban-birds",
+ "ch09-a":{bg:"ch09-a-water-tower-view-bus",atmo:"suburban-birds",
    1:{sfx:"page-turn"},2:{sfx:"raven-call",pose:"action-06"},7:{card:"Miljö =\nallt runt omkring oss"},
    11:{card:"Närmiljö =\ndär du bor och rör dig\nvarje dag"},
-   12:{card:null,sp:[{id:"ch09-vehicles-01",x:55.6,y:64.7,h:5,move:70,my:59}],sfx:"bus-passing"},
-   15:{task:{kind:"hot",need:3,title:"Tryck på tre saker du ser",spots:[
+   12:{card:null,zoom:[64,58,2.2],sfx:"bus-passing"},
+   15:{zoom:0,task:{kind:"hot",need:3,title:"Tryck på tre saker du ser",spots:[
      {x:27,y:56,r:9,l:"Skolan"},{x:57,y:63,r:5,l:"Vägen"},{x:66,y:64,r:5,l:"Bron"},{x:75,y:74,r:6,l:"Ån"},{x:46,y:57,r:4,l:"Ån"},
      {x:86,y:24,r:8,l:"Skogen"},{x:20,y:25,r:8,l:"Skogen"},{x:69,y:40,r:7,l:"Höghuset"},{x:48,y:45,r:5,l:"Husen"},{x:30,y:36,r:4,l:"Husen"},{x:22,y:42,r:6,l:"Träden"}]}},
    18:{pose:"action-01",sfx:"bird-wings-flapping"},19:{pose:"talk-04"}},
@@ -366,13 +382,13 @@ const DIR={
    8:{card:"Levande + icke-levande\n= en helhet"},9:{card:null,pose:"action-04",sfx:"bird-wings-flapping"},11:{pose:"action-05"}},
  "ch09-c":{bg:"ch09-c-valley-stone-age",atmo:"forest-quiet",
    1:{sfx:"magical-light"},3:{card:"Stenåldern:\nboplatser och odling"},5:{card:"Vägar, hus,\nelledningar, parker"},
-   6:{bg:"ch09-c-valley-today",atmo:"suburban-birds",card:"Kulturlandskap"},7:{card:null},
+   6:{bg:"ch09-c-valley-today-bus",atmo:"suburban-birds",card:"Kulturlandskap"},7:{card:null},
    8:{task:{kind:"hot",need:4,cats:1,title:"Tryck på allt som människor har byggt",spots:[
      {x:24,y:53,r:5,l:"Vägen"},{x:87,y:49,r:5,l:"Vägen"},{x:60,y:56,r:7,l:"Bron"},{x:72,y:56,r:5,l:"Bron"},
      {x:22,y:71,r:7,l:"Husen"},{x:39,y:66,r:6,l:"Husen"},{x:82,y:44,r:5,l:"Husen"},{x:17,y:46,r:6,l:"Husen"},
      {x:36,y:42,r:4,l:"Elledningarna"},{x:73,y:42,r:4,l:"Elledningarna"},{x:47,y:43,r:3,l:"Gatlampan"}],
      wrongs:[{x:72,y:73,r:9,l:"Ån fanns där innan"},{x:46,y:20,r:9,l:"Skogen fanns där innan"}]}},
-   10:{sp:[{id:"ch09-vehicles-01",x:44,y:55,h:5,move:80,my:51.5}],sfx:"bus-passing"}},
+   10:{zoom:[34,53,2.2],sfx:"bus-passing"}},
  "ch09-d":{bg:"ch09-d-forest-before",atmo:"forest-windy-birds",
    1:{sp:[{id:"ch09-park-animals-07",x:62,y:30,h:10,flip:1}]},
    3:{bg:"ch09-d-clearcut",atmo:"wind-in-forest",sp:[],sfx:"chainsaw",card:"Kalhygge"},4:{card:null,pose:"talk-06"},
@@ -473,7 +489,14 @@ let S=loadS();
 function saveS(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const $=s=>document.querySelector(s);
 const pick=a=>a[Math.random()*a.length|0];
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));scrollTo(0,0)}
+function layout(){
+  const p=$("#player"),W=innerWidth,H=innerHeight,sw=Math.min(W,Math.round(H*1.5)),side=W-sw>=Math.max(200,W*.14);
+  p.classList.toggle("side",side);p.style.setProperty("--sw",sw+"px");
+  const home=side?$("#side"):$("#stage"),k=$("#krax"),c=$("#card");
+  if(k.parentNode!==home){home.appendChild(c);home.appendChild(k);if(!side){$("#stage").insertBefore(k,$("#sceneTitle"));$("#stage").insertBefore(c,$("#sceneTitle"))}}
+}
+addEventListener("resize",layout);document.addEventListener("fullscreenchange",()=>setTimeout(layout,60));
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));scrollTo(0,0);if(id==="player")layout()}
 
 // ---------- Ljud (datorn: elementvolym) ----------
 let sndOn=true;try{sndOn=localStorage.getItem(KEY+".snd")!=="0"}catch(e){}
@@ -491,7 +514,15 @@ function atmo(name){
   if(!name){aCur=next;return}
   next.src="sfx/"+name+".mp3";next.volume=0;next.play().catch(()=>{});fadeEl(next,atmoLevel(),1600);aCur=next;
 }
-function duck(on){speaking=on;if(aName&&!aCur.paused)fadeEl(aCur,atmoLevel(),on?300:1200)}
+function duck(on){speaking=on;if(aName&&!aCur.paused)fadeEl(aCur,atmoLevel(),on?300:1200);if(mName&&!mEl.paused)fadeEl(mEl,musLevel(),on?300:1400)}
+// musik: ett spår per kapitel, sänks under rösterna
+const MUS=0.2,MUS_DUCK=0.06,mEl=new Audio();mEl.loop=true;mEl.preload="none";let mName=null,mGen=0;
+function musLevel(){return sndOn?(speaking?MUS_DUCK:MUS):0}
+function music(name){
+  if(name===mName)return;mName=name;const g=++mGen;
+  const start=()=>{if(g!==mGen)return;if(!name){mEl.pause();return}mEl.src="music/"+name+".mp3";mEl.volume=0;mEl.play().catch(()=>{});fadeEl(mEl,musLevel(),1800)};
+  if(!mEl.paused)fadeEl(mEl,0,name?700:1400,start);else start();
+}
 const pool=[];
 function sfx(name){if(!sndOn||!name)return;let el=pool.find(e=>e.paused);if(!el){el=new Audio();pool.push(el)}
   el.src="sfx/"+name+".mp3";el.volume=SFXV;el.play().catch(()=>{});
@@ -505,19 +536,19 @@ function playSeg(f,s,e){ // lovar att lösas när repliken är slut (eller avbru
   stopVoice();const tok=++vToken;const el=vEl(f);vCur=el;
   return new Promise(res=>{
     const done=()=>{if(tok!==vToken)return;clearInterval(vStopT);el.pause();duck(false);kraxTalk(false);res(true)};
-    const go=()=>{el.currentTime=s;el.play().then(()=>{duck(true);
+    const go=()=>{if(tok!==vToken)return;el.currentTime=s;el.play().then(()=>{if(tok!==vToken){el.pause();return}duck(true);
       vStopT=setInterval(()=>{if(el.currentTime>=e-.02||el.ended)done()},40)}).catch(()=>{res(false)})};
     if(el.readyState>=1)go();else el.addEventListener("loadedmetadata",go,{once:true});
     el.onended=done;
   });
 }
-function stopVoice(){vToken++;clearInterval(vStopT);if(vCur)vCur.pause();duck(false);kraxTalk(false)}
+function stopVoice(){vToken++;clearInterval(vStopT);Object.values(vEls).forEach(e=>{if(!e.paused)e.pause()});duck(false);kraxTalk(false)}
 function say(g){const[f,i]=g;const p=ALIGNMAP[f]?.[i];if(!p)return Promise.resolve();kraxTalk(f.includes("krax"));return playSeg(f,p[0],p[1])}
 function sndIcon(){
   const on='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>';
   const off='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
   ["#sndHome","#sndPl","#sndQ"].forEach(s=>{const b=$(s);b.innerHTML=sndOn?on:off;b.setAttribute("aria-label",sndOn?"Bakgrundsljud av":"Bakgrundsljud på");b.title=b.getAttribute("aria-label")})}
-function toggleSnd(){sndOn=!sndOn;try{localStorage.setItem(KEY+".snd",sndOn?"1":"0")}catch(e){}if(aName)fadeEl(aCur,atmoLevel(),300);if(!sndOn)stopSfx();sndIcon()}
+function toggleSnd(){sndOn=!sndOn;try{localStorage.setItem(KEY+".snd",sndOn?"1":"0")}catch(e){}if(aName)fadeEl(aCur,atmoLevel(),300);if(mName)fadeEl(mEl,musLevel(),300);if(!sndOn)stopSfx();sndIcon()}
 ["#sndHome","#sndPl","#sndQ"].forEach(s=>$(s).addEventListener("click",toggleSnd));sndIcon();
 
 // ---------- Startsidan ----------
@@ -559,7 +590,7 @@ function openChapter(C,startScene){
   $("#plTitle").textContent=`Kapitel ${C.n}: ${C.title}`;
   $("#dots").innerHTML=C.scenes.map(()=>"<i></i>").join("");
   resetStage(steps[si].sc);
-  bigStart(`<h3>${SHORT[steps[si].sc]}</h3><div class="row"><button class="btn big light" id="goBtn" type="button">Börja</button></div>`,()=>{run(si)});
+  bigStart(`<h3>${SHORT[steps[si].sc]}</h3><div class="row"><button class="btn big light" id="goBtn" type="button">Börja</button></div>`,()=>{music(C.id==="k9"?"town":"forest");run(si)});
   playing=false;playIcon();show("player");
 }
 function bigStart(html,onGo){const b=$("#bigstart");b.innerHTML=`<div class="inner">${html}</div>`;b.hidden=false;
@@ -567,22 +598,28 @@ function bigStart(html,onGo){const b=$("#bigstart");b.innerHTML=`<div class="inn
 // scenens tillstånd vid ett visst steg (så att hopp bakåt/framåt blir rätt)
 function sceneState(idx){
   const st=steps[idx],D=DIR[st.sc]||{};
-  const s={bg:D.bg,atmo:D.atmo,card:null,sp:[],pose:"talk-01"};
+  const s={bg:D.bg,atmo:D.atmo,card:null,sp:[],pose:"talk-01",zoom:0};
   for(let j=steps.findIndex(x=>x.sc===st.sc);j<=idx;j++){const x=steps[j];if(x.t!=="line")continue;const o=x.o;
-    if(o.bg)s.bg=o.bg;if(o.atmo)s.atmo=o.atmo;if("card" in o)s.card=o.card;if(o.sp)s.sp=o.sp;if(o.pose)s.pose=o.pose;
+    if(o.bg)s.bg=o.bg;if(o.atmo)s.atmo=o.atmo;if("card" in o)s.card=o.card;if(o.sp)s.sp=o.sp;if(o.pose)s.pose=o.pose;if("zoom" in o)s.zoom=o.zoom;
     if(j<idx&&o.img2)s.bg=o.img2[0]}
   return s;
 }
-function resetStage(sc){const D=DIR[sc]||{};setBg(D.bg,true);setSprites([]);setCard(null);$("#say").innerHTML="";setPose("talk-01")}
+function resetStage(sc){const D=DIR[sc]||{};setZoom(0);setBg(D.bg,true);setSprites([]);setCard(null);$("#say").innerHTML="";setPose("talk-01")}
 let front,back,curBg=null;front=$("#bgA");back=$("#bgB");
+let bgGen=0;
 function setBg(name,instant){
-  if(!name||name===curBg)return;curBg=name;const url="img/"+name+".webp";
+  if(!name||name===curBg)return;curBg=name;const url="img/"+name+".webp";const gen=++bgGen;
   $("#blur").style.backgroundImage=`url(${url})`;
-  back.src=url;
-  const swap=()=>{back.classList.add("show");front.classList.remove("show");[front,back]=[back,front]};
-  if(instant){front.classList.remove("show");back.classList.add("show");[front,back]=[back,front];return}
-  if(back.complete&&back.naturalWidth)requestAnimationFrame(swap);else back.onload=()=>{back.onload=null;swap()};
+  const t=back,o=front;t.onload=null;
+  const swap=()=>{if(gen!==bgGen)return;t.classList.add("show");o.classList.remove("show");front=t;back=o};
+  t.src=url;
+  if(instant){t.classList.add("show");o.classList.remove("show");front=t;back=o;return}
+  if(t.complete&&t.naturalWidth)requestAnimationFrame(swap);else t.onload=()=>{t.onload=null;swap()};
 }
+// långsam inzoomning på bakgrunden: [x%, y%, skala] eller 0
+let curZoom="0";
+function setZoom(z){const k=JSON.stringify(z||0);if(k===curZoom)return;curZoom=k;
+  document.querySelectorAll(".stage .bg").forEach(im=>{if(z){im.style.transformOrigin=`${z[0]}% ${z[1]}%`;im.style.transform=`scale(${z[2]})`}else im.style.transform=""})}
 let cardT;
 function setCard(t){const c=$("#card");clearTimeout(cardT);
   if(!t){c.classList.remove("show");return}
@@ -608,7 +645,7 @@ async function run(i){
   while(si<steps.length&&tok===runTok){
     const st=steps[si];
     if(st.t==="line"){
-      if(st.first){S.scenes[st.sc]=S.scenes[st.sc]||0;sceneTitle(st.sc);if(st.n===1&&si===0||steps[si-1]?.sc!==st.sc)await wait(1300,tok)}
+      if(st.first){S.scenes[st.sc]=S.scenes[st.sc]||0;sceneTitle(st.sc);if(st.n===1&&si===0||steps[si-1]?.sc!==st.sc)await wait(1300,tok);if(tok!==runTok)return}
       applyLine(si);preload(si);
       $("#say").innerHTML=`<b class="${st.l.w==="K"?"k":""}">${st.l.w==="K"?"Krax":"Berättaren"}</b><span>${st.l.t}</span>`;
       $("#sub").classList.toggle("hide",!showTxt);
@@ -634,17 +671,18 @@ async function run(i){
 function wait(ms,tok){return new Promise(r=>setTimeout(()=>r(),ms))}
 function applyLine(i){
   const st=steps[i],o=st.o;dots();
+  if(st.first&&!("zoom" in o))setZoom(0);if("zoom" in o)setZoom(o.zoom);
   if(o.bg)setBg(o.bg);if(o.atmo||st.first){const s=sceneState(i);atmo(sndOn||true?s.atmo:null)}
   if("card" in o)setCard(o.card);if(o.sp)setSprites(o.sp);if(o.pose)setPose(o.pose);
   if(o.sfx)sfx(o.sfx);
 }
 function jump(i){ // hoppa till steg i (replik), bygg upp scenen
   i=Math.max(0,Math.min(steps.length-1,i));while(steps[i].t!=="line"&&i>0)i--;
-  runTok++;stopVoice();closeTask();
-  const s=sceneState(i);setBg(s.bg);atmo(s.atmo);setCard(s.card);setSprites(s.sp);setPose(s.pose);
+  runTok++;stopVoice();stopSfx();closeTask();
+  const s=sceneState(i);setZoom(s.zoom);setBg(s.bg);atmo(s.atmo);setCard(s.card);setSprites(s.sp);setPose(s.pose);
   $("#bigstart").hidden=true;run(i);
 }
-function pause(){runTok++;stopVoice();playing=false;playIcon();$("#player").classList.remove("idle")}
+function pause(){runTok++;stopVoice();stopSfx();playing=false;playIcon();$("#player").classList.remove("idle")}
 function playIcon(){$("#playBtn").innerHTML=playing?'<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>':'<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>';
   $("#playBtn").setAttribute("aria-label",playing?"Paus":"Spela")}
 $("#playBtn").onclick=()=>{if(!$("#bigstart").hidden){$("#goBtn")?.click();return}
@@ -652,12 +690,12 @@ $("#playBtn").onclick=()=>{if(!$("#bigstart").hidden){$("#goBtn")?.click();retur
 $("#prevBtn").onclick=()=>{let j=si-1;while(j>0&&steps[j].t!=="line")j--;jump(j)};
 $("#nextBtn").onclick=()=>{let j=si+1;while(j<steps.length&&steps[j].t!=="line")j++;if(j>=steps.length){pause();finishChapter();return}jump(j)};
 $("#txtBtn").onclick=()=>{showTxt=!showTxt;try{localStorage.setItem(KEY+".txt",showTxt?"1":"0")}catch(e){}$("#sub").classList.toggle("hide",!showTxt)};
-$("#plBack").onclick=()=>{pause();closeTask();atmo(null);stopSfx();renderHome();show("home")};
+$("#plBack").onclick=()=>{pause();closeTask();atmo(null);music(null);stopSfx();renderHome();show("home")};
 function finishChapter(){
   pause();saveS();
   sfx("level-completed");setCard(null);
   bigStart(`<h3>Kapitel ${CH.n} klart!</h3><p>Nu får du visa vad du kommer ihåg.</p><div class="row"><button class="btn big light" id="goBtn" type="button">Frågor om kapitlet</button><button class="btn big alt" style="color:#fff" id="homeBtn" type="button">Tillbaka</button></div>`,()=>startQuiz(CH.id));
-  $("#homeBtn").onclick=()=>{$("#bigstart").hidden=true;atmo(null);renderHome();show("home")};
+  $("#homeBtn").onclick=()=>{$("#bigstart").hidden=true;atmo(null);music(null);renderHome();show("home")};
   say(GEN.nDone);
 }
 
@@ -690,9 +728,18 @@ function taskSort(T,t){
   const box=document.createElement("div");box.className="sorter";t.appendChild(box);
   const next=()=>{if(k>=items.length){finishTask();return}const[im,name,side]=items[k];$("#tn").textContent=`${k+1} av ${items.length}`;
     box.innerHTML=`<div class="item"><img src="${P(im)}" alt=""><span>${name}</span></div><div class="choices"><button class="choice" type="button" data-s="a">${T.a}</button><button class="choice" type="button" data-s="b">${T.b}</button></div>`;
-    box.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{if(b.dataset.s===side){b.classList.add("ok");right();k++;setTimeout(next,650)}else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}})};
+    box.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{if(b.dataset.s===side){b.classList.add("ok");right();k++;setTimeout(next,650)}else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}});
+    dragTo(box.querySelector(".item"),box)};
   next();
 }
+// dra en sak och släpp den på en knapp (det går också att bara trycka på knappen)
+function dragTo(el,box){
+  el.onpointerdown=e=>{e.preventDefault();const ox=e.clientX,oy=e.clientY;el.setPointerCapture(e.pointerId);el.classList.add("drag");
+    const mv=ev=>{el.style.transform=`translate(${ev.clientX-ox}px,${ev.clientY-oy}px)`};
+    const up=ev=>{el.removeEventListener("pointermove",mv);el.removeEventListener("pointerup",up);el.removeEventListener("pointercancel",up);
+      el.style.visibility="hidden";const hit=document.elementFromPoint(ev.clientX,ev.clientY);el.style.visibility="";
+      el.classList.remove("drag");el.style.transform="";const c=hit&&hit.closest(".choice");if(c&&box.contains(c))c.click()};
+    el.addEventListener("pointermove",mv);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up)}}
 function taskPick(T,t){
   $("#krax").classList.add("hide");
   const sh=document.createElement("div");sh.className="shade";t.appendChild(sh);
@@ -760,7 +807,7 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random(
 const norm=s=>s.toLowerCase().trim().replace(/[^a-zåäö0-9]/g,"");
 let QZ=null;
 function startQuiz(kind){
-  atmo(null);stopVoice();
+  atmo(null);stopVoice();music("forest");
   let list,title;
   const w=q=>{const s=S.stats[q.id];return Math.random()+(s?s.w*2-s.r*.5:1)};
   if(kind==="exam"){
@@ -818,10 +865,10 @@ function endQuiz(){
   $("#qwrap").innerHTML=`<div class="result"><img class="face" src="img/krax-head-closeup.webp" alt="Krax" style="width:110px;height:110px">
     <div class="score">${z.right} av ${z.list.length}</div><h3>${msg}</h3>
     <div class="qbtns" style="justify-content:center"><button class="btn big" type="button" id="again">Prova igen</button><button class="btn alt big" type="button" id="home2">Till startsidan</button></div></div>`;
-  $("#again").onclick=()=>startQuiz(k);$("#home2").onclick=()=>{renderHome();show("home")};
+  $("#again").onclick=()=>startQuiz(k);$("#home2").onclick=()=>{music(null);renderHome();show("home")};
   sfx(pct>=70?"level-completed":"trombone-disappoint");say(pct>=70?GEN.nDone:GEN.kWrong[1]);
 }
-$("#qBack").onclick=()=>{stopVoice();renderHome();show("home")};
+$("#qBack").onclick=()=>{stopVoice();music(null);renderHome();show("home")};
 
 // ---------- Start ----------
 const ALIGNMAP={"omg-general-narrator": [[0, 0.82], [0.71, 2.08], [1.99, 3.42], [3.51, 6.34], [6.57, 8.76], [9.05, 10.26], [10.35, 13.48]], "omg-general-krax": [[0.57, 1.58], [1.81, 3.62], [3.79, 7.74], [8.55, 9.9], [9.99, 14.62], [14.67, 16.58], [18.55, 22.75]]};
