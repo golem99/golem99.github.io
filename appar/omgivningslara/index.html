@@ -147,6 +147,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .pin::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--birch)}
 @keyframes popin{from{transform:translate(-50%,-80%) scale(.6);opacity:0}}
 .shade{position:absolute;inset:0;background:#0b120ecc}
+.tiles.big{grid-template-columns:repeat(4,1fr);gap:2cqw}
+.tiles.big .tile{height:52cqh;font-size:clamp(1rem,4cqh,1.7rem)}
+.tiles.big .tile span:empty{display:none}
 .tiles{position:absolute;left:4%;right:4%;top:20%;bottom:16%;display:grid;gap:1.6cqh 1.4cqw;grid-template-columns:repeat(var(--cols,5),1fr);align-content:center}
 .tile{background:#f7f4eb;color:var(--ink);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:1cqh .6cqw;gap:.4cqh;font-weight:700;font-size:clamp(.8rem,2.9cqh,1.25rem);height:26cqh;position:relative;overflow:hidden;transition:transform .15s}
 .tile:hover{transform:translateY(-2px)}
@@ -398,16 +401,13 @@ const DIR={
    2:{sfx:"raven-call",pose:"talk-02"},3:{card:"Lönn, rönn och asp"},5:{card:"Maskros, groblad\noch vitklöver"},
    6:{card:null,sp:[{id:"ch09-park-animals-01",x:18,y:93,h:15},{id:"ch09-park-animals-04",x:40,y:82,h:7},{id:"ch09-park-animals-06",x:58,y:86,h:11,flip:1}],sfx:"songbird-chirp"},
    7:{card:"Kråkfåglar:\nskata och korp"},8:{card:null},
-   9:{task:{kind:"explore",need:6,title:"Tryck på växterna och djuren",items:[
-     {hot:{x:8,y:30,r:9},n:"Lönn",ph:"photo-maple",f:"Lönnen har stora, handformade blad."},
-     {hot:{x:40,y:30,r:10},n:"Rönn",ph:"photo-rowan",f:"Rönnen har klasar av orangeröda bär."},
-     {hot:{x:72,y:30,r:9},n:"Asp",ph:"photo-aspen",f:"Aspens runda blad darrar i minsta vind."},
-     {sp:0,n:"Ekorre",ph:"photo-squirrel",f:"Ekorren samlar nötter och kottar inför vintern."},
-     {sp:1,n:"Sparv",ph:"photo-sparrow",f:"Sparven trivs där det bor människor."},
-     {sp:2,n:"Skata",ph:"photo-magpie",f:"Skatan är en kråkfågel, precis som korpen."},
-     {tile:"photo-dandelion",n:"Maskros",f:"Maskrosen klarar sig nästan överallt."},
-     {tile:"photo-plantain",n:"Groblad",f:"Grobladet har bladnerver som går bredvid varandra."},
-     {tile:"photo-white-clover",n:"Vitklöver",f:"Vitklövern har blad i tre delar och vita blommor."}]}}},
+   9:{task:{kind:"find",title:"Hitta i parken",items:[
+     {hot:{x:8,y:30,r:9},n:"Lönn",d:"lönnen"},{hot:{x:40,y:30,r:10},n:"Rönn",d:"rönnen"},{hot:{x:79,y:32,r:9},n:"Asp",d:"aspen"},
+     {sp:0,n:"Ekorre",d:"ekorren"},{sp:1,n:"Sparv",d:"sparven"},{sp:2,n:"Skata",d:"skatan"}],
+     rounds:[
+     {q:"Vilket är grobladet?",ok:"photo-plantain",n:"Groblad",alt:["photo-dandelion-close","photo-white-clover","photo-wood-sorrel"]},
+     {q:"Vilken är maskrosen?",ok:"photo-dandelion-close",n:"Maskros",alt:["photo-plantain","photo-white-clover","photo-blueberry"]},
+     {q:"Vilken är vitklövern?",ok:"photo-white-clover",n:"Vitklöver",alt:["photo-wood-sorrel","photo-dandelion-close","photo-plantain"]}]}}},
  "ch09-f":{bg:"ch09-f-market-square",atmo:"city-traffic",
    1:{sfx:"crowd-talking-loop"},3:{card:"Över 4 miljoner finländare\nbor i städer"},
    4:{card:null,pose:"action-08",sp:[{id:"ch09-town-icons-08",x:20,y:60,h:24},{id:"ch09-town-icons-09",x:42,y:58,h:20},{id:"ch09-town-icons-10",x:62,y:52,h:22}],sfx:"fairy-sparkle"},
@@ -707,7 +707,7 @@ function right(){sfx("quick-positive");if(Math.random()<.35)say(pick(Math.random
 function wrong(){sfx("cartoon-boing");if(Math.random()<.5)say(pick(GEN.kWrong))}
 function runTask(T,tok){
   return new Promise(res=>{taskDone=res;$("#player").classList.add("tasking");const t=$("#task");t.hidden=false;t.innerHTML="";
-    ({hot:taskHot,sort:taskSort,pick:taskPick,explore:taskExplore,count:taskCount,layers:taskLayers})[T.kind](T,t)});
+    ({find:taskFind,hot:taskHot,sort:taskSort,pick:taskPick,explore:taskExplore,count:taskCount,layers:taskLayers})[T.kind](T,t)});
 }
 function bar(t,T,txt){const b=document.createElement("div");b.className="taskbar";b.innerHTML=`<span>${T.title}</span><span class="n" id="tn">${txt||""}</span>`;t.appendChild(b)}
 function photoSrc(n){return n.startsWith("img/")?n+".webp":"photos/"+n+".webp"}
@@ -749,6 +749,41 @@ function taskPick(T,t){
     b.innerHTML=`<img src="${T.photo?photoSrc(im):P(im)}" alt=""><span>${name}</span>`;
     b.onclick=()=>{if(b.classList.contains("ok"))return;if(ok){b.classList.add("ok");got++;right();$("#tn").textContent=`${got} av ${need}`;if(got>=need)finishTask()}
       else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}};g.appendChild(b)});
+}
+// hitta en sak i taget i bilden, sedan rundor med fyra foton
+function taskFind(T,t){
+  const order=shuffle(T.items.map((_,i)=>i));let k=0;bar(t,T,"");
+  const ttl=t.querySelector(".taskbar span"),sps=[...$("#sprites").children];
+  const elFor=it=>sps.find(e=>e.dataset.k==it.sp&&e.classList.contains("show"));
+  const pin=(x,y,txt)=>{const p=document.createElement("div");p.className="pin";p.textContent=txt;p.style.left=x+"%";p.style.top=y+"%";t.appendChild(p)};
+  const show=()=>{if(k>=order.length){setTimeout(rounds,800);return}ttl.textContent="Hitta "+T.items[order[k]].d;$("#tn").textContent=`${k+1} av ${order.length}`};
+  const hit=(i,e)=>{e&&e.stopPropagation();if(k>=order.length)return;
+    if(i!==order[k]){wrong();return}
+    const it=T.items[i];right();
+    if(it.hot)pin(it.hot.x,it.hot.y-it.hot.r*1.2,it.n);
+    else{const el=elFor(it);if(el){el.classList.add("seen");pin(parseFloat(el.style.left),parseFloat(el.style.top),it.n)}}
+    k++;show()};
+  t.onclick=()=>hit(-1);
+  T.items.forEach((it,i)=>{
+    if(it.hot){const h=document.createElement("button");h.type="button";h.className="hot";h.setAttribute("aria-label",it.n);
+      h.style.cssText=`left:${it.hot.x}%;top:${it.hot.y}%;width:${it.hot.r*2}cqw;height:${it.hot.r*2}cqw`;h.onclick=e=>hit(i,e);t.appendChild(h)}
+    else{const el=elFor(it);if(el){el.classList.add("tap");el.onclick=e=>hit(i,e)}}});
+  $("#sprites").style.zIndex=8;
+  const clean=()=>{$("#sprites").style.zIndex="";sps.forEach(e=>{e.classList.remove("tap");e.onclick=null})};
+  const restore=taskDone;taskDone=v=>{clean();restore(v)};
+  function rounds(){
+    clean();t.onclick=null;t.querySelectorAll(".hot,.pin").forEach(e=>e.remove());
+    if(!$("#player").classList.contains("side"))$("#krax").classList.add("hide");
+    const sh=document.createElement("div");sh.className="shade";t.insertBefore(sh,t.firstChild);
+    const g=document.createElement("div");g.className="tiles big";t.appendChild(g);let r=0;
+    const one=()=>{if(r>=T.rounds.length){finishTask();return}const R0=T.rounds[r];ttl.textContent=R0.q;$("#tn").textContent=`${r+1} av ${T.rounds.length}`;g.innerHTML="";
+      shuffle([R0.ok,...R0.alt]).forEach(ph=>{const b=document.createElement("button");b.type="button";b.className="tile photo";
+        b.innerHTML=`<img src="${photoSrc(ph)}" alt=""><span></span>`;
+        b.onclick=()=>{if(g.dataset.lock)return;if(ph===R0.ok){g.dataset.lock=1;b.classList.add("ok");b.querySelector("span").textContent=R0.n;right();setTimeout(()=>{delete g.dataset.lock;r++;one()},1300)}
+          else{b.classList.add("no");wrong();setTimeout(()=>b.classList.remove("no"),500)}};g.appendChild(b)})};
+    one();
+  }
+  show();
 }
 function taskExplore(T,t){
   bar(t,T,`0 av ${T.need}`);const seen=new Set();let fact=null;
