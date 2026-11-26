@@ -393,7 +393,7 @@ const DIR={
      wrongs:[{x:72,y:73,r:9,l:"Ån fanns där innan"},{x:46,y:20,r:9,l:"Skogen fanns där innan"}]}},
    10:{zoom:[34,53,2.2],sfx:"bus-passing"}},
  "ch09-d":{bg:"ch09-d-forest-before",atmo:"forest-windy-birds",
-   1:{sp:[{id:"ch09-park-animals-07",x:62,y:30,h:10,flip:1}]},
+   1:{bg:"ch09-d-forest-before-magpie",zoom:[60,17,1.9]},2:{zoom:0},
    3:{bg:"ch09-d-clearcut",atmo:"wind-in-forest",sp:[],sfx:"chainsaw",card:"Kalhygge"},4:{card:null,pose:"talk-06"},
    5:{card:"Snabb förändring: kalhygge\nLångsam: varmare klimat"},7:{card:"Arter anpassar sig"},
    8:{bg:"ch09-d-dandelion-world",atmo:"morning-garden",card:null,sfxAt:[.72,"lawn-mower"]},9:{pose:"talk-07"}},
@@ -426,21 +426,21 @@ const DIR={
    4:{bg:"ch10-a-card-river"},5:{bg:"ch10-a-card-fell",task:{kind:"pick",title:"Vad hör till Finlands naturlandskap?",cols:3,photo:1,items:[
      ["img/ch10-a-card-forest","Skog",1],["img/ch09-f-market-square","Torg",0],["img/ch10-a-card-bog","Myr",1],["img/ch09-c-valley-today","Väg och bro",0],["img/ch10-a-card-river","Vattendrag",1],["img/ch10-a-card-fell","Fjäll",1]]}}},
  "ch10-b":{bg:"ch10-b-forest",atmo:"forest-european-ambience",
-   1:{sfx:"black-woodpecker-drumming",pose:"talk-07"},2:{sp:[{id:"ch10-woodpecker-01",x:14,y:52,h:24}]},
-   3:{sp:[{id:"ch10-woodpecker-01",x:14,y:52,h:24},{id:"ch10-moose-05",x:28,y:66,h:30,move:46}],sfx:"dry-leaves-rustling",card:"Däggdjur: levande ungar,\nmjölk, lungor"},
+   1:{sfx:"black-woodpecker-drumming",pose:"talk-07"},2:{bg:"ch10-b-forest-woodpecker"},
+   3:{sp:[{id:"ch10-moose-05",x:28,y:66,h:30,move:46}],sfx:"dry-leaves-rustling",card:"Däggdjur: levande ungar,\nmjölk, lungor"},
    4:{card:null},6:{pose:"talk-09"},
-   7:{bg:"ch10-b-fox-den",atmo:"forest-quiet",sp:[{id:"ch10-fox-02",x:22,y:78,h:32},{id:"ch10-fox-11",x:44,y:84,h:14},{id:"ch10-fox-09",x:60,y:88,h:16}]},
-   9:{bg:"ch10-b-forest",atmo:"forest-european-ambience",sp:[{id:"ch10-woodpecker-01",x:14,y:52,h:24},{id:"ch10-moose-01",x:40,y:66,h:30},{id:"ch10-fox-05",x:62,y:84,h:18}],
+   7:{bg:"ch10-b-fox-den-family",atmo:"forest-quiet",sp:[]},
+   9:{bg:"ch10-b-forest-woodpecker",atmo:"forest-european-ambience",sp:[{id:"ch10-moose-01",x:40,y:66,h:30},{id:"ch10-fox-05",x:62,y:84,h:18}],
      task:{kind:"explore",need:3,title:"Tryck på djuren i skogen",items:[
-     {sp:0,n:"Hackspett",ph:"photo-black-woodpecker",f:"Spillkråkan är Finlands största hackspett. Den hackar hål i trädstammarna för att komma åt insekter."},
-     {sp:1,n:"Älg",ph:"photo-moose",f:"Skogens största djur. Ett däggdjur som äter blad, kvistar och gräs."},
-     {sp:2,n:"Räv",ph:"photo-fox",f:"Ett däggdjur. Rävmamman ger ungarna mjölk i lyan."},
+     {hot:{x:11.7,y:37.5,r:3},n:"Hackspett",ph:"photo-black-woodpecker",f:"Spillkråkan är Finlands största hackspett. Den hackar hål i trädstammarna för att komma åt insekter."},
+     {sp:0,n:"Älg",ph:"photo-moose",f:"Skogens största djur. Ett däggdjur som äter blad, kvistar och gräs."},
+     {sp:1,n:"Räv",ph:"photo-fox",f:"Ett däggdjur. Rävmamman ger ungarna mjölk i lyan."},
      {tile:"photo-fox-cubs",n:"Rävungar",f:"Rävungarna föds levande och dricker mjölk."}]}}},
- "ch10-c":{bg:"ch10-c-pond-summer",atmo:"forest-frogs",
-   1:{sp:[{id:"ch10-cold-blooded-01",x:55,y:74,h:14}],card:"Växelvarma:\ngroda, ödla, orm"},
-   3:{card:null,sp:[{id:"ch10-cold-blooded-03",x:40,y:70,h:16,move:30}],sfx:"long-pop"},
-   4:{bg:"ch10-c-pond-winter",atmo:"winter-wind-loop",sp:[],card:"Dvala"},5:{card:null,pose:"talk-06"},
-   6:{bg:"ch10-c-pond-summer",atmo:"forest-frogs",sp:[{id:"ch10-cold-blooded-02",x:55,y:74,h:14}]}},
+ "ch10-c":{bg:"ch10-c-pond-summer-animals",atmo:"forest-frogs",
+   1:{zoom:[49,85,1.7,-24],card:"Växelvarma:\ngroda, ödla, orm"},
+   3:{card:null,sfx:"long-pop"},
+   4:{bg:"ch10-c-pond-winter",zoom:0,atmo:"winter-wind-loop",sp:[],card:"Dvala"},5:{card:null,pose:"talk-06"},
+   6:{bg:"ch10-c-pond-summer-animals",atmo:"forest-frogs"}},
  "ch10-d":{bg:"ch10-d-anthill",atmo:"forest-quiet",
    1:{sp:[{id:"ch10-small-creatures-01",x:30,y:82,h:12,move:40}],pose:"talk-04"},
    2:{card:"Insekt: tre kroppsdelar,\nsex ben, antenner,\nhårt skal"},
@@ -619,7 +619,7 @@ function setBg(name,instant){
 // långsam inzoomning på bakgrunden: [x%, y%, skala] eller 0
 let curZoom="0";
 function setZoom(z){const k=JSON.stringify(z||0);if(k===curZoom)return;curZoom=k;
-  document.querySelectorAll(".stage .bg").forEach(im=>{if(z){im.style.transformOrigin=`${z[0]}% ${z[1]}%`;im.style.transform=`scale(${z[2]})`}else im.style.transform=""})}
+  document.querySelectorAll(".stage .bg").forEach(im=>{if(z){im.style.transformOrigin=`${z[0]}% ${z[1]}%`;im.style.transform=`translateY(${z[3]||0}%) scale(${z[2]})`}else im.style.transform=""})}
 let cardT;
 function setCard(t){const c=$("#card");clearTimeout(cardT);
   if(!t){c.classList.remove("show");return}
