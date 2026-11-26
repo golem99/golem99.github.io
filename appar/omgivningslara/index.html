@@ -427,15 +427,12 @@ const DIR={
      ["img/ch10-a-card-forest","Skog",1],["img/ch09-f-market-square","Torg",0],["img/ch10-a-card-bog","Myr",1],["img/ch09-c-valley-today","Väg och bro",0],["img/ch10-a-card-river","Vattendrag",1],["img/ch10-a-card-fell","Fjäll",1]]}}},
  "ch10-b":{bg:"ch10-b-forest",atmo:"forest-european-ambience",
    1:{sfx:"black-woodpecker-drumming",pose:"talk-07"},2:{bg:"ch10-b-forest-woodpecker"},
-   3:{sp:[{id:"ch10-moose-05",x:28,y:66,h:30,move:46}],sfx:"dry-leaves-rustling",card:"Däggdjur: levande ungar,\nmjölk, lungor"},
+   3:{bg:"ch10-b-forest-animals",sfx:"dry-leaves-rustling",card:"Däggdjur: levande ungar,\nmjölk, lungor"},
    4:{card:null},6:{pose:"talk-09"},
    7:{bg:"ch10-b-fox-den-family",atmo:"forest-quiet",sp:[]},
-   9:{bg:"ch10-b-forest-woodpecker",atmo:"forest-european-ambience",sp:[{id:"ch10-moose-01",x:40,y:66,h:30},{id:"ch10-fox-05",x:62,y:84,h:18}],
-     task:{kind:"explore",need:3,title:"Tryck på djuren i skogen",items:[
-     {hot:{x:11.7,y:37.5,r:3},n:"Hackspett",ph:"photo-black-woodpecker",f:"Spillkråkan är Finlands största hackspett. Den hackar hål i trädstammarna för att komma åt insekter."},
-     {sp:0,n:"Älg",ph:"photo-moose",f:"Skogens största djur. Ett däggdjur som äter blad, kvistar och gräs."},
-     {sp:1,n:"Räv",ph:"photo-fox",f:"Ett däggdjur. Rävmamman ger ungarna mjölk i lyan."},
-     {tile:"photo-fox-cubs",n:"Rävungar",f:"Rävungarna föds levande och dricker mjölk."}]}}},
+   9:{bg:"ch10-b-forest-animals",atmo:"forest-european-ambience",
+     task:{kind:"find",title:"Hitta djuren i skogen",items:[
+     {hot:{x:12.8,y:35.8,r:3},n:"Hackspett",d:"hackspetten"},{hot:{x:35.6,y:51.7,r:7},n:"Älg",d:"älgen"},{hot:{x:57.7,y:83.2,r:3.5},n:"Räv",d:"räven"}]}}},
  "ch10-c":{bg:"ch10-c-pond-summer-animals",atmo:"forest-frogs",
    1:{zoom:[49,85,1.7,-24],card:"Växelvarma:\ngroda, ödla, orm"},
    3:{card:null,sfx:"long-pop"},
@@ -756,7 +753,7 @@ function taskFind(T,t){
   const ttl=t.querySelector(".taskbar span"),sps=[...$("#sprites").children];
   const elFor=it=>sps.find(e=>e.dataset.k==it.sp&&e.classList.contains("show"));
   const pin=(x,y,txt)=>{const p=document.createElement("div");p.className="pin";p.textContent=txt;p.style.left=x+"%";p.style.top=y+"%";t.appendChild(p)};
-  const show=()=>{if(k>=order.length){setTimeout(rounds,800);return}ttl.textContent="Hitta "+T.items[order[k]].d;$("#tn").textContent=`${k+1} av ${order.length}`};
+  const show=()=>{if(k>=order.length){setTimeout(T.rounds?rounds:finishTask,800);return}ttl.textContent="Hitta "+T.items[order[k]].d;$("#tn").textContent=`${k+1} av ${order.length}`};
   const hit=(i,e,hh)=>{e&&e.stopPropagation();if(k>=order.length)return;
     if(i!==order[k]){wrong();return}
     const it=T.items[i];right();
