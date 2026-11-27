@@ -679,6 +679,58 @@
     {
       "id": "DLG-SIRI-CAF-DRAW",
       "src": "/assets/illustrations/chibi_siri_caf_draw.webp"
+    },
+    {
+      "id": "DLG-GORAN-COR-HELLO",
+      "src": "/assets/illustrations/chibi_goran_cor_hello.webp"
+    },
+    {
+      "id": "DLG-GORAN-COR-UNSURE",
+      "src": "/assets/illustrations/chibi_goran_cor_unsure.webp"
+    },
+    {
+      "id": "DLG-GORAN-COR-CLARIFY",
+      "src": "/assets/illustrations/chibi_goran_cor_clarify.webp"
+    },
+    {
+      "id": "DLG-GORAN-COR-LAUGH",
+      "src": "/assets/illustrations/chibi_goran_cor_laugh.webp"
+    },
+    {
+      "id": "DLG-GORAN-CAF-INVITE",
+      "src": "/assets/illustrations/chibi_goran_caf_invite.webp"
+    },
+    {
+      "id": "DLG-GORAN-CAF-LISTEN",
+      "src": "/assets/illustrations/chibi_goran_caf_listen.webp"
+    },
+    {
+      "id": "DLG-GORAN-CAF-HURT",
+      "src": "/assets/illustrations/chibi_goran_caf_hurt.webp"
+    },
+    {
+      "id": "DLG-GORAN-CAF-DRAW",
+      "src": "/assets/illustrations/chibi_goran_caf_draw.webp"
+    },
+    {
+      "id": "DLG-GORAN-GYM-QUIET",
+      "src": "/assets/illustrations/chibi_goran_gym_quiet.webp"
+    },
+    {
+      "id": "DLG-GORAN-GYM-BOUNDARY",
+      "src": "/assets/illustrations/chibi_goran_gym_boundary.webp"
+    },
+    {
+      "id": "DLG-GORAN-GYM-RELIEF",
+      "src": "/assets/illustrations/chibi_goran_gym_relief.webp"
+    },
+    {
+      "id": "DLG-GORAN-GYM-SHY",
+      "src": "/assets/illustrations/chibi_goran_gym_shy.webp"
+    },
+    {
+      "id": "POR-GORAN",
+      "src": "/assets/illustrations/chibi_goran_portrait.webp"
     }
   ]
 }
